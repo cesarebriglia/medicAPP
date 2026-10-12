@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Troponina ESC">
+<meta name="description" content="Triage biochimico sospetta SCA — algoritmo ESC 0/1–2–3 h + HEART. Offline.">
+<meta name="theme-color" content="#2f6bff">
+<title>Triage Troponina ESC 0/1–2–3 h + HEART</title>
+<style>
+:root{
+ --kimi-color-text-primary:#19191c; --kimi-color-text-secondary:#4c4c52; --kimi-color-text-tertiary:#7d7d85; --kimi-color-text-quaternary:#a8a8b0;
+ --kimi-color-surface:#ffffff; --kimi-color-surface-muted:#f3f3f5; --kimi-color-surface-raised:#ffffff; --kimi-color-surface-strong:#eaeaee;
+ --kimi-color-border:#e2e2e6;
+ --kimi-color-danger:#d5493f; --kimi-color-positive:#2e9e5e; --kimi-color-warning:#d68a1f; --kimi-color-accent:#2f6bff;
+ --kimi-chart-1:#2f6bff; --kimi-chart-2:#d5493f; --kimi-chart-3:#2e9e5e; --kimi-chart-4:#8a5cf6; --kimi-chart-5:#8b8b93;
+ --kimi-font-sans:-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif; --kimi-font-mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+ --t-micro:60ms; --t-fast:120ms; --t-normal:200ms; --t-slow:300ms;
+ --ease-out:cubic-bezier(.16,1,.3,1); --ease-in:cubic-bezier(.7,0,.84,0); --ease-standard:cubic-bezier(.4,0,.2,1);
+}
+@media (prefers-color-scheme: dark){
+ :root{
+  --kimi-color-text-primary:#ededf0; --kimi-color-text-secondary:#b9b9c1; --kimi-color-text-tertiary:#8d8d97; --kimi-color-text-quaternary:#5f5f68;
+  --kimi-color-surface:#1e1e23; --kimi-color-surface-muted:#2a2a31; --kimi-color-surface-raised:#26262c; --kimi-color-surface-strong:#34343c;
+  --kimi-color-border:#3a3a42;
+  --kimi-color-danger:#e06055; --kimi-color-positive:#3fbf77; --kimi-color-warning:#e09a3a; --kimi-color-accent:#5b8cff;
+  --kimi-chart-1:#5b8cff; --kimi-chart-2:#e06055; --kimi-chart-3:#3fbf77; --kimi-chart-4:#a07fff; --kimi-chart-5:#9a9aa3;
+ }
+}
+html{background:var(--kimi-color-surface)}
+body{margin:0;padding:20px;max-width:880px;margin-left:auto;margin-right:auto;background:var(--kimi-color-surface)}
+</style>
+</head>
+<body>
+<div style="font-family:var(--kimi-font-sans);color:var(--kimi-color-text-primary)">
+<style>
+button,input,select,textarea{font:inherit}
+.twrap{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.tgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fld label{display:block;font-size:12px;color:var(--kimi-color-text-tertiary);margin-bottom:4px}
+.fld input,.fld select{width:100%;padding:8px 10px;border:1px solid var(--kimi-color-border);border-radius:10px;background:var(--kimi-color-surface-raised);color:var(--kimi-color-text-primary);font-variant-numeric:tabular-nums}
+.fld input:focus,.fld select:focus{outline:2px solid var(--kimi-color-text-primary);outline-offset:-1px}
+.card{border:1px solid var(--kimi-color-border);border-radius:12px;padding:16px;background:var(--kimi-color-surface-raised)}
+.zone{font-size:19px;font-weight:500;line-height:1.2}
+.big{font-size:38px;font-weight:500;font-variant-numeric:tabular-nums;line-height:1.1}
+.chip{display:inline-block;padding:2px 8px;border-radius:6px;font-size:12px;font-weight:500}
+.meta{font-size:12px;color:var(--kimi-color-text-tertiary)}
+.kv{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;border-bottom:1px solid var(--kimi-color-border)}
+.kv:last-child{border-bottom:none}
+.track{position:relative;height:12px;border-radius:6px;background:var(--kimi-color-surface-muted);margin:20px 0 6px}
+.band{position:absolute;top:0;height:100%;border-radius:6px}
+.mark{position:absolute;top:-5px;width:3px;height:22px;border-radius:2px;background:var(--kimi-color-text-primary)}
+.ticks{display:flex;justify-content:space-between;font-size:12px;color:var(--kimi-color-text-quaternary);font-variant-numeric:tabular-nums}
+.note{font-size:13px;color:var(--kimi-color-text-secondary);padding:4px 0 4px 14px;position:relative}
+.note:before{content:"";position:absolute;left:0;top:11px;width:6px;height:6px;border-radius:3px;background:var(--kimi-color-warning)}
+.note.bad:before{background:var(--kimi-color-danger)}
+.btn{padding:8px 14px;border:1px solid var(--kimi-color-border);border-radius:10px;background:var(--kimi-color-surface-raised);color:var(--kimi-color-text-primary);cursor:pointer;font-size:13px}
+.btn:hover{background:var(--kimi-color-surface-muted)}
+textarea{width:100%;min-height:110px;padding:10px;border:1px solid var(--kimi-color-border);border-radius:10px;background:var(--kimi-color-surface-raised);color:var(--kimi-color-text-primary);font-size:12.5px;line-height:1.5}
+@media(max-width:640px){.twrap{grid-template-columns:1fr}}
+</style>
+
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+  <div style="font-size:17px;font-weight:500">Triage sospetta SCA — algoritmo ESC 0/1–2–3 h + HEART</div>
+  <span class="chip" style="background:color-mix(in srgb,var(--kimi-color-accent) 12%,transparent);color:var(--kimi-color-accent)">ESC 2020 NSTEMI · ESC 2023 ACS</span>
+</div>
+
+<div class="twrap">
+  <div class="card">
+    <div class="tgrid">
+      <div class="fld"><label>Saggio hs-cTn</label>
+        <select id="assay">
+          <option value="rocheT">hs-cTnT — Elecsys (Roche)</option>
+          <option value="abboI">hs-cTnI — Architect (Abbott)</option>
+          <option value="siemI">hs-cTnI — Centaur (Siemens)</option>
+          <option value="beckI">hs-cTnI — Access (Beckman)</option>
+        </select>
+      </div>
+      <div class="fld"><label>Secondo prelievo (Δt)</label>
+        <select id="dt"><option value="1">dopo 1 h — 0/1 h (I, A)</option><option value="2">dopo 2 h — 0/2 h (I, A)</option><option value="3">dopo 3 h — 0/3 h (IIa)</option></select>
+      </div>
+      <div class="fld"><label>Età (anni)</label><input id="age" type="number" value="62" min="18" max="110"></div>
+      <div class="fld"><label>Genere</label><select id="sex"><option value="m">Maschio</option><option value="f">Femmina</option></select></div>
+      <div class="fld"><label>Creatinina (mg/dL)</label><input id="crea" type="number" value="0.90" step="0.01" min="0.2" max="20"></div>
+      <div class="fld"><label>Esordio dolore (ore fa)</label><input id="onset" type="number" value="4" step="0.5" min="0"></div>
+      <div class="fld"><label>Troponina basale T0 (ng/L)</label><input id="t0" type="number" value="8" step="0.5" min="0"></div>
+      <div class="fld"><label>Troponina al Δt (2° valore, ng/L)</label><input id="t1" type="number" value="9" step="0.5" min="0"></div>
+    </div>
+    <div class="meta" style="margin-top:10px">Il Δ viene calcolato in automatico: Δ = |T(Δt) − T0| per il rule-out, incremento T(Δt) − T0 per il rule-in.</div>
+  </div>
+
+  <div class="card" id="outcard">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+      <div>
+        <div class="meta" id="zonelabel">Classificazione</div>
+        <div class="zone" id="zonename">—</div>
+      </div>
+      <div style="text-align:right">
+        <div class="meta">Probabilità stimata di IM</div>
+        <div class="big" id="prob">—</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="band" id="band"></div>
+      <div class="mark" id="mark"></div>
+    </div>
+    <div class="ticks"><span>0</span><span>25</span><span>50</span><span>75</span><span>100 %</span></div>
+    <div style="margin-top:12px">
+      <div class="kv"><span class="meta">Δ calcolato [T(Δt) − T0]</span><span id="delta" style="font-variant-numeric:tabular-nums;font-weight:500">—</span></div>
+      <div class="kv"><span class="meta">eGFR (CKD-EPI 2021)</span><span id="gfr" style="font-variant-numeric:tabular-nums;font-weight:500">—</span></div>
+      <div class="kv"><span class="meta">99° percentile (URL) del saggio</span><span id="url" style="font-variant-numeric:tabular-nums;font-weight:500">—</span></div>
+    </div>
+    <div style="margin-top:12px" id="perf"></div>
+  </div>
+</div>
+
+<div class="card" style="margin-top:16px">
+  <div style="font-size:14px;font-weight:500;margin-bottom:8px">Score HEART — rischio a 6 settimane (MACE)</div>
+  <div class="meta" style="margin-bottom:8px">Età e troponina si calcolano in automatico dai dati inseriti: età <span id="agepts" style="font-weight:500;color:var(--kimi-color-text-primary)">—</span> · troponina <span id="troppts" style="font-weight:500;color:var(--kimi-color-text-primary)">—</span></div>
+  <div class="tgrid">
+    <div class="fld"><label>Storia clinica</label>
+      <select id="h"><option value="0">Non sospetta (0)</option><option value="1">Moderatamente sospetta (1)</option><option value="2" selected>Altamente sospetta (2)</option></select></div>
+    <div class="fld"><label>ECG</label>
+      <select id="e"><option value="0">Normale (0)</option><option value="1" selected>Anormale senza sopraslivellamento ST (1)</option><option value="2">Sopraslivellamento ST / BBB (2)</option></select></div>
+    <div class="fld"><label>Fattori di rischio</label>
+      <select id="r"><option value="0">Nessun fattore noto (0)</option><option value="1" selected>1–2 fattori o iperlipidemia (1)</option><option value="2">≥3 fattori o aterosclerosi nota (2)</option></select></div>
+    <div class="fld"><label>&nbsp;</label>
+      <div class="meta" style="padding:8px 0">H · E · R restano valutazione clinica del medico.</div></div>
+  </div>
+  <div style="display:flex;align-items:baseline;gap:12px;margin-top:12px;flex-wrap:wrap">
+    <div class="big" id="heart" style="font-size:30px">—</div>
+    <div style="flex:1;min-width:200px">
+      <div class="track" style="margin:8px 0 4px;height:10px">
+        <div class="band" style="left:0;width:30%;background:color-mix(in srgb,var(--kimi-color-positive) 30%,transparent)"></div>
+        <div class="band" style="left:30%;width:40%;background:color-mix(in srgb,var(--kimi-color-warning) 30%,transparent)"></div>
+        <div class="band" style="left:70%;width:30%;background:color-mix(in srgb,var(--kimi-color-danger) 30%,transparent)"></div>
+        <div class="mark" id="hmark" style="top:-4px;height:18px"></div>
+      </div>
+      <div class="ticks"><span>0 basso</span><span>4</span><span>6</span><span>7 alto</span><span>10</span></div>
+    </div>
+  </div>
+  <div class="meta" style="margin-top:4px" id="hearttxt">MACE 6 settimane: 0–3 → ~1,7% · 4–6 → ~12–16% · 7–10 → ~50–65%</div>
+</div>
+
+<div class="card" style="margin-top:16px">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px">
+    <div style="font-size:14px;font-weight:500">Referto strutturato</div>
+    <button class="btn" id="copybtn">Copia referto</button>
+  </div>
+  <textarea id="report" readonly></textarea>
+</div>
+
+<div class="card" style="margin-top:16px">
+  <div style="font-size:14px;font-weight:500;margin-bottom:4px">Note cliniche contestuali</div>
+  <div id="notes"></div>
+</div>
+
+<div class="card" style="margin-top:16px">
+  <div style="font-size:14px;font-weight:500;margin-bottom:8px">Bibliografia</div>
+  <div style="font-size:13px;line-height:1.7">
+   <div><a href="https://doi.org/10.1093/eurheartj/ehaa575" target="_blank" rel="noopener">Collet JP, Thiele H, Barbato E, et al. 2020 ESC Guidelines for the management of acute coronary syndromes in patients presenting without persistent ST-segment elevation. Eur Heart J. 2020;42(14):1289–1367.</a></div>
+   <div><a href="https://doi.org/10.1093/eurheartj/ehad191" target="_blank" rel="noopener">Byrne RA, Rossello X, Coughlan JJ, et al. 2023 ESC Guidelines for the management of acute coronary syndromes. Eur Heart J. 2023;44(38):3720–3826.</a></div>
+   <div><a href="https://pubmed.ncbi.nlm.nih.gov/18665203/" target="_blank" rel="noopener">Six AJ, Backus BE, Kelder JC. Chest pain in the emergency room: value of the HEART score. Neth Heart J. 2008;16(6):191–6.</a></div>
+   <div><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8822996/" target="_blank" rel="noopener">Inker LA, Eneanya ND, Coresh J, et al. New Creatinine- and Cystatin C–Based Equations to Estimate GFR without Race. N Engl J Med. 2021;385(19):1737–1749.</a></div>
+   <div><a href="https://www.kidney.org/professionals/kdoqi/gfr_calculator/formula" target="_blank" rel="noopener">National Kidney Foundation. CKD-EPI Creatinine Equation (2021) — formula di riferimento.</a></div>
+  </div>
+</div>
+
+<div class="meta" style="margin-top:10px">Strumento di stima probabilistica a scopo didattico: non sostituisce ECG, giudizio clinico e definizione universale di IM (5a via). Il troponino-metro è al timone, ma il medico resta il pilota.</div>
+<div class="meta" style="margin-top:6px;text-align:center;opacity:.75">Ideato dal dr. C.Briglia (cesarebriglia@gmail.com) con l'apporto di Claude - Anthropic</div>
+
+<script>
+var CUT={
+ rocheT:{n:"hs-cTnT Roche",u:14,ud:"14 ng/L (entrambi i generi)",h1:{vl:5,lo:12,dlo:3,hi:52,dhi:5},h2:{vl:5,lo:14,dlo:4,hi:52,dhi:10}},
+ abboI:{n:"hs-cTnI Abbott",u:26,ud:"34 ng/L ♂ · 16 ng/L ♀",h1:{vl:4,lo:5,dlo:2,hi:64,dhi:6},h2:{vl:4,lo:6,dlo:2,hi:64,dhi:15}},
+ siemI:{n:"hs-cTnI Siemens",u:46,ud:"46 ng/L (entrambi i generi)",h1:{vl:3,lo:6,dlo:3,hi:120,dhi:12},h2:{vl:3,lo:8,dlo:7,hi:120,dhi:20}},
+ beckI:{n:"hs-cTnI Beckman",u:26,ud:"~26 ng/L (entrambi i generi)",h1:{vl:4,lo:5,dlo:4,hi:50,dhi:15},h2:{vl:4,lo:5,dlo:5,hi:50,dhi:20}}
+};
+var Z={
+ ruleouts:{name:"Rule-out IM — campione singolo",p:0.5,b:[0.2,1.5],c:"positive",perf:"NPV ≥99,5% con esordio >3 h"},
+ ruleout:{name:"Rule-out IM",p:1,b:[0.3,2],c:"positive",perf:"Sens 97–100% · NPV ≥99%"},
+ rulein:{name:"Rule-in IM",p:75,b:[55,90],c:"danger",perf:"Spec 90–95% · PPV 70–85%"},
+ obs15:{name:"Zona di osservazione",p:15,b:[5,30],c:"warning",perf:"~1 IM su 5 — osservazione seriale / imaging"},
+ obs3:{name:"Zona di osservazione (0/3 h)",p:20,b:[8,35],c:"warning",perf:"Valori discordanti attorno all'URL → ripetere o imaging"},
+ rin3:{name:"Rule-in IM (0/3 h)",p:70,b:[50,85],c:"danger",perf:"Entrambi i valori sopra URL · PPV ~80%"},
+ ro3:{name:"Rule-out IM (0/3 h)",p:3,b:[1,6],c:"positive",perf:"Entrambi i valori < URL: NPV ~97–99%, valutare anche GRACE <140"}
+};
+function egfr(s,age,cr){var k=s=="f"?0.7:0.9,a=s=="f"?-0.241:-0.302,b=s=="f"?-1.2:-1.2;
+ var x=cr/k,e=142*Math.pow(x,(cr>k?b:a))*Math.pow(0.9938,age);if(s=="f")e*=1.012;return e;}
+function gstage(e){return e>=90?"G1":e>=60?"G2":e>=45?"G3a":e>=30?"G3b":e>=15?"G4":"G5";}
+function $(id){return document.getElementById(id);}
+function urlOf(a,sex){return a.n.indexOf("Abbott")>=0?(sex=="f"?16:34):a.u;}
+function calc(){
+ var a=CUT[$("assay").value],dt=$("dt").value,c=dt=="3"?null:a["h"+dt];
+ var t0=+$("t0").value||0,t1=+$("t1").value||0,age=+$("age").value||50,onset=+$("onset").value||0,cr=+$("crea").value||1;
+ var d=t1-t0,e=egfr($("sex").value,age,cr),url=urlOf(a,$("sex").value);
+ var z;
+ if(dt=="3"){
+   if(t0<url&&t1<url)z="ro3";else if(t0>=url&&t1>=url)z="rin3";else z="obs3";
+ }else{
+   if(t0<c.vl&&onset>3)z="ruleouts";
+   else if(t0<c.lo&&Math.abs(d)<c.dlo)z="ruleout";
+   else if(t0>=c.hi||d>=c.dhi)z="rulein";
+   else z="obs15";
+ }
+ var zz=Z[z],p=zz.p;
+ var notes=[];
+ if(e<60){notes.push("eGFR &lt;60: possibile elevazione cronica di hs-cTn → NPV ridotta, pesare la dinamica più dei valori assoluti.");if(z.indexOf("ro")==0||z=="ruleout")p=Math.min(p+2,4);}
+ if(e<30)notes.push("eGFR &lt;30: algoritmo 0/1–2 h NON validato (dializzati esclusi dalle coorti) → imaging/seriali e giudizio clinico.");
+ if(dt=="3"&&z=="ro3")notes.push("Via 0/3 h: il rule-out ESC richiede anche assenza dolore e GRACE &lt;140 (classe IIa).");
+ if(z.indexOf("ruleout")==0&&onset<=3)notes.push("Rule-out in campione singolo richiede esordio &gt;3 h e T0 sotto il limite di rilevamento.");
+ if(z.indexOf("obs")==0)notes.push("Zona grigia: imaging funzionale (stress imaging/eco) o terzo prelievo secondo disponibilità e stabilità del paziente. Bassa evidenza dirimente per IMA: se il quadro clinico resta sospetto, orientare verso diagnostica differenziale mirata — TC torace con mdc (dissezione aortica, embolia polmonare), ecocardiogramma transtoracico (cinesi segmentaria, versamento pericardico, funzione VS), D-dimero/RX torace se indicati dal contesto.");
+ if(z.indexOf("ruleout")==0||z=="ro3")notes.push("Rule-out biochimico di IMA: se il dolore toracico persiste o il sospetto clinico rimane elevato, considerare diagnosi alternative (embolia polmonare, dissezione aortica, pericardite, patologia esofagea o polmonare) con imaging mirato — TC torace, ecocardiogramma, RX torace — prima della dimissione.");
+ if(onset<=1)notes.push("Esordio &lt;1 h: troponina ancora 'cieca' → ripetere il dosaggio seriale anche con valori bassi.");
+ notes.push("L'algoritmo è troponino-centrico: ECG iniziale e dinamica clinica modificano sempre la gestione.");
+ var col="var(--kimi-color-"+zz.c+")";
+ $("outcard").style.borderColor=col;
+ $("zonelabel").textContent=a.n+" · cutoff 0/"+dt+" h";
+ $("zonename").textContent=zz.name;
+ $("prob").textContent=(p<1?"<1":Math.round(p))+"%";
+ $("prob").style.color=col;
+ $("delta").textContent=(d>=0?"+":"")+d.toFixed(1)+" ng/L";
+ $("gfr").textContent=Math.round(e)+" mL/min/1,73 m² · "+gstage(e);
+ $("gfr").style.color=e<60?"var(--kimi-color-warning)":"var(--kimi-color-text-primary)";
+ $("url").textContent=a.ud;
+ $("band").style.left=zz.b[0]+"%";$("band").style.width=(zz.b[1]-zz.b[0])+"%";
+ $("band").style.background="color-mix(in srgb,"+col+" 25%,transparent)";
+ $("mark").style.left="calc("+Math.min(p,100)+"% - 1px)";
+ $("perf").innerHTML='<span class="chip" style="background:color-mix(in srgb,'+col+' 12%,transparent);color:'+col+'">'+zz.perf+'</span>';
+ $("notes").innerHTML=notes.map(function(n){return '<div class="note'+(e<30?' bad':'')+'">'+n+'</div>';}).join("");
+ var ap=age>=65?2:age>=45?1:0;
+ var tp=t0<=url?0:t0<=3*url?1:2;
+ $("agepts").textContent=age+" anni → "+ap+" pti";
+ $("troppts").textContent=t0+" ng/L vs URL "+url+" → "+tp+" pti";
+ var hs=(+$("h").value)+(+$("e").value)+ap+(+$("r").value)+tp;
+ $("heart").textContent=hs+" / 10";
+ var hb=hs<=3?["positive","basso","~1,7% MACE"]:hs<=6?["warning","intermedio","~12–16% MACE"]:["danger","alto","~50–65% MACE"];
+ $("heart").style.color="var(--kimi-color-"+hb[0]+")";
+ $("hmark").style.left=Math.min(hs*10,99)+"%";
+ $("hearttxt").textContent="Rischio "+hb[1]+" (MACE 6 settimane "+hb[2]+"). Punteggi HEART 0–3 → basso · 4–6 → intermedio · 7–10 → alto.";
+ var dtTxt=dt=="3"?"3 h (via 0/3 h, classe IIa)":dt+" h (classe I)";
+ $("report").value=
+"SOSPETTA SCA — TRIAGE BIOCHIMICO (algoritmo ESC 0/"+dtTxt+")\n"+
+"Saggio: "+a.n+" · URL 99° perc: "+a.ud+"\n"+
+"Troponina T0: "+t0+" ng/L · T("+dt+"h): "+t1+" ng/L → Δ calcolato: "+(d>=0?"+":"")+d.toFixed(1)+" ng/L\n"+
+"Età: "+age+" anni · Genere: "+($("sex").value=="m"?"M":"F")+" · Creatinina: "+cr.toFixed(2)+" mg/dL → eGFR "+Math.round(e)+" mL/min/1,73 m² ("+gstage(e)+")\n"+
+"Esordio sintomi: "+onset+" h fa\n"+
+"RISULTATO: "+zz.name+" — probabilità stimata di IM ≈ "+(p<1?"<1":Math.round(p))+"% ["+zz.perf+"]\n"+
+"HEART score: "+hs+"/10 (rischio "+hb[1]+", MACE 6 sett ~"+hb[2]+")\n"+
+"NOTE: "+(e<60?"eGFR<60 → interpretare con cautela. ":"")+(e<30?"Algoritmo non validato con eGFR<30. ":"")+"Correlare con ECG e giudizio clinico.";
+}
+$("copybtn").onclick=function(){var r=$("report");r.select();if(navigator.clipboard)navigator.clipboard.writeText(r.value).then(function(){$("copybtn").textContent="Copiato ✓";setTimeout(function(){$("copybtn").textContent="Copia referto";},1500);});};
+["assay","dt","age","sex","crea","onset","t0","t1","h","e","r"].forEach(function(i){$(i).addEventListener("input",calc);});
+calc();
+</script>
+</div>
+</body>
+</html>
