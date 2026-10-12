@@ -1,0 +1,2999 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCORE2 / SCORE2-OP — Rischio Cardiovascolare ESC 2021</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#f5f4f0;--surface:#ffffff;--surface2:#f0ede8;--border:#d8d4cc;--border2:#c4bfb5;
+    --text:#1a1917;--text2:#5a574f;--text3:#8a877f;
+    --accent:#1a4a8a;--accent-light:#e8f0fa;
+    --green:#2d6a1f;--green-light:#eaf3de;
+    --warn:#8a4a00;--warn-light:#fef3e2;
+    --orange:#6b3a00;--orange-light:#fff3e0;
+    --danger:#8a1a1a;--danger-light:#fde8e8;
+    --font:'IBM Plex Sans',system-ui,sans-serif;
+    --mono:'IBM Plex Mono',monospace;
+    --radius:8px;--radius-lg:14px;
+  }
+  body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;padding:2rem 1rem}
+  .app-wrap{max-width:820px;margin:0 auto}
+  header{margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border)}
+  .header-badge{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;background:var(--accent);color:#fff;padding:3px 10px;border-radius:4px;margin-bottom:.75rem}
+  h1{font-size:1.6rem;font-weight:600;line-height:1.2;margin-bottom:.4rem}
+  .subtitle{font-size:.88rem;color:var(--text3);line-height:1.5}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1rem}
+  .card-title{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:1.25rem;display:flex;align-items:center;gap:8px}
+  .card-title-icon{font-size:15px}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+  .field{display:flex;flex-direction:column;gap:5px}
+  .field.full{grid-column:1/-1}
+  label.field-label{font-size:12px;font-weight:600;color:var(--text2);letter-spacing:.04em;text-transform:uppercase}
+  input[type="number"],select{width:100%;padding:10px 12px;font-family:var(--font);font-size:15px;color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);appearance:none;transition:border-color .15s}
+  input[type="number"]:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(26,74,138,.12)}
+  input.error{border-color:#c0392b !important}
+  .hint{font-size:11px;color:var(--text3);line-height:1.5}
+  .hint.limit{color:var(--text3);font-family:var(--mono);font-size:10.5px;letter-spacing:.01em}
+  .radio-group{display:flex;gap:8px}
+  .radio-btn{flex:1;position:relative}
+  .radio-btn input{position:absolute;opacity:0;width:0;height:0}
+  .radio-btn label{display:block;text-align:center;padding:10px 8px;border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;font-size:13px;font-weight:500;color:var(--text2);background:var(--surface);transition:all .15s;text-transform:none;letter-spacing:0}
+  .radio-btn input:checked+label{background:var(--accent);border-color:var(--accent);color:#fff}
+  .radio-btn label:hover{border-color:var(--accent)}
+
+  /* Condizioni patologiche */
+  .cond-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+  .cond-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all .15s;background:var(--surface);user-select:none}
+  .cond-item:hover{border-color:var(--accent);background:var(--accent-light)}
+  .cond-item input[type="checkbox"]{width:16px;height:16px;margin-top:1px;flex-shrink:0;accent-color:var(--accent);cursor:pointer}
+  .cond-item input[type="checkbox"]:checked~.cond-text .cond-name{color:var(--accent)}
+  .cond-item.selected{border-color:var(--accent);background:var(--accent-light)}
+  .cond-name{font-size:13px;font-weight:600;color:var(--text);line-height:1.3}
+  .cond-sub{font-size:11px;color:var(--text3);margin-top:2px;line-height:1.4}
+  .cond-extra{margin-top:.75rem;padding:.75rem;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border);display:none}
+  .cond-extra.visible{display:block}
+
+  /* ── Matrice KDIGO eGFR × UACR ── */
+  .kdigo-result-box{border-radius:var(--radius);padding:1rem 1.1rem;border:2px solid}
+  .kdigo-result-box.kdigo-low{background:var(--green-light);border-color:#7ac964}
+  .kdigo-result-box.kdigo-moderate{background:var(--warn-light);border-color:#e6b800}
+  .kdigo-result-box.kdigo-high{background:var(--orange-light);border-color:#f5a623}
+  .kdigo-result-box.kdigo-veryhigh{background:var(--danger-light);border-color:#e24b4a}
+  .kdigo-badge{display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 12px;border-radius:20px;margin-bottom:.5rem}
+  .kdigo-low .kdigo-badge{background:#b8e68b;color:var(--green)}
+  .kdigo-moderate .kdigo-badge{background:#fad78b;color:var(--warn)}
+  .kdigo-high .kdigo-badge{background:#f5b85a;color:var(--orange)}
+  .kdigo-veryhigh .kdigo-badge{background:#f5a0a0;color:var(--danger)}
+  .kdigo-grid-label{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px}
+  .kdigo-grid-desc{font-size:12px;color:var(--text2);line-height:1.6}
+  .kdigo-mini-grid{display:grid;grid-template-columns:auto 1fr 1fr 1fr;gap:2px;margin-top:.75rem;font-size:10px}
+  .kdigo-mini-cell{padding:5px 4px;text-align:center;border-radius:3px;font-weight:600}
+  .kdigo-mini-header{font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.03em;font-size:9px;padding:5px 4px;text-align:center}
+  .kdigo-mini-rowlabel{font-weight:700;color:var(--text3);font-size:9px;text-align:right;padding:5px 6px;align-self:center}
+  .kdigo-c-low{background:#b8e68b;color:var(--green)}
+  .kdigo-c-mod{background:#fad78b;color:var(--warn)}
+  .kdigo-c-high{background:#f5b85a;color:var(--orange)}
+  .kdigo-c-vhigh{background:#f5a0a0;color:var(--danger)}
+  .kdigo-c-current{outline:2.5px solid var(--text);outline-offset:-2.5px}
+  .cond-extra label.field-label{font-size:11px}
+  .cond-extra input[type="number"]{font-size:14px;padding:8px 10px}
+
+  /* Preview nonHDL */
+  .nonhdl-preview{display:none;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;color:var(--text2);line-height:1.8}
+
+  /* ── Box confronto Sampson ── */
+  .sampson-box{border-radius:var(--radius);padding:1rem 1.1rem;border:1px solid;font-size:12px;line-height:1.7}
+  .sampson-ok{background:var(--surface2);border-color:var(--border)}
+  .sampson-warn{background:var(--warn-light);border-color:#f5c870}
+  .sampson-danger{background:var(--danger-light);border-color:#f5a0a0}
+  .sampson-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem;flex-wrap:wrap;gap:.5rem}
+  .sampson-title{font-weight:700;font-size:12px;color:var(--text);display:flex;align-items:center;gap:6px}
+  .sampson-source{font-size:10.5px;color:var(--accent);text-decoration:none;font-family:var(--mono);border-bottom:1px dotted var(--accent)}
+  .sampson-source:hover{color:#0f3570}
+  .sampson-compare{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin:.5rem 0}
+  .sampson-cell{padding:.5rem .7rem;border-radius:var(--radius);text-align:center}
+  .sampson-cell-label{font-size:10px;text-transform:uppercase;letter-spacing:.05em;font-weight:700;color:var(--text3);margin-bottom:3px}
+  .sampson-cell-val{font-family:var(--mono);font-weight:700;font-size:1.1rem}
+  .sampson-delta{font-size:11px;padding:.35rem .7rem;border-radius:var(--radius);font-weight:600;display:inline-block}
+  .sampson-note{font-size:11px;color:var(--text2);line-height:1.6;margin-top:.5rem;padding-top:.5rem;border-top:1px solid rgba(0,0,0,.07)}
+
+  /* Bottone */
+  .calc-btn{width:100%;padding:14px;font-family:var(--font);font-size:15px;font-weight:600;color:#fff;background:var(--accent);border:none;border-radius:var(--radius);cursor:pointer;margin-top:1.5rem;transition:background .15s,transform .1s;letter-spacing:.02em}
+  .calc-btn:hover{background:#0f3570}
+  .calc-btn:active{transform:scale(.99)}
+
+  /* Risultati */
+  #result-section{display:none;margin-top:1.5rem}
+  .result-card{border-radius:var(--radius-lg);padding:1.5rem;border:1px solid;margin-bottom:1rem}
+  .result-card.low{background:var(--green-light);border-color:#b0d895}
+  .result-card.moderate{background:var(--warn-light);border-color:#f5c870}
+  .result-card.high{background:var(--orange-light);border-color:#f5a623}
+  .result-card.very-high{background:var(--danger-light);border-color:#f5a0a0}
+
+  .result-top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:1rem}
+  .result-algo{font-family:var(--mono);font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;opacity:.7;margin-bottom:6px}
+  .result-pct{font-family:var(--mono);font-size:3rem;font-weight:500;line-height:1;margin-bottom:2px}
+  .result-card.low .result-pct{color:var(--green)}
+  .result-card.moderate .result-pct{color:var(--warn)}
+  .result-card.high .result-pct{color:var(--orange)}
+  .result-card.very-high .result-pct{color:var(--danger)}
+  .result-category{font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+  .result-card.low .result-category{background:#b8e68b;color:var(--green)}
+  .result-card.moderate .result-category{background:#fad78b;color:var(--warn)}
+  .result-card.high .result-category{background:#f5b85a;color:var(--orange)}
+  .result-card.very-high .result-category{background:#f5a0a0;color:var(--danger)}
+
+  .risk-bar-wrap{margin-top:1rem}
+  .risk-bar-bg{height:8px;border-radius:4px;background:linear-gradient(to right,#7ac964 0%,#f5c870 40%,#f5a623 70%,#e24b4a 100%);position:relative;margin-bottom:4px}
+  .risk-bar-marker{position:absolute;top:-4px;width:16px;height:16px;background:var(--text);border:2px solid var(--surface);border-radius:50%;transform:translateX(-50%);transition:left .4s ease}
+  .risk-bar-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--text3);font-family:var(--mono);margin-top:4px}
+
+  .thresholds{margin-top:1rem;padding:.75rem 1rem;background:rgba(0,0,0,.04);border-radius:var(--radius);font-size:12px;color:var(--text2);line-height:1.8}
+  .result-desc{font-size:13px;color:var(--text2);line-height:1.6;margin-top:.75rem;padding-top:.75rem;border-top:1px solid rgba(0,0,0,.08)}
+
+  /* Card rischio finale */
+  .final-risk-card{border-radius:var(--radius-lg);padding:1.5rem;border:2px solid;margin-bottom:1rem}
+  .final-risk-card.fr-low{background:var(--green-light);border-color:#7ac964}
+  .final-risk-card.fr-moderate{background:var(--warn-light);border-color:#e6b800}
+  .final-risk-card.fr-high{background:var(--orange-light);border-color:#f5a623}
+  .final-risk-card.fr-very-high{background:var(--danger-light);border-color:#e24b4a}
+  .final-risk-card.fr-extreme{background:#f9e8f5;border-color:#8a1a6a}
+  .fr-badge{display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:3px 12px;border-radius:20px;margin-bottom:.75rem}
+  .fr-low .fr-badge{background:#b8e68b;color:var(--green)}
+  .fr-moderate .fr-badge{background:#fad78b;color:var(--warn)}
+  .fr-high .fr-badge{background:#f5b85a;color:var(--orange)}
+  .fr-very-high .fr-badge{background:#f5a0a0;color:var(--danger)}
+  .fr-extreme .fr-badge{background:#e8b0e0;color:#6a0a50}
+  .fr-title{font-size:1.1rem;font-weight:600;margin-bottom:.5rem}
+  .fr-low .fr-title{color:var(--green)}
+  .fr-moderate .fr-title{color:var(--warn)}
+  .fr-high .fr-title{color:var(--orange)}
+  .fr-very-high .fr-title{color:var(--danger)}
+  .fr-extreme .fr-title{color:#6a0a50}
+  .fr-reason{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:1rem}
+
+  .target-box{background:rgba(255,255,255,.7);border-radius:var(--radius);padding:1rem;border:1px solid rgba(0,0,0,.1)}
+  .target-box-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:.6rem}
+  .target-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(0,0,0,.06);font-size:13px}
+  .target-row:last-child{border-bottom:none}
+  .target-label{color:var(--text2)}
+  .target-val{font-family:var(--mono);font-weight:600;color:var(--accent);font-size:14px}
+  .target-achieved{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:500}
+  .target-achieved.yes{background:#b8e68b;color:var(--green)}
+  .target-achieved.no{background:#f5a0a0;color:var(--danger)}
+
+  .modifiers-list{margin-top:.75rem;padding:.75rem 1rem;background:rgba(0,0,0,.04);border-radius:var(--radius);font-size:12px;color:var(--text2);line-height:1.9}
+  .modifier-item{display:flex;align-items:flex-start;gap:6px}
+  .modifier-item::before{content:"▲";font-size:9px;color:var(--danger);margin-top:3px;flex-shrink:0}
+
+  /* Dettaglio */
+  .detail-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(0,0,0,.05);font-size:13px}
+  .detail-row:last-child{border-bottom:none}
+  .detail-label{color:var(--text2)}
+  .detail-val{font-family:var(--mono);font-weight:500}
+
+  .disclaimer{margin-top:1.5rem;padding:1rem;background:var(--surface2);border-radius:var(--radius);font-size:11px;color:var(--text3);line-height:1.6;border-left:3px solid var(--border2)}
+  .disclaimer strong{color:var(--text2)}
+
+  /* ── Indagini raccomandate ── */
+  .indagini-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1rem}
+  .indagine-item{display:flex;gap:12px;padding:.85rem 0;border-bottom:1px solid rgba(0,0,0,.06);align-items:flex-start}
+  .indagine-item:last-child{border-bottom:none}
+  .indagine-icon{flex-shrink:0;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;margin-top:1px}
+  .ind-red .indagine-icon{background:var(--danger-light)}
+  .ind-yellow .indagine-icon{background:var(--warn-light)}
+  .ind-grey .indagine-icon{background:var(--surface2)}
+  .indagine-body{flex:1;min-width:0}
+  .indagine-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px}
+  .indagine-prio{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:2px 9px;border-radius:10px;margin-bottom:5px}
+  .ind-red .indagine-prio{background:var(--danger-light);color:var(--danger)}
+  .ind-yellow .indagine-prio{background:var(--warn-light);color:var(--warn)}
+  .ind-grey .indagine-prio{background:var(--surface2);color:var(--text3)}
+  .indagine-reason{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:3px}
+  .indagine-ref{font-size:10.5px;color:var(--text3);font-style:italic}
+
+  /* ── Print / PDF ── */
+  .print-btn{
+    display:inline-flex;align-items:center;gap:6px;
+    font-family:var(--font);font-size:13px;font-weight:600;
+    padding:8px 18px;border-radius:var(--radius);border:1px solid var(--border);
+    background:var(--surface);color:var(--text2);cursor:pointer;
+    transition:all .15s;margin-top:.75rem
+  }
+  .print-btn:hover{background:var(--accent);border-color:var(--accent);color:#fff}
+  .print-btn svg{flex-shrink:0}
+
+  @media print {
+    @page { size: A4; margin: 15mm 18mm; }
+    body { background:#fff !important; padding:0 !important; font-size:12px }
+    .app-wrap { max-width:100% !important }
+    /* nascondi form input e bottoni */
+    .card:has(#age), .card:has(.cond-grid), .calc-btn,
+    .farmaci-filters, .nonhdl-preview, .cond-extra { display:none !important }
+    /* nascondi il bottone stampa stesso in stampa */
+    #print-btn-wrap { display:none !important }
+    /* nascondi sezione farmaci nella stampa — troppo lunga, stampa solo i selezionati */
+    #farmaci-section { display:none !important }
+    /* mostra il div stampa-farmaci dedicato */
+    #print-farmaci { display:block !important }
+    header { border-bottom:2px solid #1a4a8a !important; margin-bottom:1rem }
+    .header-badge { background:#1a4a8a !important; -webkit-print-color-adjust:exact; print-color-adjust:exact }
+    .result-card, .final-risk-card, .card { break-inside:avoid; page-break-inside:avoid }
+    /* forza colori su carta */
+    * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important }
+    .result-card.low    { background:#eaf3de !important; border-color:#b0d895 !important }
+    .result-card.moderate { background:#fef3e2 !important; border-color:#f5c870 !important }
+    .result-card.high   { background:#fff3e0 !important; border-color:#f5a623 !important }
+    .result-card.very-high { background:#fde8e8 !important; border-color:#f5a0a0 !important }
+    .final-risk-card.fr-low       { background:#eaf3de !important; border-color:#7ac964 !important }
+    .final-risk-card.fr-moderate  { background:#fef3e2 !important; border-color:#e6b800 !important }
+    .final-risk-card.fr-high      { background:#fff3e0 !important; border-color:#f5a623 !important }
+    .final-risk-card.fr-very-high { background:#fde8e8 !important; border-color:#e24b4a !important }
+    .final-risk-card.fr-extreme   { background:#f9e8f5 !important; border-color:#8a1a6a !important }
+    .badge-ok   { background:#eaf3de !important; color:#2d6a1f !important }
+    .badge-si   { background:#dbeafe !important; color:#1e40af !important }
+    .badge-no   { background:#f0ede8 !important; color:#8a877f !important }
+    .badge-partial { background:#fef3e2 !important; color:#8a4a00 !important }
+    .target-achieved.yes { background:#eaf3de !important; color:#2d6a1f !important }
+    .target-achieved.no  { background:#fde8e8 !important; color:#8a1a1a !important }
+    .risk-bar-bg { background: linear-gradient(to right,#7ac964,#f5c870,#f5a623,#e24b4a) !important }
+    .print-farmaci-tbl { width:100%; border-collapse:collapse; font-size:11px; margin-top:.5rem }
+    .print-farmaci-tbl th {
+      text-align:left; font-size:10px; font-weight:700; text-transform:uppercase;
+      letter-spacing:.04em; background:#f0ede8 !important; padding:5px 7px;
+      border-bottom:2px solid #c4bfb5; -webkit-print-color-adjust:exact; print-color-adjust:exact
+    }
+    .print-farmaci-tbl td { padding:5px 7px; border-bottom:1px solid #e8e4dc; font-size:11px }
+    .print-farmaci-tbl tr:last-child td { border-bottom:none }
+    .print-section-title {
+      font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.06em;
+      color:#8a877f; margin:1rem 0 .5rem; border-bottom:1px solid #d8d4cc; padding-bottom:.3rem
+    }
+  }
+  .print-btn-big{
+    display:inline-flex;align-items:center;justify-content:center;
+    font-family:var(--font);font-size:15px;font-weight:600;
+    padding:13px 32px;border-radius:var(--radius);border:2px solid var(--accent);
+    background:var(--accent);color:#fff;cursor:pointer;
+    transition:all .15s;letter-spacing:.02em;
+    box-shadow:0 2px 12px rgba(26,74,138,.25)
+  }
+  .print-btn-big:hover{background:#0f3570;border-color:#0f3570;box-shadow:0 4px 18px rgba(26,74,138,.35)}
+  .print-btn-big:active{transform:scale(.98)}
+
+  /* ── Sezione paziente in terapia ── */
+  .therapy-toggle{display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding:.85rem 1rem;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface2);user-select:none;transition:all .15s;margin-bottom:.75rem}
+  .therapy-toggle:hover{border-color:var(--accent);background:var(--accent-light)}
+  .therapy-toggle input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent);flex-shrink:0;cursor:pointer;margin-top:2px}
+  .therapy-toggle-label{font-size:13px;font-weight:600;color:var(--text);line-height:1.3}
+  .therapy-toggle-sub{font-size:11px;color:var(--text3);margin-top:2px;line-height:1.4}
+  .therapy-fields{display:none;margin-top:.75rem}
+  .therapy-fields.visible{display:block}
+  .back-calc-preview{border-radius:var(--radius);padding:.9rem 1.1rem;margin-top:.75rem;border:1px solid var(--border);background:var(--surface2);font-size:13px;color:var(--text2)}
+  .bc-pre-val{font-family:var(--mono);font-weight:600;font-size:1.1rem;color:var(--accent)}
+
+  .back-calc-result{border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1rem;border:1px solid}
+  .back-calc-result.bc-ok{background:var(--green-light);border-color:#b0d895}
+  .back-calc-result.bc-warn{background:var(--warn-light);border-color:#f5c870}
+  .back-calc-result.bc-danger{background:var(--danger-light);border-color:#f5a0a0}
+  .bc-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.6rem;opacity:.7}
+  .bc-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(0,0,0,.07);font-size:13px}
+  .bc-row:last-child{border-bottom:none}
+  .bc-label{color:var(--text2)}
+  .bc-val{font-family:var(--mono);font-weight:600}
+  .bc-badge{font-size:11px;font-weight:600;padding:2px 10px;border-radius:12px}
+  .bc-badge.ok{background:#b8e68b;color:var(--green)}
+  .bc-badge.warn{background:#fad78b;color:var(--warn)}
+  .bc-badge.danger{background:#f5a0a0;color:var(--danger)}
+  .add-therapy-note{font-size:12px;color:var(--text2);margin-bottom:1rem;line-height:1.6;padding:.75rem 1rem;background:var(--accent-light);border-radius:var(--radius);border-left:3px solid var(--accent)}
+
+  /* ── Bibliografia ── */
+  .bib-list{display:flex;flex-direction:column;gap:.1rem}
+  .bib-group-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);margin:1rem 0 .4rem;padding-bottom:.3rem;border-bottom:1px solid var(--accent-light)}
+  .bib-group-title:first-child{margin-top:0}
+  .bib-item{display:flex;gap:10px;padding:.55rem 0;border-bottom:1px solid rgba(0,0,0,.04);border-radius:var(--radius);transition:background .12s;cursor:pointer}
+  .bib-item:last-child{border-bottom:none}
+  .bib-item a.bib-link{text-decoration:none;color:inherit;display:flex;gap:10px;width:100%;padding:.2rem .4rem;border-radius:var(--radius);transition:background .12s}
+  .bib-item a.bib-link:hover{background:var(--accent-light)}
+  .bib-item a.bib-link:hover .bib-title{color:var(--accent);text-decoration:underline}
+  .bib-num{flex-shrink:0;width:20px;height:20px;border-radius:50%;background:var(--surface2);color:var(--text3);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px;font-family:var(--mono)}
+  .bib-body{font-size:12px;line-height:1.6;color:var(--text2)}
+  .bib-authors{font-weight:600;color:var(--text)}
+  .bib-title{color:var(--text2);transition:color .12s}
+  .bib-journal{color:var(--text3)}
+  .bib-doi{display:inline-block;margin-left:4px;font-size:10.5px;color:var(--accent);font-family:var(--mono)}
+  .bib-openlink{font-size:10px;color:var(--text3);margin-left:6px;opacity:0;transition:opacity .15s}
+  .bib-item a.bib-link:hover .bib-openlink{opacity:1}
+
+  .farmaci-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1rem}
+  .farmaci-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:1rem}
+  .farmaci-filters{display:flex;gap:8px;flex-wrap:wrap}
+  .filter-btn{font-family:var(--font);font-size:12px;font-weight:600;padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--text2);cursor:pointer;transition:all .15s}
+  .filter-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+  .filter-btn:hover:not(.active){border-color:var(--accent);color:var(--accent)}
+  .farmaci-count{font-size:12px;color:var(--text3);font-family:var(--mono)}
+
+  .farmaci-table-wrap{overflow-x:auto}
+  table.farmaci-tbl{width:100%;border-collapse:collapse;font-size:13px}
+  table.farmaci-tbl thead th{
+    text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;
+    letter-spacing:.05em;color:var(--text3);padding:8px 10px;
+    border-bottom:2px solid var(--border);white-space:nowrap;background:var(--surface2)
+  }
+  table.farmaci-tbl thead th:first-child{border-radius:var(--radius) 0 0 0}
+  table.farmaci-tbl thead th:last-child{border-radius:0 var(--radius) 0 0}
+  table.farmaci-tbl tbody tr{transition:background .1s}
+  table.farmaci-tbl tbody tr:hover{background:var(--accent-light)}
+  table.farmaci-tbl tbody td{padding:9px 10px;border-bottom:1px solid rgba(0,0,0,.05);vertical-align:middle}
+  table.farmaci-tbl tbody tr:last-child td{border-bottom:none}
+  .td-farmaco{font-weight:500;color:var(--text);line-height:1.3}
+  .td-farmaco .mol-combo{font-size:11px;color:var(--text3);margin-top:1px}
+  .td-rid{font-family:var(--mono);font-weight:600;color:var(--accent);text-align:center;white-space:nowrap}
+  .td-rid.achieves{color:var(--green)}
+  .td-rid.partial{color:var(--warn)}
+  .td-statina{text-align:center}
+  .badge-si{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:#dbeafe;color:#1e40af}
+  .badge-no{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:var(--surface2);color:var(--text3)}
+  .badge-ok{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:var(--green-light);color:var(--green)}
+  .badge-partial{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:var(--warn-light);color:var(--warn)}
+  .badge-eccessivo{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:var(--accent-light);color:var(--accent)}
+  .td-raggiunge{text-align:center}
+  .farmaci-empty{text-align:center;padding:2rem;color:var(--text3);font-size:13px}
+  .ldl-target-summary{padding:.75rem 1rem;border-radius:var(--radius);font-size:13px;line-height:1.7;margin-bottom:1rem}
+  .ldl-target-summary.target-ok{background:var(--green-light);border:1px solid #b0d895}
+  .ldl-target-summary.target-no{background:var(--warn-light);border:1px solid #f5c870}
+
+  @media(max-width:560px){
+    .grid-2,.cond-grid{grid-template-columns:1fr}
+    .field.full{grid-column:1}
+    h1{font-size:1.3rem}
+    table.farmaci-tbl{font-size:12px}
+  }
+</style>
+</head>
+<body>
+<div class="app-wrap">
+
+<header>
+  <div class="header-badge">ESC Guidelines 2021</div>
+  <h1>SCORE2 &amp; SCORE2-OP — Rischio Cardiovascolare Globale</h1>
+  <p class="subtitle">Stima del rischio CV a 10 anni + classificazione finale del rischio con fattori modificatori · Linee guida ESC 2021</p>
+  <p style="font-size:11px;color:var(--text3);margin-top:.4rem">
+    Ideata e realizzata dal Dr. C. Briglia
+    (<a href="mailto:cesarebriglia@gmail.com" style="color:var(--text3);text-decoration:none;border-bottom:1px dotted var(--border2)">cesarebriglia@gmail.com</a>)
+    con il fondamentale aiuto di <strong style="color:var(--accent)">Claude</strong> · Anthropic
+  </p>
+</header>
+
+<!-- SEZIONE 1: DATI BASE -->
+<div class="card">
+  <div class="card-title"><span class="card-title-icon">①</span> Dati anagrafici e fattori di rischio tradizionali</div>
+  <div class="grid-2">
+
+    <div class="field">
+      <label class="field-label">Cognome paziente</label>
+      <input type="text" id="cognome" placeholder="es. Rossi" style="width:100%;padding:10px 12px;font-family:var(--font);font-size:15px;color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);transition:border-color .15s" onfocus="this.style.borderColor='var(--accent)';this.style.boxShadow='0 0 0 3px rgba(26,74,138,.12)'" onblur="this.style.borderColor='var(--border)';this.style.boxShadow='none'"/>
+      <span class="hint">Opzionale · usato solo per il referto stampato</span>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Nome paziente</label>
+      <input type="text" id="nome" placeholder="es. Mario" style="width:100%;padding:10px 12px;font-family:var(--font);font-size:15px;color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);transition:border-color .15s" onfocus="this.style.borderColor='var(--accent)';this.style.boxShadow='0 0 0 3px rgba(26,74,138,.12)'" onblur="this.style.borderColor='var(--border)';this.style.boxShadow='none'"/>
+      <span class="hint">Opzionale · usato solo per il referto stampato</span>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Età (anni)</label>
+      <input type="number" id="age" min="40" max="89" placeholder="es. 58" oninput="onAgeChange()"/>
+      <span class="hint limit">Range: 40 – 89 anni · &lt;70 → SCORE2 · ≥70 → SCORE2-OP</span>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Sesso biologico</label>
+      <div class="radio-group">
+        <div class="radio-btn"><input type="radio" name="sex" id="sex-m" value="male" checked onchange="if(document.getElementById('cond-ckd').checked) calcEGFR()"><label for="sex-m">Maschio</label></div>
+        <div class="radio-btn"><input type="radio" name="sex" id="sex-f" value="female" onchange="if(document.getElementById('cond-ckd').checked) calcEGFR()"><label for="sex-f">Femmina</label></div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Stato di fumatore</label>
+      <div class="radio-group">
+        <div class="radio-btn"><input type="radio" name="smoking" id="smk-no" value="0" checked><label for="smk-no">Non fumatore</label></div>
+        <div class="radio-btn"><input type="radio" name="smoking" id="smk-yes" value="1"><label for="smk-yes">Fumatore attivo</label></div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Pressione arteriosa sistolica</label>
+      <input type="number" id="sbp" min="100" max="220" placeholder="es. 140" />
+      <span class="hint limit">Range: 100 – 220 mmHg</span>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Colesterolo LDL (mg/dL)</label>
+      <input type="number" id="ldl_mgdl" min="30" max="400" step="1" placeholder="es. 140" oninput="updateNonHDL()"/>
+      <span class="hint limit">Range: 30 – 400 mg/dL &nbsp;·&nbsp; da referto laboratorio</span>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Colesterolo HDL (mg/dL)</label>
+      <input type="number" id="hdl_mgdl" min="15" max="150" step="1" placeholder="es. 45" oninput="updateNonHDL()"/>
+      <span class="hint limit">Range: 15 – 150 mg/dL &nbsp;·&nbsp; da referto laboratorio</span>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Trigliceridi (mg/dL) <span style="font-weight:400;font-size:10px;color:var(--text3)">(opzionale)</span></label>
+      <input type="number" id="tg_mgdl" min="1" max="10000" step="1" placeholder="es. 150 (opzionale)" oninput="updateNonHDL()"/>
+      <span class="hint limit">Range: 30 – 5000 mg/dL · se inseriti, VLDL = TG÷5 (Friedewald) invece di stima fissa</span>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Colesterolo Totale (mg/dL) <span style="font-weight:400;font-size:10px;color:var(--text3)">(opzionale — per formula Sampson)</span></label>
+      <input type="number" id="tc_mgdl" min="80" max="600" step="1" placeholder="es. 220 (opzionale)" oninput="updateNonHDL()"/>
+      <span class="hint limit">Range: 80 – 600 mg/dL · da referto laboratorio · usato per calcolo LDL con equazione Sampson 2020 (NIH)</span>
+    </div>
+
+    <div class="field full">
+      <div class="nonhdl-preview" id="nonhdl-preview">
+        <span style="font-weight:600;color:var(--text)">Non-HDL calcolato:</span>
+        &nbsp;<span id="nonhdl-val-mgdl" style="font-family:var(--mono);font-weight:500;color:var(--accent)"></span> mg/dL
+        &nbsp;=&nbsp;<span id="nonhdl-val-mmol" style="font-family:var(--mono);font-weight:500;color:var(--accent)"></span> mmol/L
+        &nbsp;<span id="nonhdl-method-note" style="color:var(--text3);font-size:11px"></span>
+      </div>
+    </div>
+
+    <!-- Box confronto LDL Friedewald vs Sampson -->
+    <div class="field full">
+      <div id="sampson-box" style="display:none"></div>
+    </div>
+
+    <div class="field full">
+      <label class="field-label">Regione ESC di appartenenza</label>
+      <select id="region">
+        <option value="low">Rischio basso — Belgio, Cipro, Francia, Grecia, Israele, Lussemburgo, Svizzera</option>
+        <option value="moderate" selected>Rischio moderato — Italia, Spagna, Portogallo, Austria, Germania, Irlanda, Paesi Bassi</option>
+        <option value="high">Rischio alto — Bulgaria, Croazia, Estonia, Ungheria, Romania, Turchia, Slovacchia</option>
+        <option value="very_high">Rischio molto alto — Russia, Ucraina, Georgia, Armenia, Azerbaijan, Bielorussia</option>
+      </select>
+      <span class="hint">Classificazione basata sulla mortalità CV della popolazione del paese (ESC 2021, Supplementary Table)</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- SEZIONE 2: CONDIZIONI PATOLOGICHE -->
+<div class="card">
+  <div class="card-title"><span class="card-title-icon">②</span> Condizioni patologiche modificatrici del rischio (ESC 2021)</div>
+  <p style="font-size:12px;color:var(--text3);margin-bottom:1rem;line-height:1.5">Selezionare le condizioni presenti. Alcune classificano direttamente il paziente in una categoria di rischio indipendentemente dal punteggio SCORE2.</p>
+
+  <div class="cond-grid">
+
+    <label class="cond-item" id="lbl-ascvd">
+      <input type="checkbox" id="cond-ascvd" onchange="onCondChange()">
+      <div class="cond-text">
+        <div class="cond-name">Malattia CV aterosclerotica (ASCVD)</div>
+        <div class="cond-sub">Pregresso IMA, SCA, ictus ischemico, TIA, arteriopatia periferica, rivascolarizzazione coronarica/arteriosa, placca aterosclerotica documentata</div>
+      </div>
+    </label>
+
+    <label class="cond-item" id="lbl-dm">
+      <input type="checkbox" id="cond-dm" onchange="onCondChange()">
+      <div class="cond-text">
+        <div class="cond-name">Diabete mellito</div>
+        <div class="cond-sub">Tipo 1 o tipo 2 con danno d'organo, ≥3 fattori di rischio maggiori o durata DM1 &gt;20 anni</div>
+      </div>
+    </label>
+
+    <label class="cond-item" id="lbl-dm-mod">
+      <input type="checkbox" id="cond-dm-mod" onchange="onCondChange()">
+      <div class="cond-text">
+        <div class="cond-name">Diabete mellito (rischio moderato)</div>
+        <div class="cond-sub">DM2 giovane (&lt;50 aa) senza altri FR, o DM1 breve durata senza complicanze</div>
+      </div>
+    </label>
+
+    <label class="cond-item" id="lbl-fh">
+      <input type="checkbox" id="cond-fh" onchange="onCondChange()">
+      <div class="cond-text">
+        <div class="cond-name">Ipercolesterolemia familiare (FH)</div>
+        <div class="cond-sub">FH con ASCVD o con altro fattore di rischio maggiore → rischio molto alto. FH senza altri FR → alto rischio</div>
+      </div>
+    </label>
+
+    <label class="cond-item" id="lbl-ckd">
+      <input type="checkbox" id="cond-ckd" onchange="onCondChange()">
+      <div class="cond-text">
+        <div class="cond-name">Insufficienza renale cronica (IRC)</div>
+        <div class="cond-sub">eGFR &lt;30 mL/min/1.73m² → molto alto rischio · eGFR 30–59 → alto rischio</div>
+      </div>
+    </label>
+
+    <label class="cond-item" id="lbl-htn-severe">
+      <input type="checkbox" id="cond-htn-severe" onchange="onCondChange()">
+      <div class="cond-text">
+        <div class="cond-name">Ipertensione arteriosa severa</div>
+        <div class="cond-sub">PA sistolica ≥180 mmHg e/o diastolica ≥110 mmHg, nonostante terapia</div>
+      </div>
+    </label>
+
+    <label class="cond-item" id="lbl-hf">
+      <input type="checkbox" id="cond-hf" onchange="onCondChange()">
+      <div class="cond-text">
+        <div class="cond-name">Scompenso cardiaco (HF)</div>
+        <div class="cond-sub">Diagnosi documentata di insufficienza cardiaca con FE ridotta o preservata</div>
+      </div>
+    </label>
+
+    <label class="cond-item" id="lbl-lp">
+      <input type="checkbox" id="cond-lp" onchange="onCondChange()">
+      <div class="cond-text">
+        <div class="cond-name">Lp(a) elevata</div>
+        <div class="cond-sub">Lipoproteina(a) &gt;180 mg/dL (≈ &gt;430 nmol/L) → rischio lifetime equivalente a FH eterozigote</div>
+      </div>
+    </label>
+
+    <label class="cond-item" id="lbl-cac">
+      <input type="checkbox" id="cond-cac" onchange="onCondChange()">
+      <div class="cond-text">
+        <div class="cond-name">Score calcio coronarico (CAC) elevato</div>
+        <div class="cond-sub">CAC ≥100 UA o ≥75° percentile per età/sesso → reclassificazione a rischio più alto</div>
+      </div>
+    </label>
+
+    <label class="cond-item" id="lbl-af">
+      <input type="checkbox" id="cond-af" onchange="onCondChange()">
+      <div class="cond-text">
+        <div class="cond-name">Fibrillazione atriale</div>
+        <div class="cond-sub">FA persistente o permanente — fattore modificatore di rischio CV</div>
+      </div>
+    </label>
+
+    <label class="cond-item" id="lbl-abi">
+      <input type="checkbox" id="cond-abi" onchange="onCondChange()">
+      <div class="cond-text">
+        <div class="cond-name">ABI patologico (Indice Caviglia-Braccio)</div>
+        <div class="cond-sub">ABI &lt; 0.9 = arteriopatia periferica documentata → equivalente ASCVD → rischio molto alto (ESC 2021 Raccomandazione I-B)</div>
+      </div>
+    </label>
+
+  </div>
+
+  <!-- Campo ABI condizionale -->
+  <div class="cond-extra" id="abi-extra">
+    <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:.75rem;text-transform:uppercase;letter-spacing:.05em">
+      Valore ABI (opzionale — per documentazione nel referto)
+    </div>
+    <div class="grid-2">
+      <div class="field">
+        <label class="field-label">ABI (valore numerico)</label>
+        <input type="number" id="abi-val" min="0.1" max="1.9" step="0.01"
+               placeholder="es. 0.75" oninput="onCondChange()"/>
+        <span class="hint limit">Range: 0.10 – 1.90 · &lt;0.9 = AOP · 0.9–1.4 = normale · &gt;1.4 = vasi calcificati (non interpretabile)</span>
+      </div>
+      <div class="field" style="align-self:end">
+        <div id="abi-display" style="padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface2);font-size:13px;color:var(--text2);min-height:44px;display:flex;align-items:center"></div>
+      </div>
+    </div>
+    <div style="margin-top:.6rem;padding:.6rem .8rem;background:var(--danger-light);border-radius:var(--radius);font-size:11px;color:var(--danger);line-height:1.6;border-left:3px solid var(--danger)">
+      <strong>ESC 2021, par. 4.1.4:</strong> ABI &lt; 0.9 diagnostica arteriopatia ostruttiva periferica (AOP) e classifica il paziente come <strong>rischio molto alto</strong> — equivalente a malattia CV aterosclerotica documentata (ASCVD). Raccomandazione di classe <strong>I-B</strong>.
+    </div>
+  </div>
+
+  <!-- Calcolatore eGFR CKD-EPI 2021 condizionale -->
+  <div class="cond-extra" id="ckd-extra">
+    <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:.75rem;text-transform:uppercase;letter-spacing:.05em">
+      Calcolo eGFR — Formula CKD-EPI 2021 (race-free)
+    </div>
+    <div class="grid-2">
+      <div class="field">
+        <label class="field-label">Creatinina sierica (mg/dL)</label>
+        <input type="number" id="creatinina" min="0.3" max="20" step="0.01"
+               placeholder="es. 1.20" oninput="calcEGFR()"/>
+        <span class="hint limit">Range: 0.30 – 20.0 mg/dL · da referto laboratorio</span>
+      </div>
+      <div class="field">
+        <div style="display:flex;flex-direction:column;gap:5px;height:100%">
+          <label class="field-label">eGFR calcolato</label>
+          <div id="egfr-display" style="
+            padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius);
+            background:var(--surface2);font-family:var(--mono);font-size:1rem;
+            font-weight:600;color:var(--accent);min-height:44px;display:flex;
+            align-items:center;gap:8px">
+            <span id="egfr-val">—</span>
+            <span style="font-family:var(--font);font-size:11px;color:var(--text3);font-weight:400">mL/min/1.73m²</span>
+          </div>
+          <span class="hint" id="egfr-stage"></span>
+          <input type="hidden" id="egfr"/>
+          <input type="hidden" id="kdigo-cls-hidden"/>
+        </div>
+      </div>
+    </div>
+    <div id="egfr-note" style="display:none;margin-top:.6rem;padding:.6rem .8rem;background:rgba(0,0,0,.04);border-radius:var(--radius);font-size:11px;color:var(--text3);line-height:1.6">
+      Formula CKD-EPI 2021 (Inker et al., <em>NEJM</em> 2021): utilizza età e sesso già inseriti nel form.
+    </div>
+  </div>
+
+  <!-- UACR — Albuminuria: sezione autonoma, sempre disponibile -->
+  <div style="margin-top:1rem;padding:1rem;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border)">
+    <div style="font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem;display:flex;align-items:center;gap:6px">
+      <span>📋</span> UACR — Albuminuria urinaria (KDIGO 2024 · CKM 2026)
+    </div>
+    <p style="font-size:11px;color:var(--text3);margin-bottom:.75rem;line-height:1.5">
+      L'albuminuria è un marker precoce di danno cardiaco-renale, indipendente dalla riduzione del filtrato glomerulare. Rilevante anche in assenza di IRC conclamata (stadio G1–G2 con UACR ≥30 mg/g).
+    </p>
+    <div class="grid-2">
+      <div class="field">
+        <label class="field-label">UACR (mg/g)</label>
+        <input type="number" id="uacr" min="0" max="5000" step="1"
+               placeholder="es. 45 (opzionale)" oninput="calcEGFR()"/>
+        <span class="hint limit">Range: 0 – 5000 mg/g · rapporto albumina/creatinina urinaria, campione spot mattutino</span>
+      </div>
+      <div class="field">
+        <div style="display:flex;flex-direction:column;gap:5px;height:100%">
+          <label class="field-label">Categoria albuminuria</label>
+          <div id="uacr-display" style="
+            padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius);
+            background:var(--surface);font-family:var(--mono);font-size:1rem;
+            font-weight:600;color:var(--accent);min-height:44px;display:flex;
+            align-items:center;gap:8px">
+            <span id="uacr-cat-val" style="color:var(--text3);font-size:13px;font-family:var(--font);font-weight:400">Non inserito</span>
+          </div>
+          <span class="hint" id="uacr-stage"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Matrice KDIGO: appare quando entrambi eGFR e UACR sono disponibili -->
+    <div id="kdigo-matrix-box" style="display:none;margin-top:1rem">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text3);margin-bottom:.5rem">
+        Matrice di rischio KDIGO 2024 — eGFR × Albuminuria
+      </div>
+      <div id="kdigo-matrix-result" class="kdigo-result-box"></div>
+    </div>
+
+    <!-- Rischio da sola albuminuria: appare quando UACR inserito ma eGFR non disponibile -->
+    <div id="uacr-only-box" style="display:none;margin-top:.75rem">
+      <div id="uacr-only-result"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SEZIONE 3: PAZIENTE GIA' IN TERAPIA -->
+<div class="card" id="card-therapy">
+  <div class="card-title"><span class="card-title-icon">③</span> Paziente già in terapia ipolipemizzante (opzionale)</div>
+
+  <label class="therapy-toggle" for="therapy-on">
+    <input type="checkbox" id="therapy-on" onchange="onTherapyToggle()">
+    <div>
+      <div class="therapy-toggle-label">Il paziente è già in trattamento ipolipemizzante</div>
+      <div class="therapy-toggle-sub">Attiva questa sezione per ricostruire l'LDL basale pre-trattamento e verificare l'efficacia della terapia in corso</div>
+    </div>
+  </label>
+
+  <div class="therapy-fields" id="therapy-fields">
+    <div class="grid-2">
+
+      <div class="field full">
+        <label class="field-label">Farmaco / combinazione in corso</label>
+        <select id="therapy-drug" onchange="onTherapyChange()">
+          <option value="">— Selezionare il farmaco in corso —</option>
+          <optgroup label="── ROSUVASTATINA ──────────────────">
+            <option value="1">Rosuvastatina 5 mg</option>
+            <option value="2">Rosuvastatina 10 mg</option>
+            <option value="3">Rosuvastatina 20 mg</option>
+            <option value="4">Rosuvastatina 40 mg</option>
+          </optgroup>
+          <optgroup label="── ATORVASTATINA ──────────────────">
+            <option value="5">Atorvastatina 10 mg</option>
+            <option value="6">Atorvastatina 20 mg</option>
+            <option value="7">Atorvastatina 40 mg</option>
+            <option value="8">Atorvastatina 80 mg</option>
+          </optgroup>
+          <optgroup label="── SIMVASTATINA ───────────────────">
+            <option value="9">Simvastatina 10 mg</option>
+            <option value="10">Simvastatina 20 mg</option>
+            <option value="11">Simvastatina 40 mg</option>
+            <option value="12">Simvastatina 80 mg ⚠</option>
+          </optgroup>
+          <optgroup label="── LOVASTATINA ────────────────────">
+            <option value="14">Lovastatina 20 mg</option>
+            <option value="15">Lovastatina 40 mg</option>
+            <option value="16">Lovastatina 80 mg</option>
+          </optgroup>
+          <optgroup label="── PRAVASTATINA ───────────────────">
+            <option value="17">Pravastatina 10 mg</option>
+            <option value="18">Pravastatina 20 mg</option>
+            <option value="19">Pravastatina 40 mg</option>
+            <option value="20">Pravastatina 80 mg</option>
+          </optgroup>
+          <optgroup label="── FLUVASTATINA ───────────────────">
+            <option value="21">Fluvastatina 20 mg</option>
+            <option value="22">Fluvastatina 40 mg</option>
+            <option value="23">Fluvastatina 80 mg XL</option>
+          </optgroup>
+          <optgroup label="── NON-STATINE ────────────────────">
+            <option value="24">Ezetimibe 10 mg</option>
+            <option value="25">Acido bempedoico 180 mg</option>
+            <option value="27">Inibitore PCSK9 (alirocumab / evolocumab)</option>
+            <option value="28">Inclisiran 284 mg</option>
+            <option value="104">Bempedoico + Ezetimibe</option>
+          </optgroup>
+          <optgroup label="── STATINA + EZETIMIBE ────────────">
+            <option value="81">Rosuvastatina 5 mg + Ezetimibe</option>
+            <option value="82">Rosuvastatina 10 mg + Ezetimibe</option>
+            <option value="83">Rosuvastatina 20 mg + Ezetimibe</option>
+            <option value="84">Rosuvastatina 40 mg + Ezetimibe</option>
+            <option value="85">Atorvastatina 10 mg + Ezetimibe</option>
+            <option value="86">Atorvastatina 20 mg + Ezetimibe</option>
+            <option value="87">Atorvastatina 40 mg + Ezetimibe</option>
+            <option value="88">Atorvastatina 80 mg + Ezetimibe</option>
+            <option value="89">Simvastatina 10 mg + Ezetimibe</option>
+            <option value="90">Simvastatina 20 mg + Ezetimibe</option>
+            <option value="91">Simvastatina 40 mg + Ezetimibe</option>
+            <option value="96">Pravastatina 10 mg + Ezetimibe</option>
+            <option value="97">Pravastatina 20 mg + Ezetimibe</option>
+            <option value="98">Pravastatina 40 mg + Ezetimibe</option>
+            <option value="105">Inibitore PCSK9 + Ezetimibe</option>
+            <option value="106">Inclisiran + Ezetimibe</option>
+          </optgroup>
+          <optgroup label="── STATINA + BEMPEDOICO ───────────">
+            <option value="29">Rosuvastatina 5 mg + Bempedoico</option>
+            <option value="30">Rosuvastatina 10 mg + Bempedoico</option>
+            <option value="31">Rosuvastatina 20 mg + Bempedoico</option>
+            <option value="32">Rosuvastatina 40 mg + Bempedoico</option>
+            <option value="33">Atorvastatina 10 mg + Bempedoico</option>
+            <option value="34">Atorvastatina 20 mg + Bempedoico</option>
+            <option value="35">Atorvastatina 40 mg + Bempedoico</option>
+            <option value="36">Atorvastatina 80 mg + Bempedoico</option>
+          </optgroup>
+          <optgroup label="── TRIPLICE TERAPIA ───────────────">
+            <option value="55">Rosuvastatina 5 mg + Bempedoico + Ezetimibe</option>
+            <option value="56">Rosuvastatina 10 mg + Bempedoico + Ezetimibe</option>
+            <option value="57">Rosuvastatina 20 mg + Bempedoico + Ezetimibe</option>
+            <option value="58">Rosuvastatina 40 mg + Bempedoico + Ezetimibe</option>
+            <option value="59">Atorvastatina 10 mg + Bempedoico + Ezetimibe</option>
+            <option value="60">Atorvastatina 20 mg + Bempedoico + Ezetimibe</option>
+            <option value="61">Atorvastatina 40 mg + Bempedoico + Ezetimibe</option>
+            <option value="62">Atorvastatina 80 mg + Bempedoico + Ezetimibe</option>
+            <option value="79">Inibitore PCSK9 + Bempedoico + Ezetimibe</option>
+            <option value="80">Inclisiran + Bempedoico + Ezetimibe</option>
+          </optgroup>
+        </select>
+        <span class="hint">Selezionare la terapia più recente assunta con buona aderenza</span>
+      </div>
+
+      <div class="field">
+        <label class="field-label">LDL attuale in terapia (mg/dL)</label>
+        <input type="number" id="therapy-ldl" min="10" max="400" step="1"
+               placeholder="es. 75" oninput="onTherapyChange()"/>
+        <span class="hint limit">LDL misurato mentre il paziente è in terapia · Range: 10–400 mg/dL</span>
+      </div>
+
+      <div class="field" style="align-self:end">
+        <div class="back-calc-preview" id="bc-preview" style="display:none">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text3);margin-bottom:4px">LDL pre-trattamento stimato</div>
+          <span class="bc-pre-val" id="bc-pre-val">—</span>
+          <span style="font-size:12px;color:var(--text2);margin-left:4px">mg/dL</span>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px" id="bc-factor-note"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<button class="calc-btn" onclick="calculate()">Calcola rischio cardiovascolare globale</button>
+
+<!-- RISULTATI -->
+<div id="result-section">
+
+  <!-- SCORE2 grezzo -->
+  <div id="score2-card" class="result-card">
+    <div class="result-top">
+      <div>
+        <div class="result-algo" id="algo-label"></div>
+        <div class="result-pct" id="risk-pct"></div>
+        <div style="font-size:13px;color:var(--text2)">rischio a 10 anni (eventi CV fatali e non fatali)</div>
+      </div>
+      <span class="result-category" id="risk-cat-score2"></span>
+    </div>
+    <div class="risk-bar-wrap">
+      <div class="risk-bar-bg"><div class="risk-bar-marker" id="bar-marker"></div></div>
+      <div class="risk-bar-labels"><span>0%</span><span>5%</span><span>10%</span><span>15%</span><span>≥20%</span></div>
+    </div>
+    <div class="thresholds" id="threshold-text"></div>
+    <div class="result-desc" id="score2-desc"></div>
+  </div>
+
+  <!-- RISCHIO FINALE GLOBALE -->
+  <div id="final-card" class="final-risk-card">
+    <div class="fr-badge" id="fr-badge"></div>
+    <div class="fr-title" id="fr-title"></div>
+    <div class="fr-reason" id="fr-reason"></div>
+
+    <div id="modifiers-box" style="display:none">
+      <div class="modifiers-list" id="modifiers-list"></div>
+    </div>
+
+    <div class="target-box" style="margin-top:1rem">
+      <div class="target-box-title">🎯 Target terapeutici ESC 2021</div>
+      <div id="target-rows"></div>
+    </div>
+  </div>
+
+  <!-- CARD TRIGLICERIDI -->
+  <div id="tg-card" style="display:none" class="card">
+    <div class="card-title"><span class="card-title-icon">🧪</span> Trigliceridi — analisi e impatto clinico (ESC 2021)</div>
+    <div id="tg-card-body"></div>
+  </div>
+
+  <!-- BACK-CALCULATION: risultati paziente in terapia -->
+  <div id="bc-result-section" style="display:none">
+    <div class="card">
+      <div class="card-title"><span class="card-title-icon">🔄</span> Analisi terapia in corso — back-calculation LDL</div>
+      <div id="bc-result-body"></div>
+    </div>
+  </div>
+
+  <!-- FARMACI IPOCOLESTEROLEMIZZANTI -->
+  <div class="farmaci-card" id="farmaci-section">
+    <div class="farmaci-header">
+      <div>
+        <div class="card-title" style="margin-bottom:.25rem"><span class="card-title-icon">💊</span> Terapia ipolipemizzante — opzioni per raggiungere il target</div>
+        <div class="farmaci-count" id="farmaci-count"></div>
+      </div>
+      <div class="farmaci-filters">
+        <button class="filter-btn active" id="flt-ok"         onclick="setFilter('ok')">✅ Solo indicati</button>
+        <button class="filter-btn"        id="flt-statine"    onclick="setFilter('statine')">Con statina</button>
+        <button class="filter-btn"        id="flt-no-statine" onclick="setFilter('no-statine')">Senza statina</button>
+      </div>
+    </div>
+
+    <div id="ldl-target-summary" class="ldl-target-summary"></div>
+
+    <div class="farmaci-table-wrap">
+      <table class="farmaci-tbl">
+        <thead>
+          <tr>
+            <th style="width:44%">Farmaco / Combinazione</th>
+            <th style="width:20%;text-align:center">Riduzione LDL attesa</th>
+            <th style="width:16%;text-align:center">LDL stimato post-tx</th>
+            <th style="width:12%;text-align:center">Statina</th>
+            <th style="width:8%;text-align:center">Target</th>
+          </tr>
+        </thead>
+        <tbody id="farmaci-tbody"></tbody>
+      </table>
+      <div class="farmaci-empty" id="farmaci-empty" style="display:none">Nessun farmaco corrisponde al filtro selezionato.</div>
+    </div>
+  </div>
+
+  <!-- DIV SOLO STAMPA: farmaci che raggiungono il target -->
+  <div id="print-farmaci" style="display:none"></div>
+
+  <!-- Dettaglio calcolo -->
+  <div class="card">
+    <div class="card-title"><span class="card-title-icon">📋</span> Dettaglio calcolo</div>
+    <div id="detail-rows"></div>
+  </div>
+
+  <!-- INDAGINI RACCOMANDATE -->
+  <div id="indagini-card" class="indagini-card" style="display:none">
+    <div class="card-title"><span class="card-title-icon">🔬</span> Indagini raccomandate per questo paziente</div>
+    <p style="font-size:12px;color:var(--text3);margin-bottom:1rem;line-height:1.5">
+      Esami non ancora eseguiti che, nel profilo specifico di questo paziente, possono modificare la classificazione del rischio o la decisione terapeutica (ESC 2021, par. 4.1–4.2).
+    </p>
+    <div id="indagini-list"></div>
+  </div>
+
+  <div class="disclaimer">
+    <strong>Avvertenza clinica.</strong> Questo strumento implementa SCORE2 e SCORE2-OP (ESC 2021) per la stima del rischio in soggetti apparentemente sani. La classificazione finale del rischio globale integra i modificatori di rischio secondo le Linee Guida ESC 2021 (Tabelle 4 e 6). I target terapeutici sono quelli raccomandati dalla Consensus ESC/EAS 2019 aggiornata al 2021. Il calcolo eGFR usa la formula CKD-EPI 2021 (race-free). La back-calculation LDL si basa sul database VOYAGER. Lo strumento non sostituisce il giudizio clinico.
+  </div>
+
+  <!-- BIBLIOGRAFIA -->
+  <div class="card" id="bib-section" style="margin-top:1rem">
+    <div class="card-title"><span class="card-title-icon">📚</span> Bibliografia e fonti</div>
+    <div class="bib-list">
+
+      <div class="bib-group-title">Algoritmi di rischio — SCORE2 e SCORE2-OP</div>
+
+      <div class="bib-item">
+        <a class="bib-link" href="https://doi.org/10.1093/eurheartj/ehab309" target="_blank">
+          <span class="bib-num">1</span>
+          <div class="bib-body">
+            <span class="bib-authors">SCORE2 Working Group &amp; ESC Cardiovascular Risk Collaboration.</span>
+            <span class="bib-title"> SCORE2 risk prediction algorithms: new models to estimate 10-year risk of cardiovascular disease in Europe.</span>
+            <span class="bib-journal"> European Heart Journal.</span> 2021;42(25):2439–2454.
+            <span class="bib-doi">DOI: 10.1093/eurheartj/ehab309</span>
+            <span class="bib-openlink">↗ Apri</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="bib-item">
+        <a class="bib-link" href="https://doi.org/10.1093/eurheartj/ehab312" target="_blank">
+          <span class="bib-num">2</span>
+          <div class="bib-body">
+            <span class="bib-authors">SCORE2-OP Working Group &amp; ESC Cardiovascular Risk Collaboration.</span>
+            <span class="bib-title"> SCORE2-OP risk prediction algorithms: estimating incident cardiovascular event risk in older persons in four geographical risk regions.</span>
+            <span class="bib-journal"> European Heart Journal.</span> 2021;42(25):2455–2467.
+            <span class="bib-doi">DOI: 10.1093/eurheartj/ehab312</span>
+            <span class="bib-openlink">↗ Apri</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="bib-group-title">Linee guida ESC — Prevenzione cardiovascolare</div>
+
+      <div class="bib-item">
+        <a class="bib-link" href="https://doi.org/10.1093/eurheartj/ehab484" target="_blank">
+          <span class="bib-num">3</span>
+          <div class="bib-body">
+            <span class="bib-authors">Visseren FLJ, Mach F, Smulders YM, et al.; ESC National Cardiac Societies; ESC Scientific Document Group.</span>
+            <span class="bib-title"> 2021 ESC Guidelines on cardiovascular disease prevention in clinical practice.</span>
+            <span class="bib-journal"> European Heart Journal.</span> 2021;42(34):3227–3337.
+            <span class="bib-doi">DOI: 10.1093/eurheartj/ehab484</span>
+            <span class="bib-openlink">↗ Apri</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="bib-group-title">Linee guida ESC/EAS — Dislipidemie</div>
+
+      <div class="bib-item">
+        <a class="bib-link" href="https://doi.org/10.1093/eurheartj/ehz455" target="_blank">
+          <span class="bib-num">4</span>
+          <div class="bib-body">
+            <span class="bib-authors">Mach F, Baigent C, Catapano AL, et al.; ESC Scientific Document Group.</span>
+            <span class="bib-title"> 2019 ESC/EAS Guidelines for the management of dyslipidaemias: lipid modification to reduce cardiovascular risk.</span>
+            <span class="bib-journal"> European Heart Journal.</span> 2020;41(1):111–188.
+            <span class="bib-doi">DOI: 10.1093/eurheartj/ehz455</span>
+            <span class="bib-openlink">↗ Apri</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="bib-item">
+        <a class="bib-link" href="https://doi.org/10.1093/eurheartj/ehad192" target="_blank">
+          <span class="bib-num">5</span>
+          <div class="bib-body">
+            <span class="bib-authors">Ray KK, Reeskamp LF, Laufs U, et al.</span>
+            <span class="bib-title"> 2023 Focused update of the 2019 ESC/EAS Guidelines for the management of dyslipidaemias.</span>
+            <span class="bib-journal"> European Heart Journal.</span> 2023;44(30):2767–2769.
+            <span class="bib-doi">DOI: 10.1093/eurheartj/ehad192</span>
+            <span class="bib-openlink">↗ Apri</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="bib-group-title">Farmaci ipolipemizzanti — Efficacia e riduzione LDL</div>
+
+      <div class="bib-item">
+        <a class="bib-link" href="https://doi.org/10.1002/14651858.CD010254.pub2" target="_blank">
+          <span class="bib-num">6</span>
+          <div class="bib-body">
+            <span class="bib-authors">Adams SP, Sekhon SS, Wright JM.</span>
+            <span class="bib-title"> Lipid-lowering efficacy of rosuvastatin (VOYAGER database).</span>
+            <span class="bib-journal"> Cochrane Database of Systematic Reviews.</span> 2014;(3):CD010254.
+            <span class="bib-doi">DOI: 10.1002/14651858.CD010254.pub2</span>
+            <span class="bib-openlink">↗ Apri</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="bib-item">
+        <a class="bib-link" href="https://doi.org/10.1001/jamainternmed.2020.2969" target="_blank">
+          <span class="bib-num">6b</span>
+          <div class="bib-body">
+            <span class="bib-authors">Sampson M, Ling C, Sun Q, et al.</span>
+            <span class="bib-title"> A new equation for calculation of low-density lipoprotein cholesterol in patients with normolipidemia and/or hypertriglyceridemia.</span>
+            <span class="bib-journal"> JAMA Internal Medicine.</span> 2020;180(10):1316–1323.
+            <span class="bib-doi">DOI: 10.1001/jamainternmed.2020.2969</span>
+            <span class="bib-openlink">↗ Apri</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="bib-item">
+        <a class="bib-link" href="https://doi.org/10.1161/CIR.0000000000000625" target="_blank">
+          <span class="bib-num">7</span>
+          <div class="bib-body">
+            <span class="bib-authors">Grundy SM, Stone NJ, Bailey AL, et al.</span>
+            <span class="bib-title"> 2018 AHA/ACC Guideline on the Management of Blood Cholesterol.</span>
+            <span class="bib-journal"> Circulation.</span> 2019;139(25):e1082–e1143.
+            <span class="bib-doi">DOI: 10.1161/CIR.0000000000000625</span>
+            <span class="bib-openlink">↗ Apri</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="bib-item">
+        <a class="bib-link" href="https://doi.org/10.1056/NEJMoa2215024" target="_blank">
+          <span class="bib-num">8</span>
+          <div class="bib-body">
+            <span class="bib-authors">Nissen SE, Lincoff AM, Brennan D, et al.; CLEAR Outcomes Investigators.</span>
+            <span class="bib-title"> Bempedoic acid and cardiovascular outcomes in statin-intolerant patients (CLEAR Outcomes).</span>
+            <span class="bib-journal"> New England Journal of Medicine.</span> 2023;388(15):1353–1364.
+            <span class="bib-doi">DOI: 10.1056/NEJMoa2215024</span>
+            <span class="bib-openlink">↗ Apri</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="bib-item">
+        <a class="bib-link" href="https://doi.org/10.1056/NEJMoa1912387" target="_blank">
+          <span class="bib-num">9</span>
+          <div class="bib-body">
+            <span class="bib-authors">Ray KK, Wright RS, Kallend D, et al.; ORION-10 and ORION-11 Investigators.</span>
+            <span class="bib-title"> Two phase 3 trials of inclisiran in patients with elevated LDL cholesterol.</span>
+            <span class="bib-journal"> New England Journal of Medicine.</span> 2020;382(16):1507–1519.
+            <span class="bib-doi">DOI: 10.1056/NEJMoa1912387</span>
+            <span class="bib-openlink">↗ Apri</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="bib-item">
+        <a class="bib-link" href="https://doi.org/10.1056/NEJMoa1615664" target="_blank">
+          <span class="bib-num">10</span>
+          <div class="bib-body">
+            <span class="bib-authors">Sabatine MS, Giugliano RP, Keech AC, et al.; FOURIER Steering Committee and Investigators.</span>
+            <span class="bib-title"> Evolocumab and clinical outcomes in patients with cardiovascular disease.</span>
+            <span class="bib-journal"> New England Journal of Medicine.</span> 2017;376(18):1713–1722.
+            <span class="bib-doi">DOI: 10.1056/NEJMoa1615664</span>
+            <span class="bib-openlink">↗ Apri</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="bib-group-title">Calcolo eGFR — Formula CKD-EPI 2021</div>
+
+      <div class="bib-item">
+        <a class="bib-link" href="https://doi.org/10.1056/NEJMoa2102953" target="_blank">
+          <span class="bib-num">11</span>
+          <div class="bib-body">
+            <span class="bib-authors">Inker LA, Eneanya ND, Coresh J, et al.; Chronic Kidney Disease Epidemiology Collaboration.</span>
+            <span class="bib-title"> New creatinine- and cystatin C-based equations to estimate GFR without race (CKD-EPI 2021).</span>
+            <span class="bib-journal"> New England Journal of Medicine.</span> 2021;385(19):1737–1749.
+            <span class="bib-doi">DOI: 10.1056/NEJMoa2102953</span>
+            <span class="bib-openlink">↗ Apri</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="bib-group-title">Matrice di rischio KDIGO eGFR × Albuminuria (UACR)</div>
+
+      <div class="bib-item">
+        <a class="bib-link" href="https://doi.org/10.1016/j.kint.2023.10.018" target="_blank">
+          <span class="bib-num">11b</span>
+          <div class="bib-body">
+            <span class="bib-authors">Kidney Disease: Improving Global Outcomes (KDIGO) CKD Work Group.</span>
+            <span class="bib-title"> KDIGO 2024 Clinical Practice Guideline for the Evaluation and Management of Chronic Kidney Disease.</span>
+            <span class="bib-journal"> Kidney International.</span> 2024;105(4S):S117–S314.
+            <span class="bib-doi">DOI: 10.1016/j.kint.2023.10.018</span>
+            <span class="bib-openlink">↗ Apri</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="bib-item">
+        <a class="bib-link" href="https://doi.org/10.1016/j.jacc.2023.09.007" target="_blank">
+          <span class="bib-num">11c</span>
+          <div class="bib-body">
+            <span class="bib-authors">Ndumele CE, Rangaswami J, Chow SL, et al.</span>
+            <span class="bib-title"> 2026 AHA/ACC/ADA/ASN Guideline for the Prevention, Detection, Evaluation, and Management of Cardiovascular-Kidney-Metabolic Syndrome.</span>
+            <span class="bib-journal"> Journal of the American College of Cardiology.</span> 2026;87(22S):e1889–e2007.
+            <span class="bib-doi">DOI: 10.1016/j.jacc.2023.09.007</span>
+            <span class="bib-openlink">↗ Apri</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="bib-item">
+        <a class="bib-link" href="https://doi.org/10.1161/CIRCULATIONAHA.123.067626" target="_blank">
+          <span class="bib-num">11d</span>
+          <div class="bib-body">
+            <span class="bib-authors">Khan SS, Matsushita K, Sang Y, et al.</span>
+            <span class="bib-title"> Development and validation of the American Heart Association's PREVENT equations.</span>
+            <span class="bib-journal"> Circulation.</span> 2024;149(6):430–449.
+            <span class="bib-doi">DOI: 10.1161/CIRCULATIONAHA.123.067626</span>
+            <span class="bib-openlink">↗ Apri</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="bib-group-title">Trigliceridi e rischio cardiovascolare</div>
+
+      <div class="bib-item">
+        <a class="bib-link" href="https://doi.org/10.1056/NEJMoa1812792" target="_blank">
+          <span class="bib-num">14b</span>
+          <div class="bib-body">
+            <span class="bib-authors">Bhatt DL, Steg PG, Miller M, et al.; REDUCE-IT Investigators.</span>
+            <span class="bib-title"> Cardiovascular risk reduction with icosapent ethyl for hypertriglyceridemia.</span>
+            <span class="bib-journal"> New England Journal of Medicine.</span> 2019;380(1):11–22.
+            <span class="bib-doi">DOI: 10.1056/NEJMoa1812792</span>
+            <span class="bib-openlink">↗ Apri</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="bib-item">
+        <a class="bib-link" href="https://doi.org/10.1093/eurheartj/ehw152" target="_blank">
+          <span class="bib-num">14c</span>
+          <div class="bib-body">
+            <span class="bib-authors">Nordestgaard BG, Langsted A, Mora S, et al.; European Atherosclerosis Society.</span>
+            <span class="bib-title"> Fasting is not routinely required for determination of a lipid profile.</span>
+            <span class="bib-journal"> European Heart Journal.</span> 2016;37(25):1944–1958.
+            <span class="bib-doi">DOI: 10.1093/eurheartj/ehw152</span>
+            <span class="bib-openlink">↗ Apri</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="bib-group-title">Back-calculation LDL pre-trattamento</div>
+
+      <div class="bib-item">
+        <a class="bib-link" href="https://doi.org/10.1016/j.jacl.2017.08.012" target="_blank">
+          <span class="bib-num">12</span>
+          <div class="bib-body">
+            <span class="bib-authors">Defesche JC, Stefanutti C, Langslet G, et al.</span>
+            <span class="bib-title"> Efficacy of alirocumab in 1191 patients with a wide spectrum of mutations in the LDL receptor or apolipoprotein B-100 gene associated with heterozygous familial hypercholesterolaemia.</span>
+            <span class="bib-journal"> Journal of Clinical Lipidology.</span> 2017;11(6):1375–1386.
+            <span class="bib-doi">DOI: 10.1016/j.jacl.2017.08.012</span>
+            <span class="bib-openlink">↗ Apri</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="bib-item">
+        <a class="bib-link" href="https://doi.org/10.1016/j.jacc.2020.12.044" target="_blank">
+          <span class="bib-num">13</span>
+          <div class="bib-body">
+            <span class="bib-authors">Trinder M, Li X, DeCastro ML, et al.</span>
+            <span class="bib-title"> Risk of premature atherosclerotic disease in patients with monogenic versus polygenic familial hypercholesterolemia.</span>
+            <span class="bib-journal"> Journal of the American College of Cardiology.</span> 2021;77(9):1122–1134.
+            <span class="bib-doi">DOI: 10.1016/j.jacc.2020.12.044</span>
+            <span class="bib-openlink">↗ Apri</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="bib-group-title">Screening ipercolesterolemia familiare (FH)</div>
+
+      <div class="bib-item">
+        <a class="bib-link" href="https://doi.org/10.1093/eurheartj/eht273" target="_blank">
+          <span class="bib-num">14</span>
+          <div class="bib-body">
+            <span class="bib-authors">Nordestgaard BG, Chapman MJ, Humphries SE, et al.; European Atherosclerosis Society Consensus Panel.</span>
+            <span class="bib-title"> Familial hypercholesterolaemia is underdiagnosed and undertreated in the general population: guidance for clinicians to prevent coronary heart disease.</span>
+            <span class="bib-journal"> European Heart Journal.</span> 2013;34(45):3478–3490.
+            <span class="bib-doi">DOI: 10.1093/eurheartj/eht273</span>
+            <span class="bib-openlink">↗ Apri</span>
+          </div>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BOTTONE STAMPA — in fondo ai risultati -->
+  <div id="print-btn-wrap" style="display:none; margin-top:1.5rem; text-align:center">
+    <button class="print-btn-big" onclick="stampaPDF()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:8px"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Stampa referto / Salva come PDF
+    </button>
+    <p style="font-size:11px;color:var(--text3);margin-top:.5rem">Il browser aprirà la finestra di stampa. Scegli "Salva come PDF" per esportarlo.</p>
+  </div>
+</div>
+
+</div><!-- end app-wrap -->
+
+<script>
+// ─── Costanti di conversione ───────────────────────────────────────────────
+const CHOL_CONV = 0.02586; // mg/dL → mmol/L
+const VLDL_EST  = 30;      // stima VLDL in assenza di TG (mediana europea, mg/dL)
+
+// ─── Coefficienti SCORE2 (ESC/EHJ 2021 – SCORE2 Working Group) ────────────
+const SCORE2_COEFFS = {
+  male: {
+    age:0.3742, smoking:0.6012, sbp:0.2777, nonhdl:0.1458,
+    age_sbp:-0.0755, age_smk:-0.1422, age_nhdl:-0.0281
+  },
+  female: {
+    age:0.4648, smoking:0.7744, sbp:0.3131, nonhdl:0.1002,
+    age_sbp:-0.1088, age_smk:-0.1728, age_nhdl:-0.0226
+  }
+};
+const SCORE2_MEANS = {
+  male:   {age:60.74, sbp:134.15, nonhdl:3.86, smoking:0.30},
+  female: {age:60.74, sbp:134.15, nonhdl:3.86, smoking:0.30}
+};
+const SCORE2_S0 = {
+  male:   {low:0.9605, moderate:0.9330, high:0.8738, very_high:0.7990},
+  female: {low:0.9776, moderate:0.9560, high:0.9010, very_high:0.8330}
+};
+
+// ─── Coefficienti SCORE2-OP (ESC/EHJ 2021 – SCORE2-OP Working Group) ──────
+const SCORE2OP_COEFFS = {
+  male:   {age:0.0634, smoking:0.3524, sbp:0.0088, nonhdl:0.0524},
+  female: {age:0.0789, smoking:0.2436, sbp:0.0128, nonhdl:0.0275}
+};
+const SCORE2OP_MEANS = {
+  male:   {age:73.2, sbp:154.4, nonhdl:4.03, smoking:0.10},
+  female: {age:73.0, sbp:152.6, nonhdl:4.09, smoking:0.04}
+};
+const SCORE2OP_S0 = {
+  male:   {low:0.8228, moderate:0.7780, high:0.6994, very_high:0.5765},
+  female: {low:0.8836, moderate:0.8326, high:0.7572, very_high:0.6368}
+};
+
+// ─── Calcolo SCORE2 ────────────────────────────────────────────────────────
+function calcScore2(age, sex, sbp, nonhdl, smoking, region) {
+  const c = SCORE2_COEFFS[sex], m = SCORE2_MEANS[sex], s0 = SCORE2_S0[sex][region];
+  const cA = (age-m.age)/10, cS = (sbp-m.sbp)/20, cN = nonhdl-m.nonhdl, cK = smoking-m.smoking;
+  const lp = c.age*cA + c.smoking*cK + c.sbp*cS + c.nonhdl*cN
+           + c.age_sbp*cA*cS + c.age_smk*cA*cK + c.age_nhdl*cA*cN;
+  return Math.max(0, Math.min(1, 1 - Math.pow(s0, Math.exp(lp))));
+}
+
+// ─── Calcolo SCORE2-OP ─────────────────────────────────────────────────────
+function calcScore2OP(age, sex, sbp, nonhdl, smoking, region) {
+  const c = SCORE2OP_COEFFS[sex], m = SCORE2OP_MEANS[sex], s0 = SCORE2OP_S0[sex][region];
+  const lp = c.age*(age-m.age) + c.smoking*(smoking-m.smoking)
+           + c.sbp*(sbp-m.sbp) + c.nonhdl*(nonhdl-m.nonhdl);
+  return Math.max(0, Math.min(1, 1 - Math.pow(s0, Math.exp(lp))));
+}
+
+// ─── Classificazione SCORE2 per fascia d'età ───────────────────────────────
+function getScore2Class(pct, age) {
+  if (age < 50) {
+    if (pct < 2.5)  return {cls:'low',       label:'Basso'};
+    if (pct < 7.5)  return {cls:'moderate',   label:'Moderato'};
+    if (pct < 15)   return {cls:'high',        label:'Alto'};
+    return               {cls:'very-high',  label:'Molto alto'};
+  } else if (age < 70) {
+    if (pct < 5)    return {cls:'low',       label:'Basso'};
+    if (pct < 10)   return {cls:'moderate',   label:'Moderato'};
+    if (pct < 20)   return {cls:'high',        label:'Alto'};
+    return               {cls:'very-high',  label:'Molto alto'};
+  } else {
+    if (pct < 7.5)  return {cls:'low',       label:'Basso'};
+    if (pct < 15)   return {cls:'moderate',   label:'Moderato'};
+    if (pct < 30)   return {cls:'high',        label:'Alto'};
+    return               {cls:'very-high',  label:'Molto alto'};
+  }
+}
+
+// ─── Testo soglie ──────────────────────────────────────────────────────────
+function getThresholdText(age) {
+  if (age < 50) return '<strong>Soglie SCORE2 &lt;50 anni:</strong> Basso &lt;2,5% · Moderato 2,5–7,5% · Alto 7,5–15% · Molto alto ≥15%';
+  if (age < 70) return '<strong>Soglie SCORE2 50–69 anni:</strong> Basso &lt;5% · Moderato 5–10% · Alto 10–20% · Molto alto ≥20%';
+  return '<strong>Soglie SCORE2-OP ≥70 anni:</strong> Basso &lt;7,5% · Moderato 7,5–15% · Alto 15–30% · Molto alto ≥30%';
+}
+
+// ─── Classificazione FINALE del rischio (ESC 2021 Tabelle 4 e 6) ──────────
+/*
+  Gerarchia (la categoria più alta vince):
+  ESTREMO:   ASCVD + DM o FH  /  recidiva evento in terapia ottimizzata (non raccoglibile qui)
+  MOLTO ALTO: ASCVD documentata | DM con danno d'organo/≥3FR/DM1>20aa |
+              FH + ASCVD o + ≥1 altro FR maggiore |
+              IRC eGFR<30 | Lp(a)>180 mg/dL | SCORE2 molto alto
+  ALTO:       FH senza altri FR | DM giovane senza complicanze |
+              IRC eGFR 30-59 | HTN severa | HF | CAC≥100 | SCORE2 alto
+  MODERATO:   DM giovane senza altri FR | CAC elevato (senza altre condizioni) | SCORE2 moderato | FA
+  BASSO:      SCORE2 basso senza modificatori
+*/
+function getFinalRisk(score2cls, condizioni, egfr, ldl_mmol, tg_mmol, hdl_mmol) {
+  const {ascvd, dm, dmMod, fh, ckd, htnSevere, hf, lp, cac, af, abi} = condizioni;
+
+  let riskLevel = score2cls; // punto di partenza dal SCORE2
+  let reasons   = [];
+  let modifiers = [];
+
+  // Funzione helper per salire di livello
+  const levels = ['low','moderate','high','very-high','extreme'];
+  function elevate(to, reason) {
+    if (levels.indexOf(to) > levels.indexOf(riskLevel)) {
+      riskLevel = to;
+      reasons.push(reason);
+    } else {
+      modifiers.push(reason);
+    }
+  }
+
+  // Molto alto rischio → categorie automatiche
+  if (ascvd) elevate('very-high', 'Malattia CV aterosclerotica (ASCVD) documentata');
+  if (abi) {
+    const abiVal = parseFloat(document.getElementById('abi-val')?.value);
+    if (!isNaN(abiVal) && abiVal < 0.9) {
+      elevate('very-high', `ABI patologico (${abiVal.toFixed(2)} < 0.9) — arteriopatia ostruttiva periferica documentata: equivalente ASCVD (ESC 2021 I-B)`);
+    } else if (!isNaN(abiVal) && abiVal > 1.4) {
+      modifiers.push(`ABI > 1.4 (${abiVal.toFixed(2)}): vasi calcificati non comprimibili — ABI non interpretabile, considerare indagini alternative (TBI, ecoDoppler)`);
+    } else if (!isNaN(abiVal)) {
+      modifiers.push(`ABI ${abiVal.toFixed(2)}: normale (0.9–1.4) — nessuna AOP documentata`);
+    } else {
+      elevate('very-high', 'ABI patologico selezionato — arteriopatia ostruttiva periferica: equivalente ASCVD (ESC 2021 I-B)');
+    }
+  }
+  if (dm)    elevate('very-high', 'Diabete mellito con danno d\'organo, ≥3 FR maggiori o DM1 >20 anni');
+  if (fh)    elevate('very-high', 'Ipercolesterolemia familiare con ASCVD o fattore di rischio aggiuntivo');
+  if (lp)    elevate('very-high', 'Lp(a) >180 mg/dL (rischio lifetime equivalente a FH eterozigote)');
+
+  // Estremo: ASCVD + DM o FH → ulteriore escalation
+  if (ascvd && (dm || fh)) elevate('extreme', 'ASCVD in associazione con DM o FH (rischio estremo ESC 2021)');
+
+  // IRC — Matrice di rischio KDIGO 2024 (eGFR × UACR)
+  if (ckd) {
+    const gfr  = parseFloat(egfr);
+    const uacr = parseFloat(document.getElementById('uacr')?.value);
+    const hasUacr = !isNaN(uacr) && uacr >= 0;
+    const hasGfr  = !isNaN(gfr);
+
+    if (hasGfr && hasUacr) {
+      const gStage = getGFRStage(gfr).code;
+      const aStage = getUACRStage(uacr).code;
+      const kdigoCls = KDIGO_MATRIX[gStage][aStage];
+      const kdigoToEsc = {low:'low', moderate:'moderate', high:'high', veryhigh:'very-high'};
+      const escEquiv = kdigoToEsc[kdigoCls];
+      const reasonText = `IRC — matrice KDIGO: eGFR ${gfr} (${gStage}) × UACR ${uacr} mg/g (${aStage}) → ${KDIGO_LABELS[kdigoCls]}`;
+      if (escEquiv === 'very-high') elevate('very-high', reasonText);
+      else if (escEquiv === 'high') elevate('high', reasonText);
+      else modifiers.push(reasonText);
+    } else if (hasGfr) {
+      if (gfr < 30)      elevate('very-high', `IRC severa (eGFR ${gfr} mL/min/1.73m² — &lt;30)`);
+      else if (gfr < 60) elevate('high',      `IRC (eGFR ${gfr} mL/min/1.73m² — 30–59) — inserire UACR per classificazione KDIGO completa`);
+      else                modifiers.push(`IRC con eGFR ${gfr} mL/min — stadio G1/G2, monitorare`);
+    }
+  }
+
+  // UACR standalone — danno cardio-renale precoce anche senza IRC conclamata
+  const uacrStandalone = parseFloat(document.getElementById('uacr')?.value);
+  if (!ckd && !isNaN(uacrStandalone) && uacrStandalone >= 0) {
+    const aStage = getUACRStage(uacrStandalone);
+    if (uacrStandalone >= 300) {
+      elevate('high', `Macroalbuminuria (UACR ${uacrStandalone} mg/g — ${aStage.code} ≥300) — danno glomerulare significativo indipendente da eGFR (CKM Stage 2+, AHA/ACC/ADA/ASN 2026)`);
+    } else if (uacrStandalone >= 30) {
+      modifiers.push(`Microalbuminuria (UACR ${uacrStandalone} mg/g — ${aStage.code} 30–299) — marker precoce di danno CKM; fattore modificatore di rischio CV (CKM Stage 1, AHA/ACC/ADA/ASN 2026)`);
+    }
+  }
+
+  // Alto rischio → categorie
+  if (dmMod)     elevate('high', 'Diabete mellito giovanile senza complicanze — rischio moderato-alto');
+  if (htnSevere) elevate('high', 'Ipertensione arteriosa severa (≥180/110 mmHg)');
+  if (hf)        elevate('high', 'Scompenso cardiaco (HF) documentato');
+  if (cac)       elevate('high', 'Score calcio coronarico (CAC) ≥100 UA o ≥75° percentile');
+  if (af)        modifiers.push('Fibrillazione atriale — fattore modificatore CV (valutare CHA₂DS₂-VASc)');
+
+  // Target LDL in mmol/L e mg/dL
+  let targetMMol, targetMgdl, targetPct, ldlDesc;
+  const currentLDL_mgdl = Math.round(ldl_mmol / CHOL_CONV);
+
+  if (riskLevel === 'extreme') {
+    targetMMol = 1.0; targetMgdl = 55; targetPct = 50;
+    ldlDesc = 'LDL &lt;1,0 mmol/L (&lt;55 mg/dL) E riduzione ≥50% dal basale';
+  } else if (riskLevel === 'very-high') {
+    targetMMol = 1.4; targetMgdl = 55; targetPct = 50;
+    ldlDesc = 'LDL &lt;1,4 mmol/L (&lt;55 mg/dL) E riduzione ≥50% dal basale';
+  } else if (riskLevel === 'high') {
+    targetMMol = 1.8; targetMgdl = 70; targetPct = 50;
+    ldlDesc = 'LDL &lt;1,8 mmol/L (&lt;70 mg/dL) E riduzione ≥50% dal basale';
+  } else if (riskLevel === 'moderate') {
+    targetMMol = 2.6; targetMgdl = 100; targetPct = null;
+    ldlDesc = 'LDL &lt;2,6 mmol/L (&lt;100 mg/dL)';
+  } else {
+    targetMMol = 3.0; targetMgdl = 116; targetPct = null;
+    ldlDesc = 'LDL &lt;3,0 mmol/L (&lt;116 mg/dL)';
+  }
+
+  const ldlAchieved = currentLDL_mgdl < targetMgdl;
+
+  // ── Trigliceridi — fattore modificatore ESC 2021 ──────────────────────────
+  // Classificazione ESC 2021 Tabella 2 e par. 4.2 (ESC/EAS Dyslipidaemia Guidelines 2019/2021)
+  let tgInfo = null;
+  if (tg_mmol !== null) {
+    const tg_mgdl_val = Math.round(tg_mmol / CHOL_CONV);
+    const hdl_mgdl_val = hdl_mmol ? Math.round(hdl_mmol / CHOL_CONV) : null;
+
+    // Soglie ESC: 1.7 mmol/L = 150 mg/dL, 5.6 mmol/L = 500 mg/dL
+    const tgModerato = tg_mmol >= 1.7 && tg_mmol < 5.6;  // 150–499 mg/dL
+    const tgSevero   = tg_mmol >= 5.6;                    // ≥500 mg/dL
+
+    // Dislipidemia aterogena: TG alti + HDL basso (ESC 2021 / ESC/EAS 2019)
+    const hdlBasso = hdl_mmol !== null && (
+      (condizioni._sex === 'male'   && hdl_mmol < 1.0) ||  // <40 mg/dL uomo
+      (condizioni._sex === 'female' && hdl_mmol < 1.2)     // <46 mg/dL donna
+    );
+    const dislipidemiaAterogena = tgModerato && hdlBasso;
+
+    let tgTxt = '', tgCls = '';
+    if (tgSevero) {
+      tgTxt = `Ipertrigliceridemia severa (TG ${tg_mgdl_val} mg/dL — ${tg_mmol.toFixed(1)} mmol/L ≥500): rischio pancreatite acuta — gestione prioritaria indipendente dal rischio CV`;
+      tgCls = 'danger';
+      elevate('very-high', `Ipertrigliceridemia severa (TG ≥5,6 mmol/L / ≥500 mg/dL) — fattore modificatore ESC 2021`);
+    } else if (dislipidemiaAterogena) {
+      tgTxt = `Dislipidemia aterogena (TG ${tg_mgdl_val} mg/dL + HDL basso) — pattern ad alto rischio residuo anche con LDL a target (ESC 2021)`;
+      tgCls = 'warn';
+      modifiers.push(tgTxt);
+    } else if (tgModerato) {
+      tgTxt = `Ipertrigliceridemia moderata (TG ${tg_mgdl_val} mg/dL — ${tg_mmol.toFixed(1)} mmol/L, range 150–499) — fattore modificatore di rischio CV (ESC 2021)`;
+      tgCls = 'warn';
+      modifiers.push(tgTxt);
+    }
+
+    if (tgTxt) tgInfo = {tg_mgdl: tg_mgdl_val, tg_mmol, hdlBasso, dislipidemiaAterogena, tgSevero, tgModerato, tgTxt, tgCls};
+  }
+
+  return {riskLevel, reasons, modifiers, targetMMol, targetMgdl, targetPct, ldlDesc, ldlAchieved, currentLDL_mgdl, tgInfo};
+}
+
+// ─── UI helpers ────────────────────────────────────────────────────────────
+function getVLDL(tg_mgdl) {
+  // Friedewald valido per TG < 400 mg/dL
+  if (!isNaN(tg_mgdl) && tg_mgdl > 0 && tg_mgdl < 400) return tg_mgdl / 5;
+  return VLDL_EST; // 30 mg/dL stima fissa (TG ≥400 o non inseriti)
+}
+
+// ─── Formula Sampson 2020 (NIH/JAMA Internal Medicine) ────────────────────
+// Sampson M, et al. A New Equation for Calculation of Low-Density Lipoprotein
+// Cholesterol in Patients With Normolipidemia and/or Hypertriglyceridemia.
+// JAMA Intern Med. 2020;180(10):1316-1323. DOI: 10.1001/jamainternmed.2020.2969
+//
+// LDL_Sampson = TC/0.948 - HDL/0.971
+//             - (TG/8.56 + TG×nonHDL/2140 - TG²/16100) - 9.44
+// Valida per TG 0–800 mg/dL. Più accurata di Friedewald per TG >150 e LDL <70.
+function calcSampson(tc, hdl, tg) {
+  if (isNaN(tc) || isNaN(hdl) || isNaN(tg) || tc <= 0 || hdl <= 0 || tg <= 0) return null;
+  if (tg > 800) return null; // fuori range validazione
+  const nonHDL = tc - hdl;
+  const ldl = tc/0.948 - hdl/0.971
+            - (tg/8.56 + (tg * nonHDL)/2140 - (tg * tg)/16100)
+            - 9.44;
+  return Math.max(0, Math.round(ldl * 10) / 10);
+}
+
+function updateNonHDL() {
+  const ldl = parseFloat(document.getElementById('ldl_mgdl').value);
+  const hdl = parseFloat(document.getElementById('hdl_mgdl').value);
+  const tg  = parseFloat(document.getElementById('tg_mgdl').value);
+  const tc  = parseFloat(document.getElementById('tc_mgdl').value);
+  const prev    = document.getElementById('nonhdl-preview');
+  const note    = document.getElementById('nonhdl-method-note');
+  const sampBox = document.getElementById('sampson-box');
+
+  if (!isNaN(ldl) && ldl > 0 && !isNaN(hdl) && hdl > 0) {
+    const vldl = getVLDL(tg);
+    const mgdl = ldl + vldl;
+    const mmol = mgdl * CHOL_CONV;
+    document.getElementById('nonhdl-val-mgdl').textContent = mgdl.toFixed(0);
+    document.getElementById('nonhdl-val-mmol').textContent = mmol.toFixed(2);
+    const hasTG    = !isNaN(tg) && tg > 0;
+    const overLimit= hasTG && tg >= 400;
+    note.textContent = hasTG && !overLimit
+      ? `(VLDL = TG÷5 = ${vldl.toFixed(0)} mg/dL · Friedewald · usato in SCORE2)`
+      : overLimit
+        ? `(TG ≥400: Friedewald non affidabile → VLDL stimato ${VLDL_EST} mg/dL)`
+        : `(VLDL stimato ${VLDL_EST} mg/dL · inserire TG per calcolo preciso)`;
+    prev.style.display = 'block';
+  } else {
+    prev.style.display = 'none';
+  }
+
+  // ── Confronto Sampson ──────────────────────────────────────────────────
+  const ldlFried = parseFloat(document.getElementById('ldl_mgdl').value);
+  const ldlSamp  = (!isNaN(tc) && !isNaN(parseFloat(document.getElementById('hdl_mgdl').value)) && !isNaN(tg))
+    ? calcSampson(tc, parseFloat(document.getElementById('hdl_mgdl').value), tg)
+    : null;
+
+  if (ldlSamp !== null && !isNaN(ldlFried) && ldlFried > 0) {
+    const delta    = Math.round((ldlSamp - ldlFried) * 10) / 10;
+    const absDelta = Math.abs(delta);
+    // Classificazione discordanza
+    const rilevante = absDelta >= 10;
+    const critica   = absDelta >= 20;
+    let boxCls, deltaBg, deltaColor, alertMsg;
+    if (critica) {
+      boxCls = 'sampson-danger'; deltaBg = '#fde8e8'; deltaColor = 'var(--danger)';
+      alertMsg = `⚠ Discordanza critica (${delta > 0 ? '+' : ''}${delta} mg/dL): il laboratorio potrebbe aver <strong>sottostimato l'LDL</strong> con Friedewald. Con TG elevati e LDL basso l'errore può raggiungere 20–40 mg/dL. Si raccomanda di usare il valore Sampson per le decisioni terapeutiche o richiedere un LDL diretto.`;
+    } else if (rilevante) {
+      boxCls = 'sampson-warn'; deltaBg = '#fef3e2'; deltaColor = 'var(--warn)';
+      alertMsg = `La differenza (${delta > 0 ? '+' : ''}${delta} mg/dL) è clinicamente rilevante. I TG elevati tendono a far sottostimare l'LDL con Friedewald. Considerare il valore Sampson come riferimento.`;
+    } else {
+      boxCls = 'sampson-ok'; deltaBg = 'var(--surface2)'; deltaColor = 'var(--green)';
+      alertMsg = `Discordanza minima (${delta > 0 ? '+' : ''}${delta} mg/dL): i due metodi sono concordanti. Il valore LDL da referto è affidabile.`;
+    }
+
+    sampBox.innerHTML = `
+      <div class="sampson-box ${boxCls}">
+        <div class="sampson-header">
+          <div class="sampson-title">
+            🔬 Confronto LDL — Friedewald vs Sampson 2020
+          </div>
+          <a class="sampson-source"
+             href="https://doi.org/10.1001/jamainternmed.2020.2969"
+             target="_blank"
+             title="Sampson M et al. JAMA Intern Med. 2020;180(10):1316-1323">
+            ↗ Sampson et al., JAMA Intern Med 2020
+          </a>
+        </div>
+        <div class="sampson-compare">
+          <div class="sampson-cell" style="background:var(--surface2)">
+            <div class="sampson-cell-label">LDL da referto (Friedewald)</div>
+            <div class="sampson-cell-val" style="color:var(--text)">${ldlFried.toFixed(0)} mg/dL</div>
+            <div style="font-size:10px;color:var(--text3);margin-top:2px">${(ldlFried * CHOL_CONV).toFixed(2)} mmol/L</div>
+          </div>
+          <div class="sampson-cell" style="background:${deltaBg}">
+            <div class="sampson-cell-label">LDL stimato (Sampson 2020)</div>
+            <div class="sampson-cell-val" style="color:${deltaColor}">${ldlSamp.toFixed(0)} mg/dL</div>
+            <div style="font-size:10px;color:var(--text3);margin-top:2px">${(ldlSamp * CHOL_CONV).toFixed(2)} mmol/L</div>
+          </div>
+        </div>
+        <div>
+          <span class="sampson-delta" style="background:${deltaBg};color:${deltaColor}">
+            Δ = ${delta > 0 ? '+' : ''}${delta} mg/dL
+            ${rilevante ? (delta > 0 ? '— Friedewald SOTTOSTIMA' : '— Friedewald SOVRASTIMA') : '— concordanza accettabile'}
+          </span>
+        </div>
+        <div class="sampson-note">
+          ${alertMsg}
+          <br><span style="color:var(--text3);font-size:10.5px">
+            <strong>Perché Friedewald sbaglia con TG alti:</strong> assume VLDL = TG÷5 (fattore fisso),
+            ma con TG elevati il rapporto TG:VLDL non è costante → VLDL sovrastimato → LDL sottostimato.
+            La formula Sampson usa TC, TG e non-HDL con regressione multipla su 18.715 campioni NIH.
+            Valida per TG 0–800 mg/dL.
+          </span>
+        </div>
+      </div>`;
+    sampBox.style.display = 'block';
+  } else if (!isNaN(tc) && tc > 0) {
+    // TC inserito ma mancano TG o LDL
+    sampBox.innerHTML = `<div style="font-size:11px;color:var(--text3);padding:.4rem .6rem;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border)">
+      Inserire anche TG per attivare il confronto LDL Friedewald vs Sampson.
+    </div>`;
+    sampBox.style.display = 'block';
+  } else {
+    sampBox.style.display = 'none';
+  }
+}
+
+// ─── CKD-EPI 2021 (race-free, Inker et al. NEJM 2021) ─────────────────────
+// eGFR = 142 × min(Scr/κ, 1)^α × max(Scr/κ, 1)^−1.200 × 0.9938^Age × [1.012 se femmina]
+// κ = 0.7 (F), 0.9 (M) · α = −0.241 (F), −0.302 (M)
+function getGFRStage(egfr) {
+  if (egfr >= 90) return {code:'G1', label:'G1 — Normale o aumentata (≥90)'};
+  if (egfr >= 60) return {code:'G2', label:'G2 — Lievemente ridotta (60–89)'};
+  if (egfr >= 45) return {code:'G3a', label:'G3a — Lieve-moderatamente ridotta (45–59)'};
+  if (egfr >= 30) return {code:'G3b', label:'G3b — Moderato-severamente ridotta (30–44)'};
+  if (egfr >= 15) return {code:'G4', label:'G4 — Severamente ridotta (15–29)'};
+  return {code:'G5', label:'G5 — Insufficienza renale terminale (<15)'};
+}
+
+function getUACRStage(uacr) {
+  if (uacr < 30)  return {code:'A1', label:'A1 — Normale o lievemente aumentata (<30 mg/g)'};
+  if (uacr < 300) return {code:'A2', label:'A2 — Moderatamente aumentata (30–299 mg/g)'};
+  return               {code:'A3', label:'A3 — Severamente aumentata (≥300 mg/g)'};
+}
+
+/*
+  Matrice di rischio KDIGO 2024 (eGFR stadio G × Albuminuria categoria A)
+  Adottata anche dalla linea guida AHA/ACC/ADA/ASN 2026 (CKM syndrome).
+  Restituisce: 'low' | 'moderate' | 'high' | 'veryhigh'
+*/
+const KDIGO_MATRIX = {
+  G1:  {A1:'low',     A2:'moderate', A3:'high'},
+  G2:  {A1:'low',     A2:'moderate', A3:'high'},
+  G3a: {A1:'moderate',A2:'high',     A3:'veryhigh'},
+  G3b: {A1:'high',    A2:'veryhigh', A3:'veryhigh'},
+  G4:  {A1:'veryhigh',A2:'veryhigh', A3:'veryhigh'},
+  G5:  {A1:'veryhigh',A2:'veryhigh', A3:'veryhigh'}
+};
+
+const KDIGO_LABELS = {
+  low:'Rischio basso', moderate:'Rischio moderatamente aumentato',
+  high:'Rischio alto', veryhigh:'Rischio molto alto'
+};
+
+function calcEGFR() {
+  const creat = parseFloat(document.getElementById('creatinina').value);
+  const age   = parseFloat(document.getElementById('age').value);
+  const sex   = document.querySelector('input[name="sex"]:checked').value;
+  const uacrVal = parseFloat(document.getElementById('uacr').value);
+
+  const display   = document.getElementById('egfr-val');
+  const stage     = document.getElementById('egfr-stage');
+  const note      = document.getElementById('egfr-note');
+  const egfrHidden= document.getElementById('egfr');
+  const uacrDisp  = document.getElementById('uacr-cat-val');
+  const uacrStage = document.getElementById('uacr-stage');
+  const matrixBox = document.getElementById('kdigo-matrix-box');
+  const matrixRes = document.getElementById('kdigo-matrix-result');
+
+  // ── eGFR ──
+  let egfrRound = null, gfrInfo = null;
+  if (!isNaN(creat) && creat > 0 && !isNaN(age) && age > 0) {
+    const kappa = sex === 'female' ? 0.7  : 0.9;
+    const alpha = sex === 'female' ? -0.241 : -0.302;
+    const sexFactor = sex === 'female' ? 1.012 : 1.0;
+    const ratio = creat / kappa;
+    const egfr = 142
+      * Math.pow(Math.min(ratio, 1), alpha)
+      * Math.pow(Math.max(ratio, 1), -1.200)
+      * Math.pow(0.9938, age)
+      * sexFactor;
+    egfrRound = Math.round(egfr * 10) / 10;
+    gfrInfo = getGFRStage(egfrRound);
+
+    egfrHidden.value = egfrRound;
+    display.textContent = egfrRound;
+    note.style.display = 'block';
+    stage.textContent = gfrInfo.label;
+    stage.style.color = 'var(--text2)';
+    stage.style.fontWeight = '600';
+  } else {
+    display.textContent = '—';
+    stage.textContent   = 'Inserire creatinina e età per il calcolo';
+    stage.style.color   = 'var(--text3)';
+    egfrHidden.value    = '';
+    note.style.display  = 'none';
+  }
+
+  // ── UACR (sempre disponibile, indipendente da eGFR/IRC) ──
+  let uacrInfo = null;
+  const uacrOnlyBox = document.getElementById('uacr-only-box');
+  const uacrOnlyRes = document.getElementById('uacr-only-result');
+
+  if (!isNaN(uacrVal) && uacrVal >= 0) {
+    uacrInfo = getUACRStage(uacrVal);
+    const uacrColor = uacrVal < 30 ? 'var(--green)' : uacrVal < 300 ? 'var(--warn)' : 'var(--danger)';
+    uacrDisp.innerHTML = `<span style="font-family:var(--mono);font-weight:700;font-size:1.1rem;color:${uacrColor}">${uacrInfo.code}</span>`;
+    uacrStage.textContent = uacrInfo.label;
+    uacrStage.style.color = uacrColor;
+    uacrStage.style.fontWeight = '600';
+  } else {
+    uacrDisp.innerHTML = `<span style="color:var(--text3);font-size:13px;font-family:var(--font);font-weight:400">Non inserito</span>`;
+    uacrStage.textContent = '';
+    if (uacrOnlyBox) uacrOnlyBox.style.display = 'none';
+  }
+
+  // ── Matrice KDIGO (eGFR + UACR entrambi disponibili) ──
+  if (gfrInfo && uacrInfo) {
+    const kdigoCls = KDIGO_MATRIX[gfrInfo.code][uacrInfo.code];
+    const hiddenEl = document.getElementById('kdigo-cls-hidden');
+    if (hiddenEl) hiddenEl.value = kdigoCls;
+    window._kdigoClass = kdigoCls;
+
+    const clsMap = {low:'kdigo-low', moderate:'kdigo-moderate', high:'kdigo-high', veryhigh:'kdigo-veryhigh'};
+    matrixRes.className = 'kdigo-result-box ' + clsMap[kdigoCls];
+    matrixRes.innerHTML = `
+      <div class="kdigo-badge">${KDIGO_LABELS[kdigoCls]}</div>
+      <div class="kdigo-grid-label">eGFR ${gfrInfo.code} (${egfrRound} mL/min/1.73m²) + Albuminuria ${uacrInfo.code} (${uacrVal} mg/g)</div>
+      <div class="kdigo-grid-desc">${gfrInfo.label} · ${uacrInfo.label}</div>
+      ${renderKdigoMiniGrid(gfrInfo.code, uacrInfo.code)}
+    `;
+    matrixBox.style.display = 'block';
+    if (uacrOnlyBox) uacrOnlyBox.style.display = 'none';
+
+  // ── Solo UACR, senza eGFR (paziente senza IRC o creatinina non inserita) ──
+  } else if (uacrInfo && !gfrInfo) {
+    window._kdigoClass = null;
+    matrixBox.style.display = 'none';
+    const uacrRiskMap = {
+      A1: {cls:'kdigo-low',      label:'Albuminuria assente/trascurabile',
+           desc:'UACR &lt;30 mg/g — nessun segnale di danno glomerulare da albuminuria.'},
+      A2: {cls:'kdigo-moderate', label:'Microalbuminuria — segnale precoce di danno CKM',
+           desc:'UACR 30–299 mg/g. Marker indipendente di rischio CV aumentato anche con filtrato conservato. Corrisponde a CKM Stage 1 (AHA/ACC/ADA/ASN 2026). Considerare: rivalutazione eGFR, SGLT2-inibitore, riduzione pressoria.'},
+      A3: {cls:'kdigo-high',     label:'Macroalbuminuria — danno renale significativo',
+           desc:'UACR ≥300 mg/g. Danno glomerulare rilevante anche in assenza di riduzione del filtrato. Classificato CKM Stage 2 o superiore. Valutare: nefrologo, SGLT2i, finerenone, ACE-i/ARB a pieno dosaggio.'}
+    };
+    const r = uacrRiskMap[uacrInfo.code];
+    if (uacrOnlyRes) uacrOnlyRes.innerHTML = `
+      <div class="kdigo-result-box ${r.cls}">
+        <div class="kdigo-badge">${r.label}</div>
+        <div class="kdigo-grid-desc" style="margin-top:6px">${r.desc}</div>
+        <div style="margin-top:.75rem">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text3);margin-bottom:.4rem">
+            Matrice KDIGO — colonna ${uacrInfo.code} evidenziata (eGFR non inserito)
+          </div>
+          ${renderKdigoMiniGridUACROnly(uacrInfo.code)}
+        </div>
+        <div style="font-size:11px;color:var(--text3);margin-top:.6rem;line-height:1.5">
+          ℹ Per la classificazione completa inserire anche la creatinina sierica (selezionare IRC se presente).
+        </div>
+      </div>`;
+    if (uacrOnlyBox) uacrOnlyBox.style.display = 'block';
+
+  } else {
+    window._kdigoClass = null;
+    matrixBox.style.display = 'none';
+    if (uacrOnlyBox) uacrOnlyBox.style.display = 'none';
+  }
+}
+
+function renderKdigoMiniGrid(currentG, currentA) {
+  const gRows = ['G1','G2','G3a','G3b','G4','G5'];
+  const aCols = ['A1','A2','A3'];
+  const colorClass = {low:'kdigo-c-low', moderate:'kdigo-c-mod', high:'kdigo-c-high', veryhigh:'kdigo-c-vhigh'};
+
+  let html = `<div class="kdigo-mini-grid">`;
+  html += `<div></div>`;
+  aCols.forEach(a => html += `<div class="kdigo-mini-header">${a}</div>`);
+
+  gRows.forEach(g => {
+    html += `<div class="kdigo-mini-rowlabel">${g}</div>`;
+    aCols.forEach(a => {
+      const cls = KDIGO_MATRIX[g][a];
+      const isCurrent = (g === currentG && a === currentA);
+      html += `<div class="kdigo-mini-cell ${colorClass[cls]} ${isCurrent ? 'kdigo-c-current' : ''}">${isCurrent ? '●' : ''}</div>`;
+    });
+  });
+  html += `</div>`;
+  return html;
+}
+
+// Griglia KDIGO con solo la colonna UACR nota
+function renderKdigoMiniGridUACROnly(currentA) {
+  const gRows = ['G1','G2','G3a','G3b','G4','G5'];
+  const aCols = ['A1','A2','A3'];
+  const colorClass = {low:'kdigo-c-low', moderate:'kdigo-c-mod', high:'kdigo-c-high', veryhigh:'kdigo-c-vhigh'};
+
+  let html = `<div class="kdigo-mini-grid">`;
+  html += `<div></div>`;
+  aCols.forEach(a => {
+    const isActive = a === currentA;
+    html += `<div class="kdigo-mini-header" style="${isActive ? 'color:var(--text);font-weight:900;font-size:10px' : 'opacity:.4'}">${a}${isActive ? ' ◀' : ''}</div>`;
+  });
+
+  gRows.forEach(g => {
+    html += `<div class="kdigo-mini-rowlabel">${g}</div>`;
+    aCols.forEach(a => {
+      const cls = KDIGO_MATRIX[g][a];
+      const isActive = a === currentA;
+      if (isActive) {
+        html += `<div class="kdigo-mini-cell ${colorClass[cls]}" style="font-size:9px;font-weight:700">${cls === 'low' ? 'B' : cls === 'moderate' ? 'M' : cls === 'high' ? 'A' : 'MA'}</div>`;
+      } else {
+        html += `<div class="kdigo-mini-cell ${colorClass[cls]}" style="opacity:.25"></div>`;
+      }
+    });
+  });
+  html += `</div>`;
+  return html;
+}
+
+function onAgeChange() {
+  if (document.getElementById('cond-ckd').checked) calcEGFR();
+}
+
+function onCondChange() {
+  const ckdChecked = document.getElementById('cond-ckd').checked;
+  const abiChecked = document.getElementById('cond-abi').checked;
+  document.getElementById('ckd-extra').classList.toggle('visible', ckdChecked);
+  document.getElementById('abi-extra').classList.toggle('visible', abiChecked);
+  if (ckdChecked) calcEGFR();
+
+  // Display valore ABI
+  if (abiChecked) {
+    const abiVal = parseFloat(document.getElementById('abi-val').value);
+    const disp = document.getElementById('abi-display');
+    if (!isNaN(abiVal)) {
+      let txt, color;
+      if (abiVal < 0.9)       { txt = `ABI ${abiVal.toFixed(2)} — ⚠ Patologico: AOP documentata`; color = 'var(--danger)'; }
+      else if (abiVal <= 1.4)  { txt = `ABI ${abiVal.toFixed(2)} — Normale`; color = 'var(--green)'; }
+      else                     { txt = `ABI ${abiVal.toFixed(2)} — >1.4: vasi calcificati, non interpretabile`; color = 'var(--warn)'; }
+      disp.innerHTML = `<span style="font-weight:600;color:${color}">${txt}</span>`;
+    } else {
+      disp.innerHTML = '<span style="color:var(--text3)">Inserire il valore ABI</span>';
+    }
+  }
+
+  document.querySelectorAll('.cond-item').forEach(item => {
+    const cb = item.querySelector('input[type="checkbox"]');
+    item.classList.toggle('selected', cb && cb.checked);
+  });
+}
+
+function onTherapyToggle() {
+  const on = document.getElementById('therapy-on').checked;
+  document.getElementById('therapy-fields').classList.toggle('visible', on);
+  if (!on) {
+    document.getElementById('bc-preview').style.display = 'none';
+  }
+}
+
+function onTherapyChange() {
+  const drugId = parseInt(document.getElementById('therapy-drug').value);
+  const ldlVal = parseFloat(document.getElementById('therapy-ldl').value);
+  const prev   = document.getElementById('bc-preview');
+
+  if (!drugId || isNaN(ldlVal) || ldlVal <= 0) { prev.style.display='none'; return; }
+
+  const drug = FARMACI.find(f => f.id === drugId);
+  if (!drug) { prev.style.display='none'; return; }
+
+  // Back-calculation: fattore = 1 / (1 - riduzione_media/100)
+  const ridMedia = (drug.da + drug.a) / 2;
+  const fattore  = 1 / (1 - ridMedia / 100);
+  const ldlPre   = Math.round(ldlVal * fattore);
+  const ldlPreCapped = Math.min(ldlPre, 387); // cap a 15 mmol/L = 387 mg/dL (FH omozigote)
+
+  document.getElementById('bc-pre-val').textContent = ldlPreCapped;
+  document.getElementById('bc-factor-note').textContent =
+    `Fattore ×${fattore.toFixed(2)} · riduz. media stimata ${ridMedia.toFixed(0)}%`;
+  prev.style.display = 'block';
+}
+
+function renderBackCalc(targetMgdl, targetPct) {
+  const therapyOn = document.getElementById('therapy-on').checked;
+  const bcSection = document.getElementById('bc-result-section');
+
+  if (!therapyOn) { bcSection.style.display = 'none'; return; }
+
+  const drugId  = parseInt(document.getElementById('therapy-drug').value);
+  const ldlOnTx = parseFloat(document.getElementById('therapy-ldl').value);
+
+  if (!drugId || isNaN(ldlOnTx) || ldlOnTx <= 0) {
+    bcSection.style.display = 'none'; return;
+  }
+
+  const drug    = FARMACI.find(f => f.id === drugId);
+  if (!drug) { bcSection.style.display = 'none'; return; }
+
+  const ridMedia  = (drug.da + drug.a) / 2;
+  const ridMin    = drug.da;
+  const ridMax    = drug.a;
+  const fattore   = 1 / (1 - ridMedia / 100);
+  const ldlPre    = Math.min(Math.round(ldlOnTx * fattore), 387);
+  const ldlPreMin = Math.min(Math.round(ldlOnTx * (1/(1-ridMax/100))), 387); // con rid. max → ldlPre più basso
+  const ldlPreMax = Math.min(Math.round(ldlOnTx * (1/(1-ridMin/100))), 387); // con rid. min → ldlPre più alto
+
+  // Riduzione % effettiva (punto stimato)
+  const ridEffettiva = Math.round((1 - ldlOnTx / ldlPre) * 100);
+
+  // Verifica target LDL on-treatment
+  const ldlTargetOk = ldlOnTx < targetMgdl;
+
+  // Verifica riduzione % (richiesta per rischio alto/molto alto/estremo)
+  const ridTargetOk = targetPct ? ridEffettiva >= targetPct : true;
+  const terapiaOk   = ldlTargetOk && ridTargetOk;
+
+  // Classificazione: è FH probabile? (pre-tx LDL ≥ 193 mg/dL = 5 mmol/L)
+  const fhSuspect = ldlPre >= 193;
+
+  // Riduzione incrementale necessaria se non si è a target
+  let addInfo = '';
+  if (!ldlTargetOk) {
+    const ridResidua = Math.round((1 - targetMgdl / ldlOnTx) * 100);
+    addInfo = `Per raggiungere il target LDL &lt;${targetMgdl} mg/dL è necessaria un'ulteriore riduzione del <strong>${ridResidua}%</strong> rispetto all'LDL attuale in terapia.`;
+  } else if (targetPct && !ridTargetOk) {
+    addInfo = `L'LDL on-treatment è al target, ma la riduzione stimata (${ridEffettiva}%) è inferiore al ${targetPct}% richiesto dalle linee guida. Verificare l'LDL basale reale.`;
+  }
+
+  // Colore card
+  const bcCls = terapiaOk ? 'bc-ok' : (ldlOnTx < targetMgdl * 1.3 ? 'bc-warn' : 'bc-danger');
+
+  const html = `
+    <div class="back-calc-result ${bcCls}">
+      <div class="bc-title">LDL pre-trattamento — stima matematica (VOYAGER / ACC-AHA 2018)</div>
+      <div class="bc-row">
+        <span class="bc-label">Farmaco in corso</span>
+        <span class="bc-val">${drug.nome}</span>
+      </div>
+      <div class="bc-row">
+        <span class="bc-label">LDL attuale in terapia</span>
+        <span class="bc-val">${ldlOnTx} mg/dL · ${(ldlOnTx*CHOL_CONV).toFixed(2)} mmol/L</span>
+      </div>
+      <div class="bc-row">
+        <span class="bc-label">Riduzione % media stimata (range)</span>
+        <span class="bc-val">${ridMedia.toFixed(0)}% (${ridMin}%–${ridMax}%)</span>
+      </div>
+      <div class="bc-row">
+        <span class="bc-label">LDL pre-trattamento stimato</span>
+        <span class="bc-val">${ldlPre} mg/dL · ${(ldlPre*CHOL_CONV).toFixed(2)} mmol/L
+          <span style="font-size:11px;color:var(--text3)">(range: ${ldlPreMin}–${ldlPreMax} mg/dL)</span>
+        </span>
+      </div>
+      <div class="bc-row">
+        <span class="bc-label">Riduzione % effettiva stimata</span>
+        <span class="bc-val">${ridEffettiva}%</span>
+      </div>
+      <div class="bc-row">
+        <span class="bc-label">Target LDL &lt;${targetMgdl} mg/dL raggiunto?</span>
+        <span class="bc-badge ${ldlTargetOk?'ok':'danger'}">${ldlTargetOk?'✓ Sì':'✗ No'}</span>
+      </div>
+      ${targetPct ? `<div class="bc-row">
+        <span class="bc-label">Riduzione ≥${targetPct}% dal basale raggiunta?</span>
+        <span class="bc-badge ${ridTargetOk?'ok':'warn'}">${ridTargetOk?`✓ Sì (${ridEffettiva}%)`:`✗ No (${ridEffettiva}% stimato)`}</span>
+      </div>` : ''}
+      <div class="bc-row">
+        <span class="bc-label">Valutazione terapia complessiva</span>
+        <span class="bc-badge ${terapiaOk?'ok':'danger'}">${terapiaOk?'✓ Target raggiunto':'✗ Intensificare terapia'}</span>
+      </div>
+      ${fhSuspect ? `<div class="bc-row">
+        <span class="bc-label">⚠ Sospetto FH</span>
+        <span style="font-size:12px;color:var(--danger);font-weight:600">LDL basale stimato ≥193 mg/dL (≥5 mmol/L) — valutare screening FH (Dutch Lipid Clinic Score)</span>
+      </div>` : ''}
+    </div>
+    ${addInfo ? `<div class="add-therapy-note">${addInfo}<br>
+      <span style="font-size:11px;margin-top:4px;display:block">Le opzioni terapeutiche aggiuntive sono mostrate nella tabella sottostante, calcolate sull'LDL attuale in terapia.</span>
+    </div>` : ''}
+    <div style="font-size:11px;color:var(--text3);line-height:1.6;margin-top:.5rem;padding:.6rem .8rem;background:rgba(0,0,0,.04);border-radius:var(--radius)">
+      <strong>Nota metodologica.</strong> La stima del LDL pre-trattamento utilizza la formula <em>LDL₀ = LDL_tx ÷ (1 − %riduzione_media)</em>, basata sui dati di popolazione del VOYAGER database (Adams et al., <em>Eur Heart J</em> 2018) e sul FDA drug labeling. La risposta individuale varia in funzione di aderenza, genetica e interazioni farmacologiche. Metodo validato per screening FH in pazienti già in terapia (Defesche et al., <em>Eur J Prev Cardiol</em> 2022).
+    </div>
+  `;
+
+  document.getElementById('bc-result-body').innerHTML = html;
+  bcSection.style.display = 'block';
+
+  // Se non a target, mostra la tabella farmaci calcolata sul LDL on-treatment
+  // (riduzione aggiuntiva rispetto a LDL attuale)
+  if (!terapiaOk) {
+    _currentLDL = ldlOnTx; // usa LDL on-treatment come punto di partenza per aggiunta
+  }
+}
+
+function checked(id) { return document.getElementById(id).checked; }
+
+// ─── CALCOLO PRINCIPALE ────────────────────────────────────────────────────
+function calculate() {
+  const age     = parseFloat(document.getElementById('age').value);
+  const sex     = document.querySelector('input[name="sex"]:checked').value;
+  const smoking = parseInt(document.querySelector('input[name="smoking"]:checked').value);
+  const sbp     = parseFloat(document.getElementById('sbp').value);
+  const region  = document.getElementById('region').value;
+  const ldl_mgdl = parseFloat(document.getElementById('ldl_mgdl').value);
+  const hdl_mgdl = parseFloat(document.getElementById('hdl_mgdl').value);
+  const egfr    = document.getElementById('egfr').value;
+
+  // Validazione
+  let errors = [];
+  if (isNaN(age) || age < 40 || age > 89)         errors.push('Età non valida (40–89 anni)');
+  if (isNaN(sbp) || sbp < 100 || sbp > 220)        errors.push('PA sistolica fuori range (100–220 mmHg)');
+  if (isNaN(ldl_mgdl) || ldl_mgdl < 30 || ldl_mgdl > 400) errors.push('LDL fuori range (30–400 mg/dL)');
+  if (isNaN(hdl_mgdl) || hdl_mgdl < 15 || hdl_mgdl > 150) errors.push('HDL fuori range (15–150 mg/dL)');
+  if (checked('cond-ckd') && (isNaN(parseFloat(egfr)) || parseFloat(egfr) < 1 || parseFloat(egfr) > 120))
+    errors.push('eGFR non valido (1–120 mL/min/1.73m²) — richiesto se IRC selezionata');
+  if (errors.length) { alert(errors.join('\n')); return; }
+
+  // Calcolo non-HDL con Friedewald se TG disponibili
+  const tg_mgdl  = parseFloat(document.getElementById('tg_mgdl').value);
+  const tg_mmol  = !isNaN(tg_mgdl) && tg_mgdl > 0 ? tg_mgdl * CHOL_CONV : null;
+  const vldl_mgdl= getVLDL(tg_mgdl);
+  const nonhdl_mgdl = ldl_mgdl + vldl_mgdl;
+  const nonhdl      = nonhdl_mgdl * CHOL_CONV;
+  const ldl_mmol    = ldl_mgdl * CHOL_CONV;
+
+  // SCORE2 / SCORE2-OP
+  let risk, algo;
+  if (age < 70) {
+    risk = calcScore2(age, sex, sbp, nonhdl, smoking, region);
+    algo = 'SCORE2';
+  } else {
+    risk = calcScore2OP(age, sex, sbp, nonhdl, smoking, region);
+    algo = 'SCORE2-OP';
+  }
+
+  const pct      = risk * 100;
+  const pctRound = pct < 1 ? pct.toFixed(1) : (Math.round(pct * 10) / 10);
+  const {cls, label} = getScore2Class(pct, age);
+
+  // Condizioni patologiche
+  const condizioni = {
+    ascvd:     checked('cond-ascvd'),
+    dm:        checked('cond-dm'),
+    dmMod:     checked('cond-dm-mod'),
+    fh:        checked('cond-fh'),
+    ckd:       checked('cond-ckd'),
+    htnSevere: checked('cond-htn-severe'),
+    hf:        checked('cond-hf'),
+    lp:        checked('cond-lp'),
+    cac:       checked('cond-cac'),
+    af:        checked('cond-af'),
+    abi:       checked('cond-abi'),
+    _sex:      sex,
+  };
+
+  const hdl_mmol = hdl_mgdl * CHOL_CONV;
+
+  // Rischio finale
+  const fr = getFinalRisk(cls, condizioni, egfr, ldl_mmol, tg_mmol, hdl_mmol);
+
+  // ── Render SCORE2 card ──
+  const sc = document.getElementById('score2-card');
+  sc.className = 'result-card ' + cls;
+  document.getElementById('algo-label').textContent   = algo + ' · Regione ' + region.replace('_',' ');
+  document.getElementById('risk-pct').textContent     = pctRound + '%';
+  document.getElementById('risk-cat-score2').textContent = label;
+  document.getElementById('threshold-text').innerHTML = getThresholdText(age);
+  document.getElementById('score2-desc').textContent  =
+    'Rischio stimato in assenza di condizioni patologiche maggiori. ' +
+    'La classificazione finale integra i fattori modificatori di rischio ESC 2021 (vedi sotto).';
+
+  const maxBarPct = age >= 70 ? 40 : 25;
+  document.getElementById('bar-marker').style.left = Math.min(pct/maxBarPct*100, 98).toFixed(1) + '%';
+
+  // ── Render rischio finale ──
+  const clsMap = {
+    'low':'fr-low', 'moderate':'fr-moderate', 'high':'fr-high',
+    'very-high':'fr-very-high', 'extreme':'fr-extreme'
+  };
+  const labelMap = {
+    'low':'Rischio Basso', 'moderate':'Rischio Moderato', 'high':'Rischio Alto',
+    'very-high':'Rischio Molto Alto', 'extreme':'Rischio Estremo'
+  };
+  const fc = document.getElementById('final-card');
+  fc.className = 'final-risk-card ' + clsMap[fr.riskLevel];
+  document.getElementById('fr-badge').textContent = labelMap[fr.riskLevel];
+  document.getElementById('fr-title').textContent = 'Classificazione ESC 2021 — Rischio cardiovascolare globale';
+
+  let reasonText = '';
+  if (fr.reasons.length > 0) {
+    reasonText = 'Categoria determinata da: ' + fr.reasons.join('; ') + '.';
+  } else {
+    reasonText = 'Nessun modificatore maggiore. Classificazione basata sul punteggio SCORE2.';
+  }
+  document.getElementById('fr-reason').innerHTML = reasonText;
+
+  const modBox = document.getElementById('modifiers-box');
+  const modList = document.getElementById('modifiers-list');
+  if (fr.modifiers.length > 0) {
+    modList.innerHTML = '<strong style="font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--text3)">Fattori modificatori aggiuntivi:</strong><br>' +
+      fr.modifiers.map(m => `<div class="modifier-item">${m}</div>`).join('');
+    modBox.style.display = 'block';
+  } else {
+    modBox.style.display = 'none';
+  }
+
+  // Target terapeutici
+  const achieved = fr.ldlAchieved;
+  const pctReduct = fr.targetPct ? ` (+ riduzione ≥${fr.targetPct}% dal basale)` : '';
+  document.getElementById('target-rows').innerHTML = `
+    <div class="target-row">
+      <span class="target-label">Target LDL-C</span>
+      <span class="target-val">${fr.ldlDesc}</span>
+    </div>
+    <div class="target-row">
+      <span class="target-label">LDL attuale paziente</span>
+      <span class="target-val">${fr.currentLDL_mgdl} mg/dL (${ldl_mmol.toFixed(2)} mmol/L)</span>
+    </div>
+    <div class="target-row">
+      <span class="target-label">Target raggiunto?</span>
+      <span class="target-achieved ${achieved ? 'yes' : 'no'}">${achieved ? '✓ Sì' : '✗ No — rivedere terapia'}</span>
+    </div>
+    <div class="target-row">
+      <span class="target-label">Target PA sistolica</span>
+      <span class="target-val">&lt;130 mmHg (se tollerata) · attuale: ${sbp} mmHg${sbp >= 130 ? ' — ⚠ sopra target' : ' — ✓ ok'}</span>
+    </div>
+  `;
+
+  // ── Dettaglio calcolo ──
+  const regionLabels = {
+    low:'Basso (es. Francia, Svizzera)', moderate:'Moderato (es. Italia, Spagna)',
+    high:'Alto (es. Bulgaria, Turchia)', very_high:'Molto alto (es. Russia)'
+  };
+  const sexLabel = sex === 'male' ? 'Maschio' : 'Femmina';
+  const smkLabel = smoking === 1 ? 'Sì' : 'No';
+  const condsOn  = Object.entries(condizioni).filter(([,v])=>v).map(([k])=>k);
+  const condsLabels = {
+    ascvd:'ASCVD', dm:'DM ad alto rischio', dmMod:'DM moderato',
+    fh:'Ipercolesterolemia familiare', ckd:'IRC', htnSevere:'HTN severa',
+    hf:'Scompenso cardiaco', lp:'Lp(a) elevata', cac:'CAC elevato',
+    af:'Fibrillazione atriale', abi:'ABI patologico'
+  };
+
+  const cognomePaz = document.getElementById('cognome').value.trim();
+  const nomePaz    = document.getElementById('nome').value.trim();
+  const pazLabel   = [cognomePaz, nomePaz].filter(Boolean).join(' ');
+
+  document.getElementById('detail-rows').innerHTML = `
+    ${pazLabel ? `<div class="detail-row"><span class="detail-label">Paziente</span><span class="detail-val" style="font-weight:600">${pazLabel.toUpperCase()}</span></div>` : ''}
+    <div class="detail-row"><span class="detail-label">Algoritmo</span><span class="detail-val">${algo}</span></div>
+    <div class="detail-row"><span class="detail-label">Età / Sesso</span><span class="detail-val">${age} anni / ${sexLabel}</span></div>
+    <div class="detail-row"><span class="detail-label">Fumatore</span><span class="detail-val">${smkLabel}</span></div>
+    <div class="detail-row"><span class="detail-label">PA sistolica</span><span class="detail-val">${sbp} mmHg</span></div>
+    <div class="detail-row"><span class="detail-label">LDL-C inserito (Friedewald)</span><span class="detail-val">${ldl_mgdl} mg/dL = ${ldl_mmol.toFixed(2)} mmol/L</span></div>
+    <div class="detail-row"><span class="detail-label">HDL-C inserito</span><span class="detail-val">${hdl_mgdl} mg/dL = ${(hdl_mgdl*CHOL_CONV).toFixed(2)} mmol/L</span></div>
+    ${tg_mmol !== null ? `<div class="detail-row"><span class="detail-label">Trigliceridi</span><span class="detail-val">${Math.round(tg_mgdl)} mg/dL = ${tg_mmol.toFixed(2)} mmol/L · VLDL = ${vldl_mgdl.toFixed(0)} mg/dL (Friedewald)</span></div>` : ''}
+    ${(()=>{
+      const tc_v = parseFloat(document.getElementById('tc_mgdl').value);
+      if (!isNaN(tc_v) && tc_v > 0) {
+        const samp = calcSampson(tc_v, hdl_mgdl, tg_mgdl);
+        const delta = samp !== null ? Math.round((samp - ldl_mgdl)*10)/10 : null;
+        return `<div class="detail-row"><span class="detail-label">Colesterolo Totale</span><span class="detail-val">${tc_v} mg/dL = ${(tc_v*CHOL_CONV).toFixed(2)} mmol/L</span></div>`
+          + (samp !== null ? `<div class="detail-row"><span class="detail-label">LDL-C Sampson 2020 (NIH)</span><span class="detail-val" style="color:${Math.abs(delta)>=10?'var(--danger)':'var(--green)'}">${samp.toFixed(0)} mg/dL = ${(samp*CHOL_CONV).toFixed(2)} mmol/L (Δ ${delta>0?'+':''}${delta} vs Friedewald)</span></div>` : '');
+      } return '';
+    })()}
+    <div class="detail-row"><span class="detail-label">Non-HDL usato in SCORE2</span><span class="detail-val">${nonhdl_mgdl} mg/dL = ${nonhdl.toFixed(2)} mmol/L ${tg_mmol !== null && tg_mgdl < 400 ? '(Friedewald)' : '(VLDL stimato)'}</span></div>
+    <div class="detail-row"><span class="detail-label">Regione ESC</span><span class="detail-val">${regionLabels[region]}</span></div>
+    <div class="detail-row"><span class="detail-label">Rischio SCORE2 grezzo</span><span class="detail-val">${pct.toFixed(2)}% → ${label}</span></div>
+    <div class="detail-row"><span class="detail-label">Condizioni patologiche</span><span class="detail-val">${condsOn.length > 0 ? condsOn.map(k=>condsLabels[k]).join(', ') : 'Nessuna'}</span></div>
+    ${checked('cond-ckd') ? `<div class="detail-row"><span class="detail-label">eGFR</span><span class="detail-val">${egfr} mL/min/1.73m²</span></div>` : ''}
+    ${checked('cond-ckd') && document.getElementById('uacr').value ? `<div class="detail-row"><span class="detail-label">UACR</span><span class="detail-val">${document.getElementById('uacr').value} mg/g (${getUACRStage(parseFloat(document.getElementById('uacr').value)).code})</span></div>` : ''}
+    ${checked('cond-ckd') && window._kdigoClass ? `<div class="detail-row"><span class="detail-label">Classe rischio KDIGO</span><span class="detail-val">${KDIGO_LABELS[window._kdigoClass]}</span></div>` : ''}
+    <div class="detail-row"><span class="detail-label">Rischio CV globale finale</span><span class="detail-val">${labelMap[fr.riskLevel]}</span></div>
+  `;
+
+  document.getElementById('result-section').style.display = 'block';
+  document.getElementById('print-btn-wrap').style.display = 'block';
+  document.getElementById('result-section').scrollIntoView({behavior:'smooth', block:'start'});
+  _calcoloDone = true;
+
+  // ── Farmaci: passa LDL attuale e target ──
+  _currentLDL   = ldl_mgdl;
+  _targetLDL    = fr.targetMgdl;
+  _targetPct    = fr.targetPct;
+  _activeFilter = 'ok';
+  ['ok','statine','no-statine'].forEach(k =>
+    document.getElementById('flt-'+k).classList.toggle('active', k === 'ok'));
+
+  // Back-calculation e TG
+  renderBackCalc(fr.targetMgdl, fr.targetPct);
+  renderTGCard(fr.tgInfo, fr.targetMgdl, fr.ldlAchieved);
+
+  // Indagini raccomandate
+  const condizioniExt = {...condizioni, _smoking: smoking};
+  renderIndagini(fr, condizioniExt, pct, age, sex, tg_mmol, hdl_mmol, sbp, ldl_mgdl);
+
+  renderFarmaci();
+}
+// ─── Database farmaci ipocolesterolemizzanti ───────────────────────────────
+// Valori di riduzione LDL% basati su: ACC/AHA 2018, VOYAGER database,
+// ESC/EAS 2019/2021 update, STELLAR trial, ORION trials, CLEAR Outcomes.
+// Le combinazioni usano effetto additivo con cap biologico a 85%.
+// da = riduzione minima attesa, a = riduzione massima attesa (%)
+const FARMACI = [
+  // ── Rosuvastatina (VOYAGER/STELLAR) ──────────────────────────────────────
+  {id:1,  nome:"Rosuvastatina 5 mg",                            da:38, a:45, statina:true},
+  {id:2,  nome:"Rosuvastatina 10 mg",                           da:43, a:52, statina:true},
+  {id:3,  nome:"Rosuvastatina 20 mg",                           da:50, a:60, statina:true},
+  {id:4,  nome:"Rosuvastatina 40 mg",                           da:55, a:63, statina:true},
+  // ── Atorvastatina (VOYAGER/CURVES) ───────────────────────────────────────
+  {id:5,  nome:"Atorvastatina 10 mg",                           da:37, a:45, statina:true},
+  {id:6,  nome:"Atorvastatina 20 mg",                           da:43, a:50, statina:true},
+  {id:7,  nome:"Atorvastatina 40 mg",                           da:48, a:55, statina:true},
+  {id:8,  nome:"Atorvastatina 80 mg",                           da:51, a:60, statina:true},
+  // ── Simvastatina (AHA/ACC label) ─────────────────────────────────────────
+  {id:9,  nome:"Simvastatina 10 mg",                            da:27, a:32, statina:true},
+  {id:10, nome:"Simvastatina 20 mg",                            da:32, a:37, statina:true},
+  {id:11, nome:"Simvastatina 40 mg",                            da:37, a:42, statina:true},
+  {id:12, nome:"Simvastatina 80 mg ⚠",                         da:37, a:42, statina:true},
+  // ── Lovastatina (FDA labeling) ────────────────────────────────────────────
+  {id:14, nome:"Lovastatina 20 mg",                             da:24, a:30, statina:true},
+  {id:15, nome:"Lovastatina 40 mg",                             da:30, a:36, statina:true},
+  {id:16, nome:"Lovastatina 80 mg",                             da:35, a:40, statina:true},
+  // ── Pravastatina (FDA labeling) ───────────────────────────────────────────
+  {id:17, nome:"Pravastatina 10 mg",                            da:20, a:26, statina:true},
+  {id:18, nome:"Pravastatina 20 mg",                            da:24, a:30, statina:true},
+  {id:19, nome:"Pravastatina 40 mg",                            da:29, a:35, statina:true},
+  {id:20, nome:"Pravastatina 80 mg",                            da:33, a:37, statina:true},
+  // ── Fluvastatina (FDA labeling) ───────────────────────────────────────────
+  {id:21, nome:"Fluvastatina 20 mg",                            da:17, a:22, statina:true},
+  {id:22, nome:"Fluvastatina 40 mg",                            da:22, a:27, statina:true},
+  {id:23, nome:"Fluvastatina 80 mg XL",                         da:28, a:35, statina:true},
+  // ── Non-statine in monoterapia ────────────────────────────────────────────
+  {id:24, nome:"Ezetimibe 10 mg",                               da:18, a:25, statina:false},
+  {id:25, nome:"Acido bempedoico 180 mg",                       da:18, a:28, statina:false},
+  {id:27, nome:"Inibitore PCSK9 (alirocumab/evolocumab)",       da:50, a:65, statina:false},
+  {id:28, nome:"Inclisiran 284 mg",                             da:48, a:56, statina:false},
+  // ── Statina + Bempedoico ──────────────────────────────────────────────────
+  {id:29, nome:"Rosuvastatina 5 mg + Bempedoico",              da:54, a:68, statina:true},
+  {id:30, nome:"Rosuvastatina 10 mg + Bempedoico",             da:58, a:75, statina:true},
+  {id:31, nome:"Rosuvastatina 20 mg + Bempedoico",             da:63, a:80, statina:true},
+  {id:32, nome:"Rosuvastatina 40 mg + Bempedoico",             da:67, a:83, statina:true},
+  {id:33, nome:"Atorvastatina 10 mg + Bempedoico",             da:52, a:67, statina:true},
+  {id:34, nome:"Atorvastatina 20 mg + Bempedoico",             da:57, a:72, statina:true},
+  {id:35, nome:"Atorvastatina 40 mg + Bempedoico",             da:62, a:77, statina:true},
+  {id:36, nome:"Atorvastatina 80 mg + Bempedoico",             da:65, a:80, statina:true},
+  {id:37, nome:"Simvastatina 10 mg + Bempedoico",              da:43, a:55, statina:true},
+  {id:38, nome:"Simvastatina 20 mg + Bempedoico",              da:47, a:60, statina:true},
+  {id:39, nome:"Simvastatina 40 mg + Bempedoico",              da:52, a:64, statina:true},
+  {id:40, nome:"Simvastatina 80 mg + Bempedoico ⚠",           da:52, a:64, statina:true},
+  {id:41, nome:"Lovastatina 20 mg + Bempedoico",               da:40, a:53, statina:true},
+  {id:42, nome:"Lovastatina 40 mg + Bempedoico",               da:45, a:58, statina:true},
+  {id:43, nome:"Lovastatina 80 mg + Bempedoico",               da:50, a:62, statina:true},
+  {id:44, nome:"Pravastatina 10 mg + Bempedoico",              da:36, a:49, statina:true},
+  {id:45, nome:"Pravastatina 20 mg + Bempedoico",              da:40, a:53, statina:true},
+  {id:46, nome:"Pravastatina 40 mg + Bempedoico",              da:44, a:57, statina:true},
+  {id:47, nome:"Pravastatina 80 mg + Bempedoico",              da:48, a:59, statina:true},
+  {id:48, nome:"Fluvastatina 20 mg + Bempedoico",              da:33, a:45, statina:true},
+  {id:49, nome:"Fluvastatina 40 mg + Bempedoico",              da:37, a:50, statina:true},
+  {id:50, nome:"Fluvastatina 80 mg + Bempedoico",              da:43, a:56, statina:true},
+  // ── Non-statine + Bempedoico ──────────────────────────────────────────────
+  {id:53, nome:"Inibitore PCSK9 + Bempedoico",                 da:63, a:80, statina:false},
+  {id:54, nome:"Inclisiran + Bempedoico",                      da:62, a:78, statina:false},
+  // ── Statina + Bempedoico + Ezetimibe (triplice) ───────────────────────────
+  {id:55, nome:"Rosuvastatina 5 mg + Bempedoico + Ezetimibe",  da:66, a:82, statina:true},
+  {id:56, nome:"Rosuvastatina 10 mg + Bempedoico + Ezetimibe", da:70, a:85, statina:true},
+  {id:57, nome:"Rosuvastatina 20 mg + Bempedoico + Ezetimibe", da:74, a:85, statina:true},
+  {id:58, nome:"Rosuvastatina 40 mg + Bempedoico + Ezetimibe", da:77, a:85, statina:true},
+  {id:59, nome:"Atorvastatina 10 mg + Bempedoico + Ezetimibe", da:63, a:80, statina:true},
+  {id:60, nome:"Atorvastatina 20 mg + Bempedoico + Ezetimibe", da:68, a:83, statina:true},
+  {id:61, nome:"Atorvastatina 40 mg + Bempedoico + Ezetimibe", da:73, a:85, statina:true},
+  {id:62, nome:"Atorvastatina 80 mg + Bempedoico + Ezetimibe", da:76, a:85, statina:true},
+  {id:63, nome:"Simvastatina 10 mg + Bempedoico + Ezetimibe",  da:55, a:70, statina:true},
+  {id:64, nome:"Simvastatina 20 mg + Bempedoico + Ezetimibe",  da:59, a:74, statina:true},
+  {id:65, nome:"Simvastatina 40 mg + Bempedoico + Ezetimibe",  da:63, a:78, statina:true},
+  {id:66, nome:"Simvastatina 80 mg + Bempedoico + Ezetimibe ⚠",da:63, a:78, statina:true},
+  {id:67, nome:"Lovastatina 20 mg + Bempedoico + Ezetimibe",   da:52, a:67, statina:true},
+  {id:68, nome:"Lovastatina 40 mg + Bempedoico + Ezetimibe",   da:57, a:72, statina:true},
+  {id:69, nome:"Lovastatina 80 mg + Bempedoico + Ezetimibe",   da:62, a:77, statina:true},
+  {id:70, nome:"Pravastatina 10 mg + Bempedoico + Ezetimibe",  da:48, a:63, statina:true},
+  {id:71, nome:"Pravastatina 20 mg + Bempedoico + Ezetimibe",  da:52, a:67, statina:true},
+  {id:72, nome:"Pravastatina 40 mg + Bempedoico + Ezetimibe",  da:56, a:71, statina:true},
+  {id:73, nome:"Pravastatina 80 mg + Bempedoico + Ezetimibe",  da:59, a:73, statina:true},
+  {id:74, nome:"Fluvastatina 20 mg + Bempedoico + Ezetimibe",  da:45, a:60, statina:true},
+  {id:75, nome:"Fluvastatina 40 mg + Bempedoico + Ezetimibe",  da:49, a:64, statina:true},
+  {id:76, nome:"Fluvastatina 80 mg + Bempedoico + Ezetimibe",  da:55, a:70, statina:true},
+  // ── Non-statine triplice ──────────────────────────────────────────────────
+  {id:79, nome:"Inibitore PCSK9 + Bempedoico + Ezetimibe",     da:74, a:85, statina:false},
+  {id:80, nome:"Inclisiran + Bempedoico + Ezetimibe",          da:73, a:85, statina:false},
+  // ── Statina + Ezetimibe ───────────────────────────────────────────────────
+  {id:81, nome:"Rosuvastatina 5 mg + Ezetimibe",               da:52, a:63, statina:true},
+  {id:82, nome:"Rosuvastatina 10 mg + Ezetimibe",              da:57, a:68, statina:true},
+  {id:83, nome:"Rosuvastatina 20 mg + Ezetimibe",              da:63, a:75, statina:true},
+  {id:84, nome:"Rosuvastatina 40 mg + Ezetimibe",              da:67, a:78, statina:true},
+  {id:85, nome:"Atorvastatina 10 mg + Ezetimibe",              da:50, a:62, statina:true},
+  {id:86, nome:"Atorvastatina 20 mg + Ezetimibe",              da:55, a:67, statina:true},
+  {id:87, nome:"Atorvastatina 40 mg + Ezetimibe",              da:60, a:72, statina:true},
+  {id:88, nome:"Atorvastatina 80 mg + Ezetimibe",              da:63, a:75, statina:true},
+  {id:89, nome:"Simvastatina 10 mg + Ezetimibe",               da:40, a:50, statina:true},
+  {id:90, nome:"Simvastatina 20 mg + Ezetimibe",               da:44, a:55, statina:true},
+  {id:91, nome:"Simvastatina 40 mg + Ezetimibe",               da:49, a:60, statina:true},
+  {id:92, nome:"Simvastatina 80 mg + Ezetimibe ⚠",            da:49, a:60, statina:true},
+  {id:93, nome:"Lovastatina 20 mg + Ezetimibe",                da:37, a:48, statina:true},
+  {id:94, nome:"Lovastatina 40 mg + Ezetimibe",                da:42, a:53, statina:true},
+  {id:95, nome:"Lovastatina 80 mg + Ezetimibe",                da:47, a:58, statina:true},
+  {id:96, nome:"Pravastatina 10 mg + Ezetimibe",               da:33, a:44, statina:true},
+  {id:97, nome:"Pravastatina 20 mg + Ezetimibe",               da:37, a:48, statina:true},
+  {id:98, nome:"Pravastatina 40 mg + Ezetimibe",               da:41, a:52, statina:true},
+  {id:99, nome:"Pravastatina 80 mg + Ezetimibe",               da:45, a:55, statina:true},
+  {id:100,nome:"Fluvastatina 20 mg + Ezetimibe",               da:30, a:42, statina:true},
+  {id:101,nome:"Fluvastatina 40 mg + Ezetimibe",               da:35, a:46, statina:true},
+  {id:102,nome:"Fluvastatina 80 mg + Ezetimibe",               da:40, a:53, statina:true},
+  // ── Non-statine duali ─────────────────────────────────────────────────────
+  {id:104,nome:"Bempedoico + Ezetimibe",                       da:35, a:47, statina:false},
+  {id:105,nome:"Inibitore PCSK9 + Ezetimibe",                  da:63, a:80, statina:false},
+  {id:106,nome:"Inclisiran + Ezetimibe",                       da:60, a:73, statina:false},
+];
+
+// ─── Ricalcolo automatico dopo il primo calcolo ───────────────────────────
+let _calcoloDone = false;
+
+function autoRicalcola() {
+  if (_calcoloDone) calculate();
+}
+
+let _currentLDL   = null;
+let _targetLDL    = null;
+let _targetPct    = null;
+let _activeFilter = 'all';
+
+// ─── Listener globale per ricalcolo automatico dopo primo calcolo ─────────
+document.addEventListener('DOMContentLoaded', () => {
+  const campi = [
+    '#age','#sbp','#ldl_mgdl','#hdl_mgdl','#tg_mgdl','#tc_mgdl','#region',
+    '#creatinina','#uacr','#abi-val','#therapy-drug','#therapy-ldl',
+    'input[name="sex"]','input[name="smoking"]',
+    '#cond-ascvd','#cond-dm','#cond-dm-mod','#cond-fh','#cond-ckd',
+    '#cond-htn-severe','#cond-hf','#cond-lp','#cond-cac','#cond-af',
+    '#cond-abi','#therapy-on','#cognome','#nome'
+  ];
+  campi.forEach(sel => {
+    document.querySelectorAll(sel).forEach(el => {
+      const evt = (el.tagName === 'SELECT' || el.type === 'checkbox' || el.type === 'radio')
+        ? 'change' : 'input';
+      el.addEventListener(evt, autoRicalcola);
+    });
+  });
+});
+
+// ─── Rendering tabella farmaci ─────────────────────────────────────────────
+function renderFarmaci() {
+  if (_currentLDL === null || _targetLDL === null) return;
+
+  const ldl     = _currentLDL;
+  const target  = _targetLDL;
+  const needPct = _targetPct;
+  const tbody   = document.getElementById('farmaci-tbody');
+  const emptyDiv= document.getElementById('farmaci-empty');
+
+  // Riduzione % necessaria per portare l'LDL attuale sotto il target
+  const ridNecessaria = Math.max(0, Math.round((1 - target / ldl) * 100));
+  // Se c'è anche un requisito di riduzione % (es. ≥50%), prendo il massimo
+  const ridReqEff = needPct ? Math.max(ridNecessaria, needPct) : ridNecessaria;
+
+  const rows = FARMACI.map(f => {
+    const ldlConRidMin = Math.round(ldl * (1 - f.da / 100)); // LDL con riduzione minima
+    const ldlConRidMax = Math.round(ldl * (1 - f.a  / 100)); // LDL con riduzione massima
+
+    /*
+      Classificazione per ogni farmaco rispetto alla riduzione necessaria (ridReqEff):
+
+      INDICATO    — l'intervallo [da%, a%] comprende ridReqEff
+                    cioè: f.da <= ridReqEff <= f.a
+                    Il farmaco è calibrato: nella sua fascia di efficacia include
+                    esattamente la riduzione di cui il paziente ha bisogno.
+
+      INSUFFICIENTE — anche con la riduzione massima non si raggiunge il target
+                    cioè: f.a < ridReqEff
+
+      ECCESSIVO   — anche con la riduzione minima si supera la riduzione necessaria
+                    cioè: f.da > ridReqEff
+                    Il farmaco riduce più del necessario (non pericoloso, ma non ottimale
+                    come scelta di prima linea per questo paziente).
+    */
+    let stato;
+    if (f.a < ridReqEff)       stato = 'insufficiente';
+    else if (f.da > ridReqEff) stato = 'eccessivo';
+    else                        stato = 'indicato';
+
+    return {...f, ldlConRidMin, ldlConRidMax, stato};
+  });
+
+  // Filtro — tutti e tre mostrano solo farmaci "indicati"; statine/no-statine filtrano ulteriormente per tipo
+  let filtered = rows.filter(r => r.stato === 'indicato');
+  if (_activeFilter === 'statine')    filtered = filtered.filter(r => r.statina);
+  if (_activeFilter === 'no-statine') filtered = filtered.filter(r => !r.statina);
+
+  // Ordine: indicato → eccessivo → insufficiente; dentro ogni gruppo per riduzione crescente
+  const rankMap = {indicato:0, eccessivo:1, insufficiente:2};
+  filtered.sort((a,b) => {
+    if (rankMap[a.stato] !== rankMap[b.stato]) return rankMap[a.stato] - rankMap[b.stato];
+    return a.da - b.da;
+  });
+
+  // Contatori
+  const nIndicati     = rows.filter(r => r.stato === 'indicato').length;
+  const nEccessivi    = rows.filter(r => r.stato === 'eccessivo').length;
+  const nInsuff       = rows.filter(r => r.stato === 'insufficiente').length;
+  document.getElementById('farmaci-count').textContent =
+    `${filtered.length} farmaci · ✅ ${nIndicati} indicati · ⬆ ${nEccessivi} eccessivi · ❌ ${nInsuff} insufficienti`;
+
+  // Summary con riduzione necessaria in evidenza
+  const sumDiv = document.getElementById('ldl-target-summary');
+  sumDiv.className = 'ldl-target-summary ' + (nIndicati > 0 ? 'target-ok' : 'target-no');
+  const rdPctNote = needPct ? ` (+ riduzione ≥${needPct}% richiesta da ESC)` : '';
+  sumDiv.innerHTML = `
+    <strong>LDL attuale:</strong> ${Math.round(ldl)} mg/dL
+    &nbsp;→&nbsp;
+    <strong>Target:</strong> &lt;${target} mg/dL${rdPctNote}
+    &nbsp;→&nbsp;
+    <span style="font-size:14px;font-weight:700;color:var(--accent);font-family:var(--mono)">
+      Riduzione necessaria: ${ridReqEff}%
+    </span>
+    <br>
+    ${nIndicati > 0
+      ? `✅ <strong>${nIndicati} farmaci indicati</strong> — il loro intervallo di riduzione comprende il ${ridReqEff}% richiesto.`
+      : `⚠️ Nessun farmaco ha un intervallo che comprende esattamente la riduzione necessaria.`}
+    ${nEccessivi > 0 ? `&nbsp;· ⬆ <strong>${nEccessivi} eccessivi</strong> (riducono più del necessario).` : ''}
+  `;
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '';
+    emptyDiv.style.display = 'block';
+  } else {
+    emptyDiv.style.display = 'none';
+    tbody.innerHTML = filtered.map(f => {
+      const ridStr = `${f.da}%–${f.a}%`;
+      const ldlStr = `${f.ldlConRidMax}–${f.ldlConRidMin} mg/dL`;
+
+      const statBadge = f.statina
+        ? `<span class="badge-si">Statina</span>`
+        : `<span class="badge-no">No</span>`;
+
+      let statoBadge, rowStyle, ridStyle;
+      if (f.stato === 'indicato') {
+        statoBadge = `<span class="badge-ok">✅ Indicato</span>`;
+        rowStyle   = 'background:linear-gradient(to right,rgba(42,106,31,.07),transparent)';
+        ridStyle   = 'color:var(--green);font-weight:700';
+      } else if (f.stato === 'eccessivo') {
+        statoBadge = `<span class="badge-eccessivo">⬆ Eccessivo</span>`;
+        rowStyle   = '';
+        ridStyle   = 'color:var(--accent)';
+      } else {
+        statoBadge = `<span class="badge-no">❌ Insuff.</span>`;
+        rowStyle   = 'opacity:.55';
+        ridStyle   = 'color:var(--text3)';
+      }
+
+      return `<tr style="${rowStyle}">
+        <td class="td-farmaco">${f.nome}</td>
+        <td style="text-align:center;font-family:var(--mono);font-size:13px;${ridStyle}">${ridStr}</td>
+        <td style="text-align:center;font-family:var(--mono);font-size:13px;${ridStyle}">${ldlStr}</td>
+        <td class="td-statina">${statBadge}</td>
+        <td class="td-raggiunge">${statoBadge}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  document.getElementById('farmaci-section').style.display = 'block';
+}
+
+// ─── Render card Trigliceridi ──────────────────────────────────────────────
+function renderTGCard(tgInfo, targetMgdl, ldlAchieved) {
+  const card = document.getElementById('tg-card');
+  const body = document.getElementById('tg-card-body');
+
+  if (!tgInfo) { card.style.display = 'none'; return; }
+
+  const {tg_mgdl, tg_mmol, hdlBasso, dislipidemiaAterogena, tgSevero, tgModerato} = tgInfo;
+
+  // Colore header card in base alla gravità
+  const borderColor = tgSevero ? 'var(--danger)' : 'var(--warn)';
+  card.style.borderLeft = `4px solid ${borderColor}`;
+
+  // Classificazione
+  let classTxt, classBg, classColor;
+  if (tgSevero) {
+    classTxt = 'Ipertrigliceridemia severa'; classBg = 'var(--danger-light)'; classColor = 'var(--danger)';
+  } else if (dislipidemiaAterogena) {
+    classTxt = 'Dislipidemia aterogena'; classBg = 'var(--warn-light)'; classColor = 'var(--warn)';
+  } else {
+    classTxt = 'Ipertrigliceridemia moderata'; classBg = 'var(--warn-light)'; classColor = 'var(--warn)';
+  }
+
+  // ── Database farmaci per ipertrigliceridemia (ESC/EAS 2019, ESC 2021) ────
+  // Struttura: {nome, dose, riduzTG, classe, indicazione, note, primascelta}
+  const FIBRATI = [
+    { nome:'Fenofibrato', dose:'145–200 mg/die', riduzTG:'40–55%', classe:'I-C', primascelta:true,
+      note:'Prima scelta per ipertrigliceridemia severa. Preferito in combinazione con statina (minore rischio miopatia vs gemfibrozil). Monitorare creatinina.' },
+    { nome:'Bezafibrato', dose:'400–600 mg/die', riduzTG:'40–55%', classe:'I-C', primascelta:true,
+      note:'Alternativa al fenofibrato. Evitare in IRC grave (eGFR < 30). Efficace su tutti i parametri lipidici.' },
+    { nome:'Gemfibrozil', dose:'600 mg × 2/die', riduzTG:'40–55%', classe:'I-C', primascelta:false,
+      note:'⚠ Non associare a statine (rischio miopatia/rabdomiolisi aumentato). Usare solo in intolleranza alle statine.' },
+    { nome:'Ciprofibrato', dose:'100 mg/die', riduzTG:'35–50%', classe:'IIb-C', primascelta:false,
+      note:'Meno studiato dei precedenti. Alternativa in caso di intolleranza.' },
+  ];
+
+  const OMEGA3 = [
+    { nome:'Icosapent etile (IPE)', dose:'4 g/die (2 g × 2)', riduzTG:'20–30%', classe:'IIa-B', primascelta:true,
+      note:'Unico omega-3 con evidenza di riduzione CV (REDUCE-IT: −25% eventi CV in pazienti con TG 135–499 mg/dL in statina + DM o ASCVD). EPA puro, senza DHA.' },
+    { nome:'EPA + DHA (omega-3 std)', dose:'2–4 g/die', riduzTG:'20–30%', classe:'IIb-B', primascelta:false,
+      note:'Riduzione TG documentata ma senza evidenza di riduzione CV superiore a placebo (ASCEND, ORIGIN). Non sostituisce icosapent etile per l\'indicazione CV.' },
+  ];
+
+  const ALTRI = [
+    { nome:'Niacina (acido nicotinico)', dose:'1–3 g/die', riduzTG:'20–40%', classe:'III-A', primascelta:false,
+      note:'⛔ NON raccomandata da ESC/EAS 2019: nessun beneficio CV aggiuntivo alla statina (HPS2-THRIVE, AIM-HIGH). Effetti collaterali rilevanti (flush, epatotossicità, diabete).' },
+  ];
+
+  // ── Selezione farmaci per scenario ────────────────────────────────────────
+  const hasDM    = document.getElementById('cond-dm')?.checked || document.getElementById('cond-dm-mod')?.checked;
+  const hasASCVD = document.getElementById('cond-ascvd')?.checked;
+
+  const mkRow = (f, bg) => `
+    <tr style="background:${bg}">
+      <td style="padding:7px 9px;border-bottom:1px solid rgba(0,0,0,.06);font-weight:600;font-size:12px;vertical-align:top">
+        ${f.primascelta ? '<span style="font-size:9px;background:#b8e68b;color:#2d6a1f;border-radius:4px;padding:1px 5px;font-weight:700;vertical-align:middle;margin-right:4px">1ª SCELTA</span>' : ''}
+        ${f.nome}
+      </td>
+      <td style="padding:7px 9px;border-bottom:1px solid rgba(0,0,0,.06);font-size:12px;font-family:var(--mono);white-space:nowrap;vertical-align:top">${f.dose}</td>
+      <td style="padding:7px 9px;border-bottom:1px solid rgba(0,0,0,.06);font-size:12px;font-family:var(--mono);color:var(--accent);font-weight:600;white-space:nowrap;vertical-align:top">${f.riduzTG}</td>
+      <td style="padding:7px 9px;border-bottom:1px solid rgba(0,0,0,.06);font-size:11px;vertical-align:top">
+        <span style="font-family:var(--mono);font-weight:700;font-size:10px;padding:2px 6px;border-radius:4px;background:${f.classe.startsWith('I-') || f.classe.startsWith('IIa') ? '#dbeafe' : f.classe.startsWith('III') ? '#fde8e8' : '#fef3e2'};color:${f.classe.startsWith('I-') || f.classe.startsWith('IIa') ? '#1e40af' : f.classe.startsWith('III') ? '#8a1a1a' : '#8a4a00'}">${f.classe}</span>
+      </td>
+      <td style="padding:7px 9px;border-bottom:1px solid rgba(0,0,0,.06);font-size:11px;color:var(--text2);line-height:1.5;vertical-align:top">${f.note}</td>
+    </tr>`;
+
+  const mkTableHeader = () => `
+    <thead>
+      <tr style="background:var(--accent)">
+        <th style="padding:7px 9px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#fff;font-weight:700">Farmaco</th>
+        <th style="padding:7px 9px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#fff;font-weight:700;white-space:nowrap">Dose</th>
+        <th style="padding:7px 9px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#fff;font-weight:700;white-space:nowrap">Riduz. TG</th>
+        <th style="padding:7px 9px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#fff;font-weight:700">Classe ESC</th>
+        <th style="padding:7px 9px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#fff;font-weight:700">Note cliniche</th>
+      </tr>
+    </thead>`;
+
+  const mkSection = (title, farmaci, bg1, bg2) => `
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin:1rem 0 .4rem">${title}</div>
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        ${mkTableHeader()}
+        <tbody>
+          ${farmaci.map((f,i) => mkRow(f, i%2===0 ? bg1 : bg2)).join('')}
+        </tbody>
+      </table>
+    </div>`;
+
+  // ── Costruzione terapia per scenario ──────────────────────────────────────
+  let terapia = '';
+
+  if (tgSevero) {
+    // TG ≥ 500 mg/dL: fibrati prima scelta, ridurre rischio pancreatite
+    terapia = `
+      <div style="margin-top:1rem;padding:.75rem 1rem;background:var(--danger-light);border-radius:var(--radius);border-left:3px solid var(--danger);font-size:12px;line-height:1.6;margin-bottom:.5rem">
+        <strong>⚠ Priorità assoluta:</strong> ridurre il rischio di pancreatite acuta. Dieta molto povera di grassi (<10% delle calorie), eliminare alcol, ridurre zuccheri semplici. Escludere cause secondarie: ipotiroidismo, DM scompensato, farmaci (corticosteroidi, estrogeni orali, retinoidi, antipsicotici atipici, beta-bloccanti).
+      </div>
+      ${mkSection('🔵 Fibrati — prima scelta (ESC/EAS 2019 par. 11.3, Raccomandazione I-C)', FIBRATI, '#fff', 'var(--surface2)')}
+      ${mkSection('🟡 Acidi grassi omega-3 — in aggiunta ai fibrati', OMEGA3.filter(f=>f.nome.includes('EPA')), '#fff', 'var(--surface2)')}
+      ${mkSection('🔴 Non raccomandato', ALTRI, '#fde8e8', '#fde8e8')}`;
+
+  } else if (dislipidemiaAterogena) {
+    // TG 150–499 + HDL basso: statina + fibrato o IPE
+    const ipeLabel = (hasDM || hasASCVD)
+      ? '🔵 Icosapent etile — <strong style="color:var(--green)">indicato</strong> (DM o ASCVD + TG elevati in statina)'
+      : '🟡 Icosapent etile — da considerare (assenza di DM o ASCVD documentata)';
+    terapia = `
+      <div style="margin-top:1rem;padding:.75rem 1rem;background:var(--warn-light);border-radius:var(--radius);border-left:3px solid var(--warn);font-size:12px;line-height:1.6;margin-bottom:.5rem">
+        <strong>Sequenza raccomandata ESC 2021:</strong><br>
+        ① Ottimizzare LDL-C con statina (± ezetimibe) — <em>priorità assoluta</em><br>
+        ② Se TG residui ≥ 2,3 mmol/L (≥ 200 mg/dL) con LDL a target → aggiungere farmaco specifico<br>
+        ③ Modifiche stile di vita: dieta mediterranea, ridurre carboidrati raffinati e alcol, attività fisica ≥ 150 min/settimana
+      </div>
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin:.75rem 0 .4rem">${ipeLabel}</div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          ${mkTableHeader()}
+          <tbody>${OMEGA3.map((f,i) => mkRow(f, i%2===0 ? '#fff' : 'var(--surface2)')).join('')}</tbody>
+        </table>
+      </div>
+      ${mkSection('🔵 Fibrati — alternativa o in aggiunta (preferire fenofibrato con statina)', FIBRATI, '#fff', 'var(--surface2)')}
+      ${mkSection('🔴 Non raccomandato', ALTRI, '#fde8e8', '#fde8e8')}`;
+
+  } else {
+    // TG 150–499 moderati senza HDL basso
+    terapia = `
+      <div style="margin-top:1rem;padding:.75rem 1rem;background:rgba(0,0,0,.04);border-radius:var(--radius);border-left:3px solid var(--border2);font-size:12px;line-height:1.6;margin-bottom:.5rem">
+        <strong>Approccio ESC 2021:</strong> priorità al raggiungimento del target LDL. Se i TG persistono ≥ 2,3 mmol/L (≥ 200 mg/dL) <em>dopo</em> ottimizzazione dell\'LDL nei pazienti ad alto/molto alto rischio, considerare terapia specifica.<br>
+        Modifiche stile di vita: dieta mediterranea, riduzione carboidrati raffinati e alcol, attività fisica.
+      </div>
+      ${mkSection('🟡 Icosapent etile — da considerare se DM o ASCVD presente', [OMEGA3[0]], '#fff', 'var(--surface2)')}
+      ${mkSection('🟡 Fibrati — da considerare se TG > 200 mg/dL con HDL basso', FIBRATI.filter(f=>f.primascelta), '#fff', 'var(--surface2)')}
+      ${mkSection('🔴 Non raccomandato', ALTRI, '#fde8e8', '#fde8e8')}`;
+  }
+
+  // Box rischio residuo se LDL già a target
+  const rischioResiduo = ldlAchieved && tgInfo
+    ? `<div style="margin-top:.75rem;padding:.6rem .9rem;background:var(--accent-light);border-radius:var(--radius);font-size:12px;color:var(--accent);font-weight:600;border-left:3px solid var(--accent)">
+        ⚠ LDL a target ma TG elevati: possibile <strong>rischio cardiovascolare residuo</strong>. La terapia dei TG diventa prioritaria.
+       </div>` : '';
+
+  body.innerHTML = `
+    <div style="display:inline-block;padding:3px 12px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;background:${classBg};color:${classColor};margin-bottom:.75rem">${classTxt}</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.6rem;margin-bottom:.75rem">
+      <div style="padding:.7rem;background:var(--surface2);border-radius:var(--radius);text-align:center">
+        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">TG</div>
+        <div style="font-family:var(--mono);font-weight:700;font-size:1.1rem;color:${classColor}">${tg_mgdl} mg/dL</div>
+        <div style="font-size:10px;color:var(--text3)">${tg_mmol.toFixed(2)} mmol/L</div>
+      </div>
+      <div style="padding:.7rem;background:var(--surface2);border-radius:var(--radius);text-align:center">
+        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Soglia ESC</div>
+        <div style="font-family:var(--mono);font-weight:700;font-size:1rem;color:var(--text)">${tgSevero ? '≥500' : '150–499'} mg/dL</div>
+        <div style="font-size:10px;color:var(--text3)">${tgSevero ? '≥5,6 mmol/L' : '1,7–5,6 mmol/L'}</div>
+      </div>
+      <div style="padding:.7rem;background:var(--surface2);border-radius:var(--radius);text-align:center">
+        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Dislip. aterogena</div>
+        <div style="font-family:var(--mono);font-weight:700;font-size:1rem;color:${dislipidemiaAterogena ? 'var(--danger)' : 'var(--green)'}">${dislipidemiaAterogena ? '✗ Sì' : '✓ No'}</div>
+        <div style="font-size:10px;color:var(--text3)">TG alti + HDL basso</div>
+      </div>
+    </div>
+
+    ${rischioResiduo}
+    ${terapia}
+
+    <div style="font-size:10px;color:var(--text3);margin-top:.6rem;line-height:1.5">
+      Riferimenti: ESC/EAS Guidelines for Dyslipidaemias 2019, par. 4.2 e 11.3 · Bhatt DL et al. (REDUCE-IT), <em>N Engl J Med</em> 2019;380:11–22 · ESC CVD Prevention Guidelines 2021, Tabella 2.
+    </div>
+  `;
+  card.style.display = 'block';
+}
+
+// ─── Indagini raccomandate (ESC 2021 par. 4.1–4.2) ────────────────────────
+function renderIndagini(fr, condizioni, pct, age, sex, tg_mmol, hdl_mmol, sbp, ldl_mgdl) {
+  const card  = document.getElementById('indagini-card');
+  const list  = document.getElementById('indagini-list');
+  const rl    = fr.riskLevel;
+
+  // Già presenti/selezionate nel form
+  const hasCac   = condizioni.cac;
+  const hasLp    = condizioni.lp;
+  const hasCkd   = condizioni.ckd;
+  const hasAbi   = condizioni.abi;
+  const hasUacr  = !isNaN(parseFloat(document.getElementById('uacr')?.value));
+  const hasEgfr  = document.getElementById('egfr')?.value !== '';
+  const hasDm    = condizioni.dm || condizioni.dmMod;
+  const hasAscvd = condizioni.ascvd || condizioni.abi; // ABI patologico = equivalente ASCVD
+  const hasFh    = condizioni.fh;
+  const hasTg    = tg_mmol !== null;
+
+  // Zona grigia = rischio basso o moderato dove indagini possono reclassificare
+  const zonaGrigia = rl === 'low' || rl === 'moderate';
+  const rischioDef = rl === 'very-high' || rl === 'extreme';
+
+  const items = [];
+
+  // ── 1. Score calcio coronarico (CAC) ──────────────────────────────────────
+  if (!hasCac) {
+    if (rischioDef || hasAscvd) {
+      items.push({
+        prio:'grey', icon:'🚫', name:'Score calcio coronarico (CAC)',
+        reason:'Non indicato: il rischio è già classificato come molto alto/estremo e la decisione terapeutica è già definita indipendentemente dal risultato.',
+        ref:'ESC 2021, par. 4.1.3'
+      });
+    } else if (zonaGrigia) {
+      items.push({
+        prio:'red', icon:'🫀', name:'Score calcio coronarico (CAC)',
+        reason:`Raccomandata: paziente a rischio ${rl === 'low' ? 'basso' : 'moderato'} con incertezza sulla decisione di avviare terapia ipolipemizzante. CAC=0 consente di differire la terapia (evento raro). CAC ≥100 UA o ≥75° percentile per età/sesso reclassifica a rischio alto e rafforza l'indicazione al trattamento.`,
+        ref:'ESC 2021, Raccomandazione IIb-B · ACC/AHA 2018 Cholesterol Guidelines'
+      });
+    } else {
+      items.push({
+        prio:'yellow', icon:'🫀', name:'Score calcio coronarico (CAC)',
+        reason:'Da considerare: il paziente è a rischio alto ma non ancora definitivo. Un CAC elevato rafforza la decisione terapeutica, CAC=0 permette di rivalutare l\'intensità.',
+        ref:'ESC 2021, par. 4.1.3'
+      });
+    }
+  }
+
+  // ── 2. Lp(a) ──────────────────────────────────────────────────────────────
+  if (!hasLp) {
+    // ESC raccomanda almeno una misurazione nella vita per tutti
+    const indicazioneFH = hasFh;
+    const recidive = false; // non raccoglibile senza anamnesi completa
+    if (rischioDef && !indicazioneFH) {
+      items.push({
+        prio:'yellow', icon:'🧬', name:'Lipoproteina(a) — Lp(a)',
+        reason:'Misurazione almeno una volta nella vita raccomandata da ESC/EAS per tutti gli adulti. In questo paziente il rischio è già molto alto/estremo, ma il risultato è utile per valutare il rischio residuo e l\'eventuale eleggibilità a terapie specifiche (inclisiran, futuro: pelacarsen).',
+        ref:'ESC/EAS 2019 par. 6, ESC 2021 Tabella 2'
+      });
+    } else if (indicazioneFH) {
+      items.push({
+        prio:'red', icon:'🧬', name:'Lipoproteina(a) — Lp(a)',
+        reason:'Raccomandata: presenza di ipercolesterolemia familiare. Lp(a) >180 mg/dL equivale a rischio lifetime di FH eterozigote e può determinare ulteriore escalation terapeutica.',
+        ref:'ESC/EAS 2019 par. 6 · Nordestgaard et al., EHJ 2013'
+      });
+    } else {
+      items.push({
+        prio:zonaGrigia ? 'red' : 'yellow', icon:'🧬', name:'Lipoproteina(a) — Lp(a)',
+        reason:zonaGrigia
+          ? 'Raccomandata: paziente in zona grigia dove Lp(a) >180 mg/dL potrebbe reclassificare verso rischio più alto e modificare la decisione terapeutica. ESC raccomanda almeno una misurazione nella vita per tutti gli adulti.'
+          : 'Da considerare: ESC/EAS raccomandano la misurazione almeno una volta nella vita. Consente di identificare il rischio residuo da Lp(a) elevata indipendente da LDL.',
+        ref:'ESC 2021 Tabella 2 · ESC/EAS 2019 par. 6'
+      });
+    }
+  }
+
+  // ── 3. ABI (Ankle-Brachial Index) ─────────────────────────────────────────
+  const fumatore   = condizioni._smoking === 1;
+  const iperteso   = sbp >= 140;
+  const etaSoglia  = age >= 50;
+  const abiFattori = (fumatore && etaSoglia) || (hasDm && etaSoglia) || (iperteso && etaSoglia && (fumatore || hasDm));
+  if (hasAbi) {
+    // già selezionato — non suggerire, eventualmente commentare
+  } else if (!condizioni.ascvd) {
+    if (abiFattori) {
+      items.push({
+        prio:'red', icon:'🦵', name:'ABI — Indice Caviglia-Braccio',
+        reason:`Raccomandata: presenza di ${fumatore?'fumo':''}${fumatore && (hasDm||iperteso)?' + ':''}${hasDm?'diabete':''}${iperteso && (fumatore||hasDm)?' + ipertensione':''}${etaSoglia?' in soggetto ≥50 anni':''}. ABI < 0.9 diagnostica arteriopatia periferica e reclassifica a rischio molto alto (equivalente ASCVD). ABI > 1.4 segnala vasi calcificati non comprimibili.`,
+        ref:'ESC 2021 Raccomandazione I-B · AHA/ACC PAD Guidelines 2024'
+      });
+    } else if (!zonaGrigia) {
+      items.push({
+        prio:'yellow', icon:'🦵', name:'ABI — Indice Caviglia-Braccio',
+        reason:'Da considerare in presenza di sintomi di claudicatio o dolore agli arti inferiori. ABI < 0.9 = AOP documentata = rischio molto alto.',
+        ref:'ESC 2021 par. 4.1.4'
+      });
+    }
+  }
+
+  // ── 4. hsCRP (Proteina C reattiva ad alta sensibilità) ────────────────────
+  if (zonaGrigia || rl === 'high') {
+    items.push({
+      prio: zonaGrigia ? 'yellow' : 'grey', icon:'🔴', name:'hsCRP — Proteina C reattiva ad alta sensibilità',
+      reason: zonaGrigia
+        ? 'Da considerare: hsCRP ≥2 mg/L (in assenza di infezione/infiammazione acuta) indica rischio infiammatorio residuo e può rafforzare l\'indicazione alla statina anche con LDL ai limiti. Base del trial JUPITER (rosuvastatina in soggetti con LDL normale + hsCRP elevata).'
+        : 'Utilità limitata in questo profilo: il rischio è già alto; hsCRP non modifica la decisione terapeutica già definita.',
+      ref:'Ridker PM et al. (JUPITER), NEJM 2008 · ESC 2021 Tabella 2'
+    });
+  }
+
+  // ── 5. HbA1c / Glicemia a digiuno ─────────────────────────────────────────
+  if (!hasDm) {
+    const dmRisk = tg_mmol !== null && tg_mmol > 1.7;  // TG elevati = IR/DM2 sospetto
+    const hdlBasso = hdl_mmol && ((sex==='male' && hdl_mmol < 1.0) || (sex==='female' && hdl_mmol < 1.2));
+    const dismetabolico = dmRisk || hdlBasso || (sbp >= 130);
+    if (dismetabolico) {
+      items.push({
+        prio:'red', icon:'🩸', name:'HbA1c e glicemia a digiuno',
+        reason:`Raccomandata: il profilo metabolico del paziente (${[dmRisk?'TG elevati':'', hdlBasso?'HDL basso':'', sbp>=130?'PA ≥130 mmHg':''].filter(Boolean).join(', ')}) suggerisce possibile insulino-resistenza o diabete non diagnosticato. Il diabete classificherebbe questo paziente in una categoria di rischio superiore.`,
+        ref:'ESC 2021 par. 4.3.2 · ADA Standards of Care 2024'
+      });
+    } else {
+      items.push({
+        prio:'yellow', icon:'🩸', name:'HbA1c e glicemia a digiuno',
+        reason:'Da considerare come screening: il diabete non diagnosticato è frequente e influenza direttamente la classificazione del rischio CV. Raccomandata se non recentemente eseguita.',
+        ref:'ESC 2021 par. 4.3.2'
+      });
+    }
+  }
+
+  // ── 6. UACR ───────────────────────────────────────────────────────────────
+  if (!hasUacr && (hasDm || hasCkd || iperteso || rischioDef)) {
+    items.push({
+      prio: (hasDm || hasCkd) ? 'red' : 'yellow', icon:'🧪', name:'UACR — Albuminuria urinaria (campione spot)',
+      reason: hasDm
+        ? 'Raccomandata: nei pazienti diabetici l\'UACR è un esame annuale obbligatorio per valutare il danno renale precoce (CKM Stage 1–2). Microalbuminuria (UACR 30–299 mg/g) è fattore di rischio CV indipendente.'
+        : hasCkd
+          ? 'Raccomandata: l\'UACR completa la matrice KDIGO (eGFR × albuminuria) per la classificazione precisa del rischio renale-cardiovascolare.'
+          : 'Da considerare: l\'albuminuria intercetta il danno glomerulare precoce anche con eGFR conservato.',
+      ref:'KDIGO 2024 · AHA/ACC/ADA/ASN CKM 2026 · ESC 2021 Tabella 2'
+    });
+  }
+
+  // ── 7. cIMT / Ecografia carotidea ─────────────────────────────────────────
+  if (!hasAscvd && zonaGrigia) {
+    items.push({
+      prio:'yellow', icon:'🔊', name:'Ecografia carotidea (placche + cIMT)',
+      reason:'Da considerare: in pazienti a rischio basso-moderato, la presenza di placche carotidee (anche non stenotiche) reclassifica automaticamente a rischio molto alto secondo ESC 2021. Alternativa non radiante al CAC score.',
+      ref:'ESC 2021 Tabella 5 · Touboul et al., Cerebrovasc Dis 2012'
+    });
+  }
+
+  // ── Filtra: rimuovi elementi senza rilevanza clinica ──────────────────────
+  const relevant = items.filter(i => i.prio !== 'grey' || rischioDef);
+
+  if (relevant.length === 0) { card.style.display = 'none'; return; }
+
+  const prioLabel = {red:'🔴 Raccomandata', yellow:'🟡 Da considerare', grey:'⚪ Non indicata'};
+  const clsMap    = {red:'ind-red', yellow:'ind-yellow', grey:'ind-grey'};
+
+  list.innerHTML = relevant.map(item => `
+    <div class="indagine-item ${clsMap[item.prio]}">
+      <div class="indagine-icon">${item.icon}</div>
+      <div class="indagine-body">
+        <div class="indagine-name">${item.name}</div>
+        <div class="indagine-prio">${prioLabel[item.prio]}</div>
+        <div class="indagine-reason">${item.reason}</div>
+        <div class="indagine-ref">Riferimento: ${item.ref}</div>
+      </div>
+    </div>
+  `).join('');
+
+  card.style.display = 'block';
+}
+
+function setFilter(f) {
+  _activeFilter = f;
+  ['ok','statine','no-statine'].forEach(k => {
+    document.getElementById('flt-'+k).classList.toggle('active', k === f);
+  });
+  renderFarmaci();
+}
+
+// ─── Stampa / PDF — apre nuova finestra con referto completo ──────────────
+function stampaPDF() {
+  const ldl    = _currentLDL;
+  const target = _targetLDL;
+  const needPct= _targetPct;
+  if (!ldl || !target) return;
+
+  // Riduzione % necessaria (stessa logica di renderFarmaci)
+  const ridNecessaria = Math.max(0, Math.round((1 - target / ldl) * 100));
+  const ridReqEff = needPct ? Math.max(ridNecessaria, needPct) : ridNecessaria;
+
+  // Classifico tutti i farmaci con la stessa logica della tabella a video
+  const rows = FARMACI.map(f => {
+    const ldlConRidMin = Math.round(ldl * (1 - f.da / 100));
+    const ldlConRidMax = Math.round(ldl * (1 - f.a  / 100));
+    let stato;
+    if (f.a < ridReqEff)       stato = 'insufficiente';
+    else if (f.da > ridReqEff) stato = 'eccessivo';
+    else                        stato = 'indicato';
+    return {...f, ldlConRidMin, ldlConRidMax, stato};
+  });
+
+  // Applico lo STESSO filtro attivo — tutti e tre mostrano solo indicati
+  let stampaFarmaci = rows.filter(r => r.stato === 'indicato');
+  if (_activeFilter === 'statine')    stampaFarmaci = stampaFarmaci.filter(r => r.statina);
+  if (_activeFilter === 'no-statine') stampaFarmaci = stampaFarmaci.filter(r => !r.statina);
+
+  const rankMap = {indicato:0, eccessivo:1, insufficiente:2};
+  stampaFarmaci.sort((a,b) => {
+    if (rankMap[a.stato] !== rankMap[b.stato]) return rankMap[a.stato] - rankMap[b.stato];
+    return a.da - b.da;
+  });
+
+  // Etichetta leggibile del filtro applicato, da mostrare nel referto
+  const filtroLabels = {
+    ok:'Solo farmaci indicati (intervallo comprende la riduzione richiesta)',
+    statine:'Solo farmaci con statina (indicati)',
+    'no-statine':'Solo farmaci senza statina (indicati)'
+  };
+  const filtroLabel = filtroLabels[_activeFilter] || 'Tutti i farmaci';
+
+  // Raccoglie i dati già renderizzati nella pagina
+  const score2Text  = document.getElementById('risk-pct').textContent;
+  const algoText    = document.getElementById('algo-label').textContent;
+  const cognome     = document.getElementById('cognome').value.trim();
+  const nome        = document.getElementById('nome').value.trim();
+  const paziente    = [cognome, nome].filter(Boolean).join(' ');
+  const pazienteStr = paziente ? paziente : null;
+  const catScore2   = document.getElementById('risk-cat-score2').textContent;
+  const frBadge     = document.getElementById('fr-badge').textContent;
+  const frReason    = document.getElementById('fr-reason').innerHTML;
+  const targetRows  = document.getElementById('target-rows').innerHTML;
+  const detailRows  = document.getElementById('detail-rows').innerHTML;
+  const rdPct       = needPct ? ` + riduzione ≥${needPct}%` : '';
+
+  const statoLabels = {
+    indicato:      {txt:'✅ Indicato',  color:'#2d6a1f', bg:'#eaf3de'},
+    eccessivo:     {txt:'⬆ Eccessivo', color:'#1a4a8a', bg:'#e8f0fa'},
+    insufficiente: {txt:'❌ Insuff.',   color:'#8a877f', bg:'#f0ede8'}
+  };
+
+  const farmaciTable = stampaFarmaci.length === 0
+    ? '<p style="color:#8a4a00;font-size:12px">⚠ Nessun farmaco corrisponde al filtro selezionato.</p>'
+    : `<table style="width:100%;border-collapse:collapse;font-size:11px;margin-top:6px">
+        <thead><tr style="background:#f0ede8">
+          <th style="text-align:left;padding:5px 8px;border-bottom:2px solid #c4bfb5;font-size:10px;text-transform:uppercase;letter-spacing:.04em">Farmaco / Combinazione</th>
+          <th style="text-align:center;padding:5px 8px;border-bottom:2px solid #c4bfb5;font-size:10px;text-transform:uppercase">Riduz. LDL</th>
+          <th style="text-align:center;padding:5px 8px;border-bottom:2px solid #c4bfb5;font-size:10px;text-transform:uppercase">LDL post-tx</th>
+          <th style="text-align:center;padding:5px 8px;border-bottom:2px solid #c4bfb5;font-size:10px;text-transform:uppercase">Statina</th>
+          <th style="text-align:center;padding:5px 8px;border-bottom:2px solid #c4bfb5;font-size:10px;text-transform:uppercase">Stato</th>
+        </tr></thead>
+        <tbody>
+          ${stampaFarmaci.map((f,i) => {
+            const s = statoLabels[f.stato];
+            return `<tr style="background:${i%2===0?'#fff':'#f8f7f4'}">
+              <td style="padding:5px 8px;border-bottom:1px solid #e8e4dc">${f.nome}</td>
+              <td style="padding:5px 8px;border-bottom:1px solid #e8e4dc;text-align:center;font-family:monospace">${f.da}%–${f.a}%</td>
+              <td style="padding:5px 8px;border-bottom:1px solid #e8e4dc;text-align:center;font-family:monospace">${f.ldlConRidMax}–${f.ldlConRidMin} mg/dL</td>
+              <td style="padding:5px 8px;border-bottom:1px solid #e8e4dc;text-align:center">${f.statina?'Sì':'No'}</td>
+              <td style="padding:5px 8px;border-bottom:1px solid #e8e4dc;text-align:center"><span style="background:${s.bg};color:${s.color};font-weight:700;padding:2px 8px;border-radius:10px;font-size:10px">${s.txt}</span></td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>`;
+
+  const html = `<!DOCTYPE html><html lang="it"><head>
+  <meta charset="UTF-8">
+  <title>Referto Rischio Cardiovascolare${pazienteStr ? ' — ' + pazienteStr : ''} — ${new Date().toLocaleDateString('it-IT')}</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+    body{font-family:'IBM Plex Sans',sans-serif;font-size:12px;color:#1a1917;margin:0;padding:24px 32px;background:#fff}
+    h1{font-size:16px;font-weight:600;margin:0 0 2px}
+    .badge{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:2px 10px;border-radius:12px;background:#1a4a8a;color:#fff;margin-bottom:8px}
+    .subtitle{font-size:11px;color:#8a877f;margin-bottom:16px}
+    .section{margin-bottom:14px}
+    .section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#8a877f;border-bottom:1px solid #d8d4cc;padding-bottom:3px;margin-bottom:8px}
+    .score2-box{display:inline-block;padding:10px 18px;border-radius:8px;border:1px solid #d8d4cc;margin-bottom:4px}
+    .score2-pct{font-size:2.2rem;font-weight:600;font-family:monospace;line-height:1}
+    .risk-badge{display:inline-block;font-size:10px;font-weight:700;padding:3px 12px;border-radius:12px;margin-left:10px;vertical-align:middle}
+    .fr-box{padding:10px 14px;border-radius:8px;border:1px solid #d8d4cc;margin-bottom:6px}
+    .fr-level{font-size:13px;font-weight:600;margin-bottom:4px}
+    .fr-reason{font-size:11px;color:#5a574f;line-height:1.5}
+    .target-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0ede8;font-size:11px}
+    .target-row:last-child{border-bottom:none}
+    .target-label{color:#5a574f}
+    .target-val{font-family:monospace;font-weight:600;color:#1a4a8a}
+    .detail-row{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #f0ede8;font-size:11px}
+    .detail-row:last-child{border-bottom:none}
+    .detail-label{color:#5a574f}
+    .detail-val{font-family:monospace}
+    .disclaimer{font-size:9.5px;color:#8a877f;line-height:1.5;border-top:1px solid #d8d4cc;margin-top:14px;padding-top:8px}
+    .bib-group{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#1a4a8a;margin:10px 0 4px;padding-bottom:2px;border-bottom:1px solid #e8f0fa}
+    .bib-entry{display:flex;gap:8px;padding:3px 0;border-bottom:1px solid #f5f4f0;font-size:10px;line-height:1.5;color:#5a574f}
+    .bib-entry:last-child{border-bottom:none}
+    .bib-n{flex-shrink:0;width:16px;font-family:monospace;font-weight:700;color:#8a877f;font-size:9px;padding-top:1px}
+    .bib-entry em{font-style:italic}
+    .bib-entry strong{color:#1a1917}
+    @media print{body{padding:0} button{display:none!important} @page{margin:20mm 22mm;size:A4}}
+  </style>
+</head><body>
+  <div class="badge">ESC Guidelines 2021</div>
+  <h1>Referto — Rischio Cardiovascolare Globale</h1>
+  ${pazienteStr ? `<div style="font-size:15px;font-weight:600;color:#1a1917;margin:6px 0 2px;letter-spacing:.01em">Paziente: ${pazienteStr.toUpperCase()}</div>` : ''}
+  <div class="subtitle">SCORE2 / SCORE2-OP · Generato il ${new Date().toLocaleDateString('it-IT')} alle ${new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'})}</div>
+
+  <div style="text-align:right;margin-bottom:12px">
+    <button onclick="window.print()" style="font-family:sans-serif;font-size:13px;font-weight:600;padding:8px 20px;background:#1a4a8a;color:#fff;border:none;border-radius:6px;cursor:pointer">🖨 Stampa / Salva PDF</button>
+  </div>
+
+  <div class="section">
+    <div class="section-title">① Punteggio SCORE2</div>
+    <div class="score2-box">
+      <div class="score2-pct">${score2Text}</div>
+      <div style="font-size:11px;color:#5a574f;margin-top:2px">rischio a 10 anni · ${algoText}</div>
+    </div>
+    <span class="risk-badge" style="background:#e8f0fa;color:#1a4a8a">${catScore2}</span>
+  </div>
+
+  <div class="section">
+    <div class="section-title">② Classificazione rischio CV globale (ESC 2021)</div>
+    <div class="fr-box">
+      <div class="fr-level">${frBadge}</div>
+      <div class="fr-reason">${frReason}</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">③ Target terapeutici ESC 2021</div>
+    ${targetRows}
+  </div>
+
+  <div class="section">
+    <div class="section-title">④ Opzioni terapeutiche ipolipemizzanti — LDL ${Math.round(ldl)} mg/dL → target &lt;${target} mg/dL${rdPct}</div>
+    <p style="font-size:11px;color:#5a574f;margin-bottom:6px">
+      <strong style="color:#1a4a8a;font-size:13px;font-family:monospace">Riduzione necessaria: ${ridReqEff}%</strong>
+      &nbsp;·&nbsp; Filtro applicato: <strong>${filtroLabel}</strong> &nbsp;·&nbsp; ${stampaFarmaci.length} farmaci visualizzati
+    </p>
+    ${farmaciTable}
+    <p style="font-size:9.5px;color:#8a877f;margin-top:4px">⚠ Simvastatina 80 mg: uso sconsigliato da ESC per rischio miopatia. Valutare sempre tollerabilità individuale e interazioni farmacologiche.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">⑤ Dati inseriti</div>
+    ${detailRows}
+  </div>
+
+  <div class="section" style="margin-top:14px">
+    <div class="section-title">⑥ Indagini raccomandate</div>
+    ${(()=>{
+      const indCard = document.getElementById('indagini-card');
+      if (!indCard || indCard.style.display === 'none') return '<p style="font-size:11px;color:#8a877f">Nessuna indagine specifica raccomandata per questo profilo.</p>';
+      const items = document.querySelectorAll('#indagini-list .indagine-item');
+      if (!items.length) return '<p style="font-size:11px;color:#8a877f">Nessuna indagine specifica raccomandata.</p>';
+      const prioLabel = {'ind-red':'🔴 Raccomandata','ind-yellow':'🟡 Da considerare','ind-grey':'⚪ Non indicata'};
+      return Array.from(items).map(el => {
+        const prio = ['ind-red','ind-yellow','ind-grey'].find(c => el.classList.contains(c)) || 'ind-grey';
+        const name = el.querySelector('.indagine-name')?.textContent || '';
+        const prioTxt = el.querySelector('.indagine-prio')?.textContent || '';
+        const reason = el.querySelector('.indagine-reason')?.textContent || '';
+        const ref = el.querySelector('.indagine-ref')?.textContent || '';
+        return `<div style="padding:6px 0;border-bottom:1px solid #f0ede8;font-size:11px">
+          <strong>${name}</strong> <span style="font-size:9px;color:#8a877f">${prioTxt}</span><br>
+          <span style="color:#5a574f">${reason}</span><br>
+          <em style="color:#8a877f;font-size:10px">${ref}</em>
+        </div>`;
+      }).join('');
+    })()}
+  </div>
+
+  <div class="disclaimer">
+    <strong>Avvertenza clinica.</strong> Questo referto è generato automaticamente da uno strumento di supporto decisionale basato su SCORE2/SCORE2-OP (ESC 2021). Non sostituisce il giudizio clinico del medico. I valori di riduzione LDL sono stime di popolazione (VOYAGER database, ACC/AHA 2018, ESC/EAS 2021); la risposta individuale può variare. Riferimento: <em>Eur Heart J</em> 2021;42(34):3227–3337.
+  </div>
+
+  <div class="section" style="margin-top:16px">
+    <div class="section-title">⑥ Bibliografia essenziale</div>
+
+    <div class="bib-group">Algoritmi di rischio</div>
+    <div class="bib-entry"><span class="bib-n">1</span><span>SCORE2 Working Group &amp; ESC CV Risk Collaboration. <strong>SCORE2 risk prediction algorithms.</strong> <em>Eur Heart J.</em> 2021;42(25):2439–2454. DOI: 10.1093/eurheartj/ehab309</span></div>
+    <div class="bib-entry"><span class="bib-n">2</span><span>SCORE2-OP Working Group. <strong>SCORE2-OP risk prediction algorithms.</strong> <em>Eur Heart J.</em> 2021;42(25):2455–2467. DOI: 10.1093/eurheartj/ehab312</span></div>
+
+    <div class="bib-group">Linee guida ESC — Prevenzione e dislipidemie</div>
+    <div class="bib-entry"><span class="bib-n">3</span><span>Visseren FLJ et al. <strong>2021 ESC Guidelines on cardiovascular disease prevention.</strong> <em>Eur Heart J.</em> 2021;42(34):3227–3337. DOI: 10.1093/eurheartj/ehab484</span></div>
+    <div class="bib-entry"><span class="bib-n">4</span><span>Mach F et al. <strong>2019 ESC/EAS Guidelines for the management of dyslipidaemias.</strong> <em>Eur Heart J.</em> 2020;41(1):111–188. DOI: 10.1093/eurheartj/ehz455</span></div>
+    <div class="bib-entry"><span class="bib-n">5</span><span>Ray KK et al. <strong>2023 Focused update of the 2019 ESC/EAS Guidelines for dyslipidaemias.</strong> <em>Eur Heart J.</em> 2023;44(30):2767–2769. DOI: 10.1093/eurheartj/ehad192</span></div>
+
+    <div class="bib-group">Farmaci ipolipemizzanti</div>
+    <div class="bib-entry"><span class="bib-n">6</span><span>Adams SP et al. <strong>Lipid-lowering efficacy of rosuvastatin (VOYAGER).</strong> <em>Cochrane Database Syst Rev.</em> 2014;(3):CD010254.</span></div>
+    <div class="bib-entry"><span class="bib-n">7</span><span>Grundy SM et al. <strong>2018 AHA/ACC Guideline on the Management of Blood Cholesterol.</strong> <em>Circulation.</em> 2019;139(25):e1082–e1143. DOI: 10.1161/CIR.0000000000000625</span></div>
+    <div class="bib-entry"><span class="bib-n">8</span><span>Nissen SE et al.; CLEAR Outcomes. <strong>Bempedoic acid and cardiovascular outcomes in statin-intolerant patients.</strong> <em>N Engl J Med.</em> 2023;388(15):1353–1364. DOI: 10.1056/NEJMoa2215024</span></div>
+    <div class="bib-entry"><span class="bib-n">9</span><span>Ray KK et al.; ORION-10 &amp; 11. <strong>Two phase 3 trials of inclisiran in patients with elevated LDL.</strong> <em>N Engl J Med.</em> 2020;382(16):1507–1519. DOI: 10.1056/NEJMoa1912387</span></div>
+    <div class="bib-entry"><span class="bib-n">10</span><span>Sabatine MS et al.; FOURIER. <strong>Evolocumab and clinical outcomes in patients with cardiovascular disease.</strong> <em>N Engl J Med.</em> 2017;376(18):1713–1722. DOI: 10.1056/NEJMoa1615664</span></div>
+
+    <div class="bib-group">eGFR, KDIGO e screening FH</div>
+    <div class="bib-entry"><span class="bib-n">11</span><span>Inker LA et al.; CKD-EPI Collaboration. <strong>New creatinine-based equations to estimate GFR without race (CKD-EPI 2021).</strong> <em>N Engl J Med.</em> 2021;385(19):1737–1749. DOI: 10.1056/NEJMoa2102953</span></div>
+    <div class="bib-entry"><span class="bib-n">11b</span><span>KDIGO CKD Work Group. <strong>KDIGO 2024 Clinical Practice Guideline for the Evaluation and Management of CKD.</strong> <em>Kidney Int.</em> 2024;105(4S):S117–S314. DOI: 10.1016/j.kint.2023.10.018</span></div>
+    <div class="bib-entry"><span class="bib-n">11c</span><span>Ndumele CE et al. <strong>2026 AHA/ACC/ADA/ASN Guideline for CKM Syndrome.</strong> <em>JACC.</em> 2026;87(22S):e1889–e2007.</span></div>
+    <div class="bib-entry"><span class="bib-n">11d</span><span>Khan SS et al. <strong>Development and validation of the AHA's PREVENT equations.</strong> <em>Circulation.</em> 2024;149(6):430–449. DOI: 10.1161/CIRCULATIONAHA.123.067626</span></div>
+    <div class="bib-entry"><span class="bib-n">12</span><span>Nordestgaard BG et al.; EAS Consensus Panel. <strong>Familial hypercholesterolaemia is underdiagnosed and undertreated in the general population.</strong> <em>Eur Heart J.</em> 2013;34(45):3478–3490. DOI: 10.1093/eurheartj/eht273</span></div>
+  </div>
+</body></html>`;
+
+  const w = window.open('', '_blank', 'width=820,height=900,scrollbars=yes');
+  if (w) {
+    w.document.write(html);
+    w.document.close();
+  } else {
+    alert('Il browser ha bloccato la finestra popup.\nAutorizza i popup per questo sito e riprova.');
+  }
+}
+</script>
+</body>
+</html>
