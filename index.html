@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedicAPPS - Pannello Strumenti</title>
+    <style>
+        :root {
+            --primary: #0077b6;
+            --primary-hover: #03045e;
+            --bg: #f8f9fa;
+            --text: #212529;
+            --card-bg: #ffffff;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        h1 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+
+        p.subtitle {
+            color: #6c757d;
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+        }
+
+        .apps-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .app-card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-left: 5px solid var(--primary);
+            text-align: left;
+        }
+
+        .app-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        }
+
+        .app-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--primary-hover);
+            margin-bottom: 5px;
+        }
+
+        .app-desc {
+            color: #495057;
+            font-size: 0.95rem;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>MedicAPPS</h1>
+        <p class="subtitle">Seleziona uno strumento medico specialistico</p>
+
+        <div class="apps-grid">
+            
+            <!-- Scheda App 1 -->
+            <a href="aware_antibiotici_v9.html" class="app-card">
+                <div class="app-title">Aware Antibiotici</div>
+                <p class="app-desc">Linee guida e strumenti per l'orientamento alla terapia antibiotica.</p>
+            </a>
+
+            <!-- Scheda App 2 -->
+            <a href="score2_cardiovascular_risk.html" class="app-card">
+                <div class="app-title">Score2 Cardiovascular Risk</div>
+                <p class="app-desc">Calcolatore del rischio cardiovascolare secondo l'algoritmo SCORE2.</p>
+            </a>
+
+            <!-- Scheda App 3 -->
+            <a href="triage troponina esc.html" class="app-card">
+                <div class="app-title">Triage Troponina ESC</div>
+                <p class="app-desc">Algoritmo di triage per la gestione della troponina secondo le linee guida ESC.</p>
+            </a>
+
+        </div>
+    </div>
+
+</body>
+</html>
