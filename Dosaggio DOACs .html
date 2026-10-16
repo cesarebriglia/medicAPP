@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#2f6bff">
+<meta name="description" content="Dosaggio dei DOAC in fibrillazione atriale ed embolia polmonare/TVP. Offline.">
+<title>Dosaggio DOAC — FA ed EP/TVP</title>
+<style>
+:root{
+ --kimi-color-text-primary:#19191c; --kimi-color-text-secondary:#4c4c52; --kimi-color-text-tertiary:#7d7d85; --kimi-color-text-quaternary:#a8a8b0;
+ --kimi-color-surface:#ffffff; --kimi-color-surface-muted:#f3f3f5; --kimi-color-surface-raised:#ffffff; --kimi-color-surface-strong:#eaeaee;
+ --kimi-color-border:#e2e2e6;
+ --kimi-color-danger:#d5493f; --kimi-color-positive:#2e9e5e; --kimi-color-warning:#d68a1f; --kimi-color-accent:#2f6bff;
+ --kimi-font-sans:-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+ :root{
+  --kimi-color-text-primary:#ededf0; --kimi-color-text-secondary:#b9b9c1; --kimi-color-text-tertiary:#8d8d97; --kimi-color-text-quaternary:#5f5f68;
+  --kimi-color-surface:#1e1e23; --kimi-color-surface-muted:#2a2a31; --kimi-color-surface-raised:#26262c; --kimi-color-surface-strong:#34343c;
+  --kimi-color-border:#3a3a42;
+  --kimi-color-danger:#e06055; --kimi-color-positive:#3fbf77; --kimi-color-warning:#e09a3a; --kimi-color-accent:#5b8cff;
+ }
+}
+html{background:var(--kimi-color-surface)}
+body{margin:0;padding:20px;max-width:880px;margin-left:auto;margin-right:auto;background:var(--kimi-color-surface);font-family:var(--kimi-font-sans);color:var(--kimi-color-text-primary)}
+button,input,select,textarea{font:inherit}
+[hidden]{display:none!important}
+.card{border:1px solid var(--kimi-color-border);border-radius:12px;padding:16px;background:var(--kimi-color-surface-raised)}
+.fld label{display:block;font-size:12px;color:var(--kimi-color-text-tertiary);margin-bottom:4px}
+.fld input,.fld select{width:100%;box-sizing:border-box;padding:8px 10px;border:1px solid var(--kimi-color-border);border-radius:10px;background:var(--kimi-color-surface-raised);color:var(--kimi-color-text-primary);font-variant-numeric:tabular-nums}
+.fld input:focus,.fld select:focus{outline:2px solid var(--kimi-color-text-primary);outline-offset:-1px}
+.btn{padding:8px 14px;border:1px solid var(--kimi-color-border);border-radius:10px;background:var(--kimi-color-surface-raised);color:var(--kimi-color-text-primary);cursor:pointer;font-size:13px}
+.btn:hover{background:var(--kimi-color-surface-muted)}
+.chip{display:inline-block;padding:2px 8px;border-radius:6px;font-size:12px;font-weight:500}
+.chip.accent{background:color-mix(in srgb,var(--kimi-color-accent) 12%,transparent);color:var(--kimi-color-accent)}
+.chip.positive{background:color-mix(in srgb,var(--kimi-color-positive) 12%,transparent);color:var(--kimi-color-positive)}
+.chip.warning{background:color-mix(in srgb,var(--kimi-color-warning) 12%,transparent);color:var(--kimi-color-warning)}
+.chip.danger{background:color-mix(in srgb,var(--kimi-color-danger) 12%,transparent);color:var(--kimi-color-danger)}
+.meta{font-size:12px;color:var(--kimi-color-text-tertiary)}
+.kv{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;border-bottom:1px solid var(--kimi-color-border)}
+.kv:last-child{border-bottom:none}
+.note{font-size:13px;color:var(--kimi-color-text-secondary);padding:4px 0 4px 14px;position:relative}
+.note:before{content:"";position:absolute;left:0;top:11px;width:6px;height:6px;border-radius:3px;background:var(--kimi-color-warning)}
+.note.bad:before{background:var(--kimi-color-danger)}
+.note.info:before{background:var(--kimi-color-accent)}
+/* specifici app */
+.hdr{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.seg{display:flex;gap:8px;margin:12px 0}
+.btn.on{background:var(--kimi-color-accent);border-color:var(--kimi-color-accent);color:#fff}
+.sec{font-size:14px;font-weight:500;margin:20px 0 8px}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.chk{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--kimi-color-border);border-radius:10px;font-size:13px;cursor:pointer;background:var(--kimi-color-surface-raised)}
+.chk input{width:16px;height:16px;accent-color:var(--kimi-color-accent)}
+.chk:hover{background:var(--kimi-color-surface-muted)}
+.go{width:100%;margin-top:16px;padding:12px;background:var(--kimi-color-accent);border-color:var(--kimi-color-accent);color:#fff;font-size:15px;font-weight:500}
+.go:hover{background:var(--kimi-color-accent);opacity:.9}
+.rc{margin-bottom:12px;border-left-width:3px}
+.rc.ok{border-left-color:var(--kimi-color-positive)}
+.rc.wn{border-left-color:var(--kimi-color-warning)}
+.rc.no{border-left-color:var(--kimi-color-danger)}
+.dn{font-size:15px;font-weight:500;display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.dose{font-size:15px;font-weight:500;font-variant-numeric:tabular-nums}
+.ph{background:var(--kimi-color-surface-muted);border-radius:10px;padding:8px 10px}
+.ph.sel{outline:2px solid var(--kimi-color-accent)}
+.ph2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:6px 0}
+.alert{border:1px solid var(--kimi-color-danger);background:color-mix(in srgb,var(--kimi-color-danger) 10%,transparent);border-radius:12px;padding:14px;margin-bottom:12px;font-size:13px}
+.alert.w{border-color:var(--kimi-color-warning);background:color-mix(in srgb,var(--kimi-color-warning) 10%,transparent)}
+.alert b{font-weight:500;font-size:14px}
+.alert ul{margin:6px 0 0 18px;padding:0}
+#refs{font-size:13px;line-height:1.7;margin:0;padding-left:20px}
+#refs a{color:var(--kimi-color-accent)}
+@media(max-width:640px){.ph2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="hdr">
+ <div style="font-size:17px;font-weight:500">Dosaggio DOAC — fibrillazione atriale ed EP/TVP</div>
+ <span class="chip accent">ESC 2024 FA · ESC 2019 EP · EHRA 2021</span>
+</div>
+
+<div class="seg">
+ <button class="btn on" id="bFA" onclick="setMode('FA')">Fibrillazione atriale</button>
+ <button class="btn" id="bPE" onclick="setMode('PE')">Embolia polmonare / TVP</button>
+</div>
+<div class="card meta" id="info" style="margin-bottom:4px"></div>
+
+<div class="sec">Dati paziente e funzione renale</div>
+<div class="cgrid">
+ <div class="fld"><label for="eta">Età (anni) *</label><input type="number" id="eta" min="18" max="110" placeholder="es. 65"></div>
+ <div class="fld"><label for="sesso">Sesso *</label><select id="sesso"><option value="">Seleziona…</option><option value="M">Maschio</option><option value="F">Femmina</option></select></div>
+ <div class="fld"><label for="peso">Peso (kg) *</label><input type="number" id="peso" min="30" max="250" step="0.5" placeholder="es. 78"></div>
+ <div class="fld"><label for="cr">Creatinina (mg/dL) *</label><input type="number" id="cr" min="0.2" max="15" step="0.01" placeholder="es. 1.2"></div>
+</div>
+<div class="card" id="renal" hidden style="margin-top:12px">
+ <div class="kv"><span class="meta">Cockcroft-Gault (peso reale) — base del dosaggio DOAC</span><span class="dose"><span id="cgV">—</span> mL/min</span></div>
+ <div class="kv"><span class="meta">eGFR CKD-EPI 2021</span><span class="dose"><span id="ekV">—</span> mL/min/1.73 m²</span></div>
+</div>
+
+<div class="sec">Funzione epatica (Child-Pugh) — compilare tutti i campi</div>
+<div class="cgrid">
+ <div class="fld"><label for="bili">Bilirubina (mg/dL)</label><select id="bili" onchange="cpCalc()"><option value="">—</option><option value="1">&lt;2 (1)</option><option value="2">2–3 (2)</option><option value="3">&gt;3 (3)</option></select></div>
+ <div class="fld"><label for="alb">Albumina (g/dL)</label><select id="alb" onchange="cpCalc()"><option value="">—</option><option value="1">&gt;3.5 (1)</option><option value="2">2.8–3.5 (2)</option><option value="3">&lt;2.8 (3)</option></select></div>
+ <div class="fld"><label for="inr">INR</label><select id="inr" onchange="cpCalc()"><option value="">—</option><option value="1">&lt;1.7 (1)</option><option value="2">1.7–2.3 (2)</option><option value="3">&gt;2.3 (3)</option></select></div>
+ <div class="fld"><label for="asc">Ascite</label><select id="asc" onchange="cpCalc()"><option value="">—</option><option value="1">Assente (1)</option><option value="2">Lieve / controllata (2)</option><option value="3">Moderata-severa (3)</option></select></div>
+ <div class="fld"><label for="enc">Encefalopatia</label><select id="enc" onchange="cpCalc()"><option value="">—</option><option value="1">Assente (1)</option><option value="2">Grado I–II (2)</option><option value="3">Grado III–IV (3)</option></select></div>
+</div>
+<div class="card" id="cp" hidden style="margin-top:12px">
+ <div class="kv"><span class="meta">Punteggio Child-Pugh</span><span class="dose" id="cpS">—</span></div>
+ <div class="kv"><span class="meta">Classe</span><span class="dose" id="cpC">—</span></div>
+</div>
+
+<div id="pe" hidden>
+ <div class="sec">Parametri specifici EP/TVP</div>
+ <div class="cgrid">
+  <div class="fld"><label for="fase">Fase di trattamento</label><select id="fase"><option value="iniziale">Iniziale (carico)</option><option value="mantenimento">Mantenimento</option></select></div>
+  <div class="fld"><label for="pare">Anticoagulazione parenterale ≥5 giorni già eseguita?</label><select id="pare"><option value="no">No (inizio diretto)</option><option value="si">Sì (LMWH/eparina)</option></select></div>
+  <div class="fld"><label for="inst">Instabilità emodinamica / trombolisi prevista?</label><select id="inst"><option value="no">No</option><option value="si">Sì (shock/ipotensione)</option></select></div>
+  <div class="fld"><label for="neo">Neoplasia attiva?</label><select id="neo"><option value="no">No</option><option value="si">Sì</option></select></div>
+ </div>
+</div>
+
+<div class="sec">Farmaci concomitanti (interazioni CYP3A4 / P-gp)</div>
+<div class="cgrid">
+ <label class="chk"><input type="checkbox" id="verapamil"> Verapamil</label>
+ <label class="chk"><input type="checkbox" id="amiodarone"> Amiodarone</label>
+ <label class="chk"><input type="checkbox" id="azoli"> Ketoconazolo / itraconazolo</label>
+ <label class="chk"><input type="checkbox" id="induttori"> Rifampicina / carbamazepina / fenitoina</label>
+</div>
+
+<div class="sec">Controindicazioni assolute ai DOAC (→ LMWH / warfarin)</div>
+<div class="cgrid">
+ <label class="chk"><input type="checkbox" id="c0"> Valvola cardiaca meccanica</label>
+ <label class="chk"><input type="checkbox" id="c1"> Stenosi mitralica reumatica moderata-grave</label>
+ <label class="chk"><input type="checkbox" id="c2"> APS tripla positiva</label>
+ <label class="chk"><input type="checkbox" id="c3"> Gravidanza o allattamento</label>
+ <label class="chk"><input type="checkbox" id="c4"> Sanguinamento attivo maggiore</label>
+ <label class="chk"><input type="checkbox" id="c5"> Coagulopatia epatica / piastrine &lt;50.000</label>
+ <label class="chk"><input type="checkbox" id="c6"> Dialisi</label>
+</div>
+
+<button class="btn go" onclick="calc()">Calcola terapia anticoagulante</button>
+<div class="note bad" id="err" hidden style="margin-top:8px"></div>
+<div id="res" hidden style="margin-top:20px"></div>
+
+<details class="card" style="margin-top:20px">
+ <summary style="font-size:14px;font-weight:500;cursor:pointer">Come leggere i risultati</summary>
+ <div style="margin-top:10px">
+  <div class="note"><b style="font-weight:500">Utilizzabile</b> (verde): dose standard, nessuna azione particolare.</div>
+  <div class="note"><b style="font-weight:500">Dose modificata</b> (giallo): si prescrive la dose mostrata nella card, non quella piena. Il motivo (età, peso, CrCl, farmaci) è indicato sotto la dose.</div>
+  <div class="note"><b style="font-weight:500">Cautela / verifica</b> (giallo): la dose non cambia, ma c'è qualcosa da controllare prima o durante la terapia: scelta tra dose piena e ridotta lasciata al medico (dabigatran), Child-Pugh B o CrCl 15–29 (monitoraggio stretto di funzione epatica/renale e sanguinamento), lead-in parenterale ≥5 giorni non ancora eseguito (dabigatran ed edoxaban nell'EP/TVP).</div>
+  <div class="note"><b style="font-weight:500">Dose modificata · verifica</b>: entrambe le cose, la dose è ridotta e c'è anche un punto da controllare.</div>
+  <div class="note bad"><b style="font-weight:500">Interazione sconsigliata</b> (azoli, induttori forti come rifampicina): la dose non viene corretta, conviene valutare un altro DOAC o un'altra terapia.</div>
+  <div class="note bad"><b style="font-weight:500">Non utilizzabile</b> (rosso): controindicato o non raccomandato in questo paziente; la causa è indicata nella card.</div>
+ </div>
+</details>
+
+<div class="card" style="margin-top:12px">
+ <div style="font-size:14px;font-weight:500;margin-bottom:8px">Bibliografia</div>
+ <ol id="refs"></ol>
+</div>
+
+<div class="meta" style="margin-top:10px">Strumento di supporto a scopo didattico: non sostituisce il giudizio clinico né le schede tecniche (SmPC) aggiornate. Verificare sempre dosi, interazioni e controindicazioni prima della prescrizione.</div>
+<div class="meta" style="margin-top:6px;text-align:center;opacity:.75">Ideato dal dr. C.Briglia (cesarebriglia@gmail.com) con l'apporto di Claude - Anthropic</div>
+
+<script>
+var $=function(i){return document.getElementById(i)}, mode='FA';
+var INFO={
+ FA:'<b>Modalità FA.</b> Calcola Cockcroft-Gault (base del dosaggio), CKD-EPI 2021 e Child-Pugh. I DOAC sono indicati nella FA non valvolare con punteggio di rischio tromboembolico adeguato.',
+ PE:'<b>Modalità EP/TVP.</b> Indica fase iniziale e di mantenimento, necessità di lead-in parenterale e aggiustamenti renali/epatici/farmacologici.'
+};
+var CTRL=['Valvola meccanica','Stenosi mitralica reumatica moderata-grave','APS tripla positiva','Gravidanza/allattamento','Sanguinamento attivo maggiore','Coagulopatia epatica / piastrinopenia <50.000','Dialisi'];
+var REFS=[
+ ['Van Gelder IC, Rienstra M, Bunting KV, et al. 2024 ESC Guidelines for the management of atrial fibrillation. Eur Heart J 2024;45:3314–3414.','10.1093/eurheartj/ehae176'],
+ ['Konstantinides SV, Meyer G, Becattini C, et al. 2019 ESC Guidelines for the diagnosis and management of acute pulmonary embolism. Eur Heart J 2020;41:543–603.','10.1093/eurheartj/ehz405'],
+ ['Steffel J, Collins R, Antz M, et al. 2021 EHRA Practical Guide on the use of non-vitamin K antagonist oral anticoagulants in patients with atrial fibrillation. Europace 2021;23:1612–1676.','10.1093/europace/euab065'],
+ ['Stevens SM, Woller SC, Baumann Kreuziger L, et al. Antithrombotic therapy for VTE disease: second update of the CHEST guideline. Chest 2021;160:e545–e608.','10.1016/j.chest.2021.07.055'],
+ ['Martin KA, Beyer-Westendorf J, Davidson BL, et al. Use of DOACs in patients with obesity for treatment and prevention of VTE: updated communication from the ISTH SSC. J Thromb Haemost 2021;19:1874–1882.','10.1111/jth.15358'],
+ ['Granger CB, Alexander JH, McMurray JJV, et al. Apixaban versus warfarin in patients with atrial fibrillation (ARISTOTLE). N Engl J Med 2011;365:981–992.','10.1056/NEJMoa1107039'],
+ ['Patel MR, Mahaffey KW, Garg J, et al. Rivaroxaban versus warfarin in nonvalvular atrial fibrillation (ROCKET AF). N Engl J Med 2011;365:883–891.','10.1056/NEJMoa1009638'],
+ ['Connolly SJ, Ezekowitz MD, Yusuf S, et al. Dabigatran versus warfarin in patients with atrial fibrillation (RE-LY). N Engl J Med 2009;361:1139–1151.','10.1056/NEJMoa0905561'],
+ ['Giugliano RP, Ruff CT, Braunwald E, et al. Edoxaban versus warfarin in patients with atrial fibrillation (ENGAGE AF-TIMI 48). N Engl J Med 2013;369:2093–2104.','10.1056/NEJMoa1310907'],
+ ['Agnelli G, Buller HR, Cohen A, et al. Oral apixaban for the treatment of acute venous thromboembolism (AMPLIFY). N Engl J Med 2013;369:799–808.','10.1056/NEJMoa1302507'],
+ ['EINSTEIN–PE Investigators. Oral rivaroxaban for the treatment of symptomatic pulmonary embolism. N Engl J Med 2012;366:1287–1297.','10.1056/NEJMoa1113572'],
+ ['Schulman S, Kakkar AK, Goldhaber SZ, et al. Treatment of acute venous thromboembolism with dabigatran or warfarin and pooled analysis (RE-COVER II). Circulation 2014;129:764–772.','10.1161/CIRCULATIONAHA.113.004450'],
+ ['Hokusai-VTE Investigators. Edoxaban versus warfarin for the treatment of symptomatic venous thromboembolism. N Engl J Med 2013;369:1406–1415.','10.1056/NEJMoa1306638'],
+ ['Eikelboom JW, Connolly SJ, Brueckmann M, et al. Dabigatran versus warfarin in patients with mechanical heart valves (RE-ALIGN). N Engl J Med 2013;369:1206–1214.','10.1056/NEJMoa1300615'],
+ ['Pengo V, Denas G, Zoppellaro G, et al. Rivaroxaban vs warfarin in high-risk patients with antiphospholipid syndrome (TRAPS). Blood 2018;132:1365–1371.','10.1182/blood-2018-04-848333'],
+ ['Cockcroft DW, Gault MH. Prediction of creatinine clearance from serum creatinine. Nephron 1976;16:31–41.','10.1159/000180580'],
+ ['Inker LA, Eneanya ND, Coresh J, et al. New creatinine- and cystatin C–based equations to estimate GFR without race. N Engl J Med 2021;385:1737–1749.','10.1056/NEJMoa2102953'],
+ ['Pugh RN, Murray-Lyon IM, Dawson JL, et al. Transection of the oesophagus for bleeding oesophageal varices. Br J Surg 1973;60:646–649.','10.1002/bjs.1800600817']
+];
+var SMPC=[['EMA — Eliquis (apixaban): riassunto delle caratteristiche del prodotto','eliquis'],['EMA — Xarelto (rivaroxaban): riassunto delle caratteristiche del prodotto','xarelto'],['EMA — Pradaxa (dabigatran etexilato): riassunto delle caratteristiche del prodotto','pradaxa'],['EMA — Lixiana (edoxaban): riassunto delle caratteristiche del prodotto','lixiana']];
+(function(){
+ var h='';
+ REFS.forEach(function(r){h+='<li>'+r[0]+' <a href="https://doi.org/'+r[1]+'" target="_blank" rel="noopener">doi:'+r[1]+'</a></li>'});
+ SMPC.forEach(function(s){h+='<li><a href="https://www.ema.europa.eu/en/medicines/human/EPAR/'+s[1]+'" target="_blank" rel="noopener">'+s[0]+'</a></li>'});
+ $('refs').innerHTML=h; $('info').innerHTML=INFO.FA;
+ // i risultati si nascondono se i dati cambiano (evita dosaggi obsoleti)
+ ['input','change'].forEach(function(ev){document.addEventListener(ev,function(e){if(e.target.closest&&!e.target.closest('#res'))$('res').hidden=true})});
+})();
+
+function setMode(m){
+ mode=m; $('bFA').classList.toggle('on',m==='FA'); $('bPE').classList.toggle('on',m==='PE');
+ $('pe').hidden=(m!=='PE'); $('info').innerHTML=INFO[m]; $('res').hidden=true;
+}
+
+/* === Formule === */
+function cockcroft(eta,peso,cr,f){return Math.round(((140-eta)*peso/(cr*72))*(f?0.85:1)*10)/10}
+function ckdepi(eta,cr,f){ // CKD-EPI 2021 (senza fattore razza)
+ var k=f?0.7:0.9,a=f?-0.241:-0.302,r=cr/k;
+ return Math.round(142*Math.pow(Math.min(r,1),a)*Math.pow(Math.max(r,1),-1.2)*Math.pow(0.9938,eta)*(f?1.012:1));
+}
+function cpCalc(){
+ var ids=['bili','alb','inr','asc','enc'],t=0;
+ for(var i=0;i<5;i++){var v=parseInt($(ids[i]).value);if(!v){$('cp').hidden=true;return null}t+=v}
+ var c=t<=6?'A':t<=9?'B':'C';
+ $('cpS').textContent=t;$('cpC').textContent='Classe '+c;$('cp').hidden=false;return c;
+}
+
+/* === Helper === */
+function mk(n){return{nome:n,status:'approved',dose:'',fase:null,mod:false,crit:[],avv:[],note:[]}}
+function bad(d,t){d.status='contraindicated';d.avv.push(t);return d}
+function warn(d,t){if(d.status==='approved')d.status='warning';d.avv.push(t);return d}
+function adj(d,t,m){if(d.status==='approved')d.status='warning';if(m)d.mod=true;d.crit.push(t)}
+var AZ='Associazione sconsigliata con inibitori forti di CYP3A4 e P-gp (azoli, inibitori delle proteasi)';
+var IND='Induttori forti di CYP3A4/P-gp riducono l\'esposizione: associazione sconsigliata';
+
+/* === Singoli DOAC (SmPC EMA + EHRA 2021) === */
+function apixaban(c){
+ var d=mk('APIXABAN (Eliquis®)');
+ if(c.cp==='C')return bad(d,'Child-Pugh C: non raccomandato');
+ if(c.cg<15)return bad(d,'CrCl <15 mL/min: non raccomandato');
+ if(c.pe){
+  d.fase={i:'10 mg ×2/die per 7 giorni',m:'5 mg ×2/die'};
+  d.crit.push('Nel trattamento del TEV non si applicano i criteri di riduzione per età/peso/creatinina');
+  d.note.push('Single-drug: nessun lead-in parenterale. Dopo ≥6 mesi di trattamento, per la prevenzione estesa delle recidive: 2.5 mg ×2/die.');
+  if(c.cg<30)warn(d,'CrCl 15–29 mL/min: usare con cautela');
+ }else{
+  d.dose='5 mg ×2/die';
+  var k=[];if(c.eta>=80)k.push('età ≥80');if(c.peso<=60)k.push('peso ≤60 kg');if(c.cr>=1.5)k.push('creatinina ≥1.5 mg/dL');
+  if(k.length>=2){d.dose='2.5 mg ×2/die';adj(d,'Riduzione (≥2 criteri su 3): '+k.join(' + '),true)}
+  else if(k.length)d.crit.push('1 criterio su 3 ('+k[0]+'): dose piena');
+  if(c.cg<30){d.dose='2.5 mg ×2/die';adj(d,'CrCl 15–29 mL/min',true)}
+ }
+ if(c.cp==='B')warn(d,'Child-Pugh B: usare con cautela');
+ if(c.f.azoli)warn(d,AZ);if(c.f.induttori)warn(d,IND);
+ return d;
+}
+function rivaroxaban(c){
+ var d=mk('RIVAROXABAN (Xarelto®)');
+ if(c.cp==='B'||c.cp==='C')return bad(d,'Epatopatia con coagulopatia (Child-Pugh B e C): controindicato');
+ if(c.cg<15)return bad(d,'CrCl <15 mL/min: non raccomandato');
+ if(c.pe){
+  d.fase={i:'15 mg ×2/die per 21 giorni',m:'20 mg ×1/die'};
+  d.crit.push('Assumere con il cibo');
+  d.note.push('Single-drug: nessun lead-in parenterale. Dopo ≥6 mesi, per la prevenzione estesa: 10 o 20 mg ×1/die.');
+  if(c.cg<50)adj(d,'CrCl 15–49: valutare 15 mg ×1/die in mantenimento se il rischio emorragico supera quello di recidiva');
+  if(c.cg<30)warn(d,'CrCl 15–29 mL/min: usare con cautela');
+ }else{
+  d.dose='20 mg ×1/die';d.crit.push('Assumere con il pasto');
+  if(c.cg<50){d.dose='15 mg ×1/die';adj(d,'CrCl 15–49 mL/min',true)}
+ }
+ if(c.f.azoli)warn(d,AZ);if(c.f.induttori)warn(d,IND);
+ return d;
+}
+function dabigatran(c){
+ var d=mk('DABIGATRAN (Pradaxa®)');
+ if(c.cp==='C')return bad(d,'Child-Pugh C: controindicato');
+ if(c.cg<30)return bad(d,'CrCl <30 mL/min: controindicato');
+ if(c.f.azoli)return bad(d,'Ketoconazolo/itraconazolo sistemici: controindicati con dabigatran');
+ var dose='150 mg ×2/die';
+ if(c.eta>=80){dose='110 mg ×2/die';adj(d,'Età ≥80 anni: riduzione raccomandata',true)}
+ if(c.f.verapamil){dose='110 mg ×2/die';adj(d,'Verapamil: riduzione raccomandata (assumere i due farmaci in contemporanea)',true)}
+ if(dose==='150 mg ×2/die'){
+  var v=[];if(c.eta>=75)v.push('età 75–79');if(c.cg<50)v.push('CrCl 30–49');
+  if(v.length)adj(d,'Valutare 110 mg ×2/die ('+v.join(', ')+'; anche in caso di gastrite/reflusso o alto rischio emorragico)');
+ }
+ if(c.pe){
+  d.fase={i:'Prima parenterale ≥5 giorni, poi '+dose,m:dose};
+  if(c.pare==='no')warn(d,'Richiede almeno 5 giorni di anticoagulazione parenterale PRIMA di iniziare');
+  else d.note.push('Transizione da terapia parenterale già eseguita.');
+ }else d.dose=dose;
+ if(c.cp==='B')warn(d,'Child-Pugh B: dati limitati, usare con cautela');
+ if(c.f.amiodarone)d.note.push('Amiodarone: nessun adattamento di dose, monitorare.');
+ if(c.f.induttori)warn(d,IND);
+ return d;
+}
+function edoxaban(c){
+ var d=mk('EDOXABAN (Lixiana®)');
+ if(c.cp==='C')return bad(d,'Child-Pugh C: non raccomandato');
+ if(c.cg<15)return bad(d,'CrCl <15 mL/min: non raccomandato');
+ var r=[];
+ if(c.cg<=50)r.push('CrCl 15–50 mL/min');if(c.peso<=60)r.push('peso ≤60 kg');if(c.f.azoli)r.push('ketoconazolo (inibitore P-gp)');
+ var dose=r.length?'30 mg ×1/die':'60 mg ×1/die';
+ if(r.length)adj(d,'Dose ridotta: '+r.join(' + '),true);
+ if(c.pe){
+  d.fase={i:'Prima parenterale ≥5 giorni, poi '+dose,m:dose};
+  if(c.pare==='no')warn(d,'Richiede almeno 5 giorni di anticoagulazione parenterale PRIMA di iniziare');
+  else d.note.push('Transizione da terapia parenterale già eseguita.');
+ }else{
+  d.dose=dose;
+  if(c.cg>95)warn(d,'CrCl >95 mL/min: efficacia ridotta nella FA (ENGAGE AF), valutare con attenzione');
+ }
+ if(c.cp==='B')warn(d,'Child-Pugh B: usare con cautela (dose standard)');
+ if(c.f.verapamil||c.f.amiodarone)d.note.push('Verapamil/amiodarone: nessuna riduzione di dose richiesta per edoxaban.');
+ if(c.f.induttori)warn(d,IND);
+ return d;
+}
+
+/* === Rendering === */
+function card(d,fs){
+ var L={approved:['ok','Utilizzabile','positive'],warning:['wn',d.mod?(d.avv.length?'Dose modificata · verifica':'Dose modificata'):'Cautela / verifica','warning'],contraindicated:['no','Non utilizzabile','danger']}[d.status];
+ var h='<div class="card rc '+L[0]+'"><div class="dn">'+d.nome+' <span class="chip '+L[2]+'">'+L[1]+'</span></div>';
+ if(d.fase)h+='<div class="ph2"><div class="ph'+(fs==='iniziale'?' sel':'')+'"><div class="meta">Fase iniziale</div><div class="dose">'+d.fase.i+'</div></div><div class="ph'+(fs==='mantenimento'?' sel':'')+'"><div class="meta">Mantenimento</div><div class="dose">'+d.fase.m+'</div></div></div>';
+ else if(d.dose)h+='<div class="kv"><span class="meta">Dosaggio</span><span class="dose">'+d.dose+'</span></div>';
+ d.crit.forEach(function(t){h+='<div class="note info">'+t+'</div>'});
+ d.avv.forEach(function(t){h+='<div class="note'+(d.status==='contraindicated'?' bad':'')+'">'+t+'</div>'});
+ d.note.forEach(function(t){h+='<div class="note info">'+t+'</div>'});
+ return h+'</div>';
+}
+
+function calc(){
+ var eta=parseInt($('eta').value),sx=$('sesso').value,peso=parseFloat($('peso').value),cr=parseFloat($('cr').value),err=$('err');
+ if(!(eta>=18&&eta<=110)||!sx||!(peso>=30&&peso<=250)||!(cr>=0.2&&cr<=15)){
+  err.textContent='Compilare i campi obbligatori con valori plausibili (età 18–110, peso 30–250 kg, creatinina 0.2–15 mg/dL).';err.hidden=false;return;
+ }
+ err.hidden=true;
+ var f=sx==='F',cg=cockcroft(eta,peso,cr,f);
+ $('cgV').textContent=cg;$('ekV').textContent=ckdepi(eta,cr,f);$('renal').hidden=false;
+ var cp=cpCalc(),pe=(mode==='PE'),fs=$('fase').value,h='';
+
+ var cl=[];for(var i=0;i<7;i++)if($('c'+i).checked)cl.push(CTRL[i]);
+ if(cg<15&&!$('c6').checked)cl.push('CrCl calcolata <15 mL/min');
+ if(cl.length){
+  h='<div class="alert"><b>Controindicazioni assolute ai DOAC</b><ul>'+cl.map(function(x){return'<li>'+x+'</li>'}).join('')+'</ul><div style="margin-top:8px"><b>Utilizzare LMWH o warfarin.</b></div></div>';
+ }else{
+  if(pe&&$('inst').value==='si')h+='<div class="alert w"><b>Instabilità emodinamica / EP ad alto rischio</b><div style="margin-top:4px">Ricovero in area intensiva, supporto emodinamico e valutazione di trombolisi sistemica o embolectomia. I DOAC non sono appropriati come terapia iniziale in questa fase.</div></div>';
+  h+='<div class="sec" style="margin-top:0">'+(pe?'Dosaggio DOAC per EP/TVP':'Dosaggio DOAC per fibrillazione atriale')+'</div>';
+  h+='<div class="meta" style="margin-bottom:10px">Cockcroft-Gault '+cg+' mL/min · Child-Pugh '+(cp?'classe '+cp:'non valutato (assunta classe A)')+'</div>';
+  var c={eta:eta,peso:peso,cr:cr,cg:cg,cp:cp||'A',pe:pe,pare:$('pare').value,f:{verapamil:$('verapamil').checked,amiodarone:$('amiodarone').checked,azoli:$('azoli').checked,induttori:$('induttori').checked}};
+  [apixaban,rivaroxaban,dabigatran,edoxaban].forEach(function(fn){h+=card(fn(c),fs)});
+  var n=[];
+  if(!cp)n.push('Funzione epatica non valutata: i dosaggi assumono Child-Pugh A. Verificare la funzione epatica prima di prescrivere.');
+  if(peso>120)n.push('Peso >120 kg: apixaban e rivaroxaban a dose standard; dati limitati per dabigatran ed edoxaban (ISTH 2021).');
+  if(pe&&$('neo').value==='si')n.push('Neoplasia attiva: alternative a LMWH sono edoxaban, rivaroxaban o apixaban; edoxaban e rivaroxaban aumentano il rischio emorragico nei tumori gastrointestinali/genitourinari (apixaban preferibile).');
+  if(pe)n.push('Dosi e durata della fase iniziale vanno confermate sulle schede tecniche aggiornate.');
+  n.push('Il Cockcroft-Gault usa il peso reale; in obesità, cachessia o funzione renale instabile interpretare con cautela.');
+  h+='<div class="card">'+n.map(function(t){return'<div class="note info">'+t+'</div>'}).join('')+'</div>';
+ }
+ var res=$('res');res.innerHTML=h;res.hidden=false;res.scrollIntoView({behavior:'smooth'});
+}
+</script>
+</body>
+</html>
