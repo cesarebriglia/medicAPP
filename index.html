@@ -1,77 +1,107 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ClinicalTOOLs</title>
-<style>
-  :root{
-    --fondo:#dbd8bf;
-    --testo:#111;
-    --rosso:#8a2b1f;
-  }
-  *{box-sizing:border-box}
-  body{
-    margin:0;
-    background:var(--fondo);
-    color:var(--testo);
-    font-family:"Courier New",Courier,monospace;
-    line-height:1.5;
-    min-height:100vh;
-    display:flex;flex-direction:column;
-  }
-  main{width:100%;max-width:900px;margin:0 auto;padding:48px 24px 24px;flex:1}
-  header{text-align:center;margin-bottom:34px}
-  h1{font-size:clamp(2.2rem,8vw,3.6rem);font-weight:400;margin:0 0 14px;letter-spacing:.02em}
-  .sub{font-size:clamp(1rem,2.6vw,1.3rem);margin:0 0 6px}
-  .avviso{font-size:.8rem;color:var(--rosso);margin:0 auto;max-width:720px}
-  .app{margin:0 0 26px}
-  .app h2{font-size:clamp(1.3rem,3.6vw,1.8rem);font-weight:400;margin:0 0 4px}
-  .app h2 a{color:inherit;text-decoration:none}
-  .app h2 a:hover{text-decoration:underline}
-  .app .ico{display:inline-block;width:1.6em}
-  .app p{font-size:.85rem;font-style:italic;margin:0 0 4px 1.6em}
-  .azioni{margin-left:1.6em;font-size:.82rem}
-  .azioni a{color:var(--rosso);text-decoration:none;margin-right:16px}
-  .azioni a:hover{text-decoration:underline}
-  footer{text-align:center;color:var(--rosso);font-size:.8rem;padding:22px 16px 28px}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClinicalTOOLs</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #eae5d9;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+        .disclaimer {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #c55a11;
+            margin-bottom: 40px;
+        }
+        .tool-section {
+            margin-bottom: 35px;
+        }
+        .tool-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #c55a11;
+            margin-bottom: 5px;
+        }
+        .tool-description {
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+        }
+        .links a {
+            color: #c55a11;
+            text-decoration: none;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+        .links a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-<main>
-  <header>
+
     <h1>ClinicalTOOLs</h1>
-    <p class="sub">Raccolta di app a supporto della pratica in Medicina Interna</p>
-    <p class="avviso">Strumenti di supporto alla decisione clinica: non sostituiscono il giudizio del medico né le indicazioni delle schede tecniche e delle linee guida vigenti.</p>
-  </header>
+    <div class="subtitle">Raccolta di app a supporto della pratica in Medicina Interna</div>
+    <div class="disclaimer">
+        Strumenti di supporto alla decisione clinica: non sostituiscono il giudizio del medico né le indicazioni delle schede tecniche e delle linee guida vigenti.
+    </div>
 
-  <section class="app">
-    <h2><a href="AWaRe_Antibiotici_v9.html"><span class="ico">💊</span>Antibiotici AWaRe</a></h2>
-    <p>Guida posologica clinica con classificazione AWaRe degli antibiotici e calcolatore della funzione renale (CKD-EPI / Cockcroft-Gault).</p>
-    <div class="azioni"><a href="AWaRe_Antibiotici_v9.html">▶ avvia</a><a href="AWaRe_Antibiotici_v9.html" download>⤓ scarica</a></div>
-  </section>
+    <!-- Sezione Antibiotici AWaRe -->
+    <div class="tool-section">
+        <div class="tool-title">💊 Antibiotici AWaRe</div>
+        <div class="tool-description">Guida posologica clinica con classificazione AWaRe degli antibiotici e calcolatore della funzione renale (CKD-EPI / Cockcroft-Gault).</div>
+        <div class="links">
+            <a href="AWaRe_Antibiotici_v9.html">▶ avvia</a>
+            <a href="AWaRe_Antibiotici_v9.html" download>⤓ scarica</a>
+        </div>
+    </div>
 
-  <section class="app">
-    <h2><a href="Dosaggio%20DOACs%20.html"><span class="ico">🩸</span>Dosaggio DOACs</a></h2>
-    <p>Supporto al dosaggio degli anticoagulanti orali diretti.</p>
-    <div class="azioni"><a href="Dosaggio%20DOACs%20.html">▶ avvia</a><a href="Dosaggio%20DOACs%20.html" download>⤓ scarica</a></div>
-  </section>
+    <!-- Sezione Dosaggio DOACs -->
+    <div class="tool-section">
+        <div class="tool-title">🩸 Dosaggio DOACs</div>
+        <div class="tool-description">Supporto al dosaggio degli anticoagulanti orali diretti.</div>
+        <div class="links">
+            <!-- Il codice %20 serve a gestire lo spazio rimasto prima del punto nel file GitHub -->
+            <a href="Dosaggio_DOACs%20.html">▶ avvia</a>
+            <a href="Dosaggio_DOACs%20.html" download>⤓ scarica</a>
+        </div>
+    </div>
 
-  <section class="app">
-    <h2><a href="Triage%20Troponina%20ESC.html"><span class="ico">🫀</span>Triage Troponina ESC</a></h2>
-    <p>Triage biochimico della sospetta sindrome coronarica acuta: algoritmo ESC 0/1h-2h-3h e HEART score.</p>
-    <div class="azioni"><a href="Triage%20Troponina%20ESC.html">▶ avvia</a><a href="Triage%20Troponina%20ESC.html" download>⤓ scarica</a></div>
-  </section>
+    <!-- Sezione Triage Troponina ESC -->
+    <div class="tool-section">
+        <div class="tool-title">🫀 Triage Troponina ESC</div>
+        <div class="tool-description">Triage biochimico della sospetta sindrome coronarica acuta: algoritmo ESC 0/1h-2h-3h e HEART score.</div>
+        <div class="links">
+            <a href="Triage%20Troponina%20ESC.html">▶ avvia</a>
+            <a href="Triage%20Troponina%20ESC.html" download>⤓ scarica</a>
+        </div>
+    </div>
 
-  <section class="app">
-    <h2><a href="Score2_Cardiovascular_risk.html"><span class="ico">📈</span>SCORE2 – Rischio Cardiovascolare</a></h2>
-    <p>Stima del rischio cardiovascolare con lo score SCORE2 ed indicazione ai farmaci ipolipemizzanti.</p>
-    <div class="azioni"><a href="Score2_Cardiovascular_risk.html">▶ avvia</a><a href="Score2_Cardiovascular_risk.html" download>⤓ scarica</a></div>
-  </section>
-</main>
+    <!-- Sezione SCORE2 Rischio Cardiovascolare -->
+    <div class="tool-section">
+        <div class="tool-title">📈 SCORE2 – Rischio Cardiovascolare</div>
+        <div class="tool-description">Stima del rischio cardiovascolare con lo score SCORE2 ed indicazione ai farmaci ipolipemizzanti.</div>
+        <div class="links">
+            <a href="Score2_Cardiovascular_risk.html">▶ avvia</a>
+            <a href="Score2_Cardiovascular_risk.html" download>⤓ scarica</a>
+        </div>
+    </div>
 
-<footer>
-  Ideato dal dr. C.Briglia (cesarebriglia@gmail.com) con l'apporto di Claude - Antropic
-</footer>
 </body>
 </html>
