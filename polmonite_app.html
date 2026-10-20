@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Polmoniti – Medicina Interna | CAP · HAP · VAP · Aspirazione / Ab ingestis</title>
+  <style>
+    :root {
+      --bg: #f0f4f8;
+      --surface: #ffffff;
+      --surface-alt: #f8fafc;
+      --border: #dde3ec;
+      --text: #1e2a38;
+      --muted: #64748b;
+
+      --blue-deep: #1a4a7a;
+      --blue-mid: #2563a8;
+      --blue-light: #dbeafe;
+
+      --teal: #0d6b72;
+      --teal-light: #ccfbf1;
+
+      --amber: #b45309;
+      --amber-light: #fef3c7;
+
+      --red: #b91c1c;
+      --red-light: #fee2e2;
+
+      --green: #15803d;
+      --green-light: #dcfce7;
+
+      --purple: #6d28d9;
+      --purple-light: #ede9fe;
+
+      --orange: #c2410c;
+      --orange-light: #ffedd5;
+
+      --radius: 10px;
+      --radius-sm: 6px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
+      --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      --mono: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 16px;
+      min-height: 100vh;
+    }
+
+    .app-wrapper {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    /* HEADER */
+    .app-header {
+      background: var(--blue-deep);
+      color: white;
+      border-radius: var(--radius);
+      padding: 22px 28px 18px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .app-header h1 {
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+    .app-header .subtitle {
+      font-size: 0.82rem;
+      opacity: 0.72;
+      margin-top: 6px;
+    }
+    .app-header .badge-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .badge {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 20px;
+      letter-spacing: 0.03em;
+    }
+    .badge-cap { background: rgba(255,255,255,0.18); color: white; }
+    .badge-hap { background: rgba(13,107,114,0.6); color: #ccfbf1; }
+    .badge-vap { background: rgba(109,40,217,0.5); color: #ede9fe; }
+    .badge-asp { background: rgba(180,83,9,0.5); color: #fef3c7; }
+
+    /* TYPE SELECTOR */
+    .type-selector {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .type-btn {
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      padding: 14px 16px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s;
+      position: relative;
+    }
+    .type-btn:hover { border-color: var(--blue-mid); }
+    .type-btn.active {
+      border-color: var(--blue-mid);
+      background: var(--blue-light);
+      box-shadow: 0 0 0 3px rgba(37,99,168,0.12);
+    }
+    .type-btn .type-icon { font-size: 1.5rem; display: block; margin-bottom: 4px; }
+    .type-btn .type-label { font-weight: 700; font-size: 0.95rem; color: var(--blue-deep); }
+    .type-btn .type-desc { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+
+    /* PANELS */
+    .panel-group { display: none; }
+    .panel-group.active { display: block; }
+
+    /* CARD */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow);
+    }
+    .card-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .card-title .icon { font-size: 1rem; }
+
+    /* SCORE ROW */
+    .score-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 6px;
+    }
+
+    /* CHECKBOX / RADIO */
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      padding: 7px 10px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background 0.1s;
+      font-size: 0.9rem;
+    }
+    .check-item:hover { background: var(--surface-alt); }
+    .check-item input { margin-top: 2px; accent-color: var(--blue-mid); flex-shrink: 0; }
+
+    .sub-section {
+      margin-top: 12px;
+      padding: 10px 12px;
+      background: var(--surface-alt);
+      border-radius: var(--radius-sm);
+      border-left: 3px solid var(--border);
+    }
+    .sub-section-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+    }
+
+    /* INPUTS */
+    .input-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+    .input-row label { font-size: 0.9rem; display: flex; align-items: center; gap: 8px; }
+    .input-row input[type="number"] {
+      width: 80px;
+      padding: 5px 8px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      font-family: var(--mono);
+      color: var(--text);
+      background: var(--surface);
+    }
+    .input-row select {
+      padding: 5px 8px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    /* SCORE RESULT INLINE */
+    .score-inline {
+      display: none;
+      margin-top: 12px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+    }
+    .score-inline.low { background: var(--green-light); border-left: 4px solid var(--green); }
+    .score-inline.mid { background: var(--amber-light); border-left: 4px solid var(--amber); }
+    .score-inline.high { background: var(--red-light); border-left: 4px solid var(--red); }
+
+    /* BUTTONS */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 11px 22px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-primary { background: var(--blue-mid); color: white; }
+    .btn-primary:hover { background: var(--blue-deep); }
+    .btn-ghost {
+      background: transparent;
+      border: 1.5px solid var(--border);
+      color: var(--muted);
+    }
+    .btn-ghost:hover { border-color: var(--blue-mid); color: var(--blue-mid); }
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 18px 0;
+    }
+
+    /* RESULT */
+    .result-container {
+      display: none;
+      background: var(--surface);
+      border: 2px solid var(--blue-mid);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      margin-top: 8px;
+    }
+    .result-header {
+      background: var(--blue-mid);
+      color: white;
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .result-header h3 { font-size: 1.05rem; font-weight: 700; }
+    .result-meta { font-size: 0.82rem; opacity: 0.85; }
+    .result-body { padding: 18px 20px; }
+
+    .rx-block {
+      background: #f0f7ff;
+      border: 1px solid #bfdbfe;
+      border-left: 4px solid var(--blue-mid);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      margin: 10px 0;
+      font-family: var(--mono);
+      font-size: 0.88rem;
+      line-height: 1.8;
+    }
+    .rx-block .rx-label {
+      font-family: var(--font);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--blue-mid);
+      margin-bottom: 4px;
+    }
+
+    .info-box {
+      border-radius: var(--radius-sm);
+      padding: 10px 13px;
+      margin: 10px 0;
+      font-size: 0.88rem;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .info-box .box-icon { flex-shrink: 0; font-size: 1rem; }
+    .info-box.warn { background: var(--amber-light); border-left: 4px solid var(--amber); }
+    .info-box.danger { background: var(--red-light); border-left: 4px solid var(--red); }
+    .info-box.ok { background: var(--green-light); border-left: 4px solid var(--green); }
+    .info-box.note { background: var(--purple-light); border-left: 4px solid var(--purple); }
+    .info-box.teal { background: var(--teal-light); border-left: 4px solid var(--teal); }
+
+    .result-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .result-chip {
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .monitor-box {
+      background: var(--amber-light);
+      border-left: 4px solid var(--amber);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      margin: 10px 0;
+      font-size: 0.88rem;
+    }
+    .monitor-box strong { color: var(--amber); }
+
+    .switch-box {
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      margin: 12px 0;
+      font-size: 0.87rem;
+    }
+    .switch-box ul { padding-left: 18px; margin-top: 6px; }
+    .switch-box li { margin-bottom: 3px; }
+
+    .guidelines-box {
+      background: var(--teal-light);
+      border-left: 4px solid var(--teal);
+      border-radius: var(--radius-sm);
+      padding: 11px 14px;
+      margin-top: 14px;
+      font-size: 0.87rem;
+    }
+    .guidelines-box ul { padding-left: 16px; margin-top: 6px; }
+    .guidelines-box li { margin-bottom: 3px; }
+
+    .result-section-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin: 14px 0 6px;
+    }
+
+    hr.divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 14px 0;
+    }
+
+    .timestamp {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 14px;
+      text-align: right;
+    }
+
+    /* HAP/VAP specific */
+    .hap-accent .card-title { border-bottom-color: var(--teal); }
+    .vap-accent .card-title { border-bottom-color: var(--purple); }
+    .asp-accent .card-title { border-bottom-color: var(--amber); }
+
+    .cite { font-size: 0.7em; font-weight: 600; margin-left: 2px; }
+    .cite a { color: var(--blue-mid); text-decoration: none; }
+    .biblio ol { padding-left: 24px; font-size: 0.82rem; }
+    .biblio li { margin-bottom: 6px; scroll-margin-top: 12px; }
+    .biblio li:target { background: var(--amber-light); }
+    .biblio .biblio-note { font-size: 0.8rem; color: var(--muted); margin-top: 10px; }
+    .app-footer {
+      margin: 22px 0 8px;
+      padding: 12px 16px;
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--blue-deep);
+      border-top: 2px solid var(--blue-mid);
+    }
+
+    @media (max-width: 600px) {
+      .app-header { flex-direction: column; }
+      .type-selector { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media print {
+      body { background: white; padding: 0; }
+      .app-wrapper { max-width: 100%; }
+      .type-selector, .btn-row, .btn { display: none !important; }
+      .app-header { border-radius: 0; }
+      .result-container { display: block !important; border: 1px solid #ccc; }
+      .card { box-shadow: none; border: 1px solid #ddd; }
+    }
+  </style>
+</head>
+<body>
+<div class="app-wrapper">
+
+  <!-- HEADER -->
+  <div class="app-header">
+    <div>
+      <h1>🫁 Polmoniti Batteriche – Medicina Interna</h1>
+      <div class="subtitle">Strumento di supporto clinico · Piano terapeutico guidato · IDSA/ATS 2019 · ATS 2025 · IDSA/ATS 2016 (HAP/VAP) · ERS/ESICM/ESCMID/ALAT 2017-2023</div>
+      <div class="badge-group">
+        <span class="badge badge-cap">CAP</span>
+        <span class="badge badge-hap">HAP</span>
+        <span class="badge badge-vap">VAP</span>
+        <span class="badge badge-asp">ASPIRAZIONE / AB INGESTIS</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TYPE SELECTOR -->
+  <div class="type-selector">
+    <button class="type-btn active" onclick="setType('cap', this)">
+      <span class="type-icon">🏘️</span>
+      <div class="type-label">CAP</div>
+      <div class="type-desc">Community-Acquired Pneumonia<br>Acquisita in comunità</div>
+    </button>
+    <button class="type-btn" onclick="setType('hap', this)">
+      <span class="type-icon">🏥</span>
+      <div class="type-label">HAP</div>
+      <div class="type-desc">Hospital-Acquired Pneumonia<br>≥48h dal ricovero, non intubato</div>
+    </button>
+    <button class="type-btn" onclick="setType('vap', this)">
+      <span class="type-icon">🫧</span>
+      <div class="type-label">VAP</div>
+      <div class="type-desc">Ventilator-Associated Pneumonia<br>≥48h dalla ventilazione meccanica</div>
+    </button>
+    <button class="type-btn" onclick="setType('asp', this)">
+      <span class="type-icon">⚠️</span>
+      <div class="type-label">ASPIRAZIONE / Ab ingestis</div>
+      <div class="type-desc">Aspirazione / Ab ingestis<br>Ascesso · Empiema · Necrotizzante</div>
+    </button>
+  </div>
+
+  <!-- ========================= CAP ========================= -->
+  <div id="panel-cap" class="panel-group active">
+
+    <div class="card">
+      <div class="card-title"><span class="icon">📊</span>Score CURB-65</div>
+      <div class="score-grid">
+        <label class="check-item"><input type="checkbox" id="cap_c"> Confusione mentale (nuova insorgenza)</label>
+        <label class="check-item"><input type="checkbox" id="cap_u"> BUN &gt; 19 mg/dL (urea &gt; 7 mmol/L)</label>
+        <label class="check-item"><input type="checkbox" id="cap_r"> FR ≥ 30 atti/min</label>
+        <label class="check-item"><input type="checkbox" id="cap_b"> PAS &lt; 90 mmHg o PAD ≤ 60 mmHg</label>
+        <label class="check-item"><input type="checkbox" id="cap_65"> Età ≥ 65 anni</label>
+      </div>
+      <button class="btn btn-ghost" style="margin-top:10px; font-size:0.85rem; padding:7px 14px;" onclick="calcolaCURB65()">Calcola score</button>
+      <div id="curb-inline" class="score-inline"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🦠</span>Fattori di rischio microbiologici</div>
+
+      <div class="sub-section">
+        <div class="sub-section-title">Pseudomonas aeruginosa</div>
+        <div class="score-grid">
+          <label class="check-item"><input type="checkbox" id="pseu_micro"> Colonizzazione/infezione &lt; 12 mesi</label>
+          <label class="check-item"><input type="checkbox" id="pseu_osp"> Ospedalizzazione ≥2 gg o ATB EV negli ult. 90 gg</label>
+          <label class="check-item"><input type="checkbox" id="pseu_bpcp"> BPCO grave, bronchiectasie, fibrosi cistica</label>
+          <label class="check-item"><input type="checkbox" id="pseu_immune"> Neutropenia o immunosoppressione grave</label>
+        </div>
+      </div>
+
+      <div class="sub-section" style="margin-top:8px;">
+        <div class="sub-section-title">MRSA</div>
+        <div class="score-grid">
+          <label class="check-item"><input type="checkbox" id="mrsa_storia"> Storia documentata di MRSA ✱</label>
+          <label class="check-item"><input type="checkbox" id="mrsa_ospedale"> Ospedalizzazione/ATB/struttura ult. 90 gg</label>
+          <label class="check-item"><input type="checkbox" id="mrsa_rx"> Polmonite necrotizzante o empiema pleurico</label>
+          <label class="check-item"><input type="checkbox" id="mrsa_influenza"> Influenza recente o shock settico</label>
+        </div>
+        <div style="font-size:0.75rem; color:var(--muted); margin-top:6px;">✱ In assenza di storia documentata, MRSA in CAP è raro in Italia (&lt;2%)</div>
+      </div>
+
+      <div class="sub-section" style="margin-top:8px;">
+        <div class="sub-section-title">Legionella</div>
+        <div class="score-grid">
+          <label class="check-item"><input type="checkbox" id="legion_viaggio"> Viaggio/hotel/crociera ult. 10 giorni</label>
+          <label class="check-item"><input type="checkbox" id="legion_comorb"> Diabete, IRC, BPCO, neoplasia attiva</label>
+          <label class="check-item"><input type="checkbox" id="legion_clinica"> Iponatriemia, diarrea, transaminasi ↑</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">👤</span>Dati paziente e comorbidità</div>
+      <div class="input-row">
+        <label>Età (anni) <input type="number" id="cap_eta" min="18" max="120" value="70"></label>
+        <label>Sesso <select id="cap_sesso"><option value="M">M</option><option value="F">F</option></select></label>
+        <label>Creatinina (mg/dL) <input type="number" id="cap_creatinina" step="0.1" min="0.1" max="15" value="1.1"></label>
+      </div>
+      <div class="score-grid">
+        <label class="check-item"><input type="checkbox" id="cap_qt"> QT lungo o farmaci QT-prolunganti</label>
+        <label class="check-item"><input type="checkbox" id="cap_ige"> Allergia IgE-mediata alle penicilline</label>
+        <label class="check-item"><input type="checkbox" id="cap_noige"> Allergia non-IgE (rash cutaneo semplice)</label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🏨</span>Setting</div>
+      <div class="score-grid">
+        <label class="check-item"><input type="radio" name="cap_setting" value="reparto" checked> Reparto di Medicina Interna</label>
+        <label class="check-item"><input type="radio" name="cap_setting" value="icu"> Terapia Intensiva / Sub-intensiva</label>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="generaCAP()">▶ Genera piano terapeutico</button>
+      <button class="btn btn-ghost" onclick="window.print()">🖨 Stampa</button>
+    </div>
+    <div id="risultato-cap" class="result-container"></div>
+  </div>
+
+  <!-- ========================= HAP ========================= -->
+  <div id="panel-hap" class="panel-group">
+
+    <div class="card hap-accent">
+      <div class="card-title"><span class="icon">🏥</span>Definizione e contesto HAP</div>
+      <div class="info-box teal">
+        <span class="box-icon">ℹ️</span>
+        <div>HAP = polmonite insorta ≥48h dal ricovero in paziente <strong>non intubato</strong>. Agenti più frequenti: BGN (Klebsiella, E. coli, Enterobacter), S. aureus, Pseudomonas.</div>
+      </div>
+      <div class="score-grid" style="margin-top:10px;">
+        <label class="check-item"><input type="checkbox" id="hap_icu_prev"> Precedente ricovero in ICU negli ult. 90 gg</label>
+        <label class="check-item"><input type="checkbox" id="hap_atb_prev"> Antibiotici EV negli ultimi 90 giorni</label>
+        <label class="check-item"><input type="checkbox" id="hap_sepsi"> Shock settico al momento della diagnosi</label>
+        <label class="check-item"><input type="checkbox" id="hap_dialisi"> Dialisi cronica o IRC avanzata</label>
+      </div>
+    </div>
+
+    <div class="card hap-accent">
+      <div class="card-title"><span class="icon">🦠</span>Rischio germi MDR (IDSA/ATS 2016 · ERS 2017)</div>
+      <div class="sub-section">
+        <div class="sub-section-title">Pseudomonas / BGN MDR</div>
+        <div class="score-grid">
+          <label class="check-item"><input type="checkbox" id="hap_pseu_col"> Colonizzazione nota da BGN MDR</label>
+          <label class="check-item"><input type="checkbox" id="hap_pseu_bpco"> BPCO grave, bronchiectasie</label>
+          <label class="check-item"><input type="checkbox" id="hap_uso_cortico"> Corticosteroidi ≥5 mg/die per &gt;3 mesi</label>
+        </div>
+      </div>
+      <div class="sub-section" style="margin-top:8px;">
+        <div class="sub-section-title">MRSA</div>
+        <div class="score-grid">
+          <label class="check-item"><input type="checkbox" id="hap_mrsa_doc"> MRSA documentato &lt; 12 mesi</label>
+          <label class="check-item"><input type="checkbox" id="hap_mrsa_prev"> MRSA colonizzazione naso/cute attuale</label>
+          <label class="check-item"><input type="checkbox" id="hap_mrsa_naso"> Prevalenza MRSA reparto &gt;20%</label>
+        </div>
+      </div>
+      <div class="sub-section" style="margin-top:8px;">
+        <div class="sub-section-title">Germi produttori ESBL / Carbapenemasi</div>
+        <div class="score-grid">
+          <label class="check-item"><input type="checkbox" id="hap_esbl"> Colonizzazione ESBL/KPC documentata</label>
+          <label class="check-item"><input type="checkbox" id="hap_carba"> Struttura ad alta prevalenza di carbapenemasi</label>
+          <label class="check-item"><input type="checkbox" id="hap_trip_neg"> Precedente terapia con carbapenemici</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card hap-accent">
+      <div class="card-title"><span class="icon">👤</span>Dati paziente</div>
+      <div class="input-row">
+        <label>Età <input type="number" id="hap_eta" min="18" max="120" value="72"></label>
+        <label>Sesso <select id="hap_sesso"><option value="M">M</option><option value="F">F</option></select></label>
+        <label>Creatinina (mg/dL) <input type="number" id="hap_creatinina" step="0.1" min="0.1" max="15" value="1.2"></label>
+      </div>
+      <div class="score-grid">
+        <label class="check-item"><input type="checkbox" id="hap_ige"> Allergia IgE-mediata alle penicilline</label>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="generaHAP()">▶ Genera piano terapeutico</button>
+      <button class="btn btn-ghost" onclick="window.print()">🖨 Stampa</button>
+    </div>
+    <div id="risultato-hap" class="result-container"></div>
+  </div>
+
+  <!-- ========================= VAP ========================= -->
+  <div id="panel-vap" class="panel-group">
+
+    <div class="card vap-accent">
+      <div class="card-title"><span class="icon">🫧</span>Contesto VAP</div>
+      <div class="info-box note">
+        <span class="box-icon">ℹ️</span>
+        <div>VAP = polmonite insorta ≥48h dall'intubazione. Rischio MDR elevato. <strong>Raccolta colturale prima di iniziare ATB</strong> (ETA, BAL, mini-BAL). IDSA/ATS 2016 · ERS/ESICM/ESCMID/ALAT 2017.</div>
+      </div>
+    </div>
+
+    <div class="card vap-accent">
+      <div class="card-title"><span class="icon">🦠</span>Fattori di rischio MDR – VAP</div>
+      <div class="score-grid">
+        <label class="check-item"><input type="checkbox" id="vap_atb90"> ATB EV negli ultimi 90 giorni</label>
+        <label class="check-item"><input type="checkbox" id="vap_sepsi"> Shock settico alla presentazione</label>
+        <label class="check-item"><input type="checkbox" id="vap_ards"> ARDS preesistente</label>
+        <label class="check-item"><input type="checkbox" id="vap_rrt"> Dialisi/terapia sostitutiva renale acuta</label>
+        <label class="check-item"><input type="checkbox" id="vap_colMDR"> Colonizzazione MDR documentata</label>
+        <label class="check-item"><input type="checkbox" id="vap_esbl"> Colonizzazione ESBL/KPC nota</label>
+        <label class="check-item"><input type="checkbox" id="vap_mrsa_col"> Colonizzazione nasale/cutanea MRSA</label>
+        <label class="check-item"><input type="checkbox" id="vap_mrsa_prev"> MRSA documentato &lt; 12 mesi</label>
+      </div>
+    </div>
+
+    <div class="card vap-accent">
+      <div class="card-title"><span class="icon">👤</span>Dati paziente</div>
+      <div class="input-row">
+        <label>Età <input type="number" id="vap_eta" min="18" max="120" value="68"></label>
+        <label>Sesso <select id="vap_sesso"><option value="M">M</option><option value="F">F</option></select></label>
+        <label>Creatinina (mg/dL) <input type="number" id="vap_creatinina" step="0.1" min="0.1" max="15" value="1.5"></label>
+      </div>
+      <div class="score-grid">
+        <label class="check-item"><input type="checkbox" id="vap_ige"> Allergia IgE-mediata alle penicilline</label>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="generaVAP()">▶ Genera piano terapeutico</button>
+      <button class="btn btn-ghost" onclick="window.print()">🖨 Stampa</button>
+    </div>
+    <div id="risultato-vap" class="result-container"></div>
+  </div>
+
+  <!-- ========================= ASPIRAZIONE ========================= -->
+  <div id="panel-asp" class="panel-group">
+
+    <div class="card asp-accent">
+      <div class="card-title"><span class="icon">⚠️</span>Tipo e gravità</div>
+      <div class="info-box warn">
+        <span class="box-icon">⚠️</span>
+        <div>In assenza di ascesso o empiema, la copertura anti-anaerobica di routine non è raccomandata. La polmonite da aspirazione non complicata risponde spesso allo schema standard CAP.</div>
+      </div>
+      <div style="margin-top:12px; font-size:0.9rem; font-weight:600; color:var(--muted); margin-bottom:6px;">Complicanze presenti (richiedono copertura anaerobica):</div>
+      <div class="score-grid">
+        <label class="check-item"><input type="checkbox" id="asp_ascesso"> Ascesso polmonare</label>
+        <label class="check-item"><input type="checkbox" id="asp_empiema"> Empiema pleurico</label>
+        <label class="check-item"><input type="checkbox" id="asp_necro"> Polmonite necrotizzante</label>
+        <label class="check-item"><input type="checkbox" id="asp_sepsi"> Sepsi grave / shock settico</label>
+      </div>
+      <div style="margin-top:14px; font-size:0.9rem; font-weight:600; color:var(--muted); margin-bottom:6px;">Fattori predisponenti:</div>
+      <div class="score-grid">
+        <label class="check-item"><input type="checkbox" id="asp_disfagia"> Disfagia, stroke, demenza avanzata</label>
+        <label class="check-item"><input type="checkbox" id="asp_alcol"> Alcolismo, riduzione del sensorio</label>
+        <label class="check-item"><input type="checkbox" id="asp_sng"> SNG, scarsa igiene orale</label>
+        <label class="check-item"><input type="checkbox" id="asp_orofaringe"> Patologia orofaringea (parodontite grave)</label>
+      </div>
+    </div>
+
+    <div class="card asp-accent">
+      <div class="card-title"><span class="icon">👤</span>Dati paziente</div>
+      <div class="input-row">
+        <label>Età <input type="number" id="asp_eta" min="18" max="120" value="78"></label>
+        <label>Sesso <select id="asp_sesso"><option value="M">M</option><option value="F">F</option></select></label>
+        <label>Creatinina (mg/dL) <input type="number" id="asp_creatinina" step="0.1" min="0.1" max="15" value="1.3"></label>
+      </div>
+      <div class="score-grid">
+        <label class="check-item"><input type="checkbox" id="asp_qt"> QT lungo o farmaci QT-prolunganti</label>
+        <label class="check-item"><input type="checkbox" id="asp_ige"> Allergia IgE-mediata alle penicilline</label>
+        <label class="check-item"><input type="checkbox" id="asp_noige"> Allergia non-IgE (rash)</label>
+        <label class="check-item"><input type="checkbox" id="asp_icu"> Trasferimento in ICU pianificato</label>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="generaASP()">▶ Genera piano terapeutico</button>
+      <button class="btn btn-ghost" onclick="window.print()">🖨 Stampa</button>
+    </div>
+    <div id="risultato-asp" class="result-container"></div>
+  </div>
+
+  <!-- BIBLIOGRAFIA -->
+  <div class="card biblio" id="bibliografia">
+    <div class="card-title"><span class="icon">📚</span>Bibliografia</div>
+    <ol>
+<li id="ref1">Metlay JP, Waterer GW, Long AC, et al. Diagnosis and Treatment of Adults with Community-acquired Pneumonia. An Official Clinical Practice Guideline of the American Thoracic Society and Infectious Diseases Society of America. <em>Am J Respir Crit Care Med</em> 2019;200(7):e45–e67. <a href="https://doi.org/10.1164/rccm.201908-1581ST" target="_blank" rel="noopener">doi:10.1164/rccm.201908-1581ST</a></li>
+<li id="ref2">Jones BE, Ramirez JA, Oren E, et al. Diagnosis and Management of Community-acquired Pneumonia. An Official American Thoracic Society Clinical Practice Guideline (aggiornamento 2025; non approvato da IDSA). <em>Am J Respir Crit Care Med</em> 2026;212(1):24–44 (pubblicato online 18/07/2025). <a href="https://doi.org/10.1164/rccm.202507-1692ST" target="_blank" rel="noopener">doi:10.1164/rccm.202507-1692ST</a></li>
+<li id="ref3">Martin-Loeches I, Torres A, Nagavci B, et al. ERS/ESICM/ESCMID/ALAT guidelines for the management of severe community-acquired pneumonia. <em>Intensive Care Med</em> 2023;49(6):615–632. <a href="https://doi.org/10.1007/s00134-023-07033-8" target="_blank" rel="noopener">doi:10.1007/s00134-023-07033-8</a></li>
+<li id="ref4">Kalil AC, Metersky ML, Klompas M, et al. Management of Adults With Hospital-acquired and Ventilator-associated Pneumonia: 2016 Clinical Practice Guidelines by the Infectious Diseases Society of America and the American Thoracic Society. <em>Clin Infect Dis</em> 2016;63(5):e61–e111. <a href="https://doi.org/10.1093/cid/ciw353" target="_blank" rel="noopener">doi:10.1093/cid/ciw353</a></li>
+<li id="ref5">Torres A, Niederman MS, Chastre J, et al. International ERS/ESICM/ESCMID/ALAT guidelines for the management of hospital-acquired pneumonia and ventilator-associated pneumonia. <em>Eur Respir J</em> 2017;50(3):1700582. <a href="https://doi.org/10.1183/13993003.00582-2017" target="_blank" rel="noopener">doi:10.1183/13993003.00582-2017</a></li>
+<li id="ref6">Paul M, Carrara E, Retamar P, et al. European Society of Clinical Microbiology and Infectious Diseases (ESCMID) guidelines for the treatment of infections caused by multidrug-resistant Gram-negative bacilli. <em>Clin Microbiol Infect</em> 2022;28(4):521–547. <a href="https://doi.org/10.1016/j.cmi.2021.11.025" target="_blank" rel="noopener">doi:10.1016/j.cmi.2021.11.025</a></li>
+<li id="ref7">Tamma PD, Heil EL, Justo JA, et al. Infectious Diseases Society of America 2024 Guidance on the Treatment of Antimicrobial-Resistant Gram-Negative Infections. <em>Clin Infect Dis</em> 2024; ciae403. <a href="https://doi.org/10.1093/cid/ciae403" target="_blank" rel="noopener">doi:10.1093/cid/ciae403</a></li>
+<li id="ref8">Lim WS, van der Eerden MM, Laing R, et al. Defining community acquired pneumonia severity on presentation to hospital: an international derivation and validation study (CURB-65). <em>Thorax</em> 2003;58(5):377–382. <a href="https://doi.org/10.1136/thorax.58.5.377" target="_blank" rel="noopener">doi:10.1136/thorax.58.5.377</a></li>
+<li id="ref9">Inker LA, Eneanya ND, Coresh J, et al. New Creatinine- and Cystatin C–Based Equations to Estimate GFR without Race. <em>N Engl J Med</em> 2021;385(19):1737–1749. <a href="https://doi.org/10.1056/NEJMoa2102953" target="_blank" rel="noopener">doi:10.1056/NEJMoa2102953</a></li>
+<li id="ref10">Evans L, Rhodes A, Alhazzani W, et al. Surviving Sepsis Campaign: International Guidelines for Management of Sepsis and Septic Shock 2021. <em>Crit Care Med</em> 2021;49(11):e1063–e1143. <a href="https://doi.org/10.1097/CCM.0000000000005337" target="_blank" rel="noopener">doi:10.1097/CCM.0000000000005337</a></li>
+<li id="ref11">Rybak MJ, Le J, Lodise TP, et al. Therapeutic monitoring of vancomycin for serious methicillin-resistant Staphylococcus aureus infections: a revised consensus guideline (ASHP/IDSA/PIDS/SIDP). <em>Am J Health Syst Pharm</em> 2020;77(11):835–864. <a href="https://doi.org/10.1093/ajhp/zxaa036" target="_blank" rel="noopener">doi:10.1093/ajhp/zxaa036</a></li>
+<li id="ref12">Chastre J, Wolff M, Fagon JY, et al. Comparison of 8 vs 15 days of antibiotic therapy for ventilator-associated pneumonia in adults: a randomized trial. <em>JAMA</em> 2003;290(19):2588–2598. <a href="https://doi.org/10.1001/jama.290.19.2588" target="_blank" rel="noopener">doi:10.1001/jama.290.19.2588</a></li>
+<li id="ref13">Dinh A, Ropers J, Duran C, et al. Discontinuing β-lactam treatment after 3 days for patients with community-acquired pneumonia in non-critical care wards (PTC): a double-blind, randomised, placebo-controlled, non-inferiority trial. <em>Lancet</em> 2021;397(10280):1195–1203. <a href="https://doi.org/10.1016/S0140-6736(21)00313-5" target="_blank" rel="noopener">doi:10.1016/S0140-6736(21)00313-5</a></li>
+<li id="ref14">Schuetz P, Wirz Y, Sager R, et al. Procalcitonin to initiate or discontinue antibiotics in acute respiratory tract infections. <em>Cochrane Database Syst Rev</em> 2017;10:CD007498. <a href="https://doi.org/10.1002/14651858.CD007498.pub3" target="_blank" rel="noopener">doi:10.1002/14651858.CD007498.pub3</a></li>
+<li id="ref15">Mandell LA, Niederman MS. Aspiration Pneumonia. <em>N Engl J Med</em> 2019;380(7):651–663. <a href="https://doi.org/10.1056/NEJMra1714562" target="_blank" rel="noopener">doi:10.1056/NEJMra1714562</a></li>
+<li id="ref16">Dequin PF, Meziani F, Quenot JP, et al. Hydrocortisone in Severe Community-Acquired Pneumonia (CAPE COD). <em>N Engl J Med</em> 2023;388(21):1931–1941. <a href="https://doi.org/10.1056/NEJMoa2215145" target="_blank" rel="noopener">doi:10.1056/NEJMoa2215145</a></li>
+<li id="ref17">Khan DA, Banerji A, Blumenthal KG, et al. Drug allergy: a 2022 practice parameter update. <em>J Allergy Clin Immunol</em> 2022;150(6):1333–1393. <a href="https://doi.org/10.1016/j.jaci.2022.08.028" target="_blank" rel="noopener">doi:10.1016/j.jaci.2022.08.028</a></li>
+<li id="ref18">Wunderink RG, Niederman MS, Kollef MH, et al. Linezolid in methicillin-resistant Staphylococcus aureus nosocomial pneumonia: a randomized, controlled study (ZEPHyR). <em>Clin Infect Dis</em> 2012;54(5):621–629. <a href="https://doi.org/10.1093/cid/cir895" target="_blank" rel="noopener">doi:10.1093/cid/cir895</a></li>
+<li id="ref19">Blasi F, Iori I, Bulfoni A, et al. Can CAP guideline adherence improve patient outcome in internal medicine departments? (studio FASTCAP, raccomandazioni FADOI 2002). <em>Eur Respir J</em> 2008;32(4):902–910. <a href="https://doi.org/10.1183/09031936.00092607" target="_blank" rel="noopener">doi:10.1183/09031936.00092607</a></li>
+    </ol>
+    <div class="biblio-note">Le raccomandazioni riportate sono sintesi di supporto alla decisione clinica: fare sempre riferimento ai testi originali e ai protocolli/antibiogramma locali. Le linee guida IDSA/ATS 2016 (HAP/VAP) e IDSA/ATS 2019 (CAP) restano i riferimenti principali; l'aggiornamento ATS 2025 (CAP) non è stato approvato da IDSA.</div>
+  </div>
+
+  <div class="app-footer">Ideato dal dr. C.Briglia (cesarebriglia@gmail.com) con l'apporto di Claude - Antropic</div>
+
+</div>
+
+<script>
+// ============================================================
+// UI
+// ============================================================
+function setType(type, btn) {
+  document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.panel-group').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + type).classList.add('active');
+}
+
+// ============================================================
+// UTILS
+// ============================================================
+function egfr(eta, creatinina, sesso) {
+  const k = sesso === 'F' ? 0.7 : 0.9;
+  const a = sesso === 'F' ? -0.241 : -0.302;
+  const sex_factor = sesso === 'F' ? 1.012 : 1.0;
+  const cr_ratio = creatinina / k;
+  let val;
+  if (creatinina <= k) {
+    val = 142 * Math.pow(cr_ratio, a) * Math.pow(0.9938, eta) * sex_factor;
+  } else {
+    val = 142 * Math.pow(cr_ratio, -1.200) * Math.pow(0.9938, eta) * sex_factor;
+  }
+  return Math.round(val);
+}
+
+function oggi() {
+  return new Date().toLocaleDateString('it-IT', {day:'2-digit', month:'2-digit', year:'numeric'});
+}
+
+// Rimando numerato alla bibliografia in fondo alla pagina
+function cite(...n) {
+  return '<sup class="cite">[' + n.map(i => '<a href="#ref' + i + '">' + i + '</a>').join(',') + ']</sup>';
+}
+
+// Avviso di aggiustamento posologico della levofloxacina (soglia 50 mL/min, non 30)
+function levoWarn(schema, gfr) {
+  if (gfr < 50 && /Levofloxacina/.test(schema)) {
+    return infoBox('warn','💊','Levofloxacina con eGFR ' + gfr + ' mL/min: ridurre la dose in base alla clearance (scheda tecnica, regime 750 mg: CrCl 20–49 mL/min → 750 mg ogni 48 h; CrCl 10–19 mL/min → 750 mg, poi 500 mg ogni 48 h). Verificare sulla scheda tecnica/con il farmacista.');
+  }
+  return '';
+}
+
+function showResult(id, html) {
+  const el = document.getElementById(id);
+  el.innerHTML = html;
+  el.style.display = 'block';
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function resultWrap(titolo, scenario, metaHtml, bodyHtml) {
+  return `
+    <div class="result-header">
+      <div>
+        <h3>🫁 ${titolo}</h3>
+        <div class="result-meta">${scenario}</div>
+      </div>
+    </div>
+    <div class="result-body">
+      <div class="result-row">${metaHtml}</div>
+      ${bodyHtml}
+      <div class="timestamp">Generato il ${oggi()} – solo uso clinico interno</div>
+    </div>`;
+}
+
+function chip(label) {
+  return `<span class="result-chip">${label}</span>`;
+}
+
+function rxBlock(label, testo) {
+  return `<div class="rx-block"><div class="rx-label">${label}</div>${testo}</div>`;
+}
+
+function infoBox(type, icon, testo) {
+  return `<div class="info-box ${type}"><span class="box-icon">${icon}</span><div>${testo}</div></div>`;
+}
+
+function monitorBox(testo) {
+  return `<div class="monitor-box"><strong>Monitoraggio:</strong> ${testo}</div>`;
+}
+
+function switchBox() {
+  return `<div class="switch-box">
+    <strong>Criteri switch EV → orale:</strong>
+    <ul>
+      <li>Afebbrile ≥ 24h, FR ≤ 24/min, PAS ≥ 90 mmHg, SpO₂ ≥ 90%</li>
+      <li>Nessuna instabilità emodinamica; capacità di assumere farmaci per os</li>
+      <li>Tendenza al miglioramento radiologico/laboratoristico</li>
+    </ul>
+  </div>`;
+}
+
+// ============================================================
+// CAP
+// ============================================================
+function calcolaCURB65() {
+  let p = 0;
+  ['cap_c','cap_u','cap_r','cap_b','cap_65'].forEach(id => {
+    if (document.getElementById(id).checked) p++;
+  });
+  const el = document.getElementById('curb-inline');
+  let cls = 'low', msg = `CURB-65: <strong>${p}/5</strong> – Rischio basso. Trattamento ambulatoriale possibile.`;
+  if (p === 2) { cls = 'mid'; msg = `CURB-65: <strong>${p}/5</strong> – Rischio intermedio. Ricovero in reparto consigliato.`; }
+  if (p >= 3) { cls = 'high'; msg = `CURB-65: <strong>${p}/5</strong> – Rischio alto. Ricovero obbligatorio; valutare ICU/Sub-intensiva se ≥ 4.`; }
+  msg += cite(8);
+  el.className = 'score-inline ' + cls;
+  el.innerHTML = msg;
+  el.style.display = 'block';
+  return p;
+}
+
+function generaCAP() {
+  const curb65 = calcolaCURB65();
+  const inICU = document.querySelector('input[name="cap_setting"]:checked').value === 'icu';
+  const eta = parseFloat(document.getElementById('cap_eta').value) || 70;
+  const sesso = document.getElementById('cap_sesso').value;
+  const crea = parseFloat(document.getElementById('cap_creatinina').value) || 1.1;
+  const gfr = egfr(eta, crea, sesso);
+  const irc = gfr < 30;
+  const qtLungo = document.getElementById('cap_qt').checked;
+  const allergiaIgE = document.getElementById('cap_ige').checked;
+  const allergiaNoIgE = document.getElementById('cap_noige').checked;
+
+  const pseu = document.getElementById('pseu_micro').checked || document.getElementById('pseu_osp').checked ||
+               document.getElementById('pseu_bpcp').checked || document.getElementById('pseu_immune').checked;
+  const mrsaDoc = document.getElementById('mrsa_storia').checked;
+  const mrsaAltri = document.getElementById('mrsa_ospedale').checked || document.getElementById('mrsa_rx').checked ||
+                    document.getElementById('mrsa_influenza').checked;
+  const mrsa = mrsaDoc || mrsaAltri;
+  const legion = document.getElementById('legion_viaggio').checked || document.getElementById('legion_comorb').checked ||
+                 document.getElementById('legion_clinica').checked;
+  const useICU = inICU || curb65 >= 4;
+
+  let schema = '', durata = '', monitoraggio = '', warnings = '', scenario = '';
+  let lineeGuida = '';
+
+  // Warnings
+  if (mrsaAltri && !mrsaDoc && !useICU) {
+    warnings += infoBox('warn','⚠️','MRSA in CAP comunitaria è estremamente raro in Italia (&lt;2%). La copertura con glicopeptidi è raccomandata <strong>solo con storia documentata</strong>. Considerare la copertura solo in caso di polmonite necrotizzante post-influenzale con shock.');
+  }
+
+  if (useICU && curb65 >= 4 && !inICU) {
+    warnings += infoBox('danger','❗','CURB-65 ≥ 4: trasferimento in ICU/Sub-intensiva fortemente indicato.');
+  }
+
+  if (irc) {
+    warnings += infoBox('note','💊',`eGFR calcolato: <strong>${gfr} mL/min</strong> – Ridotta funzione renale: aggiustamento posologico necessario. <em>eGFR CKD-EPI 2021${cite(9)}; per il dosaggio dei farmaci valutare la clearance di Cockcroft-Gault. Il ceftriaxone non richiede aggiustamento in IRC isolata.</em>`);
+  }
+
+  // Schema
+  if (useICU) {
+    scenario = 'CAP grave – Setting ICU/Sub-intensiva';
+    if (pseu && mrsa && !allergiaIgE) {
+      schema = rxBlock('Schema di scelta', 'Piperacillina-tazobactam 4,5 g EV q6h (inf. estesa 4h)<br>+ Vancomicina 25-30 mg/kg/die (bolo/infusione continua)<br><em>oppure</em> Linezolid 600 mg EV q12h (se IRC severa)');
+      durata = '7–14 giorni in base a evoluzione clinica';
+      monitoraggio = 'Creatinina seriata, livelli vancomicina (AUC/MIC), emocromo, procalcitonina';
+    } else if (pseu && allergiaIgE) {
+      schema = rxBlock('Schema ICU anti-Pseudomonas (allergia IgE β-lattamici)', 'Aztreonam 2 g EV q8h<br>+ Levofloxacina 750 mg EV q24h' + (mrsa ? '<br>+ Vancomicina 25-30 mg/kg/die EV <em>oppure</em> Linezolid 600 mg EV q12h' : '') + '<br><em>Aztreonam non copre i Gram-positivi: la fluorochinolone copre pneumococco e atipici</em>');
+      durata = '7–10 giorni';
+      monitoraggio = 'QT (ECG basale e a 48h), glicemia, creatinina';
+    } else if (pseu) {
+      const beta = irc ? 'Cefepime 2 g EV q12-24h' : 'Piperacillina-tazobactam 4,5 g EV q6h (inf. estesa 4h)';
+      schema = rxBlock('Schema di scelta', `${beta}<br>+ Azitromicina 500 mg EV q24h`);
+      schema += rxBlock('Alternativa (ICU IDSA)', 'Ceftriaxone 2 g EV q24h + Levofloxacina 500 mg EV q24h<br><em>(solo se rischio Legionella elevato o intolleranza macrolide)</em>');
+      durata = '7–10 giorni';
+      monitoraggio = 'Creatinina, emocromo, funzionalità epatica';
+    } else if (allergiaIgE) {
+      schema = rxBlock('Schema ICU (allergia IgE β-lattamici)', 'Aztreonam 2 g EV q8h<br>+ Levofloxacina 750 mg EV q24h' + (mrsa ? '<br>+ Vancomicina 25-30 mg/kg/die EV <em>oppure</em> Linezolid 600 mg EV q12h' : '') + '<br><em>Aztreonam non copre i Gram-positivi: la fluorochinolone copre pneumococco e atipici. Considerare consulenza allergologica</em>');
+      durata = '5–7 giorni';
+      monitoraggio = 'QT (ECG basale e a 48h), glicemia, funzionalità epatica';
+    } else if (mrsa) {
+      schema = rxBlock('Schema ICU con copertura MRSA', 'Ceftriaxone 2 g EV q24h<br>+ Azitromicina 500 mg EV q24h<br>+ Vancomicina 25-30 mg/kg/die EV <em>oppure</em> Linezolid 600 mg EV q12h<br><em>Rivalutare la copertura MRSA con colture/PCR nasale a 48h</em>');
+      durata = '7 giorni (rivalutare con colture)';
+      monitoraggio = 'Livelli vancomicina (AUC 400-600), creatinina, emocromo, QT';
+    } else {
+      schema = rxBlock('Schema di scelta (IDSA/ATS 2019 · ERS/ESICM/ESCMID/ALAT 2023)', 'Ceftriaxone 2 g EV q24h<br>+ Azitromicina 500 mg EV q24h');
+      schema += rxBlock('Alternativa', 'Ceftriaxone 2 g EV q24h + Levofloxacina 750 mg EV q24h<br><em>(se QT nella norma e assenza rischio fluorochinoloni)</em>');
+      durata = '5–7 giorni (≥ 5 giorni in CAP grave; non superare 7 senza rivalutazione)' + cite(2);
+      monitoraggio = 'QT, transaminasi, clearance creatinina';
+    }
+    lineeGuida = `<div class="guidelines-box">
+      <strong>Riferimenti: ERS/ESICM/ESCMID/ALAT 2023 (sCAP) · IDSA/ATS 2019 · ATS 2025</strong>
+      <ul>
+        <li>CAP grave: terapia combinata β-lattamico + macrolide raccomandata (IDSA/ATS 2019, raccomandazione forte, evidenza bassa)${cite(1)}; macrolide come prima opzione, fluorochinolone come alternativa (ERS/ESICM/ESCMID/ALAT 2023)${cite(3)}</li>
+        <li>Antibiotici entro 1 h in sepsi grave/shock settico (Surviving Sepsis Campaign 2021)${cite(10)}</li>
+        <li>Emocolture e Ag urinari Legionella/pneumococco prima degli ATB in CAP grave (IDSA/ATS 2019)${cite(1)}</li>
+        <li>Corticosteroidi sistemici suggeriti in CAP grave, escluse le forme influenzali (ATS 2025, raccomandazione condizionale)${cite(2)}; riduzione della mortalità con idrocortisone in ICU (CAPE COD)${cite(16)}</li>
+        <li>Durata ≥ 5 giorni in CAP grave (ATS 2025, raccomandazione forte)${cite(2)}; procalcitonina utilizzabile per ridurre la durata quando il ciclo supererebbe 7 giorni (ERS/ESICM/ESCMID/ALAT 2023, condizionale)${cite(3)}</li>
+        <li>De-escalation e rivalutazione a 48–72h${cite(1)}</li>
+      </ul>
+    </div>`;
+  } else {
+    scenario = 'CAP – Reparto di Medicina Interna';
+    if (pseu && allergiaIgE) {
+      schema = rxBlock('Schema anti-Pseudomonas (allergia IgE β-lattamici)', 'Aztreonam 2 g EV q8h<br>+ Levofloxacina 750 mg EV q24h<br><em>Aztreonam non copre i Gram-positivi: la fluorochinolone copre pneumococco e atipici. Considerare consulenza allergologica</em>');
+      durata = '7 giorni (estendere se risposta lenta)';
+      monitoraggio = 'QT (ECG basale + 48h), glicemia, creatinina';
+    } else if (pseu) {
+      const beta = irc ? 'Cefepime 2 g EV q12-24h' : 'Piperacillina-tazobactam 4,5 g EV q6h';
+      schema = rxBlock('Schema anti-Pseudomonas', `${beta}<br>+ Azitromicina 500 mg EV q24h`);
+      durata = '7 giorni (estendere se risposta lenta)';
+      monitoraggio = 'Creatinina, emocromo, funzionalità epatica';
+    } else if (mrsa && mrsaDoc) {
+      schema = rxBlock('Schema con copertura MRSA documentata', 'Ceftriaxone 2 g EV q24h + Azitromicina 500 mg EV q24h<br>+ Vancomicina 15-20 mg/kg EV q12h');
+      schema += rxBlock('Alternativa (IRC grave)', 'Ceftriaxone 2 g EV q24h + Azitromicina 500 mg EV q24h<br>+ Linezolid 600 mg EV q12h');
+      durata = '7–10 giorni';
+      monitoraggio = 'Livelli vancomicina (target AUC 400-600), creatinina, emocromo';
+    } else if (legion) {
+      if (qtLungo) {
+        schema = rxBlock('Schema Legionella (QT lungo – macrolide controindicato)', 'Levofloxacina 750 mg EV q24h<br><em>Monitorare QT basale ed ECG a 48h; usare con cautela in anziani/IRC</em>');
+        schema += rxBlock('Alternativa se QT lungo + controindicazione FQ (paziente in grado di deglutire)', 'Doxiciclina 100 mg PO q12h<br><em>Non disponibile formulazione EV in Italia; biodisponibilità orale ~93%</em>');
+      } else {
+        if (allergiaIgE) {
+          schema = rxBlock('Schema con copertura Legionella (allergia IgE)', 'Levofloxacina 750 mg EV q24h<br><em>La fluorochinolone in monoterapia copre pneumococco e Legionella; usare con cautela (FQ riservati a casi selezionati)</em>');
+        } else {
+          schema = rxBlock('Schema con copertura Legionella (prima scelta)', 'Ceftriaxone 2 g EV q24h<br>+ Azitromicina 500 mg EV q24h<br><em>Se Ag urinario/PCR Legionella positivi: valutare de-escalation a macrolide o FQ in monoterapia</em>');
+          schema += rxBlock('Alternativa (intolleranza macrolide, QT nella norma)', 'Levofloxacina 750 mg EV q24h – usare con cautela (FQ riservati a casi selezionati)');
+        }
+      }
+      durata = '7–10 giorni (14 se immunodepresso)';
+      monitoraggio = 'QT a 48h, transaminasi, natremia';
+    } else {
+      if (allergiaIgE) {
+        if (qtLungo) {
+          schema = rxBlock('Schema (allergia IgE + QT lungo)', 'Levofloxacina 750 mg EV q24h<br><em>Unica opzione parenterale praticabile: monitoraggio QT obbligatorio</em>');
+          schema += rxBlock('Alternativa (paziente in grado di deglutire)', 'Doxiciclina 100 mg PO q12h<br><em>Non disponibile formulazione EV in Italia; considerare consulenza allergologica</em>');
+          monitoraggio = 'QT (ECG basale + 48h), glicemia, tendini (levofloxacina)';
+        } else {
+          schema = rxBlock('Schema (allergia IgE, QT normale)', 'Levofloxacina 750 mg EV q24h');
+          schema += infoBox('warn','⚠️','Fluorochinoloni: riservare a casi selezionati. Rischi: tendinopatie, QT, disglicemia, neuropatia. Riesaminare indicazione a 48h.');
+          monitoraggio = 'QT (ECG basale + 48h), glicemia, tendini';
+        }
+      } else if (allergiaNoIgE) {
+        schema = rxBlock('Schema (allergia non-IgE ai penicillani, cefalosporine sicure)', 'Ceftriaxone 2 g EV q24h<br>+ Azitromicina 500 mg EV q24h');
+        monitoraggio = 'QT, transaminasi';
+      } else {
+        const cef = 'Ceftriaxone 2 g EV q24h';
+        schema = rxBlock('Schema di prima scelta (IDSA/ATS 2019)', `${cef}<br>+ Azitromicina 500 mg EV q24h`);
+        monitoraggio = 'QT a 48h, transaminasi, creatinina';
+      }
+      durata = '5–7 giorni, guidati dalla stabilità clinica quotidiana. Cicli più brevi (< 5 giorni, min. 3) possono essere considerati in pazienti non gravi stabili e selezionati (ATS 2025, condizionale)' + cite(1,2,13);
+    }
+    lineeGuida = `<div class="guidelines-box">
+      <strong>Riferimenti: IDSA/ATS 2019 · ATS 2025 · ERS/ESICM/ESCMID/ALAT 2023</strong>
+      <ul>
+        <li>CAP ospedalizzata non grave: β-lattamico + macrolide oppure fluorochinolone respiratorio in monoterapia (IDSA/ATS 2019)${cite(1)}</li>
+        <li>Fluorochinoloni riservati a casi selezionati (allergia IgE ai β-lattamici, Legionella con controindicazione ai macrolidi) per il rischio di tendinopatia, prolungamento del QT e disglicemia</li>
+        <li>Ag urinari Legionella e pneumococco: raccomandati nella CAP grave; nella forma non grave solo con fattori epidemiologici (IDSA/ATS 2019)${cite(1)}</li>
+        <li>Switch EV→orale e de-escalation al raggiungimento della stabilità clinica${cite(1,2)}</li>
+        <li>Durata: minimo 5 giorni (IDSA/ATS 2019)${cite(1)}; l'aggiornamento ATS 2025 suggerisce &lt; 5 giorni (min. 3) nei non gravi stabili, raccomandazione condizionale non approvata da IDSA${cite(2)}, con supporto da RCT${cite(13)}</li>
+        <li>Procalcitonina: non raccomandata per decidere l'inizio della terapia (IDSA/ATS 2019)${cite(1)}; può ridurre l'esposizione agli antibiotici se usata per guidare la sospensione${cite(14)}</li>
+        <li>Corticosteroidi sistemici: sconsigliati nella CAP ospedalizzata non grave (ATS 2025, raccomandazione forte)${cite(2)}</li>
+        <li>Contesto italiano: l'adesione alle raccomandazioni FADOI (2002) è risultata associata a esiti migliori in Medicina Interna (studio FASTCAP)${cite(19)}</li>
+        <li>Doxiciclina disponibile solo per via orale in Italia: non indicare formulazione EV</li>
+      </ul>
+    </div>`;
+  }
+
+  const body = `
+    ${warnings}${levoWarn(schema, gfr)}
+    <div class="result-section-title">Schema terapeutico</div>
+    ${schema}
+    <div class="result-section-title">Durata raccomandata</div>
+    <p style="font-size:0.9rem;">${durata}</p>
+    ${monitorBox(monitoraggio)}
+    <hr class="divider">
+    ${switchBox()}
+    ${lineeGuida}`;
+
+  showResult('risultato-cap', resultWrap(
+    'CAP – Piano Terapeutico',
+    scenario,
+    chip(`CURB-65: ${curb65}/5`) + chip(`eGFR: ${gfr} mL/min`) + chip(useICU ? 'ICU/Sub-intensiva' : 'Reparto') + (irc ? chip('⚠️ IRC') : ''),
+    body
+  ));
+}
+
+// ============================================================
+// HAP
+// ============================================================
+function generaHAP() {
+  const eta = parseFloat(document.getElementById('hap_eta').value) || 72;
+  const sesso = document.getElementById('hap_sesso').value;
+  const crea = parseFloat(document.getElementById('hap_creatinina').value) || 1.2;
+  const gfr = egfr(eta, crea, sesso);
+  const irc = gfr < 30 || document.getElementById('hap_dialisi').checked;
+  const allergiaIgE = document.getElementById('hap_ige').checked;
+
+  const sepsi = document.getElementById('hap_sepsi').checked;
+  const psuMDR = document.getElementById('hap_pseu_col').checked || document.getElementById('hap_pseu_bpco').checked || document.getElementById('hap_uso_cortico').checked;
+  const mrsaDoc = document.getElementById('hap_mrsa_doc').checked || document.getElementById('hap_mrsa_prev').checked;
+  const mrsaPrevalenza = document.getElementById('hap_mrsa_naso').checked;
+  const esbl = document.getElementById('hap_esbl').checked;
+  const carba = document.getElementById('hap_carba').checked || document.getElementById('hap_trip_neg').checked;
+  const atbPrev = document.getElementById('hap_atb_prev').checked;
+
+  const altaRischioMDR = psuMDR || esbl || carba || atbPrev || document.getElementById('hap_icu_prev').checked;
+  const mrsaCopertura = mrsaDoc || mrsaPrevalenza || sepsi;
+
+  let schema = '', durata = '', monitoraggio = '', warnings = '';
+
+  warnings += infoBox('teal','🔬','Raccogliere <strong>emocolture (2 set) ed espettorato/ETA</strong> prima di iniziare la terapia antibiotica.');
+
+  if (irc) {
+    warnings += infoBox('note','💊',`eGFR: <strong>${gfr} mL/min</strong> – Adeguare posologia. <em>eGFR CKD-EPI 2021${cite(9)}; per i farmaci valutare Cockcroft-Gault. Il ceftriaxone non richiede aggiustamento in IRC isolata.</em>`);
+  }
+
+  if (carba) {
+    warnings += infoBox('danger','❗',"Rischio carbapenemasi elevato. Contattare l\u2019infettivologo per regime ottimale (ceftazidime-avibactam, cefiderocol, combinazioni). Schema sotto è empirico in attesa di colture.");
+  }
+
+  if (allergiaIgE && (esbl || carba)) {
+    warnings += infoBox('danger','❗',`Allergia IgE + rischio ESBL/carbapenemasi: l'aztreonam è idrolizzato dalle ESBL e dalle KPC e non copre i Gram-positivi. La cross-reattività tra penicilline e carbapenemi/cefalosporine con catene laterali diverse è bassa: valutare con infettivologo/allergologo.${cite(6,7,17)}`);
+  }
+
+  if (allergiaIgE && !mrsaCopertura) {
+    warnings += infoBox('warn','⚠️',`Allergia IgE: l'aztreonam non copre S. aureus (MSSA). Valutare un agente anti-stafilococcico (es. linezolid) o una cefalosporina/carbapenemico previa valutazione allergologica.${cite(4,17)}`);
+  }
+
+  if (altaRischioMDR) {
+    let betalat = allergiaIgE ? 'Aztreonam 2 g EV q8h' :
+                  carba ? 'Ceftazidime-avibactam 2,5 g EV q8h (se sospetto KPC/OXA-48)' :
+                  irc ? 'Cefepime 2 g EV q12h' : 'Piperacillina-tazobactam 4,5 g EV q6h (inf. estesa 4h)';
+    schema = rxBlock('Schema empirico – Alto rischio MDR (IDSA HAP 2016)', `${betalat}`);
+    if (mrsaCopertura) {
+      schema += rxBlock('Aggiunta copertura MRSA', 'Vancomicina 25-30 mg/kg/die EV (infusione continua o frazionata)<br><em>oppure</em> Linezolid 600 mg EV q12h (preferibile se IRC grave o fallimento vancomicina)');
+      monitoraggio = 'Livelli vancomicina (AUC 400-600), creatinina, emocromo piastrine (linezolid), transaminasi';
+    } else {
+      monitoraggio = 'Creatinina, emocromo, funzionalità epatica, procalcitonina';
+    }
+    durata = '7 giorni (IDSA/ATS 2016). Estendere solo se Pseudomonas confermato o risposta lenta.' + cite(4);
+    schema += infoBox('warn','⚠️','De-escalation obbligatoria a 48–72h sulla base dei risultati colturali. Evitare schemi doppi anti-Gram-negativi in assenza di sepsi grave/immunodepressione.');
+  } else {
+    let betalat = allergiaIgE ? 'Aztreonam 2 g EV q8h' :
+                  irc ? 'Cefepime 2 g EV q12h (adattare a eGFR)' : 'Piperacillina-tazobactam 4,5 g EV q6h';
+    schema = rxBlock('Schema empirico – Basso/Medio rischio MDR (IDSA/ATS 2016)', `${betalat}`);
+    schema += infoBox('note','ℹ️',`Ceftriaxone 2 g EV q24h è un'alternativa a spettro ristretto solo per HAP precoce (&lt; 5 giorni dal ricovero), senza fattori MDR né alto rischio di mortalità e con bassa prevalenza locale di ESBL (ERS 2017).${cite(5)}`);
+    if (mrsaCopertura) {
+      schema += rxBlock('Aggiunta copertura MRSA', 'Vancomicina 15-20 mg/kg EV q12h<br><em>oppure</em> Linezolid 600 mg EV q12h (se IRC)');
+      monitoraggio = 'Livelli vancomicina, creatinina, emocromo';
+    } else {
+      monitoraggio = 'Creatinina, procalcitonina, funzionalità epatica';
+    }
+    durata = '7 giorni. Review a 48h.' + cite(4);
+    schema += infoBox('ok','✅','In assenza di shock o immunodepressione: monoterapia con β-lattamico attivo. Doppia copertura anti-Gram-negativi non raccomandata in HAP a basso rischio.');
+  }
+
+  const body = `
+    ${warnings}${levoWarn(schema, gfr)}
+    <div class="result-section-title">Schema terapeutico</div>
+    ${schema}
+    <div class="result-section-title">Durata raccomandata</div>
+    <p style="font-size:0.9rem;">${durata}</p>
+    ${monitorBox(monitoraggio)}
+    <hr class="divider">
+    <div class="guidelines-box">
+      <strong>Riferimenti: IDSA/ATS 2016 (HAP/VAP) · ERS/ESICM/ESCMID/ALAT 2017 · ESCMID 2022 (MDR Gram-negativi)</strong>
+      <ul>
+        <li>Colture (ETA, emocolture) prima dell'ATB${cite(4)}; non ritardare la terapia (entro 1 h) in shock settico (Surviving Sepsis Campaign 2021)${cite(10)}</li>
+        <li>Doppia copertura anti-Gram-negativi non di routine: da considerare in shock settico o alto rischio MDR${cite(4,5)}</li>
+        <li>HAP a basso rischio MDR: IDSA/ATS elenca pip-tazo, cefepime, levofloxacina o carbapenemico (copertura MSSA)${cite(4)}; schemi a spettro ristretto (es. ceftriaxone) sono previsti da ERS solo nelle forme precoci (&lt; 5 giorni dal ricovero), senza fattori MDR né alto rischio di mortalità${cite(5)}: valutare con l'epidemiologia locale (prevalenza ESBL)</li>
+        <li>MRSA: vancomicina o linezolid entrambi raccomandati${cite(4)}; vancomicina guidata da AUC/MIC 400–600${cite(11)}</li>
+        <li>Coinvolgere l'infettivologo in caso di carbapenemasi, fallimento terapeutico, immunodepressione grave${cite(6,7)}</li>
+        <li>De-escalation sulla base delle colture a 48–72h${cite(4)}</li>
+        <li>Durata 7 giorni${cite(4)}; procalcitonina + criteri clinici per guidare la sospensione (raccomandazione debole)${cite(4)}</li>
+      </ul>
+    </div>`;
+
+  showResult('risultato-hap', resultWrap(
+    'HAP – Piano Terapeutico',
+    altaRischioMDR ? 'HAP ad alto rischio MDR' : 'HAP a basso/moderato rischio',
+    chip(`eGFR: ${gfr} mL/min`) + chip(altaRischioMDR ? '⚠️ Alto rischio MDR' : 'Rischio MDR moderato') + (mrsaCopertura ? chip('MRSA: copertura') : ''),
+    body
+  ));
+}
+
+// ============================================================
+// VAP
+// ============================================================
+function generaVAP() {
+  const eta = parseFloat(document.getElementById('vap_eta').value) || 68;
+  const sesso = document.getElementById('vap_sesso').value;
+  const crea = parseFloat(document.getElementById('vap_creatinina').value) || 1.5;
+  const gfr = egfr(eta, crea, sesso);
+  const irc = gfr < 30;
+  const allergiaIgE = document.getElementById('vap_ige').checked;
+
+  const atb90 = document.getElementById('vap_atb90').checked;
+  const sepsi = document.getElementById('vap_sepsi').checked;
+  const colMDR = document.getElementById('vap_colMDR').checked;
+  const esbl = document.getElementById('vap_esbl').checked;
+  const rrt = document.getElementById('vap_rrt').checked;
+  const mrsaCol = document.getElementById('vap_mrsa_col').checked;
+  const mrsaPrev = document.getElementById('vap_mrsa_prev').checked;
+
+  const altaRischioMDR = atb90 || colMDR || esbl || rrt || sepsi || document.getElementById('vap_ards').checked;
+  const mrsaCopertura = mrsaCol || mrsaPrev || (altaRischioMDR && sepsi);
+
+  let schema = '', monitoraggio = '';
+
+  schema += infoBox('note','🔬','<strong>Prima di iniziare ATB:</strong> campione respiratorio + emocolture 2 set. IDSA/ATS 2016 suggerisce campionamento non invasivo (ETA con coltura semiquantitativa); BAL/mini-BAL come alternativa. Non ritardare ATB se sepsi grave.' + cite(4,5));
+
+  if (allergiaIgE && (esbl || colMDR)) {
+    schema += infoBox('danger','❗',`Allergia IgE + rischio ESBL/MDR: l'aztreonam è idrolizzato dalle ESBL e dalle KPC e non copre i Gram-positivi. La cross-reattività tra penicilline e carbapenemi/cefalosporine con catene laterali diverse è bassa: valutare con infettivologo/allergologo.${cite(6,7,17)}`);
+  }
+
+  if (allergiaIgE && !mrsaCopertura) {
+    schema += infoBox('warn','⚠️',`Allergia IgE: l'aztreonam non copre S. aureus (MSSA). Valutare un agente anti-stafilococcico (es. linezolid) o una cefalosporina/carbapenemico previa valutazione allergologica.${cite(4,17)}`);
+  }
+
+  if (altaRischioMDR) {
+    const betalat = allergiaIgE ? 'Aztreonam 2 g EV q8h' :
+                    esbl ? 'Meropenem 2 g EV q8h (inf. estesa 3h)' :
+                    irc ? 'Cefepime 2 g EV q8h (adattare a eGFR)' : 'Piperacillina-tazobactam 4,5 g EV q6h (inf. estesa 4h)';
+    schema += rxBlock('β-lattamico anti-Pseudomonas (scelta in base a profilo resistenze locale)', betalat);
+    schema += rxBlock('Secondo agente anti-Gram-neg di classe diversa (VAP con fattori di rischio MDR)', 'Amikacina 15-20 mg/kg EV q24h (max 5-7 giorni)<br><em>Sospendere aminoglicoside appena stabilizzazione clinica</em>');
+    if (mrsaCopertura) {
+      schema += rxBlock('Copertura MRSA', 'Vancomicina 25-30 mg/kg/die (infusione continua preferita in ICU)<br><em>oppure</em> Linezolid 600 mg EV q12h<br><em>Scelta guidata da fattori del paziente (citopenie, interazioni, funzione renale, costo)</em>');
+    }
+    monitoraggio = 'Livelli vancomicina/amikacina, creatinina g/g, emocromo, procalcitonina';
+  } else {
+    const betalat = allergiaIgE ? 'Aztreonam 2 g EV q8h' :
+                    irc ? 'Cefepime 2 g EV q12h' : 'Piperacillina-tazobactam 4,5 g EV q6h';
+    schema += rxBlock('Schema empirico – VAP senza alto rischio MDR', betalat);
+    if (mrsaCopertura) {
+      schema += rxBlock('Copertura MRSA', 'Vancomicina 15-20 mg/kg EV q12h<br><em>oppure</em> Linezolid 600 mg EV q12h');
+    }
+    monitoraggio = 'Creatinina, emocromo, procalcitonina, colture';
+  }
+
+  schema += infoBox('warn','⚠️','De-escalation mandatoria a 48–72h. Sospendere aminoglicoside dopo 3-5 giorni se risposta clinica. Sospendere MRSA-coverage se colture negative e clinica migliorata.');
+
+  const body = `
+    ${schema}
+    <div class="result-section-title">Durata raccomandata</div>
+    <p style="font-size:0.9rem;">7 giorni. Non prolungare a 14 gg salvo Pseudomonas o Acinetobacter confermati con risposta lenta. Procalcitonina per guidare stop.${cite(4,12)}</p>
+    ${monitorBox(monitoraggio)}
+    <hr class="divider">
+    <div class="guidelines-box">
+      <strong>Riferimenti: IDSA/ATS 2016 (HAP/VAP) · ERS/ESICM/ESCMID/ALAT 2017 · ESCMID 2022 (MDR Gram-negativi)</strong>
+      <ul>
+        <li>Due agenti anti-Pseudomonas di classi diverse suggeriti nella VAP con fattori di rischio MDR (ATB EV negli ultimi 90 gg, shock settico, ARDS, ≥ 5 gg di degenza, RRT) o con &gt; 10% di resistenza locale (IDSA/ATS 2016, raccomandazione debole)${cite(4)}</li>
+        <li>MRSA: vancomicina o linezolid, senza preferenza di classe (IDSA/ATS 2016)${cite(4)}; nello studio ZEPHyR linezolid ha dato maggiore guarigione clinica a fine terapia con mortalità a 60 giorni simile${cite(18)}</li>
+        <li>Aminoglicosidi: non usare come unico agente anti-Pseudomonas e preferire alternative attive se disponibili (IDSA/ATS 2016)${cite(4)}; durata breve e sospensione alla stabilizzazione sono prassi clinica, non una raccomandazione formale</li>
+        <li>Durata 7 giorni (IDSA/ATS 2016)${cite(4)}; studio 8 vs 15 giorni senza differenze di mortalità, con più recidive da bacilli Gram-negativi non fermentanti nel braccio breve${cite(12)}</li>
+        <li>Procalcitonina + criteri clinici per guidare la sospensione (raccomandazione debole)${cite(4)}</li>
+        <li>Coinvolgere l'infettivologia per carbapenemasi, Acinetobacter MDR, fallimento terapeutico${cite(6,7)}</li>
+      </ul>
+    </div>`;
+
+  showResult('risultato-vap', resultWrap(
+    'VAP – Piano Terapeutico',
+    altaRischioMDR ? 'VAP ad alto rischio MDR' : 'VAP a basso/moderato rischio MDR',
+    chip(`eGFR: ${gfr} mL/min`) + chip(altaRischioMDR ? '⚠️ Alto rischio MDR' : 'Rischio MDR moderato') + (mrsaCopertura ? chip('MRSA: copertura') : ''),
+    body
+  ));
+}
+
+// ============================================================
+// ASPIRAZIONE
+// ============================================================
+function generaASP() {
+  const eta = parseFloat(document.getElementById('asp_eta').value) || 78;
+  const sesso = document.getElementById('asp_sesso').value;
+  const crea = parseFloat(document.getElementById('asp_creatinina').value) || 1.3;
+  const gfr = egfr(eta, crea, sesso);
+  const irc = gfr < 30;
+  const qtLungo = document.getElementById('asp_qt').checked;
+  const allergiaIgE = document.getElementById('asp_ige').checked;
+  const allergiaNoIgE = document.getElementById('asp_noige').checked;
+
+  const ascesso = document.getElementById('asp_ascesso').checked;
+  const empiema = document.getElementById('asp_empiema').checked;
+  const necro = document.getElementById('asp_necro').checked;
+  const sepsi = document.getElementById('asp_sepsi').checked;
+  const icu = document.getElementById('asp_icu').checked;
+
+  const complic = ascesso || empiema || necro;
+  const grave = sepsi || icu || necro;
+
+  let schema = '', durata = '', monitoraggio = '', warnings = '';
+
+  const predisp = [['asp_disfagia','disfagia/stroke/demenza'],['asp_alcol','alcolismo/sensorio ridotto'],['asp_sng','SNG/scarsa igiene orale'],['asp_orofaringe','patologia orofaringea']]
+    .filter(([id]) => document.getElementById(id).checked).map(([, l]) => l);
+  if (predisp.length) {
+    warnings += infoBox('teal','🦷',`<strong>Fattori predisponenti:</strong> ${predisp.join(', ')}. Prevenzione delle recidive: valutazione della disfagia (logopedista), igiene orale, posizione semiseduta ai pasti, revisione di sedativi e farmaci che riducono il sensorio.${cite(15)}`);
+  }
+  if (allergiaNoIgE && !allergiaIgE) {
+    warnings += infoBox('note','💊',`Allergia non-IgE (rash semplice): cefalosporine come ceftriaxone generalmente utilizzabili; evitare penicilline e associazioni con inibitori delle β-lattamasi salvo valutazione allergologica.${cite(17)}`);
+  }
+
+  if (!complic) {
+    warnings += infoBox('warn','ℹ️','Nessuna complicanza documentata (ascesso, empiema, necrosi). <strong>La copertura anti-anaerobica non è raccomandata</strong> nelle polmoniti da aspirazione non complicate. Schema CAP standard è appropriato.');
+    schema = rxBlock('Schema polmonite da aspirazione non complicata', allergiaIgE ?
+      'Levofloxacina 750 mg EV q24h' :
+      qtLungo ?
+      'Ceftriaxone 2 g EV q24h<br>+ Doxiciclina 100 mg PO q12h<br><em>QT lungo: macrolide evitato; doxiciclina solo per os (non disponibile EV in Italia)</em>' :
+      'Ceftriaxone 2 g EV q24h + Azitromicina 500 mg EV q24h');
+    if (allergiaIgE && qtLungo) {
+      warnings += infoBox('danger','❗','Allergia IgE + QT lungo: la levofloxacina può prolungare il QT. ECG basale e a 48h; valutare alternative con infettivologo/allergologo.');
+    }
+    durata = '5–7 giorni (rivalutare a 48h)';
+    monitoraggio = 'QT (se FQ o macrolide), creatinina, clinica';
+  } else {
+    warnings += infoBox('danger','❗','Complicanza presente: copertura anaerobica <strong>indicata</strong>.');
+
+    if (empiema) {
+      warnings += infoBox('note','🔧','<strong>Empiema pleurico:</strong> drenaggio toracico indicato (pleurocentesi diagnostica urgente + posizionamento drenaggio). Consulenza chirurgia toracica/pneumologia. VATS se loculato o risposta insufficiente a drenaggio.');
+    }
+    if (ascesso) {
+      warnings += infoBox('note','🔧','<strong>Ascesso polmonare:</strong> drenaggio percutaneo o broncoscopico se ascesso &gt;6 cm o mancata risposta ATB a 72h. TC torace per caratterizzazione.');
+    }
+
+    if (allergiaIgE) {
+      schema = rxBlock('Schema (allergia IgE – copertura anaerobica)', 'Clindamicina 600 mg EV q8h<br>+ Aztreonam 2 g EV q8h (se Gram-neg temuti)<br><em>Clindamicina: opzione anti-anaerobica in allergia ai β-lattamici (rischio C. difficile)</em>');
+      monitoraggio = 'Diarrea (rischio C. difficile), creatinina, funzionalità epatica';
+    } else if (allergiaNoIgE) {
+      schema = rxBlock('Schema (allergia non-IgE: cefalosporina + anti-anaerobico)', 'Ceftriaxone 2 g EV q24h<br>+ Metronidazolo 500 mg EV q8h');
+      monitoraggio = 'Creatinina, transaminasi (metronidazolo), emocromo, PCR/PCT';
+    } else if (grave) {
+      schema = rxBlock('Schema prima scelta – Grave/ICU', 'Piperacillina-tazobactam 4,5 g EV q6h (inf. estesa 4h)<br><em>Coprente per Gram-neg, anaerobi e S. aureus sensibile</em>');
+      schema += rxBlock('Alternativa se indisponibilità pip-tazo', 'Ampicillina-sulbactam 3 g EV q6h<br><em>oppure</em> Ceftriaxone 2 g EV q24h + Metronidazolo 500 mg EV q8h');
+      monitoraggio = 'Creatinina, funzionalità epatica (metronidazolo), emocromo, PCR/PCT';
+    } else {
+      schema = rxBlock('Schema prima scelta – Moderato/Reparto', 'Ampicillina-sulbactam 3 g EV q6h');
+      schema += rxBlock('Alternativa equivalente', 'Ceftriaxone 2 g EV q24h + Metronidazolo 500 mg EV q8h');
+      monitoraggio = 'Creatinina, transaminasi (metronidazolo), PCR/PCT';
+    }
+
+    durata = ascesso ? '14–42 giorni (ascesso: trattare fino a risoluzione rx ± 2 settimane dopo negativizzazione)' :
+             empiema ? '14–21 giorni (in combinazione con drenaggio pleurico adeguato)' :
+             '14 giorni (rivalutare con colture)';
+  }
+
+  const body = `
+    ${warnings}${levoWarn(schema, gfr)}
+    <div class="result-section-title">Schema terapeutico</div>
+    ${schema}
+    <div class="result-section-title">Durata raccomandata</div>
+    <p style="font-size:0.9rem;">${durata}</p>
+    ${monitorBox(monitoraggio)}
+    <hr class="divider">
+    <div class="guidelines-box">
+      <strong>Riferimenti: IDSA/ATS 2019 · Mandell &amp; Niederman 2019 (rassegna)</strong>
+      <ul>
+        <li>Copertura anti-anaerobica non raccomandata di routine nella polmonite da aspirazione sospetta, salvo ascesso o empiema (IDSA/ATS 2019)${cite(1)}</li>
+        <li>Il ruolo degli anaerobi stretti nella polmonite da aspirazione è oggi ritenuto minore rispetto al passato${cite(15)}</li>
+        <li>Metronidazolo: non usare in monoterapia, ma in associazione a un β-lattamico attivo su streptococchi orali (prassi clinica)</li>
+        <li>Clindamicina: alternativa in allergia ai β-lattamici; rischio di infezione da C. difficile</li>
+        <li>Ascesso/empiema: drenaggio in caso di mancata risposta alla sola terapia antibiotica (prassi clinica; cfr. rassegna)${cite(15)}</li>
+        <li>Igiene orale e gestione della disfagia: fondamentali per la prevenzione delle recidive${cite(15)}</li>
+      </ul>
+    </div>`;
+
+  showResult('risultato-asp', resultWrap(
+    'Polmonite da Aspirazione / Ab ingestis – Piano Terapeutico',
+    complic ? (grave ? 'Forma complicata grave' : 'Forma complicata moderata') : 'Forma non complicata',
+    chip(`eGFR: ${gfr} mL/min`) + chip(complic ? '⚠️ Complicata' : 'Non complicata') + (grave ? chip('Grave/ICU') : ''),
+    body
+  ));
+}
+</script>
+</body>
+</html>
