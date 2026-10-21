@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>UTI – Infezioni del Tratto Urinario | Medicina Interna</title>
+  <style>
+    :root {
+      --bg: #f0f4f8;
+      --surface: #ffffff;
+      --surface-alt: #f8fafc;
+      --border: #dde3ec;
+      --text: #1e2a38;
+      --muted: #64748b;
+
+      --blue-deep: #1a4a7a;
+      --blue-mid: #2563a8;
+      --blue-light: #dbeafe;
+
+      --teal: #0d6b72;
+      --teal-light: #ccfbf1;
+
+      --amber: #b45309;
+      --amber-light: #fef3c7;
+
+      --red: #b91c1c;
+      --red-light: #fee2e2;
+
+      --green: #15803d;
+      --green-light: #dcfce7;
+
+      --purple: #6d28d9;
+      --purple-light: #ede9fe;
+
+      --orange: #c2410c;
+      --orange-light: #ffedd5;
+
+      --radius: 10px;
+      --radius-sm: 6px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
+      --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      --mono: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 16px;
+    }
+
+    .wrapper { max-width: 980px; margin: 0 auto; }
+
+    /* HEADER */
+    .app-header {
+      background: var(--blue-deep);
+      color: white;
+      border-radius: var(--radius);
+      padding: 20px 26px 16px;
+      margin-bottom: 16px;
+    }
+    .app-header h1 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.01em; }
+    .app-header .subtitle { font-size: 0.8rem; opacity: 0.72; margin-top: 5px; }
+    .ref-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .ref-pill {
+      font-size: 0.7rem; font-weight: 600; padding: 3px 9px;
+      border-radius: 20px; border: 1px solid rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.12); color: white; letter-spacing: 0.04em;
+    }
+
+    /* CARD */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow);
+    }
+    .card-title {
+      font-size: 0.78rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.07em; color: var(--muted);
+      margin-bottom: 12px; padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 7px;
+    }
+
+    /* TIPO SELECTOR */
+    .tipo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 8px;
+    }
+    .tipo-btn {
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      padding: 12px 14px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s;
+    }
+    .tipo-btn:hover { border-color: var(--blue-mid); }
+    .tipo-btn.active { border-color: var(--blue-mid); background: var(--blue-light); }
+    .tipo-btn { position: relative; }
+    .tipo-btn input { position: absolute; opacity: 0; pointer-events: none; }
+    .tipo-btn:focus-within { outline: 2px solid var(--blue-mid); outline-offset: 2px; }
+    .tipo-btn .t-icon { font-size: 1.3rem; display: block; margin-bottom: 4px; }
+    .tipo-btn .t-label { font-weight: 700; font-size: 0.9rem; color: var(--blue-deep); }
+    .tipo-btn .t-desc { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+
+    /* INPUTS */
+    .input-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; margin-bottom: 10px; }
+    .input-group { display: flex; flex-direction: column; gap: 3px; }
+    .input-group label { font-size: 0.75rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .input-group input[type="number"],
+    .input-group select {
+      background: var(--surface-alt); border: 1px solid var(--border);
+      color: var(--text); border-radius: var(--radius-sm);
+      padding: 6px 10px; font-size: 0.9rem; font-family: var(--mono);
+      width: 100px;
+    }
+    .input-group select { width: 120px; font-family: var(--font); }
+
+    /* CHECK GRID */
+    .check-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 4px; }
+    .check-item {
+      display: flex; align-items: flex-start; gap: 8px;
+      padding: 7px 9px; border-radius: var(--radius-sm);
+      cursor: pointer; font-size: 0.88rem; color: var(--text);
+      transition: background 0.1s;
+    }
+    .check-item:hover { background: var(--surface-alt); }
+    .check-item input { margin-top: 2px; accent-color: var(--blue-mid); flex-shrink: 0; }
+
+    .sub-label {
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.06em; color: var(--muted); margin: 12px 0 5px 2px;
+    }
+
+    /* SOFA */
+    .sofa-note {
+      font-size: 0.78rem; color: var(--muted);
+      background: var(--surface-alt); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 8px 11px; margin-top: 8px;
+    }
+    .qsofa-result {
+      display: none; margin-top: 10px; padding: 9px 13px;
+      border-radius: var(--radius-sm); font-size: 0.88rem; font-weight: 600;
+    }
+
+    /* BUTTONS */
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin: 16px 0; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 11px 22px; border: none; border-radius: var(--radius-sm);
+      font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.15s;
+    }
+    .btn-primary { background: var(--blue-mid); color: white; }
+    .btn-primary:hover { background: var(--blue-deep); }
+    .btn-ghost { background: transparent; border: 1.5px solid var(--border); color: var(--muted); }
+    .btn-ghost:hover { border-color: var(--blue-mid); color: var(--blue-mid); }
+    .btn-sm { font-size: 0.82rem; padding: 6px 14px; }
+
+    /* RESULT */
+    .result-container {
+      display: none; background: var(--surface);
+      border: 2px solid var(--blue-mid); border-radius: var(--radius);
+      overflow: hidden; box-shadow: var(--shadow); margin-top: 8px;
+    }
+    .result-header {
+      background: var(--blue-mid); color: white;
+      padding: 13px 20px; display: flex;
+      justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 8px;
+    }
+    .result-header h3 { font-size: 1.0rem; font-weight: 700; }
+    .result-header .rmeta { font-size: 0.8rem; opacity: 0.85; }
+    .result-body { padding: 18px 20px; }
+
+    .result-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 14px; }
+    .chip {
+      font-size: 0.78rem; font-weight: 700; padding: 4px 11px;
+      border-radius: 20px; border: 1px solid;
+    }
+    .chip-blue { color: var(--blue-mid); border-color: #93c5fd; background: var(--blue-light); }
+    .chip-amber { color: var(--amber); border-color: #fcd34d; background: var(--amber-light); }
+    .chip-red { color: var(--red); border-color: #fca5a5; background: var(--red-light); }
+    .chip-green { color: var(--green); border-color: #86efac; background: var(--green-light); }
+    .chip-teal { color: var(--teal); border-color: #5eead4; background: var(--teal-light); }
+    .chip-neutral { color: var(--muted); border-color: var(--border); background: var(--surface-alt); }
+
+    .section-label {
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.07em; color: var(--muted); margin: 14px 0 6px;
+    }
+
+    .rx-block {
+      background: #f0f7ff; border: 1px solid #bfdbfe;
+      border-left: 4px solid var(--blue-mid);
+      border-radius: var(--radius-sm); padding: 11px 14px;
+      margin: 8px 0; font-family: var(--mono); font-size: 0.87rem; line-height: 1.9;
+    }
+    .rx-block .rx-tag {
+      font-family: var(--font); font-size: 0.7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--blue-mid); margin-bottom: 4px;
+    }
+    .rx-block em { font-family: var(--font); font-size: 0.8rem; color: var(--muted); font-style: normal; }
+    .rx-block.teal { background: var(--teal-light); border-left-color: var(--teal); border-color: #99f6e4; }
+    .rx-block.teal .rx-tag { color: var(--teal); }
+    .rx-block.amber { background: var(--amber-light); border-left-color: var(--amber); border-color: #fcd34d; }
+    .rx-block.amber .rx-tag { color: var(--amber); }
+
+    .info-box {
+      border-radius: var(--radius-sm); padding: 10px 13px;
+      margin: 8px 0; font-size: 0.86rem;
+      display: flex; gap: 9px; align-items: flex-start;
+    }
+    .info-box .bi { flex-shrink: 0; font-size: 1rem; }
+    .info-box.warn { background: var(--amber-light); border-left: 3px solid var(--amber); color: #78350f; }
+    .info-box.danger { background: var(--red-light); border-left: 3px solid var(--red); color: #7f1d1d; }
+    .info-box.ok { background: var(--green-light); border-left: 3px solid var(--green); color: #14532d; }
+    .info-box.teal { background: var(--teal-light); border-left: 3px solid var(--teal); color: #134e4a; }
+    .info-box.note { background: var(--blue-light); border-left: 3px solid var(--blue-mid); color: #1e3a5f; }
+    .info-box.purple { background: var(--purple-light); border-left: 3px solid var(--purple); color: #3b0764; }
+
+    .switch-table {
+      width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 0.85rem;
+    }
+    .switch-table th, .switch-table td {
+      border: 1px solid var(--border); padding: 7px 10px; text-align: left;
+    }
+    .switch-table th { background: var(--blue-light); font-weight: 700; color: var(--blue-deep); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    .switch-table tr:nth-child(even) td { background: var(--surface-alt); }
+
+    .guidelines-box {
+      background: var(--teal-light); border-left: 4px solid var(--teal);
+      border-radius: var(--radius-sm); padding: 12px 15px; margin-top: 14px; font-size: 0.84rem; color: #134e4a;
+    }
+    .guidelines-box strong { display: block; margin-bottom: 6px; color: var(--teal); }
+    .guidelines-box ul { padding-left: 16px; }
+    .guidelines-box li { margin-bottom: 3px; }
+
+    .divider { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+    .timestamp { font-size: 0.75rem; color: var(--muted); margin-top: 14px; text-align: right; }
+
+    /* BIBLIOGRAFIA & CREDITI */
+    .bib-refs { font-size: 0.75rem; color: var(--muted); margin-top: 8px; }
+    .bib-refs a { color: var(--blue-mid); text-decoration: none; font-weight: 700; margin-right: 4px; }
+    .bib-list { padding-left: 24px; font-size: 0.8rem; line-height: 1.5; }
+    .bib-list li { margin-bottom: 7px; }
+    .bib-note { font-size: 0.78rem; color: var(--muted); background: var(--surface-alt); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 11px; margin-top: 10px; }
+    details > summary.card-title { cursor: pointer; margin-bottom: 0; }
+    details[open] > summary.card-title { margin-bottom: 12px; }
+    .app-credit { text-align: center; font-size: 0.78rem; color: var(--muted); margin: 18px 0 8px; padding-top: 12px; border-top: 1px solid var(--border); }
+
+    @media (max-width: 600px) {
+      .tipo-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media print {
+      body { background: white; padding: 0; }
+      .btn-row, .btn { display: none !important; }
+      .result-container { display: block !important; border: 1px solid #ccc; }
+      .result-container:empty { display: none !important; }
+      .card { box-shadow: none; border: 1px solid #ddd; }
+      .app-header { border-radius: 0; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <div class="app-header">
+    <h1>💧 Infezioni del Tratto Urinario – Medicina Interna</h1>
+    <div class="subtitle">Cistite · Pielonefrite · Urosepsi · UTI catetere-correlata · UTI maschile</div>
+    <div class="ref-pills">
+      <span class="ref-pill">EAU 2026</span>
+      <span class="ref-pill">IDSA 2025 (cUTI)</span>
+      <span class="ref-pill">ESCMID 2022</span>
+      <span class="ref-pill">SSC 2026</span>
+      <span class="ref-pill">AIFA/EMA</span>
+    </div>
+  </div>
+
+  <!-- TIPO UTI -->
+  <div class="card">
+    <div class="card-title">🎯 Tipo di UTI</div>
+    <div class="tipo-grid" id="tipo-grid">
+      <label class="tipo-btn active" onclick="selTipo(this, 'cistite_f')">
+        <input type="radio" name="tipo" value="cistite_f" checked>
+        <span class="t-icon">♀️</span>
+        <span class="t-label">Cistite – Donna</span>
+        <span class="t-desc">Solo sintomi vescicali<br>No febbre, no lombalgia</span>
+      </label>
+      <label class="tipo-btn" onclick="selTipo(this, 'cistite_m')">
+        <input type="radio" name="tipo" value="cistite_m">
+        <span class="t-icon">♂️</span>
+        <span class="t-label">UTI maschile</span>
+        <span class="t-desc">Sempre complicata<br>Escludere prostatite</span>
+      </label>
+      <label class="tipo-btn" onclick="selTipo(this, 'pielonefrite')">
+        <input type="radio" name="tipo" value="pielonefrite">
+        <span class="t-icon">🌡️</span>
+        <span class="t-label">Pielonefrite</span>
+        <span class="t-desc">Febbre + dolore lombare<br>Paziente stabile</span>
+      </label>
+      <label class="tipo-btn" onclick="selTipo(this, 'urosepsi')">
+        <input type="radio" name="tipo" value="urosepsi">
+        <span class="t-icon">🚨</span>
+        <span class="t-label">Urosepsi</span>
+        <span class="t-desc">Instabilità emodinamica<br>Lattato ≥2 o shock</span>
+      </label>
+      <label class="tipo-btn" onclick="selTipo(this, 'cauti')">
+        <input type="radio" name="tipo" value="cauti">
+        <span class="t-icon">🔌</span>
+        <span class="t-label">CAUTI</span>
+        <span class="t-desc">Catetere vescicale<br>≥48h in sede</span>
+      </label>
+      <label class="tipo-btn" onclick="selTipo(this, 'asintomatica')">
+        <input type="radio" name="tipo" value="asintomatica">
+        <span class="t-icon">🚫</span>
+        <span class="t-label">Batteriuria asintomatica</span>
+        <span class="t-desc">Urinocoltura+ senza sintomi</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- qSOFA -->
+  <div class="card">
+    <div class="card-title">📊 qSOFA – Allerta sepsi</div>
+    <div class="check-grid">
+      <label class="check-item"><input type="checkbox" id="q1"> Frequenza respiratoria ≥ 22/min</label>
+      <label class="check-item"><input type="checkbox" id="q2"> Alterazione dello stato mentale (GCS &lt; 15)</label>
+      <label class="check-item"><input type="checkbox" id="q3"> Pressione Arteriosa Sistolica (PAS) ≤ 100 mmHg</label>
+    </div>
+    <div class="sofa-note">⚠️ qSOFA ≥ 2 suggerisce possibile sepsi: rivalutare clinicamente e considerare urosepsi. Lo score da solo non è diagnostico (bassa sensibilità – Singer et al., JAMA 2016): la SSC 2026 raccomanda NEWS2/MEWS/SIRS invece del solo qSOFA per lo screening.</div>
+    <div id="qsofa-inline" class="qsofa-result"></div>
+  </div>
+
+  <!-- DATI PAZIENTE -->
+  <div class="card">
+    <div class="card-title">👤 Dati paziente</div>
+    <div class="input-row">
+      <div class="input-group">
+        <label>Età (anni)</label>
+        <input type="number" id="eta" min="18" max="120" value="72">
+      </div>
+      <div class="input-group">
+        <label>Sesso</label>
+        <select id="sesso"><option value="F">F</option><option value="M">M</option></select>
+      </div>
+      <div class="input-group">
+        <label>Creatinina (mg/dL)</label>
+        <input type="number" id="creatinina" step="0.1" min="0.1" max="15" value="1.1">
+      </div>
+    </div>
+    <div class="check-grid">
+      <label class="check-item"><input type="checkbox" id="diabete"> Diabete mellito</label>
+      <label class="check-item"><input type="checkbox" id="gravidanza"> Gravidanza</label>
+      <label class="check-item"><input type="checkbox" id="immunodep"> Immunodepressione (trapianto, chemio, HIV)</label>
+      <label class="check-item"><input type="checkbox" id="ostruzione"> Ostruzione urinaria (BPH, stenosi, neoplasia)</label>
+      <label class="check-item"><input type="checkbox" id="anomalia"> Anomalia anatomica / litiasi</label>
+      <label class="check-item"><input type="checkbox" id="allergia_ige"> Allergia IgE-mediata ai β-lattamici</label>
+    </div>
+  </div>
+
+  <!-- FATTORI DI RISCHIO MDR -->
+  <div class="card">
+    <div class="card-title">🦠 Fattori di rischio per germi resistenti</div>
+
+    <div class="sub-label">ESBL / Enterobatteriacee resistenti</div>
+    <div class="check-grid">
+      <label class="check-item"><input type="checkbox" id="esbl_osp"> Ospedalizzazione o ATB negli ult. 90 giorni</label>
+      <label class="check-item"><input type="checkbox" id="esbl_rsa"> RSA / struttura residenziale</label>
+      <label class="check-item"><input type="checkbox" id="esbl_col"> Colonizzazione ESBL documentata</label>
+      <label class="check-item"><input type="checkbox" id="esbl_rec"> UTI ricorrente con ESBL in anamnesi</label>
+    </div>
+
+    <div class="sub-label">Pseudomonas aeruginosa</div>
+    <div class="check-grid">
+      <label class="check-item"><input type="checkbox" id="pseu_cat"> Catetere vescicale cronico (&gt; 30 giorni)</label>
+      <label class="check-item"><input type="checkbox" id="pseu_ostr"> Ostruzione urinaria cronica</label>
+      <label class="check-item"><input type="checkbox" id="pseu_imm"> Neutropenia / immunosoppressione grave</label>
+      <label class="check-item"><input type="checkbox" id="pseu_col"> Colonizzazione Pseudomonas documentata</label>
+    </div>
+
+    <div class="sub-label">Enterococchi / VRE</div>
+    <div class="check-grid">
+      <label class="check-item"><input type="checkbox" id="ent_cat"> Catetere vescicale in sede</label>
+      <label class="check-item"><input type="checkbox" id="ent_prec"> Infezione da Enterococco in anamnesi</label>
+      <label class="check-item"><input type="checkbox" id="ent_vre"> VRE (Enterococco vancomicino-resistente) noto</label>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="genera()">▶ Genera piano terapeutico</button>
+    <button class="btn btn-ghost" onclick="window.print()">🖨 Stampa</button>
+  </div>
+
+  <div id="risultato" class="result-container"></div>
+
+  <!-- BIBLIOGRAFIA -->
+  <div class="card" id="bibliografia" style="margin-top:14px;">
+    <details id="bib-details">
+      <summary class="card-title">📚 Bibliografia essenziale</summary>
+      <ol class="bib-list">
+        <li id="ref-1">Bonkat G, Kranz J, Cai T, Geerlings S, et al. <em>EAU Guidelines on Urological Infections</em>. European Association of Urology; edizione 2026 (aggiornamento limitato dell’edizione 2025). uroweb.org/guidelines/urological-infections</li>
+        <li id="ref-2">Trautner BW, et al. <em>2025 IDSA Guideline on the Management and Treatment of Complicated Urinary Tract Infections</em>. Clin Infect Dis 2025 (pubblicato online 17 luglio 2025).</li>
+        <li id="ref-3">Gupta K, Hooton TM, Naber KG, et al. International clinical practice guidelines for the treatment of acute uncomplicated cystitis and pyelonephritis in women: IDSA/ESCMID. Clin Infect Dis 2011;52:e103–e120.</li>
+        <li id="ref-4">Nicolle LE, Gupta K, Bradley SF, et al. Clinical practice guideline for the management of asymptomatic bacteriuria: 2019 update by the IDSA. Clin Infect Dis 2019;68:e83–e110.</li>
+        <li id="ref-5">Hooton TM, Bradley SF, Cardenas DD, et al. Diagnosis, prevention, and treatment of catheter-associated urinary tract infection in adults: 2009 IDSA guidelines. Clin Infect Dis 2010;50:625–663.</li>
+        <li id="ref-6">Prescott HC, et al. <em>Surviving Sepsis Campaign: International Guidelines for Management of Sepsis and Septic Shock 2026</em>. Crit Care Med 2026 (pubblicato online 23 marzo 2026). doi:10.1097/CCM.0000000000007075</li>
+        <li id="ref-7">Singer M, Deutschman CS, Seymour CW, et al. The Third International Consensus Definitions for Sepsis and Septic Shock (Sepsis-3). JAMA 2016;315:801–810.</li>
+        <li id="ref-8">Paul M, Carrara E, Retamar P, et al. ESCMID guidelines for the treatment of infections caused by multidrug-resistant Gram-negative bacilli. Clin Microbiol Infect 2022;28:521–547.</li>
+        <li id="ref-9">Inker LA, Eneanya ND, Coresh J, et al. New creatinine- and cystatin C–based equations to estimate GFR without race (CKD-EPI 2021). N Engl J Med 2021;385:1737–1749.</li>
+        <li id="ref-10">AIFA/EMA. Nota Informativa Importante su antibiotici chinolonici e fluorochinolonici per uso sistemico e inalatorio (aprile 2019; richiamo giugno 2023). aifa.gov.it</li>
+        <li id="ref-11">Harris PNA, Tambyah PA, Lye DC, et al. Piperacillin-tazobactam vs meropenem for E coli or K pneumoniae bloodstream infection with ceftriaxone resistance (MERINO). JAMA 2018;320:984–994.</li>
+        <li id="ref-12">Drekonja DM, Trautner B, Amundson C, et al. Effect of 7 vs 14 days of antibiotic therapy on resolution of symptoms among afebrile men with urinary tract infection. JAMA 2021;326:324–331.</li>
+        <li id="ref-13">American College of Obstetricians and Gynecologists. Clinical Consensus No. 4: Urinary tract infections in pregnant individuals. Obstet Gynecol 2023;142.</li>
+        <li id="ref-14">Tamma PD, et al. <em>IDSA 2024 Guidance on the Treatment of Antimicrobial-Resistant Gram-Negative Infections</em>. Clin Infect Dis 2024.</li>
+        <li id="ref-15">de Jong E, van Oers JA, Beishuizen A, et al. Efficacy and safety of procalcitonin guidance in reducing the duration of antibiotic treatment in critically ill patients (SAPS). Lancet Infect Dis 2016;16:819–827.</li>
+      </ol>
+      <div class="bib-note">Le posologie sono indicative (adulto, funzione epatica normale). Verificare sempre schede tecniche, antibiogramma, epidemiologia locale e protocolli aziendali. La numerazione [n] nei riquadri “Riferimenti” rimanda a questo elenco.</div>
+    </details>
+  </div>
+
+  <div class="app-credit">Ideato dal dr. C.Briglia (cesarebriglia@gmail.com) con l'apporto di Claude - Antropic</div>
+
+</div>
+
+<script>
+// ── UI ──
+function selTipo(el, val) {
+  document.querySelectorAll('.tipo-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  el.querySelector('input').checked = true;
+}
+
+function oggi() {
+  return new Date().toLocaleDateString('it-IT', {day:'2-digit', month:'2-digit', year:'numeric'});
+}
+
+function egfr(eta, crea, sesso) {
+  const k = sesso === 'F' ? 0.7 : 0.9;
+  const a = sesso === 'F' ? -0.241 : -0.302;
+  const sf = sesso === 'F' ? 1.012 : 1.0;
+  const r = crea / k;
+  const val = crea <= k
+    ? 142 * Math.pow(r, a) * Math.pow(0.9938, eta) * sf
+    : 142 * Math.pow(r, -1.200) * Math.pow(0.9938, eta) * sf;
+  return Math.round(val);
+}
+
+function rx(tag, content, color='') {
+  return `<div class="rx-block ${color}"><div class="rx-tag">${tag}</div>${content}</div>`;
+}
+function info(type, icon, text) {
+  return `<div class="info-box ${type}"><span class="bi">${icon}</span><div>${text}</div></div>`;
+}
+function chip(label, type='neutral') {
+  return `<span class="chip chip-${type}">${label}</span>`;
+}
+
+function switchTable(rows) {
+  const body = rows.map(r => `<tr><td><code>${r[0]}</code></td><td>${r[1]}</td><td style="font-size:0.8rem; color:var(--muted);">${r[2]||''}</td></tr>`).join('');
+  return `<table class="switch-table">
+    <tr><th>Schema EV</th><th>Switch orale</th><th>Note</th></tr>
+    ${body}
+  </table>`;
+}
+
+const BIB = {
+  asintomatica: [4, 1, 13],
+  cistite_f: [1, 3, 10, 13, 14],
+  cistite_m: [1, 2, 12, 10],
+  pielonefrite: [1, 2, 3, 8, 14, 10],
+  urosepsi: [6, 1, 2, 8, 11, 15],
+  cauti: [5, 2, 1]
+};
+function bib(ids) {
+  const u = Array.from(new Set(ids.concat([7, 9]))).sort((a, b) => a - b);
+  return `<div class="bib-refs">Bibliografia: ${u.map(i => `<a href="#ref-${i}" onclick="openBib()">[${i}]</a>`).join(' ')}</div>`;
+}
+function openBib() { document.getElementById('bib-details').open = true; }
+window.addEventListener('beforeprint', openBib);
+
+// ── MAIN ──
+function genera() {
+  // qSOFA
+  const q1 = document.getElementById('q1').checked;
+  const q2 = document.getElementById('q2').checked;
+  const q3 = document.getElementById('q3').checked;
+  const qsofa = (q1?1:0) + (q2?1:0) + (q3?1:0);
+
+  // qSOFA inline
+  const qEl = document.getElementById('qsofa-inline');
+  if (qsofa >= 2) {
+    qEl.style.cssText = 'display:block; background:var(--red-light); border-left:3px solid var(--red); color:#7f1d1d; padding:9px 13px; border-radius:6px; margin-top:8px; font-size:0.88rem;';
+    qEl.innerHTML = `qSOFA: <strong>${qsofa}/3</strong> – Allerta sepsi. Rivalutare: considerare urosepsi se instabilità emodinamica.`;
+  } else {
+    qEl.style.cssText = 'display:block; background:var(--green-light); border-left:3px solid var(--green); color:#14532d; padding:9px 13px; border-radius:6px; margin-top:8px; font-size:0.88rem;';
+    qEl.innerHTML = `qSOFA: <strong>${qsofa}/3</strong> – punteggio basso: non esclude la sepsi (bassa sensibilità); integrare con NEWS2/SIRS e valutazione clinica.`;
+  }
+
+  const tipo = document.querySelector('input[name="tipo"]:checked').value;
+  const eta = parseFloat(document.getElementById('eta').value);
+  const sesso = document.getElementById('sesso').value;
+  const crea = parseFloat(document.getElementById('creatinina').value);
+  if (!(eta >= 18 && eta <= 120) || !(crea >= 0.1 && crea <= 15)) {
+    alert('Inserire valori validi: età 18–120 anni, creatinina 0,1–15 mg/dL.');
+    return;
+  }
+  if (sesso === 'M' && document.getElementById('gravidanza').checked) {
+    alert('Gravidanza selezionata con sesso M: verificare i dati inseriti.');
+    return;
+  }
+  const gfr = egfr(eta, crea, sesso);
+  const irc = gfr < 30;
+  const ircMod = gfr >= 30 && gfr < 45;
+
+  const diabete = document.getElementById('diabete').checked;
+  const gravidanza = document.getElementById('gravidanza').checked;
+  const immunodep = document.getElementById('immunodep').checked;
+  const ostruzione = document.getElementById('ostruzione').checked;
+  const anomalia = document.getElementById('anomalia').checked;
+  const allergiaIgE = document.getElementById('allergia_ige').checked;
+
+  const esbl = document.getElementById('esbl_osp').checked || document.getElementById('esbl_rsa').checked ||
+               document.getElementById('esbl_col').checked || document.getElementById('esbl_rec').checked;
+  const pseu = document.getElementById('pseu_cat').checked || document.getElementById('pseu_ostr').checked ||
+               document.getElementById('pseu_imm').checked || document.getElementById('pseu_col').checked;
+  const enterococco = document.getElementById('ent_cat').checked || document.getElementById('ent_prec').checked;
+  const vre = document.getElementById('ent_vre').checked;
+
+  // Urosepsi se selezionata O qSOFA ≥ 2 con PAS ≤ 100 (vale per qualunque tipo selezionato)
+  const escalation = tipo !== 'urosepsi' && qsofa >= 2 && q3;
+  const tipoEff = (tipo === 'urosepsi' || escalation) ? 'urosepsi' : tipo;
+
+  let atb = '', durata = '', monitoraggio = '', warnings = '', sourceControl = '', lg = '';
+  if (escalation) {
+    warnings += info('danger','🚨','<strong>qSOFA ≥ 2 con PAS ≤ 100 mmHg:</strong> il quadro è gestito come urosepsi indipendentemente dal tipo selezionato. Rimuovere/sostituire un eventuale catetere vescicale e ricercare ostruzione (ecografia).');
+  }
+
+  // ── BATTERIURIA ASINTOMATICA ──
+  if (tipoEff === 'asintomatica') {
+    atb = info('ok','✅','<strong>Batteriuria asintomatica: non trattare</strong> (EAU 2026 · IDSA 2019).<br>Eccezioni in cui il trattamento è indicato:<br>• Gravidanza (screening e trattamento obbligatorio)<br>• Prima di procedure urologiche con prevedibile sanguinamento mucosale (es. resezione prostatica transuretrale)<br>• Trapianto renale nel 1° mese: evidenza insufficiente, decidere con il centro trapianti (IDSA 2019 sconsiglia screening/trattamento oltre il 1° mese)');
+    if (gravidanza) {
+      atb += rx('Batteriuria in gravidanza – trattare (IDSA 2019)',
+        'Nitrofurantoina 100 mg PO q12h × 5 giorni (evitare a termine/peri-partum)<br><em>oppure</em> Fosfomicina 3 g PO dose unica<br><em>oppure</em> Amoxicillina-clavulanato 875/125 mg PO q12h × 3–5 giorni (se sensibile)<br><em>Rivalutare con urinocoltura di controllo a 7 giorni</em>');
+      warnings += info('warn','⚠️','Gravidanza: evitare fluorochinoloni, tetracicline, TMP-SMX nel 1° trimestre e peri-partum. Nitrofurantoina: evitare a termine (38–42 sett.) e in travaglio (rischio di anemia emolitica neonatale); nel 1° trimestre solo se non esistono alternative adeguate (ACOG 2023).');
+    }
+    durata = 'Nessuna terapia (salvo le eccezioni sopra). In gravidanza: ciclo breve di 4–7 giorni';
+    monitoraggio = 'Urinocoltura di controllo post-trattamento (in gravidanza)';
+    lg = `<div class="guidelines-box">
+      <strong>Riferimenti: IDSA 2019 (batteriuria asintomatica) · EAU 2026</strong>
+      <ul>
+        <li>Il trattamento della batteriuria asintomatica non riduce le complicanze nei non-gravidi e seleziona germi resistenti (IDSA 2019)</li>
+        <li>Non trattare in: anziani istituzionalizzati, diabetici, donne in pre-menopausa, portatori di catetere cronico stabile</li>
+        <li>In gravidanza: screening nel 1° trimestre con urinocoltura (EAU 2026)</li>
+      </ul>
+    </div>`;
+
+  // ── CISTITE DONNA ──
+  } else if (tipoEff === 'cistite_f') {
+    const complicata = diabete || immunodep || anomalia || ostruzione || gravidanza;
+    if (complicata) {
+      warnings += info('note','ℹ️','Cistite complicata: presenza di fattori che aumentano il rischio di fallimento terapeutico o complicanze. Urinocoltura obbligatoria prima dell’ATB e schema più lungo rispetto alla cistite semplice. Se ostruzione/anomalia/litiasi: ecografia delle vie urinarie e valutazione urologica.');
+    }
+    if (gravidanza) {
+      atb = rx('Cistite in gravidanza (EAU 2026 · ACOG 2023)',
+        'Nitrofurantoina 100 mg PO q12h × 5 giorni (evitare a termine/peri-partum)<br><em>oppure</em> Fosfomicina trometamolo 3 g PO dose unica<br><em>oppure</em> Amoxicillina-clavulanato 875/125 mg PO q12h × 3–5 giorni (se sensibile)<br><em>NON usare: fluorochinoloni, TMP-SMX nel 1° trimestre e peri-partum</em>');
+      durata = '3–7 giorni (rivalutare con urinocoltura a 7 giorni post-trattamento)';
+    } else if (esbl) {
+      atb = rx('Cistite donna – rischio ESBL (EAU 2026)',
+        'Fosfomicina trometamolo 3 g PO dose unica' + (gfr >= 45 ? '<br><em>oppure</em> Nitrofurantoina 100 mg PO q12h × 5 giorni (eGFR ≥45 mL/min)' : '<br><em>Nitrofurantoina non indicata (eGFR &lt;45)</em>') + '<br><em>Nota: ESBL non compromette l\'attività di fosfomicina e nitrofurantoina (EAU 2026)</em>');
+      atb += info('ok','✅','Fosfomicina e nitrofurantoina mantengono attività verso ESBL: preferire come prima scelta in cistite a rischio ESBL (EAU 2026).');
+      durata = '1 (fosfomicina) – 5 giorni (nitrofurantoina)';
+    } else if (irc) {
+      atb = rx('Cistite donna – IRC grave (eGFR < 30)',
+        'Fosfomicina trometamolo 3 g PO dose unica<br><em>Nitrofurantoina controindicata (eGFR &lt;30): accumulo di metaboliti tossici</em><br><em>Fluorochinoloni: evitare come prima scelta (EAU 2026)</em>');
+      warnings += info('warn','⚠️',`eGFR calcolato: <strong>${gfr} mL/min</strong>. Nitrofurantoina controindicata. Evitare TMP-SMX se eGFR &lt;30.`);
+      durata = 'Dose unica (fosfomicina)';
+    } else {
+      atb = rx('Cistite donna non complicata – Prima scelta (EAU 2026 · NII AIFA/EMA)',
+        (irc || ircMod ? '' : 'Nitrofurantoina 100 mg PO q12h × 5 giorni<br><em>oppure</em> ') +
+        'Fosfomicina trometamolo 3 g PO dose unica');
+      atb += rx('Alternative (se resistenza locale &gt;20% a nitrofurantoina o indisponibilità)', 'Pivmecillinam 400 mg PO q8h × 3–5 giorni (disponibilità in Italia limitata: verificare)<br><em>oppure</em> TMP-SMX 160/800 mg PO q12h × 3 giorni (solo se sensibilità locale &lt;20% resistenza)<br><em>Fluorochinoloni: NON raccomandate come prima scelta (EAU 2026 · NII AIFA/EMA)</em>', 'teal');
+      durata = '1 (fosfomicina) – 5 giorni (nitrofurantoina). Fluorochinoloni: evitare empiricamente.';
+    }
+    if (complicata && !gravidanza) {
+      durata = 'Cistite complicata: 7 giorni, guidati da urinocoltura/antibiogramma. La fosfomicina in dose singola non è adeguata: se usata, ripetere 3 g ogni 48–72h × 3 dosi (off-label)';
+    }
+    monitoraggio = 'Urinocoltura pre-trattamento. Rivalutare a 48-72h se mancata risposta.';
+
+    lg = `<div class="guidelines-box">
+      <strong>Riferimenti: EAU 2026 · ESCMID 2022 · NII AIFA/EMA fluorochinoloni</strong>
+      <ul>
+        <li>Fluorochinoloni: non raccomandati come prima scelta in cistite non complicata. Riservare a indicazioni specifiche (EAU 2026; NII AIFA/EMA)</li>
+        <li>Nitrofurantoina: efficace, sicura, bassa selezione di resistenze. Controindicata se eGFR &lt;30 mL/min</li>
+        <li>Fosfomicina trometamolo: dose unica, mantiene attività verso ESBL, ottima compliance</li>
+        <li>TMP-SMX: usare solo se resistenza locale documentata &lt;20% (ESCMID 2022)</li>
+        <li>Urinocoltura: raccomandata in cistite complicata, gravidanza, recidive; non obbligatoria in cistite semplice</li>
+      </ul>
+    </div>`;
+
+  // ── UTI MASCHILE ──
+  } else if (tipoEff === 'cistite_m') {
+    warnings += info('note','ℹ️','<strong>UTI nel maschio è sempre considerata complicata</strong> (EAU 2026). Escludere prostatite acuta batterica: febbre, brividi, dolore perineale/prostatico, disuria. Ecografia prostatica e PSA se clinica suggestiva.');
+    if (esbl) {
+      atb = rx('UTI maschile – rischio ESBL (EAU 2026)',
+        'Ertapenem 1 g EV q24h (non copre Pseudomonas)<br><em>oppure</em> Meropenem 1 g EV q8h (se rischio Pseudomonas associato)<br>' +
+        (irc ? '<em>Adeguare posologia a eGFR</em>' : ''));
+    } else if (pseu) {
+      atb = rx('UTI maschile – rischio Pseudomonas (EAU 2026)',
+        (allergiaIgE ? 'Aztreonam 2 g EV q8h' : 'Piperacillina-tazobactam 4,5 g EV q6h') +
+        (irc ? '<br><em>Adeguare posologia a eGFR</em>' : ''));
+    } else {
+      atb = rx('UTI maschile – schema empirico (EAU 2026)',
+        (allergiaIgE ? 'Aztreonam 2 g EV q8h' : 'Ceftriaxone 2 g EV q24h') +
+        (irc ? '<br><em>Adeguare a eGFR</em>' : ''));
+      atb += rx('Switch orale (dopo stabilizzazione, se prostatite esclusa)',
+        'Ciprofloxacina 500 mg PO q12h<br><em>oppure</em> TMP-SMX 160/800 mg PO q12h (se sensibile)<br><em>Nota: i fluorochinoloni e TMP-SMX hanno buona penetrazione prostatica; preferiti nello switch per sospetta prostatite</em>', 'teal');
+    }
+    durata = '7 giorni se afebbrile e prostatite esclusa; 14 giorni se febbre, risposta lenta o prostatite sospetta; prostatite acuta batterica confermata: fino a 2–4 settimane';
+    monitoraggio = 'Urinocoltura pre-ATB, creatinina, PSA, ecografia prostatica se clinica suggestiva';
+    lg = `<div class="guidelines-box">
+      <strong>Riferimenti: EAU 2026 (UTI maschile / prostatite)</strong>
+      <ul>
+        <li>UTI nel maschio = sempre complicata: escludere prostatite, ostruzione, anomalie anatomiche (EAU 2026)</li>
+        <li>Prostatite acuta batterica: febbre alta, dolore perineale, prostata dolente all'esplorazione rettale</li>
+        <li>Durata: 7 giorni se afebbrile e prostatite esclusa (Drekonja, JAMA 2021); 14 giorni se prostatite sospetta o risposta lenta; rivalutare a 48h con colture</li>
+        <li>Fluorochinoloni e TMP-SMX: buona penetrazione prostatica; utili nello switch orale (EAU 2026)</li>
+      </ul>
+    </div>`;
+
+  // ── PIELONEFRITE ──
+  } else if (tipoEff === 'pielonefrite') {
+    const complicata = diabete || immunodep || ostruzione || anomalia || (eta > 65) || (sesso === 'M');
+    if (complicata) {
+      warnings += info('note','ℹ️','Pielonefrite complicata (fattori di rischio presenti): schema più lungo, sorveglianza più stretta, emocolture obbligatorie.');
+    }
+    if (ostruzione) {
+      sourceControl = info('danger','❗','<strong>Ostruzione urinaria:</strong> il drenaggio (nefrostomia percutanea, stent ureterale) è prioritario rispetto all’antibiotico. Contattare urologia urgentemente. In assenza di drenaggio il fallimento terapeutico è quasi certo (EAU 2026).');
+    }
+    if (esbl) {
+      atb = rx('Pielonefrite – rischio ESBL (EAU 2026 · ESCMID 2022)',
+        'Ertapenem 1 g EV q24h (prima scelta; non copre Pseudomonas)<br><em>oppure</em> Meropenem 1 g EV q8h (se rischio Pseudomonas associato)<br>' +
+        (irc ? '<em>Adeguare posologia a eGFR</em>' : ''));
+      atb += info('warn','⚠️','Cefalosporine ed ampicillina-sulbactam: non affidabili per ESBL anche se CIM appare sensibile in vitro. Carbapeneme come scelta empirica (EAU 2026).');
+    } else if (pseu) {
+      atb = rx('Pielonefrite – rischio Pseudomonas (EAU 2026)',
+        (allergiaIgE ? 'Aztreonam 2 g EV q8h' : 'Piperacillina-tazobactam 4,5 g EV q6h') +
+        (irc ? '<br><em>Adeguare posologia a eGFR</em>' : ''));
+    } else if (enterococco) {
+      if (vre) {
+        atb = rx('Pielonefrite – VRE (EAU 2026)',
+          'Linezolid 600 mg EV/PO q12h<br><em>oppure</em> Daptomicina 6 mg/kg EV q24h (off-label UTI)<br><em>Consulenza infettivologica obbligatoria</em>');
+        warnings += info('danger','❗','VRE: consulenza infettivologica urgente. Daptomicina inattivata dal surfattante polmonare (non usare in polmonite); in UTI è off-label ma utilizzata in centri specializzati.');
+      } else {
+        atb = rx('Pielonefrite – Enterococcus spp. (EAU 2026)',
+          (allergiaIgE ? 'Vancomicina 15–20 mg/kg EV q12h' : 'Ampicillina 2 g EV q4–6h'));
+      }
+    } else {
+      atb = rx('Pielonefrite – Prima scelta (EAU 2026 · IDSA 2010)',
+        (allergiaIgE ? 'Aztreonam 2 g EV q8h' : 'Ceftriaxone 2 g EV q24h') +
+        (irc ? '<br><em>Adeguare a eGFR</em>' : ''));
+      atb += rx('Alternativa parenterale', 'Ampicillina-sulbactam 3 g EV q6h (solo se sensibilità attesa alta)<br><em>oppure</em> Amoxicillina-clavulanato 2,2 g EV q8h', 'teal');
+    }
+    // Switch EV→PO
+    atb += `<div class="section-label" style="margin-top:14px;">Switch EV → orale (dopo 48–72h se stabile, afebbrile, tolleranza orale)</div>`;
+    atb += switchTable([
+      ['Ceftriaxone EV', 'Cefixima 400 mg PO q24h', 'buona biodisponibilità'],
+      ['Ceftriaxone EV', 'Amoxicillina-clavulanato 875/125 mg q8h', 'se sensibile in vitro'],
+      ['Ampicillina-sulbactam EV', 'Amoxicillina-clavulanato 875/125 mg q8h', 'se sensibile'],
+      ['Piperacillina-tazo EV', 'Ciprofloxacina 500 mg q12h', 'solo se sensibile + QT nella norma'],
+      ['Ertapenem EV', 'Ciprofloxacina 500 mg q12h', 'solo se sensibile in antibiogramma'],
+    ]);
+    atb += info('warn','⚠️','Ciprofloxacina orale nello switch: usare <strong>solo se sensibilità confermata in antibiogramma</strong>. Non usare empiricamente: la resistenza in Italia è spesso elevata, verificare i dati locali di sorveglianza (EAU 2026 · NII AIFA/EMA).');
+
+    durata = complicata ? '7 giorni se buona risposta clinica (IDSA 2025); 10–14 giorni se ostruzione non risolta, ascesso, immunodepressione o risposta lenta' : '7 giorni se risposta rapida (7–10 giorni negli altri casi)';
+    monitoraggio = 'Emocolture ×2 (prima ATB), urinocoltura, PCR, procalcitonina, creatinina, ecografia renale';
+    lg = `<div class="guidelines-box">
+      <strong>Riferimenti: EAU 2026 · IDSA 2010 · IDSA 2025 (cUTI) · ESCMID 2022</strong>
+      <ul>
+        <li>Emocolture obbligatorie in pielonefrite con febbre &gt;38.5°C o segni di sepsi (EAU 2026)</li>
+        <li>Fluorochinoloni: empirici solo se resistenza locale &lt;10% (soglia EAU) e senza assunzione negli ultimi 6 mesi; in Italia la resistenza è spesso superiore, quindi preferire β-lattamici parenterali (EAU 2026 · NII AIFA/EMA)</li>
+        <li>Ertapenem: preferito ai carbapenemi ad ampio spettro per ESBL non-Pseudomonas (spettro più ristretto) (ESCMID 2022)</li>
+        <li>Rivalutare e scalare l’ATB non appena disponibile l’antibiogramma (de-escalation)</li>
+        <li>Ecografia renale urgente per escludere ostruzione, ascesso perirenale</li>
+      </ul>
+    </div>`;
+
+  // ── UROSEPSI ──
+  } else if (tipoEff === 'urosepsi') {
+    warnings += info('danger','❗','<strong>Urosepsi – emergenza medica:</strong> attivare il bundle SSC. Emocolture ×2 + urinocoltura prima dell’ATB. Antibiotico entro 1h dalla diagnosi.');
+    if (ostruzione) {
+      sourceControl = info('danger','❗','<strong>Source control – PRIORITÀ ASSOLUTA:</strong> drenaggio urgente (nefrostomia o stent ureterale) il prima possibile (indicativamente entro 6–12h). Senza drenaggio la mortalità rimane elevata indipendentemente dall’ATB (EAU 2026 · SSC 2026). Contattare urologia immediatamente.');
+    }
+    if (esbl && pseu) {
+      atb = rx('Urosepsi – ESBL + Pseudomonas (EAU 2026)',
+        'Meropenem 1 g EV q8h (infusione estesa 3h; 2 g q8h solo se Pseudomonas con CIM elevata, previa consulenza infettivologica)<br>' + (irc ? '<em>Adeguare a eGFR</em>' : ''));
+    } else if (pseu) {
+      atb = rx('Urosepsi – rischio Pseudomonas (EAU 2026)',
+        (allergiaIgE ? 'Aztreonam 2 g EV q8h' : 'Piperacillina-tazobactam 4,5 g EV q6h (inf. estesa 4h)') +
+        (irc ? '<br><em>Adeguare a eGFR</em>' : ''));
+    } else if (esbl) {
+      atb = rx('Urosepsi – rischio ESBL (EAU 2026 · ESCMID 2022)',
+        'Meropenem 1 g EV q8h<br><em>oppure</em> Ertapenem 1 g EV q24h (se no Pseudomonas e paziente stabile)<br>' +
+        (irc ? '<em>Adeguare a eGFR</em>' : ''));
+    } else if (enterococco) {
+      if (vre) {
+        atb = rx('Urosepsi – VRE',
+          'Linezolid 600 mg EV q12h<br><em>Consulenza infettivologica urgente</em>');
+      } else {
+        atb = rx('Urosepsi – Enterococcus spp.',
+          (allergiaIgE ? 'Vancomicina: carico 20–35 mg/kg EV (max 3 g), poi 15–20 mg/kg q8–12h con monitoraggio (AUC/MIC)' :
+          'Ampicillina 2 g EV q4h<br><em>oppure</em> Piperacillina-tazobactam 4,5 g EV q6h (copre Enterococcus faecalis, non faecium)'));
+      }
+    } else {
+      atb = rx('Urosepsi – Schema empirico prima scelta (EAU 2026 · SSC 2026)',
+        (allergiaIgE ? 'Aztreonam 2 g EV q8h' : 'Ceftriaxone 2 g EV q24h') +
+        (irc ? '<br><em>Adeguare a eGFR</em>' : ''));
+      atb += rx('De-escalation (appena disponibile antibiogramma)', 'Ampicillina-sulbactam 3 g EV q6h (se E. coli o Klebsiella sensibile)<br><em>oppure</em> Cefazolina 2 g EV q8h (se MSSA o Enterobatteriacee sensibili)', 'teal');
+    }
+    atb += info('teal','⏱','<strong>Bundle urosepsi (SSC 2026):</strong> emocolture ×2 + urinocoltura → ATB entro 1h → fluidi 30 mL/kg se ipotensione → vasopressori se PAM (Pressione Arteriosa Media) &lt;65 mmHg persiste. Per gestione dettagliata dei vasopressori e steroidi vedere la app Sepsi.');
+    durata = '7–14 giorni (rivalutare con colture a 48–72h; de-escalation obbligatoria)';
+    monitoraggio = 'Emocolture ×2, urinocoltura, lattato, PCR, procalcitonina, creatinina, diuresi oraria, PAM';
+    lg = `<div class="guidelines-box">
+      <strong>Riferimenti: EAU 2026 · SSC 2026 · ESCMID 2022</strong>
+      <ul>
+        <li>Drenaggio urinario urgente: componente essenziale del source control in urosepsi con ostruzione (EAU 2026)</li>
+        <li>Carbapenemici empirici: indicati solo con fattori di rischio ESBL documentati. Evitare uso indiscriminato (ESCMID 2022)</li>
+        <li>De-escalation obbligatoria a 48–72h su colture</li>
+        <li>β-lattamici: dopo la dose di carico preferire l’infusione prolungata (SSC 2026)</li>
+        <li>Procalcitonina: utile per guidare la durata dell’ATB (stop se &lt;0,5 μg/L o calo ≥80% dal picco, sempre con valutazione clinica)</li>
+        <li>Per gestione vasopressori, steroidi, fluidi: vedere la app Sepsi (SSC 2026)</li>
+      </ul>
+    </div>`;
+
+  // ── CAUTI ──
+  } else if (tipoEff === 'cauti') {
+    warnings += info('note','ℹ️','<strong>CAUTI (Catheter-Associated UTI):</strong> rimozione o sostituzione del catetere raccomandata prima o entro 24h dall’inizio ATB (IDSA 2010 · 2025 · EAU 2026). Non trattare la batteriuria asintomatica nel portatore cronico.');
+    sourceControl = info('teal','🔧','<strong>Source control CAUTI:</strong> rimuovere o sostituire il catetere prima di iniziare l’ATB. Se il catetere è in sede da &gt;2 settimane e ancora indicato: sostituirlo e raccogliere l’urinocoltura dal nuovo catetere. Rivalutare ogni giorno la necessità clinica (rimozione appena possibile).');
+    if (esbl && pseu) {
+      atb = rx('CAUTI – ESBL + Pseudomonas (IDSA 2010 · 2025 · EAU 2026)',
+        'Meropenem 1 g EV q8h<br>' + (irc ? '<em>Adeguare a eGFR</em>' : ''));
+    } else if (pseu) {
+      atb = rx('CAUTI – rischio Pseudomonas (IDSA 2010 · 2025)',
+        (allergiaIgE ? 'Aztreonam 2 g EV q8h' : 'Piperacillina-tazobactam 4,5 g EV q6h') +
+        (irc ? '<br><em>Adeguare a eGFR</em>' : ''));
+    } else if (esbl) {
+      atb = rx('CAUTI – rischio ESBL (IDSA 2010 · 2025 · EAU 2026)',
+        'Ertapenem 1 g EV q24h<br><em>oppure</em> Meropenem 1 g EV q8h se Pseudomonas non escluso<br>' +
+        (irc ? '<em>Adeguare a eGFR</em>' : ''));
+    } else if (enterococco) {
+      atb = rx('CAUTI – Enterococcus spp. (IDSA 2010 · 2025)',
+        (vre ? 'Linezolid 600 mg EV q12h (VRE – consulenza infettivologica)' :
+        (allergiaIgE ? 'Vancomicina 15–20 mg/kg EV q12h' : 'Ampicillina 2 g EV q6h')));
+    } else {
+      atb = rx('CAUTI – Schema empirico (IDSA 2010 · 2025 · EAU 2026)',
+        (allergiaIgE ? 'Aztreonam 2 g EV q8h' : 'Ceftriaxone 2 g EV q24h') +
+        (irc ? '<br><em>Adeguare a eGFR</em>' : ''));
+    }
+    durata = '7 giorni (se risposta rapida dopo rimozione catetere); 10–14 giorni se risposta lenta o catetere non rimosso; 3 giorni nelle donne ≤65 anni senza sintomi delle alte vie dopo rimozione del catetere (IDSA 2010)';
+    monitoraggio = 'Urinocoltura pre-ATB, creatinina, risposta clinica a 48–72h';
+    lg = `<div class="guidelines-box">
+      <strong>Riferimenti: IDSA 2010 (CAUTI) · IDSA 2025 (cUTI) · EAU 2026</strong>
+      <ul>
+        <li>Rimozione o sostituzione catetere: riduce la carica batterica e migliora la risposta ATB (IDSA 2010 · 2025)</li>
+        <li>Non trattare batteriuria asintomatica in portatore cronico di catetere (IDSA 2019)</li>
+        <li>Durata 7 giorni se risposta rapida; 10–14 giorni se risposta lenta o catetere non rimovibile</li>
+        <li>Urinocoltura obbligatoria prima di iniziare ATB</li>
+        <li>Donne ≤65 anni senza sintomi delle alte vie dopo rimozione del catetere: schema di 3 giorni (IDSA 2010)</li>
+      </ul>
+    </div>`;
+  }
+
+  // Coerenza sesso / tipo
+  if (tipo === 'cistite_f' && sesso === 'M') warnings += info('warn','⚠️','Tipo “Cistite – Donna” con sesso M: verificare la selezione (nel maschio l’UTI è sempre complicata).');
+  if (tipo === 'cistite_m' && sesso === 'F') warnings += info('warn','⚠️','Tipo “UTI maschile” con sesso F: verificare la selezione.');
+  if (allergiaIgE) {
+    warnings += info('warn','⚠️','Allergia IgE-mediata ai β-lattamici: gli schemi con penicilline/cefalosporine (ampicillina, amoxicillina-clavulanato, piperacillina-tazobactam, ceftriaxone, cefixima) non sono idonei. Carbapenemi: cross-reattività bassa (&lt;1%), valutare con allergologo/infettivologo. Aztreonam: evitare se allergia a ceftazidima (stessa catena laterale).');
+  }
+
+  // Warnings generali
+  if (irc) {
+    warnings += info('warn','💊',`eGFR calcolato: <strong>${gfr} mL/min</strong>. Nitrofurantoina controindicata. TMP-SMX: evitare se eGFR &lt;30. Aggiustare la posologia alla funzione renale (le schede tecniche usano spesso la clearance di Cockcroft-Gault).`);
+  }
+  if (ircMod) {
+    warnings += info('note','💊',`eGFR calcolato: <strong>${gfr} mL/min</strong> (IRC moderata). Nitrofurantoina: evitare se eGFR &lt;45 (accumulo di metaboliti). Preferire fosfomicina.`);
+  }
+  if (esbl) {
+    warnings += info('warn','⚠️','Rischio ESBL: cefalosporine e piperacillina-tazobactam non affidabili anche se sensibili in vitro (effetto inoculo; studio MERINO). Fluorochinoloni e TMP-SMX solo se sensibilità documentata (utili per lo switch orale). Nelle forme sistemiche scelta empirica con carbapenemico (EAU 2026 · ESCMID 2022 · IDSA 2024).');
+  }
+  if (vre) {
+    warnings += info('danger','❗','VRE (Enterococcus vancomicino-resistente): consulenza infettivologica urgente. Opzioni: linezolid, daptomicina (off-label UTI). Isolamento da contatto obbligatorio.');
+  }
+
+  // Chips
+  const tipoLabel0 = {
+    cistite_f:'Cistite – Donna', cistite_m:'UTI Maschile',
+    pielonefrite:'Pielonefrite', urosepsi:'Urosepsi',
+    cauti:'CAUTI', asintomatica:'Batteriuria asintomatica'
+  }[tipoEff] || tipoEff;
+  const tipoLabel = escalation ? 'Urosepsi (da qSOFA)' : tipoLabel0;
+
+  const chipsHtml = [
+    chip(tipoLabel, tipoEff === 'urosepsi' ? 'red' : tipoEff === 'pielonefrite' ? 'amber' : 'blue'),
+    chip(`eGFR: ${gfr} mL/min`, irc ? 'red' : ircMod ? 'amber' : 'green'),
+    chip(`qSOFA: ${qsofa}/3`, qsofa >= 2 ? 'red' : 'neutral'),
+    esbl ? chip('⚠️ ESBL', 'amber') : '',
+    pseu ? chip('⚠️ Pseudomonas', 'amber') : '',
+    vre ? chip('🚨 VRE', 'red') : '',
+    enterococco && !vre ? chip('Enterococco', 'neutral') : '',
+    ostruzione ? chip('⚠️ Ostruzione', 'red') : '',
+    gravidanza ? chip('🤰 Gravidanza', 'teal') : '',
+  ].filter(Boolean).join('');
+
+  const body = `
+    <div class="result-chips">${chipsHtml}</div>
+    ${warnings}
+    ${sourceControl ? `<div class="section-label">Source control</div>${sourceControl}` : ''}
+    <div class="section-label">Schema terapeutico</div>
+    ${atb}
+    <div class="section-label">Durata raccomandata</div>
+    <p style="font-size:0.9rem;">${durata}</p>
+    <div class="info-box note" style="margin-top:8px;"><span class="bi">🔬</span><div><strong>Monitoraggio:</strong> ${monitoraggio}</div></div>
+    <hr class="divider">
+    ${tipoEff === 'asintomatica' ? '' : `<div class="info-box teal"><span class="bi">🔄</span><div><strong>De-escalation:</strong> rivalutare obbligatoriamente a 48–72h con urinocoltura/emocoltura. Scalare ad antibiotico a spettro più ristretto non appena disponibile l'antibiogramma (EAU 2026).</div></div>`}
+    ${lg}${bib(BIB[tipoEff])}
+    <div class="timestamp">Generato il ${oggi()} · Uso clinico interno · Non sostituisce la valutazione medica</div>`;
+
+  const el = document.getElementById('risultato');
+  el.innerHTML = `
+    <div class="result-header">
+      <h3>💧 ${tipoLabel} – Piano Terapeutico</h3>
+      <div class="rmeta">eGFR ${gfr} mL/min/1,73 m² (CKD-EPI 2021) · qSOFA ${qsofa}/3 · ${oggi()}</div>
+    </div>
+    <div class="result-body">${body}</div>`;
+  el.style.display = 'block';
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Mostra qSOFA live al cambio checkbox
+['q1','q2','q3'].forEach(id => {
+  document.getElementById(id).addEventListener('change', () => {
+    const q = ['q1','q2','q3'].filter(i => document.getElementById(i).checked).length;
+    if (q === 0) { document.getElementById('qsofa-inline').style.display = 'none'; return; }
+    const el = document.getElementById('qsofa-inline');
+    if (q >= 2) {
+      el.style.cssText = 'display:block; background:var(--red-light); border-left:3px solid var(--red); color:#7f1d1d; padding:9px 13px; border-radius:6px; margin-top:8px; font-size:0.88rem;';
+      el.innerHTML = `qSOFA: <strong>${q}/3</strong> – Allerta sepsi. Considerare urosepsi se instabilità emodinamica.`;
+    } else {
+      el.style.cssText = 'display:block; background:var(--amber-light); border-left:3px solid var(--amber); color:#78350f; padding:9px 13px; border-radius:6px; margin-top:8px; font-size:0.88rem;';
+      el.innerHTML = `qSOFA: <strong>${q}/3</strong> – Sorveglianza.`;
+    }
+  });
+});
+document.querySelectorAll('input[name="tipo"]').forEach(r => r.addEventListener('change', () => {
+  document.querySelectorAll('.tipo-btn').forEach(b => b.classList.toggle('active', b.querySelector('input').checked));
+}));
+</script>
+</body>
+</html>
