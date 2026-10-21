@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sepsi / Shock Settico – Gestione Clinica | SSC 2026</title>
+  <style>
+    :root {
+      --bg: #f0f4f8;
+      --surface: #ffffff;
+      --surface-2: #f8fafc;
+      --surface-3: #f1f5f9;
+      --border: #dde3ec;
+      --border-bright: #b0bcd4;
+
+      --red: #c53030;
+      --red-dim: #9b2c2c;
+      --red-glow: #fff5f5;
+      --red-text: #c53030;
+
+      --amber: #b45309;
+      --amber-dim: #92400e;
+      --amber-light: #b45309;
+      --amber-bg: #fffbeb;
+
+      --teal: #0d6b72;
+      --teal-dim: #0a5359;
+      --teal-light: #0d6b72;
+      --teal-bg: #f0fdfa;
+
+      --blue: #2563a8;
+      --blue-dim: #1a4a7a;
+      --blue-light: #2563a8;
+      --blue-bg: #eff6ff;
+
+      --green: #15803d;
+      --green-dim: #14532d;
+      --green-light: #15803d;
+      --green-bg: #f0fdf4;
+
+      --purple: #6d28d9;
+      --purple-bg: #f5f3ff;
+
+      --text: #1e2a38;
+      --text-dim: #475569;
+      --text-muted: #64748b;
+
+      --mono: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+      --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      --radius: 10px;
+      --radius-sm: 6px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 16px;
+      min-height: 100vh;
+    }
+
+    .wrapper { max-width: 1000px; margin: 0 auto; }
+
+    /* ── HEADER ── */
+    .app-header {
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--red);
+      border-radius: var(--radius);
+      background: var(--surface);
+      padding: 20px 24px 16px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .app-header h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .pulse-dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: var(--red);
+      flex-shrink: 0;
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(197,48,48,0.5); }
+      50% { box-shadow: 0 0 0 7px rgba(197,48,48,0); }
+    }
+    .app-header .subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 5px;
+    }
+    .ref-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .ref-pill {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 20px;
+      letter-spacing: 0.04em;
+      border: 1px solid;
+    }
+    .pill-red { color: var(--red-text); border-color: var(--red-dim); background: var(--red-glow); }
+    .pill-teal { color: var(--teal-light); border-color: var(--teal-dim); background: var(--teal-bg); }
+    .pill-blue { color: var(--blue-light); border-color: var(--blue-dim); background: var(--blue-bg); }
+
+    /* ── BUNDLE BANNER ── */
+    .bundle-banner {
+      background: var(--red-glow);
+      border: 1px solid var(--red-dim);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .bundle-banner .bb-icon { font-size: 1.3rem; flex-shrink: 0; }
+    .bundle-banner .bb-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--red-text);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+    .bundle-steps {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .bundle-step {
+      font-size: 0.78rem;
+      background: var(--red-glow);
+      border: 1px solid #f5c6c6;
+      border-radius: var(--radius-sm);
+      padding: 4px 10px;
+      color: var(--text-dim);
+    }
+    .bundle-step strong { color: var(--red-text); }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      margin-bottom: 12px;
+    }
+    .card-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    /* ── INPUTS ── */
+    .input-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 10px;
+      align-items: center;
+    }
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .input-group label {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .input-group input[type="number"],
+    .input-group select {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: var(--radius-sm);
+      padding: 7px 10px;
+      font-size: 0.95rem;
+      font-family: var(--mono);
+      width: 110px;
+    }
+    .input-group input:focus, .input-group select:focus {
+      outline: none;
+      border-color: var(--blue);
+    }
+
+    .check-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 4px;
+    }
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 7px 9px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 0.88rem;
+      color: var(--text-dim);
+      transition: background 0.1s, color 0.1s;
+    }
+    .check-item:hover { background: var(--surface-2); color: var(--text); }
+    .check-item input[type="checkbox"],
+    .check-item input[type="radio"] {
+      margin-top: 2px;
+      accent-color: var(--red);
+      flex-shrink: 0;
+    }
+
+    .sub-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-muted);
+      margin: 10px 0 5px;
+      padding-left: 2px;
+    }
+
+    .fonte-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 6px;
+    }
+    .fonte-btn {
+      background: var(--surface-2);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s;
+    }
+    .fonte-btn input { display: none; }
+    .fonte-btn .fb-icon { font-size: 1.1rem; display: block; margin-bottom: 3px; }
+    .fonte-btn .fb-label { font-size: 0.85rem; font-weight: 600; color: var(--text-dim); }
+    .fonte-btn:hover { border-color: var(--border-bright); }
+    .fonte-btn.selected {
+      border-color: var(--red);
+      background: var(--red-glow);
+    }
+    .fonte-btn.selected .fb-label { color: var(--red-text); }
+
+    /* ── SOFA ── */
+    .sofa-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 8px;
+    }
+    .sofa-item {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+    }
+    .sofa-item label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: block;
+      margin-bottom: 5px;
+    }
+    .sofa-item select {
+      width: 100%;
+      background: var(--surface-3);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 4px;
+      padding: 5px 7px;
+      font-size: 0.85rem;
+    }
+    .sofa-score-display {
+      display: none;
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    /* ── BUTTONS ── */
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin: 16px 0; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 11px 22px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+      letter-spacing: 0.01em;
+    }
+    .btn-danger { background: var(--red); color: white; }
+    .btn-danger:hover { background: var(--red-dim); }
+    .btn-ghost {
+      background: transparent;
+      border: 1.5px solid var(--border);
+      color: var(--text-dim);
+    }
+    .btn-ghost:hover { border-color: var(--border-bright); color: var(--text); }
+    .btn-teal { background: var(--teal); color: white; font-size: 0.82rem; padding: 7px 14px; }
+    .btn-teal:hover { background: var(--teal-dim); }
+
+    /* ── RESULT ── */
+    .result-container {
+      display: none;
+      margin-top: 8px;
+    }
+    .result-header {
+      background: var(--red);
+      color: white;
+      border-radius: var(--radius) var(--radius) 0 0;
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .result-header h3 { font-size: 1.05rem; font-weight: 700; letter-spacing: -0.01em; }
+    .result-header .result-meta { font-size: 0.8rem; opacity: 0.85; }
+    .result-body {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 var(--radius) var(--radius);
+      padding: 18px 20px;
+    }
+
+    .result-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 14px;
+    }
+    .chip {
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 4px 11px;
+      border-radius: 20px;
+      border: 1px solid;
+    }
+    .chip-red { color: var(--red-text); border-color: var(--red-dim); background: var(--red-glow); }
+    .chip-amber { color: var(--amber-light); border-color: var(--amber-dim); background: var(--amber-bg); }
+    .chip-teal { color: var(--teal-light); border-color: var(--teal-dim); background: var(--teal-bg); }
+    .chip-blue { color: var(--blue-light); border-color: var(--blue-dim); background: var(--blue-bg); }
+    .chip-green { color: var(--green-light); border-color: var(--green-dim); background: var(--green-bg); }
+    .chip-neutral { color: var(--text-dim); border-color: var(--border); background: var(--surface-2); }
+
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-muted);
+      margin: 14px 0 6px;
+    }
+
+    .rx-block {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--red);
+      border-radius: var(--radius-sm);
+      padding: 11px 14px;
+      margin: 8px 0;
+      font-family: var(--mono);
+      font-size: 0.87rem;
+      line-height: 1.9;
+      color: var(--text);
+    }
+    .rx-block .rx-tag {
+      font-family: var(--font);
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--red-text);
+      margin-bottom: 4px;
+    }
+    .rx-block em {
+      font-family: var(--font);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-style: normal;
+    }
+
+    .rx-block.teal { border-left-color: var(--teal); }
+    .rx-block.teal .rx-tag { color: var(--teal-light); }
+    .rx-block.amber { border-left-color: var(--amber); }
+    .rx-block.amber .rx-tag { color: var(--amber-light); }
+    .rx-block.blue { border-left-color: var(--blue); }
+    .rx-block.blue .rx-tag { color: var(--blue-light); }
+
+    .info-box {
+      border-radius: var(--radius-sm);
+      padding: 10px 13px;
+      margin: 8px 0;
+      font-size: 0.86rem;
+      display: flex;
+      gap: 9px;
+      align-items: flex-start;
+      color: var(--text-dim);
+    }
+    .info-box .bi { flex-shrink: 0; font-size: 1rem; }
+    .info-box.warn { background: var(--amber-bg); border-left: 3px solid var(--amber); }
+    .info-box.warn { color: var(--amber-dim); }
+    .info-box.danger { background: var(--red-glow); border-left: 3px solid var(--red); color: var(--red-text); }
+    .info-box.ok { background: var(--green-bg); border-left: 3px solid var(--green); color: var(--green-light); }
+    .info-box.teal { background: var(--teal-bg); border-left: 3px solid var(--teal); color: var(--teal-light); }
+    .info-box.note { background: var(--blue-bg); border-left: 3px solid var(--blue); color: var(--blue-light); }
+    .info-box.purple { background: var(--purple-bg); border-left: 3px solid var(--purple); color: var(--purple); }
+
+    .rx-block.purple { border-left-color: var(--purple); }
+    .rx-block.purple .rx-tag { color: var(--purple); }
+
+    sup.ref { font-size: 0.68em; font-weight: 700; color: var(--blue); font-family: var(--font); letter-spacing: 0; text-transform: none; }
+    sup.ref a { color: inherit; text-decoration: none; }
+    sup.ref a:hover { text-decoration: underline; }
+    .bb-note { font-size: 0.76rem; color: var(--text-dim); margin-top: 7px; }
+    .sofa-note { font-size: 0.74rem; color: var(--text-muted); margin-top: 8px; }
+
+    .biblio { padding-left: 22px; font-size: 0.82rem; color: var(--text-dim); }
+    .biblio li { margin-bottom: 5px; scroll-margin-top: 12px; }
+    .biblio li:target { background: var(--amber-bg); }
+    .biblio-note { font-size: 0.74rem; color: var(--text-muted); margin-top: 10px; }
+
+    .app-footer {
+      margin: 18px 0 6px;
+      padding: 12px 16px;
+      text-align: center;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    .timeline-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 8px;
+      margin: 10px 0;
+    }
+    .timeline-item {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+    }
+    .timeline-item .tl-time {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--red-text);
+      margin-bottom: 5px;
+    }
+    .timeline-item ul {
+      padding-left: 14px;
+      font-size: 0.82rem;
+      color: var(--text-dim);
+    }
+    .timeline-item li { margin-bottom: 2px; }
+
+    .guidelines-box {
+      background: var(--teal-bg);
+      border: 1px solid var(--teal-dim);
+      border-radius: var(--radius-sm);
+      padding: 12px 15px;
+      margin-top: 14px;
+      font-size: 0.84rem;
+      color: var(--teal-light);
+    }
+    .guidelines-box strong { color: var(--teal-light); display: block; margin-bottom: 6px; }
+    .guidelines-box ul { padding-left: 16px; }
+    .guidelines-box li { margin-bottom: 3px; color: var(--text-dim); }
+
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 14px 0;
+    }
+
+    .timestamp {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 14px;
+      text-align: right;
+    }
+
+    @media (max-width: 600px) {
+      .fonte-grid { grid-template-columns: repeat(3, 1fr); }
+      .sofa-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media print {
+      body { background: white; padding: 0; }
+      .btn-row, .btn, .bundle-banner { display: none !important; }
+      .result-container { display: block !important; }
+      .card { box-shadow: none; border: 1px solid #ddd; }
+      .pulse-dot { animation: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <div class="app-header">
+    <div>
+      <h1><span class="pulse-dot"></span>Sepsi / Shock Settico</h1>
+      <div class="subtitle">Strumento di supporto clinico – Gestione urgenza · Antibioticoterapia · Vasopressori · Steroidi</div>
+      <div class="ref-pills">
+        <span class="ref-pill pill-red">SSC 2026</span>
+        <span class="ref-pill pill-teal">IDSA/ATS 2019</span>
+        <span class="ref-pill pill-blue">ESCMID 2023</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUNDLE BANNER -->
+  <div class="bundle-banner">
+    <span class="bb-icon">⏱</span>
+    <div>
+      <div class="bb-title">Hour-1 Bundle (SSC 2018 · aggiornato SSC 2026) – da attivare immediatamente <sup class="ref" data-r="1,3"></sup></div>
+      <div class="bundle-steps">
+        <span class="bundle-step"><strong>1</strong> Lattato arterioso</span>
+        <span class="bundle-step"><strong>2</strong> Emocolture ×2 prima ATB</span>
+        <span class="bundle-step"><strong>3</strong> ATB ad ampio spettro entro 1h</span>
+        <span class="bundle-step"><strong>4</strong> Fluidi 30 mL/kg se ipotensione o lattato ≥4 <sup class="ref" data-r="1,7"></sup></span>
+        <span class="bundle-step"><strong>5</strong> Vasopressori se PAM (Pressione Arteriosa Media) &lt;65 mmHg persiste</span>
+      </div>
+      <div class="bb-note">Antibiotico: subito (idealmente entro 1 h) nello shock settico e nella sepsi probabile/definita; nella sepsi solo <em>possibile</em> senza shock, entro 3 h dopo rapida rivalutazione (SSC 2026). <sup class="ref" data-r="1"></sup></div>
+    </div>
+  </div>
+
+  <!-- DATI PAZIENTE -->
+  <div class="card">
+    <div class="card-title">👤 Dati paziente e parametri</div>
+    <div class="input-row">
+      <div class="input-group">
+        <label>Peso (kg)</label>
+        <input type="number" id="peso" min="30" max="200" value="70">
+      </div>
+      <div class="input-group">
+        <label>Età (anni)</label>
+        <input type="number" id="eta" min="18" max="120" value="70">
+      </div>
+      <div class="input-group">
+        <label>Lattato (mmol/L)</label>
+        <input type="number" id="lattato" step="0.1" min="0" max="20" value="2.5">
+      </div>
+      <div class="input-group">
+        <label>PAS (mmHg)</label>
+        <input type="number" id="pas" min="40" max="220" value="85">
+      </div>
+    </div>
+    <div class="check-grid" style="margin-top:6px;">
+      <label class="check-item"><input type="checkbox" id="ipotensione"> Ipotensione (PAS &lt;90) refrattaria a fluidi</label>
+      <label class="check-item"><input type="checkbox" id="vasopressori_att"> Vasopressori già avviati</label>
+      <label class="check-item"><input type="checkbox" id="refrattario"> Noradrenalina (NE) &gt; 0.25 mcg/kg/min per mantenere PAM (Pressione Arteriosa Media) ≥65 mmHg</label>
+      <label class="check-item"><input type="checkbox" id="lattato_post"> Lattato ≥ 2 mmol/L dopo rianimazione fluidi</label>
+    </div>
+  </div>
+
+  <!-- SOFA SCORE -->
+  <div class="card">
+    <div class="card-title">📊 SOFA Score (rapido) <sup class="ref" data-r="4,5"></sup></div>
+    <div class="sofa-grid">
+      <div class="sofa-item">
+        <label>PaO₂/FiO₂ (mmHg)</label>
+        <select id="sofa_resp">
+          <option value="0">≥ 400 → 0 pt</option>
+          <option value="1">300–399 → 1 pt</option>
+          <option value="2">200–299 → 2 pt</option>
+          <option value="3" selected>100–199 + VM → 3 pt</option>
+          <option value="4">&lt; 100 + VM → 4 pt</option>
+        </select>
+      </div>
+      <div class="sofa-item">
+        <label>Piastrine (×10³/µL)</label>
+        <select id="sofa_plt">
+          <option value="0">≥ 150 → 0 pt</option>
+          <option value="1">100–149 → 1 pt</option>
+          <option value="2" selected>50–99 → 2 pt</option>
+          <option value="3">20–49 → 3 pt</option>
+          <option value="4">&lt; 20 → 4 pt</option>
+        </select>
+      </div>
+      <div class="sofa-item">
+        <label>Bilirubina (mg/dL)</label>
+        <select id="sofa_bili">
+          <option value="0" selected>&lt; 1.2 → 0 pt</option>
+          <option value="1">1.2–1.9 → 1 pt</option>
+          <option value="2">2.0–5.9 → 2 pt</option>
+          <option value="3">6.0–11.9 → 3 pt</option>
+          <option value="4">≥ 12.0 → 4 pt</option>
+        </select>
+      </div>
+      <div class="sofa-item">
+        <label>Cardiovascolare</label>
+        <select id="sofa_cv">
+          <option value="0" selected>PAM (Pressione Arteriosa Media) ≥70 → 0 pt</option>
+          <option value="1">PAM &lt;70 → 1 pt</option>
+          <option value="2">DA &lt;5 o DB qualsiasi → 2 pt</option>
+          <option value="3">DA 5–15 o NE/A ≤0.1 → 3 pt</option>
+          <option value="4">DA &gt;15 o NE/A &gt;0.1 → 4 pt</option>
+        </select>
+      </div>
+      <div class="sofa-item">
+        <label>GCS</label>
+        <select id="sofa_gcs">
+          <option value="0" selected>15 → 0 pt</option>
+          <option value="1">13–14 → 1 pt</option>
+          <option value="2">10–12 → 2 pt</option>
+          <option value="3">6–9 → 3 pt</option>
+          <option value="4">&lt;6 → 4 pt</option>
+        </select>
+      </div>
+      <div class="sofa-item">
+        <label>Creatinina (mg/dL)</label>
+        <select id="sofa_crea">
+          <option value="0" selected>&lt; 1.2 → 0 pt</option>
+          <option value="1">1.2–1.9 → 1 pt</option>
+          <option value="2">2.0–3.4 → 2 pt</option>
+          <option value="3">3.5–4.9 o diuresi &lt;500mL → 3 pt</option>
+          <option value="4">≥5.0 o diuresi &lt;200mL → 4 pt</option>
+        </select>
+      </div>
+    </div>
+    <div style="margin-top:10px;">
+      <button class="btn btn-teal" onclick="calcolaSOFA()">Calcola SOFA</button>
+      <div id="sofa-result" class="sofa-score-display"></div>
+      <div class="sofa-note">Le fasce di mortalità sono indicative (coorti di terapia intensiva) e non sostituiscono il giudizio clinico. <sup class="ref" data-r="6"></sup></div>
+    </div>
+  </div>
+
+  <!-- FONTE INFETTIVA -->
+  <div class="card">
+    <div class="card-title">🎯 Fonte infettiva presunta</div>
+    <div class="fonte-grid" id="fonte-grid">
+      <label class="fonte-btn selected" onclick="selFonte(this, 'polmonite')">
+        <input type="radio" name="fonte" value="polmonite" checked>
+        <span class="fb-icon">🫁</span>
+        <span class="fb-label">Polmonare</span>
+      </label>
+      <label class="fonte-btn" onclick="selFonte(this, 'uti')">
+        <input type="radio" name="fonte" value="uti">
+        <span class="fb-icon">💧</span>
+        <span class="fb-label">Urinaria</span>
+      </label>
+      <label class="fonte-btn" onclick="selFonte(this, 'addome')">
+        <input type="radio" name="fonte" value="addome">
+        <span class="fb-icon">🫀</span>
+        <span class="fb-label">Addominale</span>
+      </label>
+      <label class="fonte-btn" onclick="selFonte(this, 'cute')">
+        <input type="radio" name="fonte" value="cute">
+        <span class="fb-icon">🩹</span>
+        <span class="fb-label">Cute / SSTIs</span>
+      </label>
+      <label class="fonte-btn" onclick="selFonte(this, 'cvc')">
+        <input type="radio" name="fonte" value="cvc">
+        <span class="fb-icon">🔌</span>
+        <span class="fb-label">CVC / device</span>
+      </label>
+      <label class="fonte-btn" onclick="selFonte(this, 'snc')">
+        <input type="radio" name="fonte" value="snc">
+        <span class="fb-icon">🧠</span>
+        <span class="fb-label">SNC / meningite</span>
+      </label>
+      <label class="fonte-btn" onclick="selFonte(this, 'sconosciuta')">
+        <input type="radio" name="fonte" value="sconosciuta">
+        <span class="fb-icon">❓</span>
+        <span class="fb-label">Non identificata</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- FATTORI DI RISCHIO MICROBIOLOGICI -->
+  <div class="card">
+    <div class="card-title">🦠 Fattori di rischio microbiologici</div>
+
+    <div class="sub-label">Pseudomonas aeruginosa / BGN MDR</div>
+    <div class="check-grid">
+      <label class="check-item"><input type="checkbox" id="pseu_osp"> Ospedalizzazione o ATB EV negli ult. 90 gg</label>
+      <label class="check-item"><input type="checkbox" id="pseu_col"> Colonizzazione da Pseudomonas documentata</label>
+      <label class="check-item"><input type="checkbox" id="pseu_bpco"> BPCO grave, bronchiectasie</label>
+      <label class="check-item"><input type="checkbox" id="pseu_immune"> Neutropenia, immunosoppressione grave</label>
+    </div>
+
+    <div class="sub-label" style="margin-top:10px;">MRSA</div>
+    <div class="check-grid">
+      <label class="check-item"><input type="checkbox" id="mrsa_doc"> MRSA documentato &lt; 12 mesi ✱</label>
+      <label class="check-item"><input type="checkbox" id="mrsa_col"> Colonizzazione nasale/cutanea MRSA</label>
+      <label class="check-item"><input type="checkbox" id="mrsa_dialisi"> Dialisi cronica o ferite croniche</label>
+    </div>
+    <div style="font-size:0.72rem; color:var(--text-muted); margin-top:4px; padding-left:4px;">✱ MRSA raro in sepsi comunitaria in Italia. Copertura raccomandata solo con storia documentata o colonizzazione nota.</div>
+
+    <div class="sub-label" style="margin-top:10px;">ESBL / Enterobatteriacee resistenti</div>
+    <div class="check-grid">
+      <label class="check-item"><input type="checkbox" id="esbl_col"> Colonizzazione ESBL documentata</label>
+      <label class="check-item"><input type="checkbox" id="esbl_rsa"> RSA, lungodegenza, struttura ad alta prevalenza</label>
+      <label class="check-item"><input type="checkbox" id="esbl_carba"> Colonizzazione/infezione pregressa da CPE (KPC, OXA-48, MBL) o recente terapia con carbapenemici</label>
+    </div>
+
+    <div class="sub-label" style="margin-top:10px;">Candida / infezione fungina</div>
+    <div class="check-grid">
+      <label class="check-item"><input type="checkbox" id="candida_nut"> Nutrizione parenterale totale</label>
+      <label class="check-item"><input type="checkbox" id="candida_imm"> Immunodepressione grave (neutropenia, trapianto)</label>
+      <label class="check-item"><input type="checkbox" id="candida_col"> Colonizzazione Candida multisito</label>
+    </div>
+  </div>
+
+  <!-- COMORBIDITA -->
+  <div class="card">
+    <div class="card-title">⚕️ Comorbidità rilevanti</div>
+    <div class="check-grid">
+      <label class="check-item"><input type="checkbox" id="irc"> IRC (creatinina &gt; 2 mg/dL o dialisi)</label>
+      <label class="check-item"><input type="checkbox" id="epatica"> Insufficienza epatica severa</label>
+      <label class="check-item"><input type="checkbox" id="qt_lungo"> QT lungo o farmaci QT-prolunganti</label>
+      <label class="check-item"><input type="checkbox" id="allergia_ige"> Allergia IgE-mediata ai β-lattamici</label>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-danger" onclick="genera()">▶ Genera piano di gestione</button>
+    <button class="btn btn-ghost" onclick="window.print()">🖨 Stampa</button>
+  </div>
+
+  <div id="risultato" class="result-container"></div>
+
+  <!-- BIBLIOGRAFIA -->
+  <div class="card" id="bibliografia" style="margin-top:16px;">
+    <div class="card-title">📚 Bibliografia</div>
+    <ol class="biblio" id="biblio-list"></ol>
+    <div class="biblio-note">Le raccomandazioni sono riportate in forma sintetica e vanno sempre verificate sul testo originale e sui protocolli locali.</div>
+  </div>
+
+  <footer class="app-footer">Ideato dal dr. C.Briglia (cesarebriglia@gmail.com) con l'apporto di Claude - Antropic</footer>
+
+</div>
+
+<script>
+// ── UI helpers ──
+function selFonte(el, val) {
+  document.querySelectorAll('.fonte-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  el.querySelector('input').checked = true;
+}
+
+function calcolaSOFA() {
+  const ids = ['sofa_resp','sofa_plt','sofa_bili','sofa_cv','sofa_gcs','sofa_crea'];
+  const score = ids.reduce((s, id) => s + parseInt(document.getElementById(id).value), 0);
+  const el = document.getElementById('sofa-result');
+  let msg, style;
+  if (score <= 1) {
+    msg = `SOFA: <strong>${score}</strong> – Basso rischio disfunzione d'organo (&lt;10% mortalità stimata).`;
+    style = 'background:var(--green-bg); border:1px solid var(--green-dim); color:var(--green-light);';
+  } else if (score <= 5) {
+    msg = `SOFA: <strong>${score}</strong> – Rischio moderato (~15–25% mortalità). Monitoraggio intensivo.`;
+    style = 'background:var(--amber-bg); border:1px solid var(--amber-dim); color:var(--amber-light);';
+  } else if (score <= 10) {
+    msg = `SOFA: <strong>${score}</strong> – Rischio elevato (~40–50% mortalità). Considerare ICU.`;
+    style = 'background:var(--red-glow); border:1px solid var(--red-dim); color:var(--red-text);';
+  } else {
+    msg = `SOFA: <strong>${score}</strong> – Rischio molto elevato (&gt;80% mortalità). ICU urgente.`;
+    style = 'background:var(--red-glow); border:2px solid var(--red); color:var(--red-text); font-size:1rem;';
+  }
+  el.setAttribute('style', style + ' display:block; padding:10px 14px; border-radius:6px; margin-top:10px;');
+  el.innerHTML = msg;
+  return score;
+}
+
+function oggi() {
+  return new Date().toLocaleDateString('it-IT', {day:'2-digit', month:'2-digit', year:'numeric'});
+}
+
+function rx(tag, content, color='') {
+  return `<div class="rx-block ${color}"><div class="rx-tag">${tag}</div>${content}</div>`;
+}
+function info(type, icon, text) {
+  return `<div class="info-box ${type}"><span class="bi">${icon}</span><div>${text}</div></div>`;
+}
+function chip(label, type='neutral') {
+  return `<span class="chip chip-${type}">${label}</span>`;
+}
+
+// ── BIBLIOGRAFIA ──
+const BIBLIO = [
+  "Prescott HC, Mohr NM, Antonelli M, et al. Surviving Sepsis Campaign: International Guidelines for Management of Sepsis and Septic Shock 2026. <em>Crit Care Med</em> 2026 (doi:10.1097/CCM.0000000000007075); pubblicata anche in <em>Intensive Care Med</em> 2026 (doi:10.1007/s00134-026-08361-1).",
+  "Evans L, Rhodes A, Alhazzani W, et al. Surviving Sepsis Campaign: International Guidelines for Management of Sepsis and Septic Shock 2021. <em>Intensive Care Med</em> 2021;47:1181–1247.",
+  "Levy MM, Evans LE, Rhodes A. The Surviving Sepsis Campaign Bundle: 2018 update. <em>Crit Care Med</em> 2018;46:997–1000.",
+  "Singer M, Deutschman CS, Seymour CW, et al. The Third International Consensus Definitions for Sepsis and Septic Shock (Sepsis-3). <em>JAMA</em> 2016;315:801–810.",
+  "Vincent JL, Moreno R, Takala J, et al. The SOFA (Sepsis-related Organ Failure Assessment) score to describe organ dysfunction/failure. <em>Intensive Care Med</em> 1996;22:707–710.",
+  "Ferreira FL, Bota DP, Bross A, et al. Serial evaluation of the SOFA score to predict outcome in critically ill patients. <em>JAMA</em> 2001;286:1754–1758.",
+  "National Heart, Lung, and Blood Institute PETAL Clinical Trials Network (CLOVERS). Early restrictive or liberal fluid management for sepsis-induced hypotension. <em>N Engl J Med</em> 2023;388:499–510.",
+  "Russell JA, Walley KR, Singer J, et al. Vasopressin versus norepinephrine infusion in patients with septic shock (VASST). <em>N Engl J Med</em> 2008;358:877–887.",
+  "De Backer D, Biston P, Devriendt J, et al. Comparison of dopamine and norepinephrine in the treatment of shock. <em>N Engl J Med</em> 2010;362:779–789.",
+  "Venkatesh B, Finfer S, Cohen J, et al. Adjunctive glucocorticoid therapy in patients with septic shock (ADRENAL). <em>N Engl J Med</em> 2018;378:797–808.",
+  "Annane D, Renault A, Brun-Buisson C, et al. Hydrocortisone plus fludrocortisone for adults with septic shock (APROCCHSS). <em>N Engl J Med</em> 2018;378:809–818.",
+  "Metlay JP, Waterer GW, Long AC, et al. Diagnosis and treatment of adults with community-acquired pneumonia: an official clinical practice guideline of the ATS and IDSA. <em>Am J Respir Crit Care Med</em> 2019;200:e45–e67.",
+  "Martin-Loeches I, Torres A, Nagavci B, et al. ERS/ESICM/ESCMID/ALAT guidelines for the management of severe community-acquired pneumonia. <em>Intensive Care Med</em> 2023;49:615–632.",
+  "Paul M, Carrara E, Retamar P, et al. ESCMID guidelines for the treatment of infections caused by multidrug-resistant Gram-negative bacilli. <em>Clin Microbiol Infect</em> 2022;28:521–547.",
+  "Solomkin JS, Mazuski JE, Bradley JS, et al. Diagnosis and management of complicated intra-abdominal infection in adults and children (IDSA/SIS). <em>Clin Infect Dis</em> 2010;50:133–164.",
+  "Stevens DL, Bisno AL, Chambers HF, et al. Practice guidelines for the diagnosis and management of skin and soft tissue infections: 2014 update by the IDSA. <em>Clin Infect Dis</em> 2014;59:e10–e52.",
+  "Mermel LA, Allon M, Bouza E, et al. Clinical practice guidelines for the diagnosis and management of intravascular catheter-related infection: 2009 update by the IDSA. <em>Clin Infect Dis</em> 2009;49:1–45.",
+  "van de Beek D, Cabellos C, Dzupova O, et al. ESCMID guideline: diagnosis and treatment of acute bacterial meningitis. <em>Clin Microbiol Infect</em> 2016;22(Suppl 3):S37–S62.",
+  "de Gans J, van de Beek D. Dexamethasone in adults with bacterial meningitis. <em>N Engl J Med</em> 2002;347:1549–1556.",
+  "Pappas PG, Kauffman CA, Andes DR, et al. Clinical practice guideline for the management of candidiasis: 2016 update by the IDSA. <em>Clin Infect Dis</em> 2016;62:e1–e50."
+];
+
+function fillRefs(root) {
+  (root || document).querySelectorAll('sup.ref[data-r]').forEach(el => {
+    const nums = el.getAttribute('data-r').split(',').map(n => n.trim());
+    el.innerHTML = '[' + nums.map(n => `<a href="#biblio-${n}">${n}</a>`).join(',') + ']';
+  });
+}
+
+function renderBiblio() {
+  document.getElementById('biblio-list').innerHTML =
+    BIBLIO.map((t, i) => `<li id="biblio-${i + 1}">${t}</li>`).join('');
+  fillRefs(document);
+}
+renderBiblio();
+
+// ── MAIN ──
+function genera() {
+  const peso = parseFloat(document.getElementById('peso').value) || 70;
+  const eta = parseFloat(document.getElementById('eta').value) || 70;
+  const lattato = parseFloat(document.getElementById('lattato').value) || 0;
+  const pas = parseFloat(document.getElementById('pas').value) || 90;
+  const ipotensione = document.getElementById('ipotensione').checked;
+  const vasopressori = document.getElementById('vasopressori_att').checked;
+  const refrattario = document.getElementById('refrattario').checked;
+  const lattato_post = document.getElementById('lattato_post').checked;
+
+  const fonte = document.querySelector('input[name="fonte"]:checked').value;
+
+  const pseu = document.getElementById('pseu_osp').checked || document.getElementById('pseu_col').checked ||
+               document.getElementById('pseu_bpco').checked || document.getElementById('pseu_immune').checked;
+  const mrsaDoc = document.getElementById('mrsa_doc').checked || document.getElementById('mrsa_col').checked;
+  const mrsaDial = document.getElementById('mrsa_dialisi').checked;
+  const mrsa = mrsaDoc || mrsaDial;
+  const esbl = document.getElementById('esbl_col').checked || document.getElementById('esbl_rsa').checked;
+  const carba = document.getElementById('esbl_carba').checked;
+  const candida = document.getElementById('candida_nut').checked || document.getElementById('candida_imm').checked ||
+                  document.getElementById('candida_col').checked;
+
+  const irc = document.getElementById('irc').checked;
+  const epatica = document.getElementById('epatica').checked;
+  const qtLungo = document.getElementById('qt_lungo').checked;
+  const allergiaIgE = document.getElementById('allergia_ige').checked;
+
+  // Definizione clinica
+  // Shock settico SSC 2026: sepsi + vasopressori per mantenere PAM≥65 + lattato>2 dopo rianimazione
+  const shockSettico = (ipotensione || vasopressori) && (lattato_post || lattato >= 2) && (vasopressori || refrattario);
+  const sepsiGrave = !shockSettico && (lattato >= 2 || ipotensione);
+  const tipoClinico = shockSettico ? 'SHOCK SETTICO' : sepsiGrave ? 'SEPSI con disfunzione d\'organo' : 'SEPSI';
+
+  let atb = '', vasop = '', steroidi = '', sourceControl = '', antifungino = '', warnings = '';
+
+  // ── ANTIBIOTICI per fonte ──
+  const ieSuffisso = irc ? '<em>Adeguare posologia a funzione renale</em>' : '';
+  const atipici = allergiaIgE ? 'Levofloxacina 750 mg EV q24h' : 'Azitromicina 500 mg EV q24h';
+  const meroDose = carba ? '2 g' : '1 g';
+  const meroNota = '<em>2 g q8h se sospetta CPE/Pseudomonas MDR; 1 g q8h se solo ESBL</em>';
+
+  if (fonte === 'polmonite') {
+    if (pseu && mrsa) {
+      atb = rx('Schema anti-Pseudomonas + MRSA (CAP/HAP grave) <sup class="ref" data-r="12,13"></sup>',
+        (allergiaIgE ? 'Aztreonam 2 g EV q8h' : 'Piperacillina-tazobactam 4,5 g EV q6h (inf. estesa 4h)') +
+        '<br>+ Vancomicina 25–30 mg/kg/die EV (inf. continua o frazionata)<br>' +
+        '<em>oppure</em> Linezolid 600 mg EV q12h (preferibile se IRC grave)<br>' + ieSuffisso);
+    } else if (pseu) {
+      atb = rx('Schema anti-Pseudomonas (polmonite settica) <sup class="ref" data-r="12,13"></sup>',
+        (allergiaIgE ? 'Aztreonam 2 g EV q8h' : 'Piperacillina-tazobactam 4,5 g EV q6h (inf. estesa 4h)') +
+        '<br>+ ' + atipici + '<br>' + ieSuffisso);
+      if (!allergiaIgE) {
+        atb += rx('Alternativa (IDSA/ATS 2019) <sup class="ref" data-r="12"></sup>', 'Cefepime 2 g EV q8h + Azitromicina 500 mg EV q24h<br>' + ieSuffisso, 'blue');
+      }
+    } else if (mrsa) {
+      atb = rx('Schema con copertura MRSA documentata <sup class="ref" data-r="12,13"></sup>',
+        (allergiaIgE ? 'Aztreonam 2 g EV q8h' : 'Ceftriaxone 2 g EV q24h') +
+        '<br>+ ' + atipici + '<br>+ Vancomicina 25–30 mg/kg/die EV<br><em>oppure</em> Linezolid 600 mg EV q12h (VAP/HAP: preferito per penetrazione polmonare)<br>' + ieSuffisso);
+    } else {
+      atb = rx('Schema prima scelta – Polmonite settica (IDSA/ATS 2019 · ERS/ESICM 2023) <sup class="ref" data-r="12,13"></sup>',
+        (allergiaIgE ? 'Aztreonam 2 g EV q8h' : 'Ceftriaxone 2 g EV q24h') +
+        '<br>+ ' + atipici + '<br>' + ieSuffisso);
+    }
+  } else if (fonte === 'uti') {
+    if (carba) {
+      atb = rx('Schema – UTI settica con rischio carbapenemasi (ESCMID 2022) <sup class="ref" data-r="14"></sup>',
+        'Ceftazidime-avibactam 2,5 g EV q8h (sospetto KPC/OXA-48)<br><em>oppure</em> Meropenem 2 g EV q8h (inf. estesa 3h) in attesa di sensibilità<br>' + ieSuffisso, 'amber');
+      warnings += info('danger','❗','Rischio carbapenemasi elevato: richiedere test fenotipici rapidi (CarbaNP, disco test). Coinvolgere infettivologo urgentemente.');
+    } else if (esbl) {
+      atb = rx('Schema – UTI settica con rischio ESBL (ESCMID 2022) <sup class="ref" data-r="14"></sup>',
+        'Meropenem 1 g EV q8h<br><em>oppure (se sensibilità confermata)</em> Ertapenem 1 g EV q24h (non copre Pseudomonas)<br>' + ieSuffisso, 'amber');
+    } else if (pseu) {
+      atb = rx('Schema – UTI settica con rischio Pseudomonas',
+        (allergiaIgE ? 'Aztreonam 2 g EV q8h' : 'Piperacillina-tazobactam 4,5 g EV q6h') + '<br>' + ieSuffisso);
+    } else {
+      atb = rx('Schema prima scelta – UTI settica (SSC 2026) <sup class="ref" data-r="1"></sup>',
+        (allergiaIgE ? 'Aztreonam 2 g EV q8h' : 'Ceftriaxone 2 g EV q24h') + '<br>' + ieSuffisso);
+      atb += rx('De-escalation appena disponibile antibiogramma', 'Ampicillina 2 g EV q4h (se E. coli sensibile)<br>oppure Cefazolina 2 g EV q8h', 'teal');
+    }
+    sourceControl = info('teal','🔧','<strong>Source control UTI:</strong> Rimuovere o sostituire catetere urinario se presente. Escludere ostruzione/ascesso perirenale (ecografia renale urgente). Drenaggio se idronefrosi ostruttiva (contatto urologico urgente).');
+  } else if (fonte === 'addome') {
+    if (carba || esbl) {
+      atb = rx('Schema – Sepsi addominale con rischio MDR (ESCMID 2022) <sup class="ref" data-r="14"></sup>',
+        'Meropenem ' + meroDose + ' EV q8h (inf. estesa 3h)<br>' + meroNota + '<br>' + ieSuffisso, 'amber');
+    } else {
+      atb = rx('Schema prima scelta – Sepsi addominale (SSC 2026 · IDSA 2010) <sup class="ref" data-r="1,15"></sup>',
+        (allergiaIgE ? 'Aztreonam 2 g EV q8h + Metronidazolo 500 mg EV q8h' :
+        'Piperacillina-tazobactam 4,5 g EV q6h (inf. estesa 4h)') + '<br>' + ieSuffisso);
+      atb += rx('Alternativa equivalente', 'Ceftriaxone 2 g EV q24h + Metronidazolo 500 mg EV q8h<br>' + ieSuffisso, 'blue');
+    }
+    sourceControl = info('danger','❗','<strong>Source control addominale – PRIORITÀ ASSOLUTA:</strong> TC addome con mdc urgente. Drenaggio percutaneo o chirurgico di ascessi/raccolte, idealmente entro 6 h dalla diagnosi (SSC 2026). <sup class="ref" data-r="1"></sup> Contattare chirurgia d\'urgenza.');
+  } else if (fonte === 'cute') {
+    if (mrsa) {
+      atb = rx('Schema – SSTIs con MRSA (IDSA 2014) <sup class="ref" data-r="16"></sup>',
+        'Vancomicina 25–30 mg/kg/die EV (bolo/inf. continua)<br><em>oppure</em> Daptomicina 6–10 mg/kg EV q24h (non usare in polmonite)<br>' + ieSuffisso);
+    } else {
+      atb = rx('Schema prima scelta – SSTIs non-MRSA (IDSA 2014) <sup class="ref" data-r="16"></sup>',
+        (allergiaIgE ? 'Vancomicina 15–20 mg/kg EV q12h' :
+        'Flucloxacillina 2 g EV q4h<br><em>oppure (se non disponibile)</em> Cefazolina 2 g EV q8h') + '<br>' + ieSuffisso);
+      if (!allergiaIgE) {
+        warnings += info('note','ℹ️','Flucloxacillina: prima scelta per stafilococco MSSA in Italia, ma la disponibilità può variare per reparto. Alternativa pratica: Cefazolina 2 g EV q8h (non inferiore per SSTIs da MSSA).');
+      }
+    }
+    sourceControl = info('teal','🔧','<strong>Source control cute:</strong> Drenaggio chirurgico di ascessi/fascite necrotizzante urgente. Sospettare fascite necrotizzante in: rapida progressione, crepitio, dolore sproporzionato → chirurgia d\'urgenza (TC soft tissue).');
+  } else if (fonte === 'cvc') {
+    atb = rx('Schema – Batteriemia da CVC (IDSA 2009) <sup class="ref" data-r="17"></sup>',
+      (mrsa ? 'Vancomicina 25–30 mg/kg/die EV' :
+      (allergiaIgE ? 'Daptomicina 6 mg/kg EV q24h' : 'Cefazolina 2 g EV q8h')) +
+      '<br><em>Adeguare su colture da CVC e periferica (differenziale dei tempi di positivizzazione)</em><br>' + ieSuffisso);
+    sourceControl = info('danger','❗','<strong>Rimozione CVC – IDSA 2009:</strong> <sup class="ref" data-r="17"></sup> Rimuovere il CVC nelle prime 24h dalla diagnosi di batteriemia confermata. Eccezione: impossibilità tecnica o accesso venoso alternativo non disponibile (decisione condivisa). Non sostituire su guida metallica in caso di batteriemia.');
+  } else if (fonte === 'snc') {
+    atb = rx('Schema – Meningite batterica / sepsi SNC (ESCMID 2016) <sup class="ref" data-r="18,19"></sup>',
+      (allergiaIgE ? 'Cloramfenicolo 1 g EV q6h + Rifampicina 600 mg EV q12h' :
+      'Ceftriaxone 2 g EV q12h (4 g/die)') +
+      '<br>+ Desametasone 10 mg EV 15–30 min PRIMA della prima dose ATB, poi q6h × 4 giorni<br>' +
+      '<em>Se Listeria sospetta (età &gt;60, immunodepresso): aggiungere Ampicillina 2 g EV q4h</em><br>' + ieSuffisso);
+    warnings += info('danger','❗','<strong>Meningite batterica – Urgenza assoluta:</strong> ATB entro 60 min dalla diagnosi. TC cerebrale solo se indicata (non ritardare ATB). Desametasone riduce mortalità e sequele neurologiche in meningite pneumococcica (ESCMID 2016). <sup class="ref" data-r="18,19"></sup>');
+  } else {
+    // Sconosciuta
+    if (carba || esbl) {
+      atb = rx('Schema empirico – Fonte sconosciuta, alto rischio MDR (SSC 2026 · ESCMID 2022) <sup class="ref" data-r="1,14"></sup>',
+        'Meropenem ' + meroDose + ' EV q8h (inf. estesa 3h)<br>' + meroNota +
+        (mrsa ? '<br>+ Vancomicina 25–30 mg/kg/die EV' : '') + '<br>' + ieSuffisso, 'amber');
+    } else if (pseu || mrsa) {
+      atb = rx('Schema empirico – Fonte sconosciuta, rischio MDR/MRSA (SSC 2026) <sup class="ref" data-r="1"></sup>',
+        (allergiaIgE ? 'Aztreonam 2 g EV q8h' : 'Piperacillina-tazobactam 4,5 g EV q6h') +
+        (mrsa ? '<br>+ Vancomicina 25–30 mg/kg/die EV' : '') + '<br>' + ieSuffisso);
+    } else {
+      atb = rx('Schema empirico – Fonte sconosciuta, senza fattori MDR (SSC 2026) <sup class="ref" data-r="1"></sup>',
+        (allergiaIgE ? 'Aztreonam 2 g EV q8h' : 'Piperacillina-tazobactam 4,5 g EV q6h (inf. estesa 4h)') +
+        '<br>' + ieSuffisso);
+    }
+    warnings += info('note','🔬','Fonte non identificata: TC total-body con mdc urgente + procalcitonina + ricerca focolai occulti (ecocardio per endocardite, ecografia addome, rx torace). Rivalutare schema dopo colture.');
+  }
+
+  if (qtLungo && fonte === 'polmonite') {
+    warnings += info('warn','⚠️','QT lungo: azitromicina e levofloxacina prolungano il QT. ECG basale, correggere K⁺/Mg²⁺, evitare altri farmaci QT-prolunganti e valutare con infettivologo/cardiologo un’alternativa.');
+  }
+
+  if (allergiaIgE && fonte === 'polmonite') {
+    warnings += info('teal','ℹ️','Allergia IgE a β-lattamici: l\'aztreonam non copre pneumococco e atipici, quindi è associato a un fluorochinolone respiratorio (levofloxacina) (IDSA/ATS 2019). <sup class="ref" data-r="12"></sup>');
+  }
+
+  // ── VASOPRESSORI (SSC 2026) ──
+  const fluidi = Math.round(peso * 30);
+  if (shockSettico || ipotensione) {
+    vasop = rx('Vasopressori – SSC 2026 (obiettivo PAM ≥ 65 mmHg) <sup class="ref" data-r="1,8,9"></sup>',
+      'Noradrenalina (NE): 0.01–0.02 mcg/kg/min; titolare fino a PAM ≥65 (max empirico 0.5 mcg/kg/min)<br>' +
+      '<em>2° agente se NE &gt; 0.25 mcg/kg/min:</em> Vasopressina 0.03 U/min EV fisso (non titolare)<br>' +
+      '<em>3° agente (shock refrattario):</em> Adrenalina 0.05–0.5 mcg/kg/min EV<br>' +
+      '<em>Dopamina: non raccomandata come 1ª scelta (SSC 2026)</em>' +
+      (eta >= 65 ? '<br><em>Età ≥65 anni: SSC 2026 suggerisce un target iniziale di PAM 60–65 mmHg rispetto a valori più alti</em>' : ''), 'teal');
+  }
+
+  // ── STEROIDI (SSC 2026) ──
+  if (shockSettico && refrattario) {
+    steroidi = rx('Idrocortisone – Shock refrattario (SSC 2026 · ADRENAL · APROCCHSS) <sup class="ref" data-r="1,10,11"></sup>',
+      '<strong>Idrocortisone 200 mg/die EV</strong> (dose fissa, indipendente dal peso)<br>' +
+      'Schema: 50 mg EV q6h <em>oppure</em> infusione continua 200 mg/24h<br>' +
+      'Indicazione (criterio SSC 2021): NE ≥0.25 mcg/kg/min per ≥4 h dopo adeguata rianimazione fluidi <sup class="ref" data-r="2"></sup><br>' +
+      '<em>Soglia e timing della SSC 2026 da verificare sul testo originale</em><br>' +
+      '<em>Non aggiungere fludrocortisone di routine (SSC 2026)</em><br>' +
+      '<em>Sospendere alla risoluzione dello shock (tapering non necessario se &lt;7 giorni)</em>', 'amber');
+  } else if ((ipotensione || vasopressori) && !refrattario) {
+    steroidi = info('warn','⚠️','<strong>Idrocortisone:</strong> non indicato in questo momento. Considerare solo se Noradrenalina (NE) &gt; 0.25 mcg/kg/min per mantenere PAM (Pressione Arteriosa Media) ≥65 mmHg (shock refrattario). SSC 2026: corticosteroidi suggeriti solo nello shock settico. <sup class="ref" data-r="1"></sup>');
+  }
+
+  // ── ANTIFUNGINO ──
+  if (candida) {
+    warnings += info('warn','⚠️','SSC 2026 suggerisce di <strong>non</strong> usare terapia antifungina empirica di routine in sepsi/shock settico: riservarla a pazienti ad alto rischio documentato (NPT, neutropenia, trapianto, colonizzazione multisito) con valutazione infettivologica. <sup class="ref" data-r="1,20"></sup>');
+    antifungino = rx('Copertura antifungina empirica – solo casi selezionati ad alto rischio (IDSA 2016) <sup class="ref" data-r="20"></sup>',
+      'Caspofungina 70 mg EV giorno 1, poi 50 mg EV q24h (prima scelta in ICU)<br>' +
+      '<em>oppure</em> Micafungina 100 mg EV q24h<br>' +
+      '<em>Fluconazolo solo se paziente stabile e basso rischio C. glabrata/krusei</em><br>' +
+      '<em>Rivalutare a 48-72h con colture e β-D-glucano; de-escalation se Candida non confermata</em>', 'purple');
+  }
+
+  // ── WARNINGS AGGIUNTIVI ──
+  if (carba) {
+    warnings += info('danger','❗','Sospetto germe produttore di carbapenemasi (KPC, OXA-48, MBL): coinvolgere infettivologia urgentemente. Schema con ceftazidime-avibactam o cefiderocol da considerare. Isolamento da contatto obbligatorio.');
+  }
+  if (mrsaDial && !mrsaDoc && fonte !== 'cute' && fonte !== 'cvc') {
+    warnings += info('warn','⚠️','MRSA in sepsi comunitaria è raro in Italia. La copertura con glicopeptidi è raccomandata solo con storia/colonizzazione documentata, sepsi grave post-influenzale o fonte cutanea/dispositivo.');
+  }
+  if (epatica) {
+    warnings += info('warn','⚠️','Insufficienza epatica severa: ridurre la dose di metronidazolo (circa −50%) e usare cautela con azitromicina; ceftriaxone senza aggiustamento, salvo concomitante insufficienza renale (max 2 g/die). Monitorare funzionalità epatica ogni 48h; consulenza epatologica.');
+  }
+
+  // ── CHIPS ──
+  const chipsHtml = [
+    chip(tipoClinico, shockSettico ? 'red' : sepsiGrave ? 'amber' : 'neutral'),
+    chip(`Lattato: ${lattato} mmol/L`, lattato >= 4 ? 'red' : lattato >= 2 ? 'amber' : 'green'),
+    chip(`Fluidi iniziali: ${fluidi} mL`, 'blue'),
+    chip(`Fonte: ${fonte}`, 'teal'),
+    pseu ? chip('⚠️ Pseudomonas', 'amber') : '',
+    mrsa ? chip('⚠️ MRSA', 'amber') : '',
+    esbl ? chip('⚠️ ESBL', 'amber') : '',
+    carba ? chip('🚨 Carbapenemasi', 'red') : '',
+    candida ? chip('🍄 Candida', 'purple') : '',
+  ].filter(Boolean).join('');
+
+  // ── TIMELINE ──
+  const timeline = `
+    <div class="section-label">Bundle temporale – SSC 2026 <sup class="ref" data-r="1,3"></sup></div>
+    <div class="timeline-row">
+      <div class="timeline-item">
+        <div class="tl-time">⏱ Entro 1 ora</div>
+        <ul>
+          <li>Lattato arterioso</li>
+          <li>Emocolture ×2 (prima ATB)</li>
+          <li>Antibiotico EV (shock/sepsi probabile: subito; sepsi solo possibile: entro 3 h)</li>
+          <li>Fluidi 30 mL/kg (${fluidi} mL) se lattato ≥4 o ipotensione</li>
+          <li>Vasopressori se PAM (Press. Art. Media) &lt;65 mmHg persiste</li>
+        </ul>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-time">⏱ Entro 3–6 ore</div>
+        <ul>
+          <li>Rivalutare risposta ai fluidi (clinica, lattato)</li>
+          <li>TC per source control (se addome/CVC/sconosciuta)</li>
+          <li>Monitoraggio diuresi oraria</li>
+          <li>Emogasanalisi seriata</li>
+          <li>Ecografia FAST/POCUS</li>
+        </ul>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-time">⏱ Entro 24–48 ore</div>
+        <ul>
+          <li>Review colture: de-escalation</li>
+          <li>Source control definitivo</li>
+          <li>SOFA seriato</li>
+          <li>Procalcitonina per guida durata ATB</li>
+          <li>Valutazione trasferimento ICU</li>
+        </ul>
+      </div>
+    </div>`;
+
+  // ── LINEE GUIDA ──
+  const lg = `<div class="guidelines-box">
+    <strong>Note bibliografiche</strong>
+    I numeri tra parentesi quadre [n] rimandano alla sezione <a href="#bibliografia">Bibliografia</a> in fondo alla pagina.
+  </div>`;
+
+  const body = `
+    <div class="result-chips">${chipsHtml}</div>
+    ${warnings}
+    ${timeline}
+    <div class="section-label">Rianimazione fluidi</div>
+    ${rx('Fluidi – SSC 2026 <sup class="ref" data-r="1,7"></sup>',
+      `30 mL/kg cristalloidi isotonici (Soluzione Fisiologica 0,9% o Ringer Lattato) = <strong>${fluidi} mL</strong><br>
+      <em>Preferire cristalloidi bilanciati alla fisiologica (SSC 2026). Se BMI &gt;30: calcolare i 30 mL/kg sul peso ideale o aggiustato.</em><br>
+      <em>Rivalutare con indici dinamici dopo ogni bolo (PLR, variazione PP, VVS). Evitare sovraccarico.</em><br>
+      <em>Albumina: considerabile dopo grandi volumi di cristalloidi (SSC 2021); le linee guida non indicano una soglia di albuminemia</em> <sup class="ref" data-r="2"></sup>`, 'teal')}
+    <div class="section-label">Antibioticoterapia empirica</div>
+    ${atb}
+    ${vasop ? `<div class="section-label">Vasopressori</div>${vasop}` : ''}
+    ${steroidi ? `<div class="section-label">Corticosteroidi</div>${steroidi}` : ''}
+    ${antifungino ? `<div class="section-label">Copertura antifungina</div>${antifungino}` : ''}
+    ${sourceControl ? `<div class="section-label">Source control</div>${sourceControl}` : ''}
+    <hr class="divider">
+    ${info('teal','🔄','<strong>De-escalation ATB – SSC 2026:</strong> Rivalutare obbligatoriamente a 48–72h con colture, risposta clinica e procalcitonina. Durata minima raccomandata: 5–7 giorni. Ridurre spettro appena possibile.')}
+    ${lg}
+    <div class="timestamp">Generato il ${oggi()} · Uso clinico interno · Non sostituisce la valutazione medica</div>`;
+
+  const el = document.getElementById('risultato');
+  el.innerHTML = `
+    <div class="result-header">
+      <h3>🟥 ${tipoClinico} – Fonte: ${fonte}</h3>
+      <div class="result-meta">Peso ${peso} kg · Lattato ${lattato} mmol/L · PAS ${pas} mmHg</div>
+    </div>
+    <div class="result-body">${body}</div>`;
+  el.style.display = 'block';
+  fillRefs(el);
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
+</body>
+</html>
