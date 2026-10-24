@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SSTIs – Infezioni Cute e Tessuti Molli | Medicina Interna</title>
+  <style>
+    :root {
+      --bg: #f0f4f8;
+      --surface: #ffffff;
+      --surface-alt: #f8fafc;
+      --border: #dde3ec;
+      --text: #1e2a38;
+      --muted: #64748b;
+
+      --blue-deep: #1a4a7a;
+      --blue-mid: #2563a8;
+      --blue-light: #dbeafe;
+
+      --teal: #0d6b72;
+      --teal-light: #ccfbf1;
+
+      --amber: #b45309;
+      --amber-light: #fef3c7;
+
+      --red: #b91c1c;
+      --red-light: #fee2e2;
+
+      --green: #15803d;
+      --green-light: #dcfce7;
+
+      --purple: #6d28d9;
+      --purple-light: #ede9fe;
+
+      --orange: #c2410c;
+      --orange-light: #ffedd5;
+
+      --radius: 10px;
+      --radius-sm: 6px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
+      --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      --mono: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 16px;
+    }
+
+    .wrapper { max-width: 980px; margin: 0 auto; }
+
+    /* HEADER */
+    .app-header {
+      background: var(--blue-deep);
+      color: white;
+      border-radius: var(--radius);
+      padding: 20px 26px 16px;
+      margin-bottom: 16px;
+    }
+    .app-header h1 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.01em; }
+    .app-header .subtitle { font-size: 0.8rem; opacity: 0.72; margin-top: 5px; }
+    .ref-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .ref-pill {
+      font-size: 0.7rem; font-weight: 600; padding: 3px 9px;
+      border-radius: 20px; border: 1px solid rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.12); color: white; letter-spacing: 0.04em;
+    }
+
+    /* CARD */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow);
+    }
+    .card-title {
+      font-size: 0.78rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.07em; color: var(--muted);
+      margin-bottom: 12px; padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 7px;
+    }
+
+    /* TIPO SELECTOR */
+    .tipo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+      gap: 8px;
+    }
+    .tipo-btn {
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      padding: 12px 14px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s;
+    }
+    .tipo-btn:hover { border-color: var(--blue-mid); }
+    .tipo-btn.active { border-color: var(--blue-mid); background: var(--blue-light); }
+    .tipo-btn input { display: none; }
+    .tipo-btn .t-icon { font-size: 1.3rem; display: block; margin-bottom: 4px; }
+    .tipo-btn .t-label { font-weight: 700; font-size: 0.88rem; color: var(--blue-deep); }
+    .tipo-btn .t-desc { font-size: 0.73rem; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+
+    /* INPUTS */
+    .input-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; margin-bottom: 10px; }
+    .input-group { display: flex; flex-direction: column; gap: 3px; }
+    .input-group label { font-size: 0.75rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .input-group input[type="number"],
+    .input-group select {
+      background: var(--surface-alt); border: 1px solid var(--border);
+      color: var(--text); border-radius: var(--radius-sm);
+      padding: 6px 10px; font-size: 0.9rem;
+      width: 110px;
+    }
+    .input-group select { font-family: var(--font); }
+
+    /* CHECK GRID */
+    .check-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 4px; }
+    .check-item {
+      display: flex; align-items: flex-start; gap: 8px;
+      padding: 7px 9px; border-radius: var(--radius-sm);
+      cursor: pointer; font-size: 0.88rem; color: var(--text);
+      transition: background 0.1s;
+    }
+    .check-item:hover { background: var(--surface-alt); }
+    .check-item input { margin-top: 2px; accent-color: var(--blue-mid); flex-shrink: 0; }
+
+    .sub-label {
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.06em; color: var(--muted); margin: 12px 0 5px 2px;
+    }
+
+    /* BUTTONS */
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin: 16px 0; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 11px 22px; border: none; border-radius: var(--radius-sm);
+      font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.15s;
+    }
+    .btn-primary { background: var(--blue-mid); color: white; }
+    .btn-primary:hover { background: var(--blue-deep); }
+    .btn-ghost { background: transparent; border: 1.5px solid var(--border); color: var(--muted); }
+    .btn-ghost:hover { border-color: var(--blue-mid); color: var(--blue-mid); }
+
+    /* RESULT */
+    .result-container {
+      display: none; background: var(--surface);
+      border: 2px solid var(--blue-mid); border-radius: var(--radius);
+      overflow: hidden; box-shadow: var(--shadow); margin-top: 8px;
+    }
+    .result-header {
+      background: var(--blue-mid); color: white;
+      padding: 13px 20px; display: flex;
+      justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 8px;
+    }
+    .result-header h3 { font-size: 1.0rem; font-weight: 700; }
+    .result-header .rmeta { font-size: 0.8rem; opacity: 0.85; }
+    .result-body { padding: 18px 20px; }
+
+    .result-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 14px; }
+    .chip {
+      font-size: 0.78rem; font-weight: 700; padding: 4px 11px;
+      border-radius: 20px; border: 1px solid;
+    }
+    .chip-blue { color: var(--blue-mid); border-color: #93c5fd; background: var(--blue-light); }
+    .chip-amber { color: var(--amber); border-color: #fcd34d; background: var(--amber-light); }
+    .chip-red { color: var(--red); border-color: #fca5a5; background: var(--red-light); }
+    .chip-green { color: var(--green); border-color: #86efac; background: var(--green-light); }
+    .chip-teal { color: var(--teal); border-color: #5eead4; background: var(--teal-light); }
+    .chip-orange { color: var(--orange); border-color: #fdba74; background: var(--orange-light); }
+    .chip-neutral { color: var(--muted); border-color: var(--border); background: var(--surface-alt); }
+
+    .section-label {
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.07em; color: var(--muted); margin: 14px 0 6px;
+    }
+
+    .rx-block {
+      background: #f0f7ff; border: 1px solid #bfdbfe;
+      border-left: 4px solid var(--blue-mid);
+      border-radius: var(--radius-sm); padding: 11px 14px;
+      margin: 8px 0; font-family: var(--mono); font-size: 0.87rem; line-height: 1.9;
+    }
+    .rx-block .rx-tag {
+      font-family: var(--font); font-size: 0.7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--blue-mid); margin-bottom: 4px;
+    }
+    .rx-block em { font-family: var(--font); font-size: 0.8rem; color: var(--muted); font-style: normal; }
+    .rx-block.teal { background: var(--teal-light); border-left-color: var(--teal); border-color: #99f6e4; }
+    .rx-block.teal .rx-tag { color: var(--teal); }
+    .rx-block.amber { background: var(--amber-light); border-left-color: var(--amber); border-color: #fcd34d; }
+    .rx-block.amber .rx-tag { color: var(--amber); }
+    .rx-block.red { background: var(--red-light); border-left-color: var(--red); border-color: #fca5a5; }
+    .rx-block.red .rx-tag { color: var(--red); }
+
+    .info-box {
+      border-radius: var(--radius-sm); padding: 10px 13px;
+      margin: 8px 0; font-size: 0.86rem;
+      display: flex; gap: 9px; align-items: flex-start;
+    }
+    .info-box .bi { flex-shrink: 0; font-size: 1rem; }
+    .info-box.warn { background: var(--amber-light); border-left: 3px solid var(--amber); color: #78350f; }
+    .info-box.danger { background: var(--red-light); border-left: 3px solid var(--red); color: #7f1d1d; }
+    .info-box.ok { background: var(--green-light); border-left: 3px solid var(--green); color: #14532d; }
+    .info-box.teal { background: var(--teal-light); border-left: 3px solid var(--teal); color: #134e4a; }
+    .info-box.note { background: var(--blue-light); border-left: 3px solid var(--blue-mid); color: #1e3a5f; }
+    .info-box.purple { background: var(--purple-light); border-left: 3px solid var(--purple); color: #3b0764; }
+    .info-box.orange { background: var(--orange-light); border-left: 3px solid var(--orange); color: #7c2d12; }
+
+    .switch-table {
+      width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 0.85rem;
+    }
+    .switch-table th, .switch-table td {
+      border: 1px solid var(--border); padding: 7px 10px; text-align: left;
+    }
+    .switch-table th {
+      background: var(--blue-light); font-weight: 700; color: var(--blue-deep);
+      font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .switch-table tr:nth-child(even) td { background: var(--surface-alt); }
+
+    .iwgdf-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 8px; margin: 10px 0;
+    }
+    .iwgdf-card {
+      border-radius: var(--radius-sm); padding: 10px 12px;
+      font-size: 0.82rem; border: 1px solid;
+    }
+    .iwgdf-card .ig-grade { font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+    .iwgdf-card.g1 { background: var(--green-light); border-color: #86efac; color: #14532d; }
+    .iwgdf-card.g2 { background: var(--amber-light); border-color: #fcd34d; color: #78350f; }
+    .iwgdf-card.g3 { background: var(--orange-light); border-color: #fdba74; color: #7c2d12; }
+    .iwgdf-card.g4 { background: var(--red-light); border-color: #fca5a5; color: #7f1d1d; }
+
+    .guidelines-box {
+      background: var(--teal-light); border-left: 4px solid var(--teal);
+      border-radius: var(--radius-sm); padding: 12px 15px; margin-top: 14px; font-size: 0.84rem; color: #134e4a;
+    }
+    .guidelines-box strong { display: block; margin-bottom: 6px; color: var(--teal); }
+    .guidelines-box ul { padding-left: 16px; }
+    .guidelines-box li { margin-bottom: 3px; }
+
+    .divider { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+    .timestamp { font-size: 0.75rem; color: var(--muted); margin-top: 14px; text-align: right; }
+
+    .refline { list-style: none; margin-top: 6px; font-size: 0.8rem; }
+    .refline a { color: var(--teal); font-weight: 700; text-decoration: none; }
+    .biblio ol { padding-left: 22px; font-size: 0.8rem; color: var(--text); }
+    .biblio li { margin-bottom: 6px; }
+    .biblio li:target { background: var(--amber-light); border-radius: 4px; }
+    .biblio .bib-note { font-size: 0.75rem; color: var(--muted); margin-top: 8px; }
+    .app-disclaimer {
+      background: var(--amber-light); border-left: 4px solid var(--amber); color: #78350f;
+      border-radius: var(--radius-sm); padding: 10px 14px; margin: 14px 0 0; font-size: 0.82rem;
+    }
+    .app-date { text-align: center; font-size: 0.75rem; color: var(--muted); margin-bottom: 8px; }
+    .app-credits {
+      text-align: center; font-size: 0.8rem; font-weight: 600; color: var(--blue-deep);
+      margin: 18px 0 6px; padding: 10px 12px; border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 600px) {
+      .tipo-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media print {
+      body { background: white; padding: 0; }
+      .btn-row, .btn { display: none !important; }
+      .result-container { display: block !important; border: 1px solid #ccc; }
+      .card { box-shadow: none; border: 1px solid #ddd; }
+      .app-header { border-radius: 0; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <div class="app-header">
+    <h1>🩹 Infezioni di Cute e Tessuti Molli (SSTIs)</h1>
+    <div class="subtitle">Erisipela · Cellulite · Ascesso · Fascite necrotizzante · Piede diabetico · Morso · Ferita chirurgica</div>
+    <div class="ref-pills">
+      <span class="ref-pill">IDSA 2014</span>
+      <span class="ref-pill">IWGDF/IDSA 2023</span>
+      <span class="ref-pill">SSC 2026</span>
+      <span class="ref-pill">WSES/SIS-E 2018</span>
+    </div>
+  </div>
+
+  <!-- TIPO -->
+  <div class="card">
+    <div class="card-title">🎯 Tipo di infezione</div>
+    <div class="tipo-grid" id="tipo-grid">
+      <label class="tipo-btn active" onclick="selTipo(this,'erisipela')">
+        <input type="radio" name="tipo" value="erisipela" checked>
+        <span class="t-icon">🔴</span>
+        <span class="t-label">Erisipela</span>
+        <span class="t-desc">Dermite superficiale ben demarcata<br>Febbre, eritema lucido</span>
+      </label>
+      <label class="tipo-btn" onclick="selTipo(this,'cellulite')">
+        <input type="radio" name="tipo" value="cellulite">
+        <span class="t-icon">🟠</span>
+        <span class="t-label">Cellulite</span>
+        <span class="t-desc">Derma profondo, margini sfumati<br>S. aureus + Streptococchi</span>
+      </label>
+      <label class="tipo-btn" onclick="selTipo(this,'ascesso')">
+        <input type="radio" name="tipo" value="ascesso">
+        <span class="t-icon">🔵</span>
+        <span class="t-label">Ascesso cutaneo</span>
+        <span class="t-desc">Raccolta purulenta fluttuante<br>Drenaggio = trattamento primario</span>
+      </label>
+      <label class="tipo-btn" onclick="selTipo(this,'fascite')">
+        <input type="radio" name="tipo" value="fascite">
+        <span class="t-icon">🚨</span>
+        <span class="t-label">Fascite necrotizzante</span>
+        <span class="t-desc">Urgenza chirurgica assoluta<br>Tipo I (polimicrobica) · Tipo II (SGA)</span>
+      </label>
+      <label class="tipo-btn" onclick="selTipo(this,'piede')">
+        <input type="radio" name="tipo" value="piede">
+        <span class="t-icon">🦶</span>
+        <span class="t-label">Piede diabetico</span>
+        <span class="t-desc">IWGDF 2023<br>Grado 1–4</span>
+      </label>
+      <label class="tipo-btn" onclick="selTipo(this,'morso')">
+        <input type="radio" name="tipo" value="morso">
+        <span class="t-icon">🦷</span>
+        <span class="t-label">Ferita da morso</span>
+        <span class="t-desc">Umano · Cane · Gatto<br>Flora mista, Pasteurella</span>
+      </label>
+      <label class="tipo-btn" onclick="selTipo(this,'ssi')">
+        <input type="radio" name="tipo" value="ssi">
+        <span class="t-icon">🔪</span>
+        <span class="t-label">Ferita chirurgica (SSI)</span>
+        <span class="t-desc">Superficiale · Profonda · Organo<br>SSI = Surgical Site Infection</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- FATTORI DI RISCHIO -->
+  <div class="card">
+    <div class="card-title">🦠 Fattori di rischio e comorbidità</div>
+
+    <div class="sub-label">Rischio MRSA</div>
+    <div class="check-grid">
+      <label class="check-item"><input type="checkbox" id="mrsa_doc"> MRSA documentato o colonizzazione nota</label>
+      <label class="check-item"><input type="checkbox" id="mrsa_osp"> Ospedalizzazione o ATB EV negli ult. 90 gg</label>
+      <label class="check-item"><input type="checkbox" id="mrsa_dialisi"> Dialisi cronica o ferite croniche</label>
+      <label class="check-item"><input type="checkbox" id="mrsa_necro"> Segni di necrosi o shock settico</label>
+    </div>
+
+    <div class="sub-label">Rischio germi Gram-negativi / polimicrobici</div>
+    <div class="check-grid">
+      <label class="check-item"><input type="checkbox" id="gram_diab"> Diabete mellito</label>
+      <label class="check-item"><input type="checkbox" id="gram_immuno"> Immunodepressione (trapianto, chemio, HIV)</label>
+      <label class="check-item"><input type="checkbox" id="gram_acqua"> Esposizione ad acqua (mare, fiumi, piscine)</label>
+      <label class="check-item"><input type="checkbox" id="gram_irc"> IRC grave (eGFR &lt; 30 mL/min)</label>
+    </div>
+
+    <div class="sub-label">Comorbidità e allergie</div>
+    <div class="check-grid">
+      <label class="check-item"><input type="checkbox" id="allergia_ige"> Allergia IgE-mediata ai beta-lattamici</label>
+      <label class="check-item"><input type="checkbox" id="allergia_noige"> Allergia non-IgE (rash cutaneo)</label>
+      <label class="check-item"><input type="checkbox" id="scompenso"> Scompenso cardiaco / linfedema</label>
+      <label class="check-item"><input type="checkbox" id="sepsi_segni"> Segni sistemici di sepsi (febbre &gt;38.5, tachicardia, ipotensione)</label>
+    </div>
+  </div>
+
+  <!-- DATI PAZIENTE -->
+  <div class="card">
+    <div class="card-title">👤 Dati paziente</div>
+    <div class="input-row">
+      <div class="input-group">
+        <label>Età (anni)</label>
+        <input type="number" id="eta" min="18" max="120" value="68">
+      </div>
+      <div class="input-group">
+        <label>Sesso</label>
+        <select id="sesso"><option value="M">M</option><option value="F">F</option></select>
+      </div>
+      <div class="input-group">
+        <label>Creatinina (mg/dL)</label>
+        <input type="number" id="creatinina" step="0.1" min="0.1" max="15" value="1.0">
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="genera()">&#9654; Genera piano terapeutico</button>
+    <button class="btn btn-ghost" onclick="window.print()">&#128424; Stampa</button>
+  </div>
+
+  <div id="risultato" class="result-container"></div>
+
+  <!-- BIBLIOGRAFIA -->
+  <div class="card biblio" id="bibliografia" style="margin-top:14px;">
+    <div class="card-title">📚 Bibliografia</div>
+    <ol>
+      <li id="ref-1">Stevens DL, Bisno AL, Chambers HF, et al. Practice guidelines for the diagnosis and management of skin and soft tissue infections: 2014 update by the Infectious Diseases Society of America. <em>Clin Infect Dis</em> 2014;59(2):e10-e52. doi:10.1093/cid/ciu444</li>
+      <li id="ref-2">Senneville É, Albalawi Z, van Asten SA, et al. IWGDF/IDSA guidelines on the diagnosis and treatment of diabetes-related foot infections (IWGDF/IDSA 2023). <em>Clin Infect Dis</em> 2023; ciad527. doi:10.1093/cid/ciad527</li>
+      <li id="ref-3">Sartelli M, Guirao X, Hardcastle TC, et al. 2018 WSES/SIS-E consensus conference: recommendations for the management of skin and soft-tissue infections. <em>World J Emerg Surg</em> 2018;13:58. doi:10.1186/s13017-018-0219-9</li>
+      <li id="ref-4">Sartelli M, Malangoni MA, Abu-Zidan FM, et al. WSES guidelines for management of skin and soft tissue infections. <em>World J Emerg Surg</em> 2014;9:57. doi:10.1186/1749-7922-9-57</li>
+      <li id="ref-5">Prescott HC, Antonelli M, Alhazzani W, et al. Surviving Sepsis Campaign: international guidelines for management of sepsis and septic shock 2026. <em>Crit Care Med</em> 2026. doi:10.1097/CCM.0000000000007075</li>
+      <li id="ref-6">Talan DA, Mower WR, Krishnadasan A, et al. Trimethoprim-sulfamethoxazole versus placebo for uncomplicated skin abscess. <em>N Engl J Med</em> 2016;374:823-832.</li>
+      <li id="ref-7">Daum RS, Miller LG, Immergluck L, et al. A placebo-controlled trial of antibiotics for smaller skin abscesses. <em>N Engl J Med</em> 2017;376:2545-2555.</li>
+      <li id="ref-8">Hepburn MJ, Dooley DP, Skidmore PJ, et al. Comparison of short-course (5 days) and standard (10 days) treatment for uncomplicated cellulitis. <em>Arch Intern Med</em> 2004;164:1669-1674.</li>
+      <li id="ref-9">Weng QY, Raff AB, Cohen JM, et al. Costs and consequences associated with misdiagnosed lower extremity cellulitis. <em>JAMA Dermatol</em> 2017;153(2):141-146.</li>
+      <li id="ref-10">Thomas KS, Crook AM, Nunn AJ, et al. Penicillin to prevent recurrent leg cellulitis (PATCH I). <em>N Engl J Med</em> 2013;368:1695-1703.</li>
+      <li id="ref-11">Talan DA, Citron DM, Abrahamian FM, Moran GJ, Goldstein EJC. Bacteriologic analysis of infected dog and cat bites. <em>N Engl J Med</em> 1999;340:85-90.</li>
+      <li id="ref-12">Rybak MJ, Le J, Lodise TP, et al. Therapeutic monitoring of vancomycin for serious MRSA infections: revised consensus guideline (ASHP/IDSA/PIDS/SIDP). <em>Am J Health Syst Pharm</em> 2020;77:835-864.</li>
+      <li id="ref-13">Wong CH, Khin LW, Heng KS, Tan KC, Low CO. The LRINEC score: a tool for distinguishing necrotizing fasciitis from other soft tissue infections. <em>Crit Care Med</em> 2004;32:1535-1541.</li>
+      <li id="ref-14">Kapoor A, Page S, LaValley M, Gale DR, Felson DT. Magnetic resonance imaging for diagnosing foot osteomyelitis: a meta-analysis. <em>Arch Intern Med</em> 2007;167:125-132.</li>
+      <li id="ref-15">Inker LA, Eneanya ND, Coresh J, et al. New creatinine- and cystatin C-based equations to estimate GFR without race (CKD-EPI 2021). <em>N Engl J Med</em> 2021;385:1737-1749.</li>
+    </ol>
+  </div>
+
+  <div class="app-disclaimer"><strong>Avvertenza:</strong> le dosi in generale sono orientative: vanno controllate sulle schede tecniche e sui protocolli aziendali.</div>
+  <div class="app-date" style="margin-top:10px;">Data di compilazione: 24/10/2026</div>
+  <div class="app-credits">Ideato dal dr. C.Briglia (cesarebriglia@gmail.com) con l'apporto di Claude - Antropic</div>
+
+</div>
+
+<script>
+function selTipo(el, val) {
+  document.querySelectorAll('.tipo-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  el.querySelector('input').checked = true;
+}
+
+function oggi() {
+  return new Date().toLocaleDateString('it-IT', {day:'2-digit', month:'2-digit', year:'numeric'});
+}
+
+function egfr(eta, crea, sesso) {
+  const k = sesso === 'F' ? 0.7 : 0.9;
+  const a = sesso === 'F' ? -0.241 : -0.302;
+  const sf = sesso === 'F' ? 1.012 : 1.0;
+  const r = crea / k;
+  const val = crea <= k
+    ? 142 * Math.pow(r, a) * Math.pow(0.9938, eta) * sf
+    : 142 * Math.pow(r, -1.200) * Math.pow(0.9938, eta) * sf;
+  return Math.round(val);
+}
+
+function refs(ids) {
+  return ids.map(function(i) { return '<a href="#ref-' + i + '">[' + i + ']</a>'; }).join(' ');
+}
+
+function rx(tag, content, color) {
+  color = color || '';
+  return '<div class="rx-block ' + color + '"><div class="rx-tag">' + tag + '</div>' + content + '</div>';
+}
+
+function info(type, icon, text) {
+  return '<div class="info-box ' + type + '"><span class="bi">' + icon + '</span><div>' + text + '</div></div>';
+}
+
+function chip(label, type) {
+  type = type || 'neutral';
+  return '<span class="chip chip-' + type + '">' + label + '</span>';
+}
+
+function switchTable(rows) {
+  var body = rows.map(function(r) {
+    return '<tr><td><code>' + r[0] + '</code></td><td>' + r[1] + '</td><td style="font-size:0.8rem; color:var(--muted);">' + (r[2] || '') + '</td></tr>';
+  }).join('');
+  return '<table class="switch-table"><tr><th>Schema EV</th><th>Switch orale</th><th>Note</th></tr>' + body + '</table>';
+}
+
+function genera() {
+  var tipo = document.querySelector('input[name="tipo"]:checked').value;
+  var eta = parseFloat(document.getElementById('eta').value);
+  var sesso = document.getElementById('sesso').value;
+  var crea = parseFloat(document.getElementById('creatinina').value);
+  if (!(eta >= 18 && eta <= 120) || !(crea >= 0.1 && crea <= 15)) {
+    alert('Inserire età (18-120 anni) e creatinina (0,1-15 mg/dL) validi.');
+    return;
+  }
+  var gfr = egfr(eta, crea, sesso);
+  var irc = gfr < 30;
+
+  var mrsaDoc = document.getElementById('mrsa_doc').checked;
+  var mrsaOsp = document.getElementById('mrsa_osp').checked;
+  var mrsaDialisi = document.getElementById('mrsa_dialisi').checked;
+  var mrsaNecro = document.getElementById('mrsa_necro').checked;
+  var mrsa = mrsaDoc || mrsaDialisi || mrsaNecro;
+  var mrsaRischio = mrsa || mrsaOsp;
+
+  var gramDiab = document.getElementById('gram_diab').checked;
+  var gramImmuno = document.getElementById('gram_immuno').checked;
+  var gramAcqua = document.getElementById('gram_acqua').checked;
+  
+  var allergiaIgE = document.getElementById('allergia_ige').checked;
+  var allergiaNoIgE = document.getElementById('allergia_noige').checked;
+  var scompenso = document.getElementById('scompenso').checked;
+  var sepsi = document.getElementById('sepsi_segni').checked;
+
+  var atb = '', durata = '', monitoraggio = '', warnings = '', sourceControl = '', lg = '';
+
+  var tipoLabel = {
+    erisipela: 'Erisipela',
+    cellulite: 'Cellulite',
+    ascesso: 'Ascesso cutaneo',
+    fascite: 'Fascite necrotizzante',
+    piede: 'Piede diabetico infetto',
+    morso: 'Ferita da morso',
+    ssi: 'Infezione ferita chirurgica (SSI)'
+  }[tipo] || tipo;
+
+  // ── ERISIPELA ──
+  if (tipo === 'erisipela') {
+    warnings += info('note', 'i', 'Erisipela: infezione del derma superficiale e linfatici, margini netti e rilevati. Agente quasi sempre <strong>Streptococcus pyogenes (gruppo A)</strong>. S. aureus raro. La copertura anti-stafilococcica non è necessaria di routine (IDSA 2014).');
+    if (sepsi) {
+      atb = rx('Erisipela con sepsi – schema EV (IDSA 2014)',
+        (allergiaIgE
+          ? 'Clindamicina 600 mg EV q8h<br><em>oppure</em> Vancomicina 15-20 mg/kg EV q12h (se sospetto S. aureus)'
+          : 'Penicillina G 2-4 MU EV q4-6h<br><em>oppure</em> Ampicillina-sulbactam 3 g EV q6h') +
+        (irc ? '<br><em>Adeguare posologia a eGFR</em>' : ''));
+      atb += switchTable([
+        ['Penicillina G EV', 'Amoxicillina 500 mg PO q8h', 'dopo stabilizzazione'],
+        ['Penicillina G EV', 'Amoxicillina-clavulanato 875/125 mg PO q12h', 'se sospetto S. aureus MSSA']
+      ]);
+      durata = '5-10 giorni (minimo 5, prolungare se risposta lenta)';
+    } else {
+      atb = rx('Erisipela non complicata – schema orale (IDSA 2014)',
+        (allergiaIgE
+          ? 'Clindamicina 300 mg PO q8h<br><em>Attenzione: rischio C. difficile; resistenza streptococcica crescente in Italia</em>'
+          : 'Amoxicillina 500 mg PO q8h<br><em>oppure</em> Amoxicillina-clavulanato 875/125 mg PO q12h'));
+      durata = '5 giorni (rivalutare; estendere fino a risoluzione dei segni infiammatori)';
+    }
+    if (scompenso) {
+      warnings += info('warn', '!', 'Linfedema / scompenso: alto rischio di recidiva. Considerare profilassi secondaria con Penicillina V 250 mg PO q12h o Benzatina-penicillina 1.2 MU IM ogni 4 settimane se 3-4 episodi/anno nonostante il controllo dei fattori predisponenti (IDSA 2014). La protezione dura solo finché si assume la profilassi (PATCH I).');
+    }
+    monitoraggio = 'Delimitare il margine con pennarello. Rivalutare a 48-72h: se non miglioramento, riconsiderare diagnosi (trombosi venosa profonda, fascite) o cambio schema.';
+    lg = '<div class="guidelines-box"><strong>Riferimenti: IDSA 2014 - WSES/SIS-E 2018</strong><ul>' +
+      '<li>Erisipela: S. pyogenes quasi sempre responsabile; non aggiungere copertura anti-stafilococcica di routine (IDSA 2014)</li>' +
+      '<li>Penicillina: prima scelta; S. pyogenes resta sensibile ai beta-lattamici (IDSA 2014)</li>' +
+      '<li>Clindamicina: alternativa in allergia ai beta-lattamici; la resistenza streptococcica varia per area, verificare i dati locali</li>' +
+      '<li>Profilassi secondaria se 3-4 episodi/anno nonostante il controllo dei fattori predisponenti; riduce le recidive solo durante l’assunzione (IDSA 2014; PATCH I)</li>' +
+      '<li class="refline">Bibliografia: ' + refs([1,3,10]) + '</li>' +
+      '</ul></div>';
+
+  // ── CELLULITE ──
+  } else if (tipo === 'cellulite') {
+    warnings += info('note', 'i', 'Cellulite: infezione del derma profondo e ipoderma, margini sfumati. Agenti: <strong>S. aureus (MSSA/MRSA)</strong> e <strong>Streptococchi beta-emolitici</strong>. Distinguere da erisipela (margini netti e rilevati, streptococco quasi sempre).');
+    if (mrsa) {
+      atb = rx('Cellulite con rischio/storia MRSA (IDSA 2014)',
+        'Vancomicina 25-30 mg/kg/die EV (infusione continua o frazionata)<br><em>oppure</em> Daptomicina 4 mg/kg EV q24h (6 mg/kg solo se batteriemia da S. aureus; non usare se polmonite associata)<br><em>oppure</em> Linezolid 600 mg EV/PO q12h');
+      atb += switchTable([
+        ['Vancomicina EV', 'TMP-SMX 160/800 mg PO q12h', 'se sensibile in antibiogramma'],
+        ['Vancomicina EV', 'Doxiciclina 100 mg PO q12h', 'alternativa orale (solo PO: non disponibile EV in Italia)'],
+        ['Linezolid EV', 'Linezolid 600 mg PO q12h', 'biodisponibilità orale ~100%']
+      ]);
+      warnings += info('warn', '!', 'Doxiciclina: disponibile <strong>solo per via orale</strong> in Italia. Non prescrivere formulazione EV.');
+      durata = '5-14 giorni (rivalutare a 48-72h)';
+    } else if (sepsi) {
+      if (allergiaIgE) {
+        atb = rx('Cellulite con sepsi - allergia IgE ai beta-lattamici (IDSA 2014)',
+          'Vancomicina 15-20 mg/kg EV q12h<br><em>oppure</em> Clindamicina 600 mg EV q8h (se MRSA escluso e S. aureus sensibile)');
+      } else {
+        atb = rx('Cellulite con sepsi - schema EV (IDSA 2014)',
+          'Oxacillina 2 g EV q4h (se disponibile)<br><em>oppure</em> Cefazolina 2 g EV q8h (preferita: stessa efficacia, meno effetti avversi)<br><em>oppure</em> Amoxicillina-clavulanato 2.2 g EV q8h');
+        warnings += info('note', 'i', '<strong>Flucloxacillina / Oxacillina:</strong> prima scelta teorica per MSSA, ma la disponibilità in reparto è variabile in Italia. <strong>Cefazolina 2 g EV q8h</strong> è una valida opzione EV per la cellulite non purulenta (IDSA 2014) e spesso più pratica (q8h contro q4h).');
+      }
+      atb += switchTable([
+        ['Cefazolina EV', 'Cefalessina 500 mg PO q6h', ''],
+        ['Cefazolina EV', 'Amoxicillina-clavulanato 875/125 mg PO q12h', 'se polimicrobico sospetto'],
+        ['Amox-clav EV', 'Amoxicillina-clavulanato 875/125 mg PO q12h', '']
+      ]);
+      durata = '5-14 giorni';
+    } else {
+      if (allergiaIgE) {
+        atb = rx('Cellulite non complicata - allergia IgE (IDSA 2014)',
+          'Clindamicina 300-450 mg PO q8h<br><em>Attenzione: rischio C. difficile; verificare sensibilità locale</em>');
+      } else if (allergiaNoIgE) {
+        warnings += info('warn', '!', 'Allergia non-IgE: escludere reazioni cutanee gravi (SJS/TEN, DRESS, AGEP), nel qual caso evitare i beta-lattamici. La cefalessina condivide la catena laterale con amoxicillina/ampicillina.');
+        atb = rx('Cellulite non complicata - allergia non-IgE (IDSA 2014)',
+          'Cefalessina 500 mg PO q6h (generalmente tollerata in allergia non-IgE lieve)<br><em>oppure</em> Amoxicillina-clavulanato 875/125 mg PO q12h');
+      } else {
+        atb = rx('Cellulite non complicata - prima scelta (IDSA 2014)',
+          'Cefalessina 500 mg PO q6h<br><em>oppure</em> Amoxicillina-clavulanato 875/125 mg PO q12h');
+      }
+      durata = '5 giorni (estendere se risposta lenta; max 14 giorni)';
+    }
+    monitoraggio = 'Delimitare margine con pennarello. Rivalutare a 48-72h. Se non risposta: TC dei tessuti molli per escludere fascite o ascesso profondo.';
+    lg = '<div class="guidelines-box"><strong>Riferimenti: IDSA 2014 - WSES/SIS-E 2018</strong><ul>' +
+      '<li>Cefazolina EV: opzione raccomandata per la cellulite non purulenta (IDSA 2014); posologia più pratica (q8h) rispetto a oxacillina (q4h)</li>' +
+      '<li>Copertura MRSA non necessaria in cellulite non-purulenta senza fattori di rischio (IDSA 2014)</li>' +
+      '<li>Rivalutare a 48-72h: circa 1/3 delle diagnosi di cellulite agli arti inferiori risulta errata (pseudocellulite: dermatite da stasi, TVP, linfedema) (Weng 2017)</li>' +
+      '<li>Durata 5 giorni se miglioramento: non inferiore a 10 giorni nella cellulite non complicata (Hepburn 2004; IDSA 2014)</li>' +
+      '<li>TMP-SMX e doxiciclina (PO): opzioni orali per cellulite purulenta da MRSA (IDSA 2014)</li>' +
+      '<li class="refline">Bibliografia: ' + refs([1,3,8,9]) + '</li>' +
+      '</ul></div>';
+
+  // ── ASCESSO ──
+  } else if (tipo === 'ascesso') {
+    sourceControl = info('teal', '+', '<strong>Drenaggio chirurgico = trattamento primario</strong> (IDSA 2014). Il solo drenaggio è sufficiente in molti ascessi non complicati. ATB aggiuntivo indicato (IDSA 2014) in: malattia severa o estesa, ascessi multipli, rapida progressione con cellulite, segni sistemici, comorbidità/immunodepressione, età estreme, sedi difficili da drenare, flebite settica, mancata risposta al solo drenaggio. I trial successivi (Talan 2016; Daum 2017) mostrano un modesto beneficio di TMP-SMX o clindamicina dopo drenaggio anche negli ascessi non complicati: valutare caso per caso.');
+    if (sepsi || gramImmuno) {
+      if (mrsaRischio) {
+        atb = rx('Ascesso complicato con rischio MRSA (IDSA 2014)',
+          'Vancomicina 25-30 mg/kg/die EV<br><em>oppure</em> Daptomicina 4 mg/kg EV q24h (dosi maggiori solo se batteriemia/endocardite)<br><em>oppure</em> Linezolid 600 mg EV q12h');
+        atb += switchTable([
+          ['Vancomicina EV', 'TMP-SMX 160/800 mg PO q12h', 'se sensibile'],
+          ['Vancomicina EV', 'Doxiciclina 100 mg PO q12h', 'alternativa (solo PO in Italia)'],
+          ['Linezolid EV', 'Linezolid 600 mg PO q12h', 'biodisponibilità ~100%']
+        ]);
+      } else {
+        atb = rx('Ascesso complicato senza rischio MRSA (IDSA 2014)',
+          (allergiaIgE
+            ? 'Clindamicina 600 mg EV q8h<br><em>oppure</em> Vancomicina 15-20 mg/kg EV q12h'
+            : 'Cefazolina 2 g EV q8h<br><em>oppure</em> Amoxicillina-clavulanato 2.2 g EV q8h'));
+      }
+      durata = '5-7 giorni post-drenaggio';
+    } else {
+      if (mrsaRischio) {
+        atb = rx('Ascesso non complicato con rischio MRSA - schema orale (IDSA 2014)',
+          'TMP-SMX 160/800 mg PO q12h<br><em>oppure</em> Doxiciclina 100 mg PO q12h (solo PO in Italia)<br><em>oppure</em> Clindamicina 300-450 mg PO q8h (se sensibile; rischio C. difficile)');
+      } else {
+        atb = info('ok', 'v', '<strong>Ascesso non complicato senza fattori di rischio:</strong> il drenaggio è il trattamento principale e l’ATB non è indicato di routine (IDSA 2014). Due RCT (Talan 2016; Daum 2017) mostrano però guarigioni più frequenti con TMP-SMX o clindamicina rispetto al placebo (circa +7-14 punti percentuali): considerare in base a rischio, sede e preferenze.');
+        atb += rx('ATB solo se non risposta a drenaggio o fattori di rischio (IDSA 2014)',
+          (allergiaIgE
+            ? 'TMP-SMX 160/800 mg PO q12h (verificare allergia crociata)'
+            : 'Cefalessina 500 mg PO q6h<br><em>oppure</em> TMP-SMX 160/800 mg PO q12h (se rischio MRSA)'), 'teal');
+      }
+      durata = '5 giorni post-drenaggio (se ATB indicato)';
+    }
+    monitoraggio = 'Rivalutare a 48h post-drenaggio: verifica guarigione, segni di estensione, febbre persistente.';
+    lg = '<div class="guidelines-box"><strong>Riferimenti: IDSA 2014 - Talan 2016 - Daum 2017</strong><ul>' +
+      '<li>Drenaggio: trattamento principale (IDSA 2014); ATB aggiuntivo: beneficio modesto ma significativo vs placebo negli ascessi non complicati (Talan 2016; Daum 2017)</li>' +
+      '<li>TMP-SMX e clindamicina: superiori al placebo dopo drenaggio (Talan 2016; Daum 2017)</li>' +
+      '<li>TMP-SMX: efficacia sovrapponibile alla clindamicina con meno effetti avversi gastrointestinali (Daum 2017)</li>' +
+      '<li>Ascessi perianali, pilonidali, bartholiniani: stessa logica; drenaggio prioritario</li>' +
+      '<li class="refline">Bibliografia: ' + refs([1,6,7]) + '</li>' +
+      '</ul></div>';
+
+  // ── FASCITE NECROTIZZANTE ──
+  } else if (tipo === 'fascite') {
+    warnings += info('danger', '!', '<strong>FASCITE NECROTIZZANTE - URGENZA CHIRURGICA ASSOLUTA.</strong> Il debridement chirurgico precoce è il fattore prognostico più importante. Non ritardare per imaging o stabilizzazione. Mortalità elevata anche con trattamento ottimale (WSES/SIS-E 2018).');
+    sourceControl = info('danger', '!', '<strong>Chirurgia urgente:</strong> debridement ampio il prima possibile, idealmente entro 6 h dalla diagnosi (SSC 2026). Contattare chirurgia d\'urgenza immediatamente. TC dei tessuti molli utile se non ritarda intervento (gas nei tessuti = fascite confermata). Reintervento a 24-48h quasi sempre necessario.');
+    warnings += info('orange', '!', '<strong>Score LRINEC (Laboratory Risk Indicator for Necrotizing Fasciitis):</strong> utile ma non sostituisce il giudizio clinico. Score ≥6 rischio intermedio, ≥8 rischio alto (Wong 2004); un punteggio basso NON esclude la diagnosi. Dolore sproporzionato, cute "a buccia di legno", crepitio, rapida progressione = indicazione chirurgica indipendentemente dallo score.');
+
+    atb = rx('Fascite necrotizzante Tipo I - Polimicrobica (aerobi + anaerobi) (WSES 2018 - IDSA 2014)',
+      (allergiaIgE
+        ? 'Aztreonam 2 g EV q8h + Metronidazolo 500 mg EV q8h + Vancomicina 25-30 mg/kg/die EV'
+        : 'Piperacillina-tazobactam 4.5 g EV q6h (infusione estesa 4h)<br>+ Vancomicina 25-30 mg/kg/die EV<br><em>oppure</em> Piperacillina-tazobactam + Linezolid 600 mg EV q12h (se IRC grave)') +
+      (irc ? '<br><em>Adeguare posologia a eGFR</em>' : ''));
+    atb += rx('Fascite necrotizzante Tipo II - Streptococcus pyogenes (IDSA 2014)',
+      (allergiaIgE
+        ? 'Clindamicina 900 mg EV q8h + Vancomicina 25-30 mg/kg/die EV'
+        : 'Penicillina G 4 MU EV q4h + Clindamicina 900 mg EV q8h') +
+      '<br><em>Clindamicina: inibisce la sintesi delle tossine streptococciche (effetto Eagle); aggiungere sempre nella Tipo II (IDSA 2014)</em>');
+    atb += rx('Fascite necrotizzante - Vibrio vulnificus (esposizione acqua marina) (IDSA 2014)',
+      (allergiaIgE
+        ? 'Doxiciclina 100 mg PO q12h + Ciprofloxacina 400 mg EV q8h'
+        : 'Ceftriaxone 2 g EV q24h + Doxiciclina 100 mg PO q12h<br><em>Doxiciclina: solo formulazione orale in Italia</em>'), 'amber');
+    if (gramAcqua) {
+      warnings += info('orange', '!', 'Esposizione ad acqua salata/marina: considerare <strong>Vibrio vulnificus</strong> (fascite fulminante, eziologia rara ma letale). Aggiungere doxiciclina PO al regime empirico.');
+    }
+
+    atb += rx('Immunoglobuline EV (IVIG) in fascite Tipo II (uso compassionevole)',
+      'IVIG 1-2 g/kg EV in unica dose<br><em>Indicazione controversa: considerare in shock tossico streptococcico refrattario (dati limitati - WSES 2018)</em>', 'teal');
+
+    durata = 'Continuare ATB fino a 48-72h dopo ultimo debridement e stabilizzazione clinica (minimo 10-14 giorni)';
+    monitoraggio = 'Lattato, PCR seriata, emocromo, creatinina, coagulazione (DIC), procalcitonina. Reintervento chirurgico a 24-48h.';
+    lg = '<div class="guidelines-box"><strong>Riferimenti: IDSA 2014 - WSES/SIS-E 2018 - SSC 2026</strong><ul>' +
+      '<li>Chirurgia precoce: fattore prognostico principale; il ritardo nel debridement aumenta la mortalità (WSES/SIS-E 2018)</li>' +
+      '<li>Clindamicina nella Tipo II: inibisce produzione di tossine streptococciche ed esotossine (effetto Eagle) (IDSA 2014)</li>' +
+      '<li>Tipo I: S. aureus, Enterobatteriacee, anaerobi (Bacteroides, Clostridium); sempre polimicrobica</li>' +
+      '<li>Tipo II: S. pyogenes o S. agalactiae; mono-microbica, più aggressiva</li>' +
+      '<li>Ossigenoterapia iperbarica: dati insufficienti per raccomandazione routinaria (WSES 2018)</li>' +
+      '<li class="refline">Bibliografia: ' + refs([1,3,4,5,13]) + '</li>' +
+      '</ul></div>';
+
+  // ── PIEDE DIABETICO ──
+  } else if (tipo === 'piede') {
+    warnings += info('note', 'i', 'Classificazione <strong>IWGDF/IDSA 2023</strong> in 4 gradi. La gravità determina setting di cura e schema ATB. Sempre valutare: ischemia (ABI, eco-doppler), profondita della lesione (sondaggio con ago/sonda), osteomielite (RX, probe-to-bone, VES/PCR; RM se il dubbio persiste).');
+
+    atb = '<div class="iwgdf-grid">' +
+      '<div class="iwgdf-card g1"><div class="ig-grade">Grado 1 - Non infetta</div>Nessun segno di infezione. Non indicato ATB. Cure locali della ferita.</div>' +
+      '<div class="iwgdf-card g2"><div class="ig-grade">Grado 2 - Lieve</div>Eritema ≤2 cm, solo cute/sottocute superficiale, senza segni sistemici. Schema orale; ambulatoriale possibile.</div>' +
+      '<div class="iwgdf-card g3"><div class="ig-grade">Grado 3 - Moderata</div>Eritema &gt;2 cm o strutture profonde (ascesso, fascite, osteomielite, artrite settica), senza SIRS. Spesso EV/ricovero.</div>' +
+      '<div class="iwgdf-card g4"><div class="ig-grade">Grado 4 - Grave</div>Risposta infiammatoria sistemica (≥2 criteri SIRS). EV urgente, ricovero, valutazione chirurgica; valutare sempre anche l’ischemia (PAD).</div>' +
+      '</div>';
+
+    atb += rx('Piede diabetico Grado 2 - lieve, senza rischio MRSA (IWGDF/IDSA 2023)',
+      (allergiaIgE
+        ? 'Clindamicina 300-450 mg PO q8h'
+        : 'Amoxicillina-clavulanato 875/125 mg PO q12h<br><em>oppure</em> Cefalessina 500 mg PO q6h'));
+
+    atb += rx('Piede diabetico Grado 3 - moderata, EV (IWGDF/IDSA 2023)',
+      (mrsaRischio
+        ? (allergiaIgE
+            ? 'Aztreonam 2 g EV q8h + Metronidazolo 500 mg EV q8h + Vancomicina 25-30 mg/kg/die EV'
+            : 'Piperacillina-tazobactam 4.5 g EV q6h + Vancomicina 25-30 mg/kg/die EV<br><em>oppure</em> + Linezolid 600 mg EV q12h (se IRC grave)')
+        : (allergiaIgE
+            ? 'Aztreonam 2 g EV q8h + Metronidazolo 500 mg EV q8h'
+            : 'Piperacillina-tazobactam 4.5 g EV q6h<br><em>oppure</em> Amoxicillina-clavulanato 2.2 g EV q8h')));
+
+    atb += rx('Piede diabetico Grado 4 - grave con sepsi (IWGDF/IDSA 2023 - SSC 2026)',
+      (allergiaIgE
+        ? 'Aztreonam 2 g EV q8h + Metronidazolo 500 mg EV q8h + Vancomicina 25-30 mg/kg/die EV'
+        : 'Meropenem 1 g EV q8h + Vancomicina 25-30 mg/kg/die EV<br><em>oppure</em> Piperacillina-tazobactam 4.5 g EV q6h + Vancomicina (se no MDR documentato)') +
+      (irc ? '<br><em>Adeguare a eGFR</em>' : ''), 'red');
+
+    atb += info('teal', '+', '<strong>Osteomielite:</strong> RM del piede se il sospetto persiste dopo clinica, RX e indici di flogosi (sensibilità ~90%, Kapoor 2007). Una RX negativa non esclude. Durata ATB (IWGDF/IDSA 2023): 6 settimane senza resezione ossea; fino a 3 settimane dopo amputazione minore con margine osseo positivo alla coltura; ciclo breve (circa 2-5 giorni per i tessuti molli) se tutto l’osso infetto è stato asportato.');
+
+    sourceControl = info('teal', '+', '<strong>Source control piede diabetico:</strong> debridement chirurgico e drenaggio di ascessi. Amputazione minore se necessario. Consulenza chirurgia vascolare per ischemia critica (ABI &lt;0.4 o TcPO2 &lt;30 mmHg). Non ritardare rivascolarizzazione.');
+    durata = 'Tessuti molli (grado 2-3): 1-2 settimane, fino a 3-4 settimane se miglioramento lento o PAD severa (IWGDF/IDSA 2023). Grado 4: in base a risposta e source control. Osteomielite: vedi sopra.';
+    monitoraggio = 'Glicemia, creatinina, RX piede (baseline), RM se sospetto osteomielite, eco-doppler arti inferiori, colture da tessuto profondo (non tampone superficiale).';
+    lg = '<div class="guidelines-box"><strong>Riferimenti: IWGDF/IDSA 2023 - SSC 2026</strong><ul>' +
+      '<li>Colture: da tessuto profondo o aspirato, non tampone superficiale (scarsa correlazione con agente causale) (IWGDF/IDSA 2023)</li>' +
+      '<li>Ischemia: valutare sempre ABI, TcPO2; rivascolarizzazione migliora outcome ATB (IWGDF/IDSA 2023)</li>' +
+      '<li>Osteomielite: RM se il dubbio persiste; coltura/istologia ossea per la diagnosi di certezza; durata ATB ridotta se resezione ossea completa (IWGDF/IDSA 2023)</li>' +
+      '<li>Grado 1 (non infetto): ATB non indicato; trattamento locale della ferita (IWGDF/IDSA 2023)</li>' +
+      '<li class="refline">Bibliografia: ' + refs([2,14,5]) + '</li>' +
+      '</ul></div>';
+
+  // ── MORSO ──
+  } else if (tipo === 'morso') {
+    warnings += info('warn', '!', '<strong>Valutare sempre:</strong> stato vaccinale antitetanico (aggiornare se necessario), rischio rabbia (morso animale selvatico o non vaccinato), profilassi post-esposizione HIV/HBV se morso umano.');
+
+    atb = rx('Morso di cane o gatto - prima scelta (IDSA 2014)',
+      (allergiaIgE
+        ? 'Moxifloxacina 400 mg PO q24h<br><em>oppure</em> TMP-SMX 160/800 mg PO q12h + Metronidazolo 500 mg PO q8h'
+        : 'Amoxicillina-clavulanato 875/125 mg PO q12h<br><em>Copre: Pasteurella multocida, Capnocytophaga canimorsus, anaerobi orali, S. aureus MSSA</em>'));
+
+    atb += rx('Morso umano - prima scelta (IDSA 2014)',
+      (allergiaIgE
+        ? 'Moxifloxacina 400 mg PO q24h (copre Eikenella corrodens e anaerobi)'
+        : 'Amoxicillina-clavulanato 875/125 mg PO q12h<br><em>Copre: Eikenella corrodens, Streptococchi, S. aureus, anaerobi</em>'));
+
+    atb += rx('Morso con infezione grave o sepsi - schema EV (IDSA 2014)',
+      (allergiaIgE
+        ? 'Aztreonam 2 g EV q8h + Metronidazolo 500 mg EV q8h'
+        : 'Ampicillina-sulbactam 3 g EV q6h<br><em>oppure</em> Piperacillina-tazobactam 4.5 g EV q6h (se sepsi)') +
+      (mrsaRischio ? '<br>+ Vancomicina 25-30 mg/kg/die EV (se rischio MRSA)' : ''), 'amber');
+
+    warnings += info('note', 'i', '<strong>Morso di gatto:</strong> Pasteurella multocida isolata in circa il 75% delle ferite infette da gatto e il 50% da cane (Talan 1999). Ferite da puntura profonda: alto rischio infezione. Amoxicillina-clavulanato copre Pasteurella. Se allergia: doxiciclina 100 mg PO q12h (solo PO in Italia).');
+    warnings += info('note', 'i', '<strong>Capnocytophaga canimorsus</strong> (morso di cane): raro ma letale in asplenici, epatopatici, immunodepressi. Sepsi fulminante. Schema EV con beta-lattamici.');
+
+    durata = '3-5 giorni (profilassi se ferita fresca senza infezione); 5-14 giorni (infezione stabilita)';
+    monitoraggio = 'Rivalutare a 48h. Radiografia per escludere corpo estraneo o frattura (morso da puntura profonda). Colture da ferita se purulenta.';
+    lg = '<div class="guidelines-box"><strong>Riferimenti: IDSA 2014 - Talan 1999</strong><ul>' +
+      '<li>Amoxicillina-clavulanato: prima scelta per morso di cane, gatto e umano (copre spettro completo) (IDSA 2014)</li>' +
+      '<li>Profilassi antibiotica 3-5 giorni in ferite moderate/gravi, mani, viso, genitali, immunodepressi, asplenici, ferite con danno vascolare/articolare (IDSA 2014)</li>' +
+      '<li>Antitetanica: aggiornare se ultima dose > 5 anni (ferita sporca) o > 10 anni (ferita pulita)</li>' +
+      '<li>Rabbia: contattare servizio igiene pubblica per animali selvatici o non vaccinati</li>' +
+      '<li class="refline">Bibliografia: ' + refs([1,11]) + '</li>' +
+      '</ul></div>';
+
+  // ── SSI ──
+  } else if (tipo === 'ssi') {
+    warnings += info('note', 'i', '<strong>SSI (Surgical Site Infection):</strong> superficiale (cute/sottocute), profonda (fascia/muscolo), organo/spazio. La classificazione guida il trattamento. Insorgenza tipica entro 30 giorni (fino a 90 giorni per alcune procedure con impianto, definizioni NHSN/ECDC).');
+
+    if (mrsaRischio) {
+      atb = rx('SSI con rischio MRSA (IDSA 2014)',
+        'Vancomicina 25-30 mg/kg/die EV<br><em>oppure</em> Linezolid 600 mg EV/PO q12h (se IRC grave o intolleranza vancomicina)');
+      atb += switchTable([
+        ['Vancomicina EV', 'TMP-SMX 160/800 mg PO q12h', 'se sensibile'],
+        ['Vancomicina EV', 'Doxiciclina 100 mg PO q12h', 'solo PO in Italia'],
+        ['Linezolid EV', 'Linezolid 600 mg PO q12h', 'biodisponibilità ~100%']
+      ]);
+    } else {
+      atb = rx('SSI superficiale - schema (IDSA 2014)',
+        (allergiaIgE
+          ? 'Clindamicina 300 mg PO q8h<br><em>oppure</em> TMP-SMX 160/800 mg PO q12h'
+          : 'Cefalessina 500 mg PO q6h<br><em>oppure</em> Amoxicillina-clavulanato 875/125 mg PO q12h'));
+      atb += rx('SSI profonda o di organo/spazio - schema EV (IDSA 2014)',
+        (allergiaIgE
+          ? 'Aztreonam 2 g EV q8h + Metronidazolo 500 mg EV q8h'
+          : 'Piperacillina-tazobactam 4.5 g EV q6h<br><em>oppure</em> Ceftriaxone 2 g EV q24h + Metronidazolo 500 mg EV q8h') +
+        (mrsaRischio ? '<br>+ Vancomicina 25-30 mg/kg/die EV' : ''), 'amber');
+    }
+
+    sourceControl = info('teal', '+', '<strong>Source control SSI:</strong> apertura e drenaggio della ferita per SSI superficiale. SSI profonda: reintervento chirurgico per drenaggio raccolte, rimozione protesi infetta se necessario. Colture da tessuto profondo prima di ATB.');
+    durata = 'SSI superficiale: 5-7 giorni. SSI profonda: 2-4 settimane. Protesi infetta: in base a strategia (DAIR vs rimozione).';
+    monitoraggio = 'Colture da ferita (tessuto profondo, non tampone superficiale), PCR, emocromo. TC se SSI di organo/spazio sospetta.';
+    lg = '<div class="guidelines-box"><strong>Riferimenti: IDSA 2014 - WSES/SIS-E 2018</strong><ul>' +
+      '<li>SSI superficiale: drenaggio chirurgico spesso sufficiente; ATB aggiuntivo se cellulite estesa o segni sistemici (IDSA 2014)</li>' +
+      '<li>Colture da tessuto profondo o pus, non tampone superficiale (risultati poco affidabili) (IDSA 2014)</li>' +
+      '<li>Protesi infetta: consulenza chirurgica e infettivologica per strategia DAIR (debridement, ATB, ritenzione impianto) vs rimozione (WSES/SIS-E 2018)</li>' +
+      '<li>ATB prolungata solo se protesi ritenuta (biofilm) o osteomielite associata (WSES/SIS-E 2018)</li>' +
+      '<li class="refline">Bibliografia: ' + refs([1,3,4]) + '</li>' +
+      '</ul></div>';
+  }
+
+  // Warning IRC sempre
+  if (irc) {
+    warnings += info('warn', '!', 'eGFR calcolato: <strong>' + gfr + ' mL/min</strong>. Adeguare la posologia (vancomicina, piperacillina-tazobactam, aztreonam, meropenem, daptomicina, cefalosporine). TMP-SMX: ridurre la dose o evitare se eGFR &lt; 30. L’eGFR (CKD-EPI 2021, <a href="#ref-15">[15]</a>) è normalizzato a 1,73 m²: per il dosaggio dei farmaci considerare la clearance di Cockcroft-Gault, soprattutto in anziani e pazienti sottopeso.');
+  }
+
+  if (atb.indexOf('Vancomicina') !== -1) {
+    warnings += info('note', 'i', '<strong>Vancomicina:</strong> dose di carico 20-35 mg/kg (max 3 g) poi dosi guidate da TDM, preferibilmente su AUC/MIC 400-600 (Rybak 2020, <a href="#ref-12">[12]</a>).');
+  }
+
+  // Chips
+  var chipsHtml = [
+    chip(tipoLabel, tipo === 'fascite' ? 'red' : tipo === 'piede' ? 'orange' : 'blue'),
+    chip('eGFR: ' + gfr + ' mL/min', irc ? 'red' : 'green'),
+    mrsa ? chip('MRSA documentato', 'red') : (mrsaRischio ? chip('Rischio MRSA', 'amber') : ''),
+    gramDiab ? chip('Diabete', 'amber') : '',
+    gramImmuno ? chip('Immunodepresso', 'amber') : '',
+    sepsi ? chip('Sepsi', 'red') : '',
+    gramAcqua ? chip('Esposizione acqua', 'teal') : '',
+    allergiaIgE ? chip('Allergia IgE beta-latt.', 'neutral') : ''
+  ].filter(Boolean).join('');
+
+  var body =
+    '<div class="result-chips">' + chipsHtml + '</div>' +
+    warnings +
+    (sourceControl ? '<div class="section-label">Source control</div>' + sourceControl : '') +
+    '<div class="section-label">Schema terapeutico</div>' +
+    atb +
+    '<div class="section-label">Durata raccomandata</div>' +
+    '<p style="font-size:0.9rem;">' + durata + '</p>' +
+    '<div class="info-box note" style="margin-top:8px;"><span class="bi">&#128300;</span><div><strong>Monitoraggio:</strong> ' + monitoraggio + '</div></div>' +
+    '<hr class="divider">' +
+    info('teal', '&#128260;', '<strong>De-escalation:</strong> rivalutare a 48-72h con colture e risposta clinica. Scalare allo spettro più stretto appena possibile (IDSA 2014).') +
+    lg +
+    '<div class="timestamp">Le dosi sono orientative: verificare su schede tecniche e protocolli aziendali. Generato il ' + oggi() + ' - Uso clinico interno - Non sostituisce la valutazione medica</div>';
+
+  var el = document.getElementById('risultato');
+  el.innerHTML =
+    '<div class="result-header">' +
+    '<h3>&#128203; ' + tipoLabel + ' - Piano Terapeutico</h3>' +
+    '<div class="rmeta">eGFR ' + gfr + ' mL/min - ' + oggi() + '</div>' +
+    '</div>' +
+    '<div class="result-body">' + body + '</div>';
+  el.style.display = 'block';
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
+</body>
+</html>
