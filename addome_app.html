@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Infezioni Addominali – Medicina Interna</title>
+  <style>
+    :root {
+      --bg: #f0f4f8;
+      --surface: #ffffff;
+      --surface-alt: #f8fafc;
+      --border: #dde3ec;
+      --text: #1e2a38;
+      --muted: #64748b;
+
+      --blue-deep: #1a4a7a;
+      --blue-mid: #2563a8;
+      --blue-light: #dbeafe;
+
+      --teal: #0d6b72;
+      --teal-light: #ccfbf1;
+
+      --amber: #b45309;
+      --amber-light: #fef3c7;
+
+      --red: #b91c1c;
+      --red-light: #fee2e2;
+
+      --green: #15803d;
+      --green-light: #dcfce7;
+
+      --purple: #6d28d9;
+      --purple-light: #ede9fe;
+
+      --orange: #c2410c;
+      --orange-light: #ffedd5;
+
+      --radius: 10px;
+      --radius-sm: 6px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
+      --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      --mono: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 16px;
+    }
+
+    .wrapper { max-width: 980px; margin: 0 auto; }
+
+    .app-header {
+      background: var(--blue-deep);
+      color: white;
+      border-radius: var(--radius);
+      padding: 20px 26px 16px;
+      margin-bottom: 16px;
+    }
+    .app-header h1 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.01em; }
+    .app-header .subtitle { font-size: 0.8rem; opacity: 0.72; margin-top: 5px; }
+    .ref-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .ref-pill {
+      font-size: 0.7rem; font-weight: 600; padding: 3px 9px;
+      border-radius: 20px; border: 1px solid rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.12); color: white; letter-spacing: 0.04em;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow);
+    }
+    .card-title {
+      font-size: 0.78rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.07em; color: var(--muted);
+      margin-bottom: 12px; padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 7px;
+    }
+
+    .tipo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+      gap: 8px;
+    }
+    .tipo-btn {
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      padding: 12px 14px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s;
+    }
+    .tipo-btn:hover { border-color: var(--blue-mid); }
+    .tipo-btn.active { border-color: var(--blue-mid); background: var(--blue-light); }
+    .tipo-btn input { display: none; }
+    .tipo-btn .t-icon { font-size: 1.3rem; display: block; margin-bottom: 4px; }
+    .tipo-btn .t-label { font-weight: 700; font-size: 0.88rem; color: var(--blue-deep); }
+    .tipo-btn .t-desc { font-size: 0.73rem; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+
+    .input-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; margin-bottom: 10px; }
+    .input-group { display: flex; flex-direction: column; gap: 3px; }
+    .input-group label { font-size: 0.75rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .input-group input[type="number"],
+    .input-group select {
+      background: var(--surface-alt); border: 1px solid var(--border);
+      color: var(--text); border-radius: var(--radius-sm);
+      padding: 6px 10px; font-size: 0.9rem; width: 110px;
+    }
+    .input-group select { font-family: var(--font); }
+
+    .check-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 4px; }
+    .check-item {
+      display: flex; align-items: flex-start; gap: 8px;
+      padding: 7px 9px; border-radius: var(--radius-sm);
+      cursor: pointer; font-size: 0.88rem; color: var(--text);
+      transition: background 0.1s;
+    }
+    .check-item:hover { background: var(--surface-alt); }
+    .check-item input { margin-top: 2px; accent-color: var(--blue-mid); flex-shrink: 0; }
+
+    .sub-label {
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.06em; color: var(--muted); margin: 12px 0 5px 2px;
+    }
+
+    .tokyo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 8px; margin: 10px 0;
+    }
+    .tokyo-card {
+      border-radius: var(--radius-sm); padding: 10px 12px;
+      font-size: 0.82rem; border: 1px solid; cursor: pointer;
+      transition: all 0.15s;
+    }
+    .tokyo-card:hover { opacity: 0.85; }
+    .tokyo-card .tg-grade { font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+    .tokyo-card.g1 { background: var(--green-light); border-color: #86efac; color: #14532d; }
+    .tokyo-card.g2 { background: var(--amber-light); border-color: #fcd34d; color: #78350f; }
+    .tokyo-card.g3 { background: var(--red-light); border-color: #fca5a5; color: #7f1d1d; }
+    .tokyo-card.selected-grade { box-shadow: 0 0 0 3px var(--blue-mid); }
+
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin: 16px 0; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 11px 22px; border: none; border-radius: var(--radius-sm);
+      font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.15s;
+    }
+    .btn-primary { background: var(--blue-mid); color: white; }
+    .btn-primary:hover { background: var(--blue-deep); }
+    .btn-ghost { background: transparent; border: 1.5px solid var(--border); color: var(--muted); }
+    .btn-ghost:hover { border-color: var(--blue-mid); color: var(--blue-mid); }
+
+    .result-container {
+      display: none; background: var(--surface);
+      border: 2px solid var(--blue-mid); border-radius: var(--radius);
+      overflow: hidden; box-shadow: var(--shadow); margin-top: 8px;
+    }
+    .result-header {
+      background: var(--blue-mid); color: white;
+      padding: 13px 20px; display: flex;
+      justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 8px;
+    }
+    .result-header h3 { font-size: 1.0rem; font-weight: 700; }
+    .result-header .rmeta { font-size: 0.8rem; opacity: 0.85; }
+    .result-body { padding: 18px 20px; }
+
+    .result-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 14px; }
+    .chip {
+      font-size: 0.78rem; font-weight: 700; padding: 4px 11px;
+      border-radius: 20px; border: 1px solid;
+    }
+    .chip-blue { color: var(--blue-mid); border-color: #93c5fd; background: var(--blue-light); }
+    .chip-amber { color: var(--amber); border-color: #fcd34d; background: var(--amber-light); }
+    .chip-red { color: var(--red); border-color: #fca5a5; background: var(--red-light); }
+    .chip-green { color: var(--green); border-color: #86efac; background: var(--green-light); }
+    .chip-teal { color: var(--teal); border-color: #5eead4; background: var(--teal-light); }
+    .chip-orange { color: var(--orange); border-color: #fdba74; background: var(--orange-light); }
+    .chip-neutral { color: var(--muted); border-color: var(--border); background: var(--surface-alt); }
+
+    .section-label {
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.07em; color: var(--muted); margin: 14px 0 6px;
+    }
+
+    .rx-block {
+      background: #f0f7ff; border: 1px solid #bfdbfe;
+      border-left: 4px solid var(--blue-mid);
+      border-radius: var(--radius-sm); padding: 11px 14px;
+      margin: 8px 0; font-family: var(--mono); font-size: 0.87rem; line-height: 1.9;
+    }
+    .rx-block .rx-tag {
+      font-family: var(--font); font-size: 0.7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--blue-mid); margin-bottom: 4px;
+    }
+    .rx-block em { font-family: var(--font); font-size: 0.8rem; color: var(--muted); font-style: normal; }
+    .rx-block.teal { background: var(--teal-light); border-left-color: var(--teal); border-color: #99f6e4; }
+    .rx-block.teal .rx-tag { color: var(--teal); }
+    .rx-block.amber { background: var(--amber-light); border-left-color: var(--amber); border-color: #fcd34d; }
+    .rx-block.amber .rx-tag { color: var(--amber); }
+    .rx-block.red { background: var(--red-light); border-left-color: var(--red); border-color: #fca5a5; }
+    .rx-block.red .rx-tag { color: var(--red); }
+    .rx-block.purple { background: var(--purple-light); border-left-color: var(--purple); border-color: #c4b5fd; }
+    .rx-block.purple .rx-tag { color: var(--purple); }
+
+    .info-box {
+      border-radius: var(--radius-sm); padding: 10px 13px;
+      margin: 8px 0; font-size: 0.86rem;
+      display: flex; gap: 9px; align-items: flex-start;
+    }
+    .info-box .bi { flex-shrink: 0; font-size: 1rem; }
+    .info-box.warn { background: var(--amber-light); border-left: 3px solid var(--amber); color: #78350f; }
+    .info-box.danger { background: var(--red-light); border-left: 3px solid var(--red); color: #7f1d1d; }
+    .info-box.ok { background: var(--green-light); border-left: 3px solid var(--green); color: #14532d; }
+    .info-box.teal { background: var(--teal-light); border-left: 3px solid var(--teal); color: #134e4a; }
+    .info-box.note { background: var(--blue-light); border-left: 3px solid var(--blue-mid); color: #1e3a5f; }
+    .info-box.purple { background: var(--purple-light); border-left: 3px solid var(--purple); color: #3b0764; }
+    .info-box.orange { background: var(--orange-light); border-left: 3px solid var(--orange); color: #7c2d12; }
+
+    .switch-table {
+      width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 0.85rem;
+    }
+    .switch-table th, .switch-table td {
+      border: 1px solid var(--border); padding: 7px 10px; text-align: left;
+    }
+    .switch-table th {
+      background: var(--blue-light); font-weight: 700; color: var(--blue-deep);
+      font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .switch-table tr:nth-child(even) td { background: var(--surface-alt); }
+
+    .guidelines-box {
+      background: var(--teal-light); border-left: 4px solid var(--teal);
+      border-radius: var(--radius-sm); padding: 12px 15px; margin-top: 14px; font-size: 0.84rem; color: #134e4a;
+    }
+    .guidelines-box strong { display: block; margin-bottom: 6px; color: var(--teal); }
+    .guidelines-box ul { padding-left: 16px; }
+    .guidelines-box li { margin-bottom: 3px; }
+
+    .divider { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+    .timestamp { font-size: 0.75rem; color: var(--muted); margin-top: 14px; text-align: right; }
+
+    @media (max-width: 600px) {
+      .tipo-grid { grid-template-columns: repeat(2, 1fr); }
+      .tokyo-grid { grid-template-columns: 1fr; }
+    }
+
+    @media print {
+      body { background: white; padding: 0; }
+      .btn-row, .btn { display: none !important; }
+      .result-container { display: block !important; border: 1px solid #ccc; }
+      .card { box-shadow: none; border: 1px solid #ddd; }
+      .app-header { border-radius: 0; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="app-header">
+    <h1>&#127818; Infezioni Addominali – Medicina Interna</h1>
+    <div class="subtitle">Ascessi · Peritonite · Colangite · Colecistite · Tutti i setting</div>
+    <div class="ref-pills">
+      <span class="ref-pill">WSES 2021</span>
+      <span class="ref-pill">Tokyo Guidelines 2018</span>
+      <span class="ref-pill">EASL 2022</span>
+      <span class="ref-pill">ESCMID 2023</span>
+      <span class="ref-pill">SSC 2024</span>
+    </div>
+  </div>
+
+  <!-- TIPO -->
+  <div class="card">
+    <div class="card-title">&#127919; Tipo di infezione addominale</div>
+    <div class="tipo-grid" id="tipo-grid">
+      <label class="tipo-btn active" onclick="selTipo(this,'ascesso_ep')">
+        <input type="radio" name="tipo" value="ascesso_ep" checked>
+        <span class="t-icon">&#129706;</span>
+        <span class="t-label">Ascesso epatico piogeno</span>
+        <span class="t-desc">E. coli, Klebsiella, anaerobi<br>Drenaggio + ATB prolungata</span>
+      </label>
+      <label class="tipo-btn" onclick="selTipo(this,'ascesso_am')">
+        <input type="radio" name="tipo" value="ascesso_am">
+        <span class="t-icon">&#127758;</span>
+        <span class="t-label">Ascesso epatico amebico</span>
+        <span class="t-desc">Entamoeba histolytica<br>Metronidazolo – spesso senza drenaggio</span>
+      </label>
+      <label class="tipo-btn" onclick="selTipo(this,'ascesso_sp')">
+        <input type="radio" name="tipo" value="ascesso_sp">
+        <span class="t-icon">&#128140;</span>
+        <span class="t-label">Ascesso splenico</span>
+        <span class="t-desc">Spesso ematogeno (endocardite)<br>Raro ma grave</span>
+      </label>
+      <label class="tipo-btn" onclick="selTipo(this,'ascesso_pr')">
+        <input type="radio" name="tipo" value="ascesso_pr">
+        <span class="t-icon">&#128297;</span>
+        <span class="t-label">Ascesso perirenale</span>
+        <span class="t-desc">Complicanza pielonefrite<br>S. aureus o BGN</span>
+      </label>
+      <label class="tipo-btn" onclick="selTipo(this,'sbp')">
+        <input type="radio" name="tipo" value="sbp">
+        <span class="t-icon">&#128167;</span>
+        <span class="t-label">Peritonite primaria (SBP)</span>
+        <span class="t-desc">Cirrotico con ascite<br>PMN &gt;250/mm&#179;</span>
+      </label>
+      <label class="tipo-btn" onclick="selTipo(this,'peritonite_sec')">
+        <input type="radio" name="tipo" value="peritonite_sec">
+        <span class="t-icon">&#128308;</span>
+        <span class="t-label">Peritonite secondaria</span>
+        <span class="t-desc">Perforazione / complicanza chirurgica<br>Polimicrobica</span>
+      </label>
+      <label class="tipo-btn" onclick="selTipo(this,'colangite')">
+        <input type="radio" name="tipo" value="colangite">
+        <span class="t-icon">&#128999;</span>
+        <span class="t-label">Colangite acuta</span>
+        <span class="t-desc">Tokyo Guidelines 2018<br>Gradi I / II / III</span>
+      </label>
+      <label class="tipo-btn" onclick="selTipo(this,'colecistite')">
+        <input type="radio" name="tipo" value="colecistite">
+        <span class="t-icon">&#127807;</span>
+        <span class="t-label">Colecistite acuta</span>
+        <span class="t-desc">Tokyo Guidelines 2018<br>Gradi I / II / III</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- TOKYO GRADE (visibile solo per colangite/colecistite) -->
+  <div class="card" id="card-tokyo" style="display:none;">
+    <div class="card-title">&#128200; Grado di gravita (Tokyo Guidelines 2018)</div>
+    <div class="tokyo-grid">
+      <div class="tokyo-card g1" id="tg1" onclick="selGrade(1)">
+        <div class="tg-grade">Grado I – Lieve</div>
+        Non soddisfa criteri G2/G3. Organi integri. Risposta infiammatoria locale.
+      </div>
+      <div class="tokyo-card g2" id="tg2" onclick="selGrade(2)">
+        <div class="tg-grade">Grado II – Moderata</div>
+        GB &gt;12.000 o &lt;4.000 · Massa pericolecistica · Durata &gt;72h · Marcata infiammazione locale.
+      </div>
+      <div class="tokyo-card g3" id="tg3" onclick="selGrade(3)">
+        <div class="tg-grade">Grado III – Grave</div>
+        Disfunzione d'organo (CV, renale, epatica, ematologica, respiratoria, neurologica).
+      </div>
+    </div>
+    <input type="hidden" id="tokyo-grade" value="1">
+  </div>
+
+  <!-- FATTORI DI RISCHIO -->
+  <div class="card">
+    <div class="card-title">&#128300; Fattori di rischio e contesto clinico</div>
+
+    <div class="sub-label">Rischio germi MDR</div>
+    <div class="check-grid">
+      <label class="check-item"><input type="checkbox" id="mdr_osp"> Ospedalizzazione o ATB EV negli ult. 90 giorni</label>
+      <label class="check-item"><input type="checkbox" id="mdr_esbl"> Colonizzazione ESBL / KPC documentata</label>
+      <label class="check-item"><input type="checkbox" id="mdr_rsa"> RSA o struttura residenziale</label>
+      <label class="check-item"><input type="checkbox" id="mdr_carba"> Precedente terapia con carbapenemici</label>
+    </div>
+
+    <div class="sub-label">Contesto clinico</div>
+    <div class="check-grid">
+      <label class="check-item"><input type="checkbox" id="sepsi"> Sepsi / shock settico (instabilita emodinamica)</label>
+      <label class="check-item"><input type="checkbox" id="cirrosi"> Cirrosi epatica (Child B o C)</label>
+      <label class="check-item"><input type="checkbox" id="immunodep"> Immunodepressione (trapianto, chemio, HIV)</label>
+      <label class="check-item"><input type="checkbox" id="diabete"> Diabete mellito</label>
+      <label class="check-item"><input type="checkbox" id="endocardite"> Endocardite sospetta o documentata</label>
+      <label class="check-item"><input type="checkbox" id="viaggio"> Viaggio in area endemica (tropici / Medio Oriente)</label>
+      <label class="check-item"><input type="checkbox" id="chirurgia"> Chirurgia addominale recente (&lt; 30 giorni)</label>
+      <label class="check-item"><input type="checkbox" id="biliary_stent"> Stent biliare o ERCP precedente</label>
+    </div>
+
+    <div class="sub-label">Allergie</div>
+    <div class="check-grid">
+      <label class="check-item"><input type="checkbox" id="allergia_ige"> Allergia IgE-mediata ai beta-lattamici</label>
+      <label class="check-item"><input type="checkbox" id="allergia_noige"> Allergia non-IgE (rash cutaneo)</label>
+    </div>
+  </div>
+
+  <!-- DATI PAZIENTE -->
+  <div class="card">
+    <div class="card-title">&#128100; Dati paziente</div>
+    <div class="input-row">
+      <div class="input-group">
+        <label>Eta (anni)</label>
+        <input type="number" id="eta" min="18" max="120" value="68">
+      </div>
+      <div class="input-group">
+        <label>Sesso</label>
+        <select id="sesso"><option value="M">M</option><option value="F">F</option></select>
+      </div>
+      <div class="input-group">
+        <label>Creatinina (mg/dL)</label>
+        <input type="number" id="creatinina" step="0.1" min="0.1" max="15" value="1.0">
+      </div>
+      <div class="input-group">
+        <label>Bilirubina tot. (mg/dL)</label>
+        <input type="number" id="bili" step="0.1" min="0" max="50" value="1.0">
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="genera()">&#9654; Genera piano terapeutico</button>
+    <button class="btn btn-ghost" onclick="window.print()">&#128424; Stampa</button>
+  </div>
+
+  <div id="risultato" class="result-container"></div>
+
+</div>
+
+<script>
+// ── UI ──
+function selTipo(el, val) {
+  document.querySelectorAll('.tipo-btn').forEach(function(b) { b.classList.remove('active'); });
+  el.classList.add('active');
+  el.querySelector('input').checked = true;
+  var tokyoCard = document.getElementById('card-tokyo');
+  if (val === 'colangite' || val === 'colecistite') {
+    tokyoCard.style.display = 'block';
+  } else {
+    tokyoCard.style.display = 'none';
+  }
+}
+
+var tokyoGrade = 1;
+function selGrade(g) {
+  tokyoGrade = g;
+  document.getElementById('tokyo-grade').value = g;
+  [1,2,3].forEach(function(n) {
+    document.getElementById('tg' + n).classList.remove('selected-grade');
+  });
+  document.getElementById('tg' + g).classList.add('selected-grade');
+}
+
+function oggi() {
+  return new Date().toLocaleDateString('it-IT', {day:'2-digit', month:'2-digit', year:'numeric'});
+}
+
+function egfr(eta, crea, sesso) {
+  var k = sesso === 'F' ? 0.7 : 0.9;
+  var a = sesso === 'F' ? -0.241 : -0.302;
+  var sf = sesso === 'F' ? 1.012 : 1.0;
+  var r = crea / k;
+  var val = crea <= k
+    ? 142 * Math.pow(r, a) * Math.pow(0.9938, eta) * sf
+    : 142 * Math.pow(r, -1.200) * Math.pow(0.9938, eta) * sf;
+  return Math.round(val);
+}
+
+function rx(tag, content, color) {
+  color = color || '';
+  return '<div class="rx-block ' + color + '"><div class="rx-tag">' + tag + '</div>' + content + '</div>';
+}
+
+function info(type, icon, text) {
+  return '<div class="info-box ' + type + '"><span class="bi">' + icon + '</span><div>' + text + '</div></div>';
+}
+
+function chip(label, type) {
+  type = type || 'neutral';
+  return '<span class="chip chip-' + type + '">' + label + '</span>';
+}
+
+function swTab(rows) {
+  var body = rows.map(function(r) {
+    return '<tr><td><code>' + r[0] + '</code></td><td>' + r[1] + '</td><td style="font-size:0.8rem;color:var(--muted);">' + (r[2]||'') + '</td></tr>';
+  }).join('');
+  return '<table class="switch-table"><tr><th>Schema EV</th><th>Switch orale</th><th>Note</th></tr>' + body + '</table>';
+}
+
+function lg(refs, bullets) {
+  return '<div class="guidelines-box"><strong>Riferimenti: ' + refs + '</strong><ul>' +
+    bullets.map(function(b) { return '<li>' + b + '</li>'; }).join('') + '</ul></div>';
+}
+
+// ── MAIN ──
+function genera() {
+  var tipo = document.querySelector('input[name="tipo"]:checked').value;
+  var grade = tokyoGrade;
+  var eta = parseFloat(document.getElementById('eta').value) || 68;
+  var sesso = document.getElementById('sesso').value;
+  var crea = parseFloat(document.getElementById('creatinina').value) || 1.0;
+  var bili = parseFloat(document.getElementById('bili').value) || 1.0;
+  var gfr = egfr(eta, crea, sesso);
+  var irc = gfr < 30;
+
+  var mdrOsp = document.getElementById('mdr_osp').checked;
+  var mdrEsbl = document.getElementById('mdr_esbl').checked;
+  var mdrRsa = document.getElementById('mdr_rsa').checked;
+  var mdrCarba = document.getElementById('mdr_carba').checked;
+  var altoMDR = mdrEsbl || mdrCarba;
+  var modMDR = mdrOsp || mdrRsa;
+
+  var sepsi = document.getElementById('sepsi').checked;
+  var cirrosi = document.getElementById('cirrosi').checked;
+  var immunodep = document.getElementById('immunodep').checked;
+  var diabete = document.getElementById('diabete').checked;
+  var endocardite = document.getElementById('endocardite').checked;
+  var viaggio = document.getElementById('viaggio').checked;
+  var chirurgia = document.getElementById('chirurgia').checked;
+  var bilStent = document.getElementById('biliary_stent').checked;
+  var allergiaIgE = document.getElementById('allergia_ige').checked;
+  var allergiaNoIgE = document.getElementById('allergia_noige').checked;
+
+  var ircSuffix = irc ? '<br><em>Adeguare posologia a eGFR (' + gfr + ' mL/min)</em>' : '';
+
+  var atb = '', durata = '', monitoraggio = '', warnings = '', sourceControl = '', linee = '';
+
+  var tipoLabel = {
+    ascesso_ep: 'Ascesso epatico piogeno',
+    ascesso_am: 'Ascesso epatico amebico',
+    ascesso_sp: 'Ascesso splenico',
+    ascesso_pr: 'Ascesso perirenale / retroperitoneale',
+    sbp: 'Peritonite batterica spontanea (SBP)',
+    peritonite_sec: 'Peritonite secondaria',
+    colangite: 'Colangite acuta – Grado ' + grade,
+    colecistite: 'Colecistite acuta – Grado ' + grade
+  }[tipo] || tipo;
+
+  // ═══════════════════════════════════════════════════
+  // ASCESSO EPATICO PIOGENO
+  // ═══════════════════════════════════════════════════
+  if (tipo === 'ascesso_ep') {
+    warnings += info('note', 'i', 'Ascesso epatico piogeno: agenti principali <strong>E. coli, Klebsiella pneumoniae</strong> (specie in Asia e diabetici), anaerobi (Bacteroides), Streptococchi. Spesso polimicrobico. Fonte biliare (50%), portale, criptogenetica.');
+    if (diabete) warnings += info('warn', '!', '<strong>Diabete mellito:</strong> rischio aumentato di Klebsiella pneumoniae iperviru-lenta (hvKp) con potenziale disseminazione metastatica (endoftalmite, meningite). Emocolture obbligatorie. Valutare fundus oculi se batteriemia da Klebsiella.');
+    sourceControl = info('teal', '+', '<strong>Source control:</strong> drenaggio percutaneo eco/TC-guidato indicato se ascesso > 3 cm o mancata risposta ATB a 72h (WSES 2021). Drenaggio chirurgico se fallimento percutaneo, rottura, ascesso loculato. Ricerca e trattamento della fonte biliare (ERCP se coledocolitiasi).');
+
+    if (altoMDR) {
+      atb = rx('Ascesso epatico piogeno – alto rischio MDR / ESBL (WSES 2021 · ESCMID 2023)',
+        (allergiaIgE
+          ? 'Aztreonam 2 g EV q8h + Metronidazolo 500 mg EV q8h'
+          : 'Meropenem 1 g EV q8h') + ircSuffix, 'amber');
+      warnings += info('danger', '!', 'Rischio carbapenemasi (KPC/OXA-48): ceftazidime-avibactam 2,5 g EV q8h. Consulenza infettivologica urgente.');
+    } else if (sepsi || altoMDR) {
+      atb = rx('Ascesso epatico piogeno – sepsi (WSES 2021 · SSC 2024)',
+        (allergiaIgE
+          ? 'Aztreonam 2 g EV q8h + Metronidazolo 500 mg EV q8h'
+          : 'Piperacillina-tazobactam 4,5 g EV q6h (infusione estesa 4h)') + ircSuffix, 'red');
+    } else {
+      atb = rx('Ascesso epatico piogeno – schema di prima scelta (WSES 2021)',
+        (allergiaIgE
+          ? 'Aztreonam 2 g EV q8h + Metronidazolo 500 mg EV q8h'
+          : 'Amoxicillina-clavulanato 2,2 g EV q8h<br><em>oppure</em> Ceftriaxone 2 g EV q24h + Metronidazolo 500 mg EV q8h') + ircSuffix);
+    }
+    atb += swTab([
+      ['Amox-clav EV', 'Amoxicillina-clavulanato 875/125 mg PO q8h', 'dopo stabilizzazione e drenaggio'],
+      ['Ceftriaxone + Metro EV', 'Ciprofloxacina 500 mg PO q12h + Metronidazolo 500 mg PO q8h', 'solo se sensibile in antibiogramma'],
+      ['Meropenem EV', 'Ertapenem 1 g EV q24h poi switch orale su colture', 'de-escalation']
+    ]);
+    durata = '4-6 settimane totali (EV fino a stabilizzazione clinica + drenaggio adeguato, poi switch orale). Rivalutare con imaging a 4-6 settimane.';
+    monitoraggio = 'Emocolture x2 prima ATB. PCR, bilirubina, transaminasi, emocromo seriati. Ecografia epatica a 48-72h per risposta al drenaggio. TC a 4 settimane.';
+    linee = lg('WSES 2021 (infezioni intra-addominali) · ESCMID 2023', [
+      'Drenaggio percutaneo: indicato se ascesso > 3 cm; riduce la durata ATB (WSES 2021)',
+      'Emocolture positive nel 50-80% dei casi: obbligatorie prima ATB',
+      'Klebsiella pneumoniae iperviru-lenta (hvKp): valutare endoftalmite e meningite se batteriemia (EASL 2022)',
+      'Durata ATB: minimo 4 settimane; ridotta a 2-3 settimane se drenaggio completo (WSES 2021)',
+      'Switch orale: non prima di stabilizzazione clinica e drenaggio adeguato'
+    ]);
+
+  // ═══════════════════════════════════════════════════
+  // ASCESSO EPATICO AMEBICO
+  // ═══════════════════════════════════════════════════
+  } else if (tipo === 'ascesso_am') {
+    warnings += info('note', 'i', 'Ascesso epatico amebico: causato da <strong>Entamoeba histolytica</strong>. Sospettare in: viaggiatori o immigrati da area endemica (Asia, Africa, America Latina), giovani maschi, contenuto "pasta di acciughe" all\'ecografia. Sierologia (ELISA IgG anti-Entamoeba) positiva nel 95% dei casi.');
+    if (!viaggio && !immunodep) warnings += info('warn', '!', 'Nessuna esposizione in area endemica segnalata. Confermare diagnosi con sierologia ELISA prima di iniziare metronidazolo. Considerare ascesso piogeno in diagnosi differenziale.');
+
+    atb = rx('Ascesso epatico amebico – prima scelta (EASL 2022 · WHO 2019)',
+      'Metronidazolo 750 mg EV/PO q8h x 10 giorni<br><em>oppure (se via orale disponibile)</em> Metronidazolo 800 mg PO q8h x 10 giorni');
+    atb += rx('Terapia luminale (obbligatoria al termine del metronidazolo)',
+      'Paromomicina 500 mg PO q8h x 7 giorni<br><em>Elimina i cisti intestinali residui; senza terapia luminale il 40-70% dei pazienti rimane portatore intestinale (EASL 2022)</em>', 'teal');
+    atb += info('ok', 'v', '<strong>Drenaggio:</strong> nella maggioranza dei casi NON necessario. Indicazioni al drenaggio: ascesso > 10 cm, mancata risposta a metronidazolo a 72h, rischio di rottura imminente (lobo sinistro, adiacente al pericardio), sovra-infezione batterica sospetta (EASL 2022 · WSES 2021).');
+
+    if (sepsi) {
+      warnings += info('danger', '!', 'Segni sistemici di sepsi: escludere sovra-infezione batterica. Aggiungere schema anti-batterico empirico (vedere ascesso epatico piogeno) fino a esclusione colturale.');
+    }
+    durata = 'Metronidazolo: 10 giorni. Paromomicina luminale: 7 giorni dopo metronidazolo. Totale: 17 giorni.';
+    monitoraggio = 'Sierologia ELISA IgG anti-Entamoeba (alta specificita). Ecografia a 72h per risposta. PCR, emocromo, transaminasi. Ricerca E. histolytica nelle feci (sensibilita bassa in forma invasiva).';
+    linee = lg('EASL 2022 · WHO 2019 (amebiasi) · WSES 2021', [
+      'Metronidazolo: efficace nel 90% degli ascessi amebici non complicati (EASL 2022)',
+      'Terapia luminale con paromomicina: obbligatoria per eradicare il serbatoio intestinale (EASL 2022)',
+      'Drenaggio: riservato ai casi con rischio di rottura o mancata risposta clinica (WSES 2021)',
+      'Diagnosi: sierologia ELISA IgG sensibilita 95%; Ag fecale e PCR fecale utili',
+      'Tinidazolo 2 g PO q24h x 5 giorni: alternativa efficace al metronidazolo (WHO 2019)'
+    ]);
+
+  // ═══════════════════════════════════════════════════
+  // ASCESSO SPLENICO
+  // ═══════════════════════════════════════════════════
+  } else if (tipo === 'ascesso_sp') {
+    warnings += info('note', 'i', 'Ascesso splenico: raro (0,05-0,07% delle autopsie). Cause principali: disseminazione ematogena da <strong>endocardite</strong> (S. aureus, Streptococchi viridans), immunodepressione, emoglobinopatie (drepanocitosi), trauma. Mortalita elevata se non trattato.');
+    if (endocardite) warnings += info('danger', '!', 'Endocardite sospetta/documentata: ascesso splenico settico. Emocolture x3 prima ATB. Ecocardiogramma transesofageo urgente. Schema ATB in linea con agente causale dell\'endocardite.');
+
+    sourceControl = info('teal', '+', '<strong>Source control:</strong> splenectomia laparoscopica (trattamento definitivo) o drenaggio percutaneo eco-guidato (in pazienti non candidabili a chirurgia). Splenectomia preferita se ascesso multiplo, loculato o mancata risposta a drenaggio (WSES 2021). Vaccinare post-splenectomia: pneumococco, meningococco, Hib.');
+
+    if (altoMDR || immunodep) {
+      atb = rx('Ascesso splenico – immunodepresso o MDR (WSES 2021)',
+        (allergiaIgE
+          ? 'Aztreonam 2 g EV q8h + Metronidazolo 500 mg EV q8h + Vancomicina 25-30 mg/kg/die EV'
+          : 'Meropenem 1 g EV q8h + Vancomicina 25-30 mg/kg/die EV') + ircSuffix, 'amber');
+    } else {
+      atb = rx('Ascesso splenico – schema empirico (WSES 2021)',
+        (allergiaIgE
+          ? 'Aztreonam 2 g EV q8h + Metronidazolo 500 mg EV q8h'
+          : 'Piperacillina-tazobactam 4,5 g EV q6h<br><em>oppure</em> Ceftriaxone 2 g EV q24h + Metronidazolo 500 mg EV q8h') +
+        (endocardite ? '<br>+ Vancomicina 25-30 mg/kg/die EV (se S. aureus sospetto)' : '') + ircSuffix);
+    }
+    durata = '4-6 settimane (EV fino a source control, poi switch orale su colture). Rivalutare con imaging a 4 settimane.';
+    monitoraggio = 'Emocolture x3 prima ATB. Ecocardiogramma TE se endocardite sospetta. PCR, emocromo. TC addome a 48-72h.';
+    linee = lg('WSES 2021 · IDSA 2014 (endocardite)', [
+      'Ascesso splenico da endocardite: outcome dipende dalla cura dell\'infezione primaria (IDSA 2014)',
+      'Splenectomia: indicata se ascesso multiplo, loculato o rottura (WSES 2021)',
+      'Post-splenectomia: vaccinare contro pneumococco (PCV15/PCV20), meningococco ACWY e B, Hib',
+      'Profilassi antibiotica post-splenectomia: amoxicillina 500 mg PO q24h a vita (o almeno 5 anni)'
+    ]);
+
+  // ═══════════════════════════════════════════════════
+  // ASCESSO PERIRENALE
+  // ═══════════════════════════════════════════════════
+  } else if (tipo === 'ascesso_pr') {
+    warnings += info('note', 'i', 'Ascesso perirenale / retroperitoneale: complicanza di pielonefrite (BGN: E. coli, Klebsiella) o disseminazione ematogena (S. aureus). Diagnosi spesso tardiva. TC addome con mdc: gold standard. Sospettare se pielonefrite non risponde a 72h di ATB.');
+    sourceControl = info('teal', '+', '<strong>Source control:</strong> drenaggio percutaneo TC/eco-guidato indicato se ascesso > 3 cm o mancata risposta ATB (WSES 2021). Drenaggio chirurgico se fallimento percutaneo o coinvolgimento retroperitoneale esteso. Escludere litiasi ostruttiva associata (eco/TC).');
+
+    var mrsaAscPr = endocardite || (mdrOsp && !mdrEsbl);
+    if (altoMDR) {
+      atb = rx('Ascesso perirenale – rischio ESBL/MDR (WSES 2021 · ESCMID 2023)',
+        (allergiaIgE
+          ? 'Aztreonam 2 g EV q8h'
+          : 'Meropenem 1 g EV q8h') + ircSuffix, 'amber');
+    } else if (mrsaAscPr) {
+      atb = rx('Ascesso perirenale – rischio S. aureus / ematogeno (WSES 2021)',
+        (allergiaIgE
+          ? 'Vancomicina 25-30 mg/kg/die EV'
+          : 'Cefazolina 2 g EV q8h<br><em>oppure</em> Vancomicina se MRSA sospetto') + ircSuffix);
+    } else {
+      atb = rx('Ascesso perirenale – schema empirico prima scelta (WSES 2021)',
+        (allergiaIgE
+          ? 'Aztreonam 2 g EV q8h'
+          : 'Ceftriaxone 2 g EV q24h') + ircSuffix);
+      atb += swTab([
+        ['Ceftriaxone EV', 'Ciprofloxacina 500 mg PO q12h', 'solo se sensibile in antibiogramma'],
+        ['Ceftriaxone EV', 'Amoxicillina-clavulanato 875/125 mg q8h', 'se sensibile']
+      ]);
+    }
+    durata = '2-4 settimane (EV fino a stabilizzazione e drenaggio, poi switch orale su colture). Non meno di 14 giorni.';
+    monitoraggio = 'Emocolture x2, urinocoltura, PCR, creatinina, emocromo. TC a 48-72h per risposta al drenaggio.';
+    linee = lg('WSES 2021 · EAU 2023 (complicanze pielonefrite)', [
+      'TC con mdc: gold standard per diagnosi e guida al drenaggio (WSES 2021)',
+      'Drenaggio obbligatorio se ascesso > 3 cm: ATB da sola insufficiente (EAU 2023)',
+      'S. aureus ematogeno: considerare ecocardiogramma per escludere endocardite',
+      'Switch orale: solo dopo drenaggio adeguato e stabilizzazione clinica'
+    ]);
+
+  // ═══════════════════════════════════════════════════
+  // SBP
+  // ═══════════════════════════════════════════════════
+  } else if (tipo === 'sbp') {
+    warnings += info('note', 'i', '<strong>SBP (Peritonite Batterica Spontanea):</strong> diagnosi con PMN &gt; 250/mm&#179; nel liquido ascitico. Non attendere la coltura per iniziare ATB. Agenti principali: E. coli, Klebsiella, Streptococchi. Mortalita in-ospedale 20-30% (EASL 2018).');
+    warnings += info('warn', '!', '<strong>Paracentesi diagnostica urgente</strong> in tutti i cirrotici ricoverati con ascite: PMN &gt; 250/mm&#179; = SBP anche in assenza di sintomi. Raccogliere liquido per coltura (inoculo diretto in flaconi emocoltura).');
+
+    if (altoMDR || bilStent) {
+      atb = rx('SBP con rischio MDR / nosocomial-SBP (EASL 2018 · ESCMID 2023)',
+        (allergiaIgE
+          ? 'Aztreonam 2 g EV q8h + Vancomicina 15-20 mg/kg EV q12h'
+          : 'Piperacillina-tazobactam 4,5 g EV q6h<br><em>oppure</em> Meropenem 1 g EV q8h (se rischio ESBL/KPC)') + ircSuffix, 'amber');
+      warnings += info('warn', '!', 'SBP nosocomiale (insorgenza > 48h dal ricovero): spettro polimicrobico e MDR. Schema empirico piu ampio. Adeguare su colture del liquido ascitico (EASL 2018).');
+    } else {
+      atb = rx('SBP community-acquired – prima scelta (EASL 2018 · ESCMID 2023)',
+        (allergiaIgE
+          ? 'Aztreonam 2 g EV q8h'
+          : 'Cefotaxime 2 g EV q8h<br><em>oppure</em> Ceftriaxone 2 g EV q24h') + ircSuffix);
+    }
+
+    atb += rx('Albumina EV – obbligatoria (EASL 2018)',
+      'Albumina 20%: 1,5 g/kg EV al giorno 1, poi 1 g/kg al giorno 3<br><em>Riduce la sindrome epato-renale e la mortalita del 30% (Sort et al., NEJM 1999)</em>', 'teal');
+
+    atb += info('teal', '+', '<strong>Profilassi secondaria SBP (EASL 2018):</strong> Norfloxacina 400 mg PO q24h a lungo termine (o fino a trapianto) dopo il primo episodio di SBP. In centri con alta resistenza ai fluorochinoloni: TMP-SMX 160/800 mg PO 5 giorni/settimana.');
+
+    durata = '5 giorni (rivalutare con paracentesi di controllo a 48h: PMN deve scendere > 25% rispetto al basale).';
+    monitoraggio = 'Paracentesi di controllo a 48h (PMN). Creatinina, azotemia (sindrome epato-renale), sodiemia, bilirubina. Emocolture x2 prima ATB.';
+    linee = lg('EASL 2018 (cirrosi e SBP) · ESCMID 2023', [
+      'Albumina EV: riduce sindrome epato-renale e mortalita; non omettere (Sort et al., NEJM 1999 - EASL 2018)',
+      'Coltura liquido ascitico: inoculare direttamente in flaconi emocoltura (sensibilita 80% vs 50% con metodo classico)',
+      'Paracentesi di controllo a 48h: indispensabile per verificare risposta; PMN deve scendere > 25%',
+      'Profilassi secondaria: obbligatoria dopo primo episodio (rischio recidiva 70% a 1 anno senza profilassi)',
+      'SBP nosocomiale: frequente MDR; considerare schema ampio empiricamente (ESCMID 2023)'
+    ]);
+
+  // ═══════════════════════════════════════════════════
+  // PERITONITE SECONDARIA
+  // ═══════════════════════════════════════════════════
+  } else if (tipo === 'peritonite_sec') {
+    warnings += info('danger', '!', '<strong>Peritonite secondaria – urgenza chirurgica.</strong> Fonte principale: perforazione viscerale, complicanza anastomotica, appendicite/diverticolite perforata. Polimicrobica (aerobi + anaerobi). Chirurgia urgente e il trattamento definitivo; ATB complementare.');
+    sourceControl = info('danger', '!', '<strong>Source control chirurgico PRIORITARIO (WSES 2021 · SSC 2024):</strong> laparotomia / laparoscopia esplorativa urgente. Controllo della fonte (sutura, resezione, stomia, drenaggio). ATB da sola non sufficiente in perforazione. Contattare chirurgia d\'urgenza immediatamente.');
+
+    if (altoMDR || chirurgia) {
+      atb = rx('Peritonite secondaria – rischio MDR / post-chirurgica (WSES 2021 · ESCMID 2023)',
+        (allergiaIgE
+          ? 'Aztreonam 2 g EV q8h + Metronidazolo 500 mg EV q8h + Vancomicina 25-30 mg/kg/die EV'
+          : 'Meropenem 1 g EV q8h<br><em>oppure</em> Piperacillina-tazobactam 4,5 g EV q6h + Vancomicina 25-30 mg/kg/die EV (se MRSA)') + ircSuffix, 'red');
+      warnings += info('warn', '!', 'Peritonite post-chirurgica (entro 30 giorni da chirurgia addominale): alto rischio MDR, Candida, Enterococcus. Considerare copertura antifungina empirica con caspofungina 70 mg EV il giorno 1, poi 50 mg/die (WSES 2021).');
+    } else {
+      atb = rx('Peritonite secondaria comunitaria – prima scelta (WSES 2021)',
+        (allergiaIgE
+          ? 'Aztreonam 2 g EV q8h + Metronidazolo 500 mg EV q8h'
+          : 'Piperacillina-tazobactam 4,5 g EV q6h (infusione estesa 4h)<br><em>oppure</em> Ceftriaxone 2 g EV q24h + Metronidazolo 500 mg EV q8h') + ircSuffix);
+    }
+    if (sepsi) {
+      atb += info('danger', '!', 'Sepsi/shock settico: attivare bundle SSC 2024. Per vasopressori, steroidi e gestione emodinamica vedere la app Sepsi.');
+    }
+    durata = '4 giorni se source control adeguato (dati da SMART trial, Sawyer et al., NEJM 2015). Prolungare solo se source control incompleto o mancata risposta clinica.';
+    monitoraggio = 'Emocolture x2 prima ATB. PCR, lattato, emocromo, creatinina, lipasi. TC addome con mdc. Colture intraoperatorie (liquido peritoneale).';
+    linee = lg('WSES 2021 · Sawyer et al. NEJM 2015', [
+      'ATB 4 giorni post-source control: non inferiore a 8 giorni (Sawyer et al., NEJM 2015)',
+      'Source control incompleto: l\'ATB non compensa; rivalutare possibilita di reintervento (WSES 2021)',
+      'Colture intraoperatorie: guidano de-escalation; raccogliere sempre se possibile',
+      'Candida: copertura empirica se peritonite ricorrente, paziente immunodepresso o post-chirurgica (WSES 2021)',
+      'Enterococcus: non coprire routinariamente in peritonite comunitaria; copertura in post-chirurgica (WSES 2021)'
+    ]);
+
+  // ═══════════════════════════════════════════════════
+  // COLANGITE ACUTA
+  // ═══════════════════════════════════════════════════
+  } else if (tipo === 'colangite') {
+    warnings += info('note', 'i', '<strong>Triade di Charcot:</strong> febbre + dolore ipocondrio destro + ittero. Pentade di Reynolds (Grado III): + sepsi + alterazione del sensorio. Ostruzione biliare quasi sempre alla base (coledocolitiasi, stenosi, stent). Decompressione biliare urgente = trattamento definitivo.');
+
+    if (grade === 3) {
+      warnings += info('danger', '!', '<strong>Colangite Grado III – urgenza.</strong> Disfunzione d\'organo presente. ERCP/drenaggio biliare urgente (entro 24h, idealmente entro 12h). Supporto emodinamico. Consulenza gastroenterologia/chirurgia urgente.');
+      sourceControl = info('danger', '!', '<strong>Decompressione biliare urgente (entro 12-24h):</strong> ERCP con sfinterotomia e rimozione calcoli; o drenaggio biliare per via percutanea (PTBD) se ERCP non fattibile. La decompressione e il trattamento definitivo; ATB ponte fino alla procedura (Tokyo Guidelines 2018).');
+      atb = rx('Colangite Grado III – urgenza (Tokyo Guidelines 2018)',
+        (allergiaIgE
+          ? 'Aztreonam 2 g EV q8h + Metronidazolo 500 mg EV q8h'
+          : (altoMDR || bilStent
+              ? 'Meropenem 1 g EV q8h'
+              : 'Piperacillina-tazobactam 4,5 g EV q6h (infusione estesa 4h)')) + ircSuffix, 'red');
+    } else if (grade === 2) {
+      warnings += info('warn', '!', '<strong>Colangite Grado II – moderata.</strong> ERCP entro 24-48h. Ricovero obbligatorio. ATB EV fino a decompressione biliare.');
+      sourceControl = info('teal', '+', '<strong>ERCP entro 24-48h:</strong> sfinterotomia + rimozione calcoli o posizionamento stent. Rivalutare ogni 24h; se deterioramento passare a Grado III.');
+      atb = rx('Colangite Grado II (Tokyo Guidelines 2018)',
+        (allergiaIgE
+          ? 'Aztreonam 2 g EV q8h + Metronidazolo 500 mg EV q8h'
+          : (altoMDR || bilStent
+              ? 'Piperacillina-tazobactam 4,5 g EV q6h'
+              : 'Ceftriaxone 2 g EV q24h + Metronidazolo 500 mg EV q8h')) + ircSuffix, 'amber');
+    } else {
+      warnings += info('ok', 'v', '<strong>Colangite Grado I – lieve.</strong> Risposta attesa ad ATB entro 24-48h. Se non miglioramento: rivalutare grado e pianificare ERCP.');
+      sourceControl = info('teal', '+', 'ERCP programmata (non urgente) per trattamento della causa sottostante (coledocolitiasi). Rivalutare a 24-48h.');
+      atb = rx('Colangite Grado I (Tokyo Guidelines 2018)',
+        (allergiaIgE
+          ? 'Aztreonam 2 g EV q8h'
+          : 'Amoxicillina-clavulanato 2,2 g EV q8h<br><em>oppure</em> Ceftriaxone 2 g EV q24h + Metronidazolo 500 mg EV q8h') + ircSuffix);
+      atb += swTab([
+        ['Amox-clav EV', 'Amoxicillina-clavulanato 875/125 mg PO q8h', 'dopo ERCP e stabilizzazione'],
+        ['Ceftriaxone EV', 'Ciprofloxacina 500 mg PO q12h + Metronidazolo 500 mg PO q8h', 'solo se sensibile']
+      ]);
+    }
+    if (bilStent) warnings += info('warn', '!', 'Stent biliare o ERCP precedente: rischio aumentato di MDR (ESBL, Enterococcus, Candida). Allargare spettro empiricamente (Piperacillina-tazobactam o Meropenem).');
+    durata = 'Grado I: 5-7 giorni totali (EV fino a ERCP, poi switch orale). Grado II-III: 7-14 giorni (EV fino a stabilizzazione post-decompressione, poi switch orale).';
+    monitoraggio = 'Emocolture x2 prima ATB. Bilirubina, GGT, fosfatasi alcalina, transaminasi seriati. Ecografia biliare urgente. PCR, emocromo, coagulazione.';
+    linee = lg('Tokyo Guidelines 2018 (TG18) · WSES 2021', [
+      'Decompressione biliare: trattamento definitivo; ATB e solo misura ponte (TG18)',
+      'Grado III: ERCP entro 12-24h; supporto intensivo (TG18)',
+      'Emocolture positive nel 20-70% dei casi; raccogliere sempre prima ATB',
+      'Stent biliare: ampio rischio MDR; ampliare spettro empiricamente (TG18 · ESCMID 2023)',
+      'Switch orale: dopo ERCP e stabilizzazione (bilirubina in riduzione, afebbrile > 24h)'
+    ]);
+
+  // ═══════════════════════════════════════════════════
+  // COLECISTITE ACUTA
+  // ═══════════════════════════════════════════════════
+  } else if (tipo === 'colecistite') {
+    warnings += info('note', 'i', '<strong>Colecistite acuta:</strong> infiammazione della colecisti, calcolitica nel 90% dei casi. Segno di Murphy positivo. Ecografia: ispessimento parete > 4 mm, calcoli, liquido pericolecistico. Diagnosi di esclusione: colangite (no ittero tipicamente), appendicite, ulcera peptica perforata.');
+
+    if (grade === 3) {
+      warnings += info('danger', '!', '<strong>Colecistite Grado III – urgenza.</strong> Disfunzione d\'organo. Colecistectomia laparoscopica urgente (entro 24h) o colecistostomia percutanea se paziente non operabile. ATB EV immediata.');
+      sourceControl = info('danger', '!', '<strong>Colecistectomia laparoscopica urgente (entro 24h):</strong> trattamento definitivo. Se rischio chirurgico proibitivo: colecistostomia percutanea eco-guidata come bridge. Consulenza chirurgica urgente (Tokyo Guidelines 2018).');
+      atb = rx('Colecistite Grado III (Tokyo Guidelines 2018)',
+        (allergiaIgE
+          ? 'Aztreonam 2 g EV q8h + Metronidazolo 500 mg EV q8h'
+          : (altoMDR
+              ? 'Meropenem 1 g EV q8h'
+              : 'Piperacillina-tazobactam 4,5 g EV q6h')) + ircSuffix, 'red');
+    } else if (grade === 2) {
+      warnings += info('warn', '!', '<strong>Colecistite Grado II – moderata.</strong> Colecistectomia laparoscopica precoce (entro 72h dall\'insorgenza dei sintomi) raccomandata se tecnicamente fattibile (TG18). ATB EV fino all\'intervento.');
+      sourceControl = info('teal', '+', 'Colecistectomia laparoscopica precoce (entro 72h): riduce recidive e complicanze rispetto alla chirurgia differita (TG18). Se non fattibile: ATB + rivalutazione per chirurgia elettiva a 6-8 settimane.');
+      atb = rx('Colecistite Grado II (Tokyo Guidelines 2018)',
+        (allergiaIgE
+          ? 'Aztreonam 2 g EV q8h + Metronidazolo 500 mg EV q8h'
+          : 'Ceftriaxone 2 g EV q24h + Metronidazolo 500 mg EV q8h<br><em>oppure</em> Amoxicillina-clavulanato 2,2 g EV q8h') + ircSuffix, 'amber');
+    } else {
+      warnings += info('ok', 'v', '<strong>Colecistite Grado I – lieve.</strong> Colecistectomia laparoscopica precoce (entro 72h) raccomandata anche in Grado I se le condizioni del paziente lo permettono (TG18). ATB come supporto.');
+      sourceControl = info('teal', '+', 'Colecistectomia precoce preferita alla differita anche in Grado I: riduce il rischio di recidiva nel periodo di attesa (TG18). Discutere con il chirurgo.');
+      atb = rx('Colecistite Grado I (Tokyo Guidelines 2018)',
+        (allergiaIgE
+          ? 'Amoxicillina-clavulanato 875/125 mg PO q8h (se lieve, orale accettata)'
+          : 'Amoxicillina-clavulanato 875/125 mg PO q8h<br><em>oppure</em> Cefazolina 2 g EV q8h (se via orale non praticabile)') + ircSuffix, 'teal');
+      atb += swTab([
+        ['Amox-clav EV', 'Amoxicillina-clavulanato 875/125 mg PO q8h', 'post-colecistectomia se necessario'],
+        ['Cefazolina EV', 'Cefalessina 500 mg PO q6h', '']
+      ]);
+    }
+    durata = 'Grado I: 24h dopo colecistectomia (TG18: ATB non necessaria post-colecistectomia se colecistite lieve). Grado II-III: 5-7 giorni (EV fino a chirurgia o stabilizzazione, poi switch orale).';
+    monitoraggio = 'Ecografia addominale urgente. GB, PCR, bilirubina, transaminasi, lipasi. Emocolture x2 se febbre > 38.5°C. Valutare colangio-RM se sospetto coledocolitiasi associata.';
+    linee = lg('Tokyo Guidelines 2018 (TG18) · WSES 2021', [
+      'Colecistectomia precoce (entro 72h): superiore alla differita in Grado I e II; riduce recidive nel periodo attesa (TG18)',
+      'Grado III: colecistostomia percutanea come bridge se paziente non operabile (TG18)',
+      'ATB post-colecistectomia in Grado I: non necessaria se resezione completa (TG18)',
+      'Colangio-RM: se sospetto coledocolitiasi associata (bilirubina elevata, dilatazione via biliare)',
+      'Colecistite acalcolitica (5-10%): grave, spesso in ICU/post-chirurgica; mortalita piu alta (TG18)'
+    ]);
+  }
+
+  // Warning universali
+  if (irc) {
+    warnings += info('warn', '!', 'eGFR calcolato: <strong>' + gfr + ' mL/min</strong>. Adeguare posologia di piperacillina-tazobactam, meropenem, aztreonam. Evitare aminoglicosidi.');
+  }
+  if (bili > 3 && (tipo === 'colangite' || tipo === 'colecistite' || tipo === 'sbp')) {
+    warnings += info('warn', '!', 'Bilirubina totale: <strong>' + bili + ' mg/dL</strong>. Ceftriaxone: da evitare se bilirubina > 5 mg/dL (competizione per il legame all\'albumina; rischio ittero nucleare neonatale – non rilevante nell\'adulto ma preferire cefotaxime in cirrosi avanzata).');
+  }
+
+  // Chips
+  var chipsHtml = [
+    chip(tipoLabel, (tipo === 'peritonite_sec' || tipo === 'fascite') ? 'red' : tipo === 'colangite' && grade === 3 ? 'red' : tipo === 'colecistite' && grade === 3 ? 'red' : 'blue'),
+    chip('eGFR: ' + gfr + ' mL/min', irc ? 'red' : 'green'),
+    altoMDR ? chip('Alto rischio MDR', 'red') : (modMDR ? chip('Rischio MDR', 'amber') : ''),
+    sepsi ? chip('Sepsi', 'red') : '',
+    cirrosi ? chip('Cirrosi', 'amber') : '',
+    immunodep ? chip('Immunodepresso', 'amber') : '',
+    viaggio ? chip('Area endemica', 'teal') : '',
+    bilStent ? chip('Stent biliare', 'orange') : '',
+    endocardite ? chip('Endocardite', 'red') : '',
+    allergiaIgE ? chip('Allergia IgE beta-latt.', 'neutral') : ''
+  ].filter(Boolean).join('');
+
+  var body =
+    '<div class="result-chips">' + chipsHtml + '</div>' +
+    warnings +
+    (sourceControl ? '<div class="section-label">Source control</div>' + sourceControl : '') +
+    '<div class="section-label">Schema terapeutico</div>' +
+    atb +
+    '<div class="section-label">Durata raccomandata</div>' +
+    '<p style="font-size:0.9rem;">' + durata + '</p>' +
+    '<div class="info-box note" style="margin-top:8px;"><span class="bi">&#128300;</span><div><strong>Monitoraggio:</strong> ' + monitoraggio + '</div></div>' +
+    '<hr class="divider">' +
+    info('teal', '&#128260;', '<strong>De-escalation ATB:</strong> rivalutare a 48-72h con colture e risposta clinica. Scalare allo spettro piu ristretto appena possibile. Procalcitonina utile per guidare la durata (target &lt; 0,25 mcg/L) (ESCMID 2023).') +
+    linee +
+    '<div class="timestamp">Generato il ' + oggi() + ' · Uso clinico interno · Non sostituisce la valutazione medica</div>';
+
+  var el = document.getElementById('risultato');
+  el.innerHTML =
+    '<div class="result-header">' +
+    '<h3>&#127818; ' + tipoLabel + ' – Piano Terapeutico</h3>' +
+    '<div class="rmeta">eGFR ' + gfr + ' mL/min · Bilirubina ' + bili + ' mg/dL · ' + oggi() + '</div>' +
+    '</div>' +
+    '<div class="result-body">' + body + '</div>';
+  el.style.display = 'block';
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
+</body>
+</html>
