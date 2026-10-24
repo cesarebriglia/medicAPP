@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Accessi Vascolari – PICC/CVC: Guida all’indicazione</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f4f6f9;--card:#fff;--tx:#1b2430;--mut:#5b6777;--bd:#d8dee7;--ac:#0b5ea8;--ok:#e3f4e8;--okb:#2e8b57;--wa:#fff3d6;--wab:#c98a00;--no:#fde4e4;--nob:#c0392b;--inf:#e6f0fb;--infb:#0b5ea8}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10151c;--card:#1a212b;--tx:#e8edf3;--mut:#9aa7b7;--bd:#2c3644;--ac:#5aa9ec;--ok:#16301f;--okb:#4cc380;--wa:#38300f;--wab:#e3b341;--no:#3a1a1a;--nob:#ef6b5c;--inf:#14283d;--infb:#5aa9ec}}
+:root[data-theme="dark"]{--bg:#10151c;--card:#1a212b;--tx:#e8edf3;--mut:#9aa7b7;--bd:#2c3644;--ac:#5aa9ec;--ok:#16301f;--okb:#4cc380;--wa:#38300f;--wab:#e3b341;--no:#3a1a1a;--nob:#ef6b5c;--inf:#14283d;--infb:#5aa9ec}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.w{max-width:780px;margin:0 auto;padding:16px}
+h1{font-size:1.3rem;margin:4px 0 2px}.sub{color:var(--mut);font-size:.9rem;margin:0 0 14px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:12px}
+label.l{display:block;font-weight:600;font-size:.9rem;margin:10px 0 4px}
+select{width:100%;padding:10px;border-radius:8px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-size:1rem}
+.ck{display:flex;gap:8px;align-items:flex-start;padding:8px 0;font-size:.95rem}
+.ck input{margin-top:4px;width:18px;height:18px;flex:none}
+.res{border-left:5px solid;border-radius:8px;padding:10px 12px;margin:8px 0}
+.res b{display:block;margin-bottom:2px}
+.ok{background:var(--ok);border-color:var(--okb)}.wa{background:var(--wa);border-color:var(--wab)}.no{background:var(--no);border-color:var(--nob)}.inf{background:var(--inf);border-color:var(--infb)}
+h2{font-size:1.05rem;margin:0 0 6px}
+.sm{font-size:.82rem;color:var(--mut)}.src{display:block;font-size:.78rem;color:var(--mut);margin-top:3px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:.85rem;min-width:600px}th,td{border-bottom:1px solid var(--bd);padding:6px 4px;text-align:left;vertical-align:top}th{color:var(--mut);font-weight:600}
+td input[type=number],.dd{padding:6px;border-radius:6px;border:1px solid var(--bd);background:var(--bg);color:var(--tx)}td input[type=number]{width:70px}.dd{width:90px;padding:8px}
+tr.fit td:first-child{box-shadow:inset 4px 0 0 var(--okb)}tr.best{background:var(--ok)}
+details{margin-top:8px}summary{cursor:pointer;font-weight:600;font-size:.9rem}details p{margin:6px 0;font-size:.85rem}
+ol{padding-left:20px;margin:6px 0}ol li{margin-bottom:5px}
+footer{margin-top:18px;padding:12px;border-top:1px solid var(--bd);text-align:center;font-size:.85rem;font-weight:600}
+</style>
+</head>
+<body>
+<div class="w">
+<h1>Accessi venosi centrali: PICC / CVC</h1>
+<p class="sub">Supporto decisionale per l’adulto: raccomandazioni MAGIC (RAND/UCLA) e GAVeCeLT 2024 a confronto.</p>
+
+<div class="card">
+<h2>Scenario clinico</h2>
+<label class="l" for="ctx">Contesto</label>
+<select id="ctx">
+<option value="ward">Paziente ricoverato (area medica)</option>
+<option value="icu">Critico / instabilità emodinamica / urgenza</option>
+<option value="onc">Paziente oncologico / ematologico</option>
+<option value="pall">Cure palliative / fine vita</option>
+<option value="home">Domicilio / RSA / hospice / day hospital</option>
+</select>
+<div id="oncbox" style="display:none">
+<label class="l" for="onct">Tipo di neoplasia</label>
+<select id="onct">
+<option value="solid">Tumore solido</option>
+<option value="heme">Neoplasia ematologica acuta, chemioterapia urgente</option>
+</select>
+</div>
+<label class="l" for="inf">Terapia infusionale prevista</label>
+<select id="inf">
+<option value="per">Compatibile con via periferica (pH 5–9, osmolarità &lt;750–850 mOsm/L, non vescicante)</option>
+<option value="pref">Preferibilmente centrale (es. antibiotici dell’elenco GAVeCeLT, vedi sotto)</option>
+<option value="irr">Necessariamente centrale: vescicanti/irritanti, pH &lt;5 o &gt;9, osmolarità &gt;750–850, NPT, vancomicina, aciclovir, ganciclovir, amfotericina B</option>
+</select>
+<label class="l" for="dur">Durata prevista della terapia</label>
+<select id="dur">
+<option value="1">≤ 5 giorni</option>
+<option value="2">6–14 giorni</option>
+<option value="3">15–30 giorni</option>
+<option value="4">≥ 31 giorni</option>
+</select>
+<label class="l">Fattori aggiuntivi</label>
+<label class="ck"><input type="checkbox" id="diff"> Accesso periferico difficile (vene superficiali non visibili/palpabili)</label>
+<label class="ck"><input type="checkbox" id="hemo"> Monitoraggio emodinamico invasivo o accesso centrale non differibile</label>
+<label class="ck"><input type="checkbox" id="ckd"> Malattia renale cronica stadio ≥3b o dialisi (preservare il patrimonio venoso)</label>
+<label class="ck"><input type="checkbox" id="only"> Unico motivo: prelievi ematici ripetuti o richiesta del curante</label>
+<details><summary>Antibiotici e via di somministrazione (GAVeCeLT 2024, Tab. 1)</summary>
+<p><b>Sicuri per via periferica:</b> azitromicina, aztreonam, caspofungina, cefotaxime, ceftazidime, ceftazidime/avibactam, ceftozolano/tazobactam, ceftriaxone, claritromicina, clindamicina, fluconazolo, levofloxacina, metronidazolo, penicillina, teicoplanina, tigeciclina, voriconazolo.</p>
+<p><b>Preferibilmente via centrale:</b> amoxicillina/clavulanato, ampicillina, anidulafungina, cefazolina, cefepime, ciprofloxacina, colistina, cotrimossazolo, daptomicina, ertapenem, fosfomicina, gentamicina, imipenem, linezolid, meropenem, micafungina, moxifloxacina, oxacillina, pentamidina, piperacillina/tazobactam, rifampicina.</p>
+<p><b>Necessariamente via centrale:</b> aciclovir, amfotericina, ganciclovir, vancomicina.</p>
+<p class="sm">L’elenco GAVeCeLT è più restrittivo di diverse pratiche cliniche correnti: verificare con farmacia e protocolli aziendali.</p></details>
+</div>
+
+<div class="card"><h2>Indicazione</h2><div id="out"></div></div>
+
+<div class="card">
+<h2>Scelta del dispositivo e costi</h2>
+<p class="sm">I dispositivi indicati per lo scenario sono evidenziati. Le tariffe variano per azienda e gara d’acquisto: inserisci i costi locali (impianto, gestione giornaliera) per confrontare il costo totale sul periodo previsto. I valori restano salvati su questo dispositivo.</p>
+<label class="l" for="days">Giorni previsti di utilizzo</label>
+<input type="number" id="days" class="dd" min="1" value="10">
+<div class="tw"><table><thead><tr><th>Dispositivo</th><th>Quando</th><th>Costo relativo</th><th>Indicato</th><th>Impianto (€)</th><th>Gestione/die (€)</th><th>Totale (€)</th></tr></thead><tbody id="dev"></tbody></table></div>
+<p class="sm">Il costo relativo è orientativo. Port e tunnellizzati costano di più all’impianto ma meno al giorno su durate lunghe. Secondo [3] un episodio di sepsi da catetere in terapia intensiva costa oltre 15.000 € e allunga la degenza di oltre 12 giorni: le complicanze evitabili pesano più del prezzo del dispositivo. [3] indica inoltre che PICC valvolati costano di più e non hanno vantaggi documentati, e che pack di inserzione, ECG intracavitario e ancoraggio sottocutaneo sono strategie costo-efficaci.</p>
+</div>
+
+<div class="card sm">
+<b>Bibliografia</b>
+<ol>
+<li>Chopra V, Flanders SA, Saint S, et al. The Michigan Appropriateness Guide for Intravenous Catheters (MAGIC): results from a multispecialty panel using the RAND/UCLA appropriateness method. Ann Intern Med 2015;163(6 Suppl):S1–S39.</li>
+<li>Woller SC, Evans RS, et al. PICC and venous catheter appropriateness (sintesi di MAGIC per il medico ospedaliero). J Hosp Med 2016;11(4):306–310.</li>
+<li>Pittiruti M, Scoppettuolo G (a cura di). Raccomandazioni GAVeCeLT 2024 per la indicazione, l’impianto e la gestione dei dispositivi per accesso venoso. GAVeCeLT; 2024 (www.gavecelt.it). Documento di indirizzo che, come dichiarato dagli autori, non segue la metodologia delle linee guida o delle consensus. L’elenco antibiotici (Tab. 1) deriva da fonti citate in [3] e non consultate direttamente.</li>
+<li>Major A, Paje DG, Taxbro K, et al. The Michigan Appropriateness Guide for Intravenous Catheters in Adult Patients With Cancer (MAGIC-ONC): results from a multispecialty panel using the RAND/UCLA appropriateness method. 2025.</li>
+<li>Pittiruti M. Scelta razionale dell’accesso venoso e Algoritmo GAVeCeLT per la corretta indicazione ai PICC (presentazioni); sistema esperto DAV Expert, GAVeCeLT (www.gavecelt.it).</li>
+</ol>
+<b>Avvertenza.</b> Strumento di supporto, non sostituisce il giudizio clinico né i protocolli aziendali. Le due fonti non coincidono su alcune soglie (es. durata del midline, prelievi ripetuti): l’app segnala le divergenze. Rivalutare ogni giorno la necessità del dispositivo.
+</div>
+
+<footer>Ideato dal dr. C.Briglia (cesarebriglia@gmail.com) con l’apporto di Claude - Antropic</footer>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const OUTS=[];
+function evaluate(){
+  const ctx=$("ctx").value, inf=$("inf").value, dur=+$("dur").value;
+  const diff=$("diff").checked, hemo=$("hemo").checked, ckd=$("ckd").checked, only=$("only").checked;
+  $("oncbox").style.display = ctx==="onc" ? "block" : "none";
+  const o=[]; const add=(c,t,x,s)=>o.push(`<div class="res ${c}"><b>${t}</b>${x}${s?`<span class="src">Fonti: ${s}</span>`:""}</div>`);
+  const crit=(ctx==="icu"||hemo), irrL=(inf==="irr"||(inf==="pref"&&dur>=2));
+
+  if(only){
+    add("wa","Indicazione controversa tra le linee guida","MAGIC: prelievi frequenti o richiesta del curante, da soli, non giustificano PICC/CVC. GAVeCeLT include i prelievi ripetuti tra le indicazioni all’accesso centrale, ma indica il midline con punta corretta come unico catetere periferico utilizzabile per prelievi continuativi nel paziente con accesso difficile. Valutare il midline prima di un accesso centrale.","[1][3]");
+  } else if(crit){
+    if(dur<=2) add("ok","CICC o FICC non tunnellizzato (eco-guidato)","Instabilità o urgenza: dispositivo centrale non tunnellizzato. Se inserito in emergenza va rimosso entro 24–48 ore e sostituito se ancora necessario. Il PICC va evitato in pronto soccorso.","[1][3]");
+    else add("ok","PICC appropriato (anche multilume)","Accesso centrale o monitoraggio invasivo con durata ≥15 giorni: nel ricoverato il PICC è la prima scelta centrale in elezione, meno rischioso del CICC all’inserzione; in terapia intensiva sono indicati i PICC trilume. Con instabilità emodinamica persiste l’indicazione a CICC.","[1][3]");
+  } else if(ctx==="onc"){
+    const t=$("onct").value;
+    if(t==="heme") add("ok","PICC a doppio lume o CVC tunnellizzato","Neoplasia ematologica acuta con chemioterapia urgente: dispositivi giudicati appropriati indipendentemente da intensità e infusato.","[4]");
+    else if(dur>=4) add("ok","PICC-port o port toracico; tunnellizzato se uso frequente","Terapie cicliche ≥3–4 mesi: con uso infrequente (es. chemioterapia ogni circa 3 settimane) il port è l’accesso ideale, PICC-port se le vene del braccio sono disponibili. Con uso frequente o continuo preferire catetere tunnellizzato cuffiato o con ancoraggio sottocutaneo.","[3][4]");
+    else if(irrL||dur===3) add("ok","PICC (medio termine)","Fino a 3–4 mesi il PICC è l’accesso ideale anche in ambito extraospedaliero; MAGIC lo considera appropriato per irritanti/vescicanti a qualsiasi durata.","[1][3]");
+    else add("wa","Preferire accesso periferico","Chemioterapia periferica compatibile di breve durata: valutare cannula lunga o midline; nel paziente oncologico il rischio trombotico del PICC può superare il beneficio.","[1][3]");
+  } else if(ctx==="pall"){
+    add("ok","PICC appropriato","Nel paziente oncologico in cure palliative il PICC è l’accesso ideale a medio termine e può essere mantenuto se facilita il comfort. Se controindicato: CICC tunnellizzato non cuffiato o FICC con emergenza a metà coscia.","[1][3]");
+  } else if(irrL){
+    add("ok","PICC appropriato (qualsiasi durata)","Infusione non compatibile con la via periferica: indicazione centrale. In ambito extraospedaliero il PICC è l’accesso ideale fino a 3–4 mesi (CICC solo se tunnellizzato).","[1][3]");
+    if(dur>=4) add("inf","Oltre 3–4 mesi","Accesso a lungo termine: port se uso infrequente, catetere tunnellizzato (cuffiato o con ancoraggio sottocutaneo) se uso frequente o continuo (es. NPT).","[3]");
+  } else if(inf==="pref"){
+    add("wa","Via centrale preferibile, ciclo breve","Per cicli ≤5 giorni con farmaci a rischio flebitico la scelta va valutata caso per caso con stretta sorveglianza del sito; se la terapia si prolunga, passare a PICC.","[3]");
+  } else if(ctx==="home"){
+    if(dur<=2) add("wa","Midline o cannula lunga; PICC non appropriato","A domicilio sono idonei solo accessi a medio-lungo termine: GAVeCeLT indica mini-midline per <3–4 settimane e midline oltre. MAGIC giudica il PICC inappropriato per terapie domiciliari ≤14 giorni.","[1][3]");
+    else if(dur===3) add("ok","Midline preferibile; PICC appropriato per MAGIC","Terapia periferica compatibile 15–30 giorni: midline (GAVeCeLT) o PICC se si ritiene necessaria la via centrale (MAGIC lo considera appropriato da 15 giorni).","[1][3]");
+    else add("ok","Midline (fino a 3–4 mesi) o PICC","Il midline è sconsigliato oltre 3–4 mesi: per terapie più lunghe servono accessi centrali.","[3]");
+  } else {
+    if(dur===1) add("no","PICC non appropriato","Durata ≤5 giorni con infusato compatibile: sufficiente una cannula periferica corta in poliuretano (<60 mm).","[1][3]");
+    else if(dur===2) add("wa","Cannula lunga (mini-midline) o midline","Durata 6–14 giorni: MAGIC preferisce midline o PIV eco-guidata al PICC; GAVeCeLT indica la cannula periferica lunga se la terapia supera una settimana o se l’accesso è difficile.","[1][3]");
+    else if(dur===3) add("wa","Midline o PICC: le fonti divergono","Via periferica compatibile 15–30 giorni: MAGIC considera il PICC appropriato; GAVeCeLT riserva l’accesso centrale alle indicazioni specifiche e indica il midline per terapie periferiche prolungate (oltre un mese).","[1][3]");
+    else add("ok","Midline (&gt;1 mese) o PICC","Terapia periferica compatibile ≥31 giorni: midline secondo GAVeCeLT; PICC appropriato secondo MAGIC.","[1][3]");
+  }
+  if(diff && !only && !crit && inf==="per") add("inf","Accesso periferico difficile","Con vene superficiali non disponibili, prima del PICC usare accesso periferico eco-guidato (cannula lunga o midline).","[1][3]");
+  if(ckd) add("wa","Preservare il patrimonio venoso","Con IRC stadio ≥3b o dialisi evitare il PICC; in caso di accesso centrale preferire CICC eco-guidato (tunnellizzato se a medio-lungo termine), concordando con il nefrologo.","[1][3]");
+  add("inf","Buona pratica (GAVeCeLT)","Venipuntura eco-guidata; vena con diametro interno ≥3 volte quello del catetere; poliuretano power injectable, no silicone né valvole; tip location con ECG intracavitario; punta alla giunzione cavo-atriale; fissaggio sutureless o ancoraggio sottocutaneo con colla in cianoacrilato; nessuna profilassi antibiotica; rivalutazione quotidiana.","[3]");
+  $("out").innerHTML=o.join("");
+}
+
+const DEVS=[
+["piv","Cannula periferica corta","Infusati compatibili, ≤5–6 giorni","€"],
+["mini","Cannula lunga (mini-midline)","Infusati compatibili, 6–14 giorni o accesso difficile","€"],
+["mid","Midline","Infusati compatibili, terapie prolungate (fino a 3–4 mesi)","€€"],
+["cvc","CICC/FICC non tunnellizzato","Critico/urgente, ≤14 giorni (se emergenza: 24–48 h)","€€"],
+["picc","PICC","Via centrale necessaria o ≥15 giorni; evitare in IRC avanzata","€€€"],
+["port","Port / CVC tunnellizzato","≥3–4 mesi o terapie cicliche prolungate","€€€€"]];
+let saved={};try{saved=JSON.parse(localStorage.getItem("accv_costi")||"{}")}catch(e){}
+$("dev").innerHTML=DEVS.map(d=>`<tr id="r_${d[0]}"><td><b>${d[1]}</b></td><td>${d[2]}</td><td>${d[3]}</td><td id="f_${d[0]}"></td><td><input type="number" min="0" step="any" id="a_${d[0]}" value="${saved["a_"+d[0]]??""}"></td><td><input type="number" min="0" step="any" id="g_${d[0]}" value="${saved["g_"+d[0]]??""}"></td><td id="t_${d[0]}">–</td></tr>`).join("");
+function fits(id,d){
+  const ctx=$("ctx").value, inf=$("inf").value, diff=$("diff").checked, ckd=$("ckd").checked;
+  const crit=(ctx==="icu"||$("hemo").checked), irrL=(inf==="irr"||(inf==="pref"&&d>=6)), per=!crit&&!irrL&&ctx!=="pall";
+  if($("only").checked) return id==="mid"&&d>=2;
+  if(id==="piv") return per&&d<=5&&!diff;
+  if(id==="mini") return per&&d<=14&&(d>=6||diff);
+  if(id==="mid") return per&&d>=6&&d<=120&&ctx!=="onc";
+  if(id==="cvc") return crit&&d<=14;
+  if(id==="picc") return !ckd&&d<90&&(irrL||ctx==="pall"||(crit&&d>=15)||(per&&d>=15&&ctx!=="onc"));
+  if(id==="port") return d>=90||(ctx==="onc"&&((($("onct").value==="solid")&&d>=30)||($("onct").value==="heme"&&d>=15)));
+}
+function costUpdate(){
+  const d=Math.max(1,+$("days").value||1); let best=null,bv=Infinity; const s={};
+  DEVS.forEach(v=>{const id=v[0],a=$("a_"+id).value,g=$("g_"+id).value,ok=!!fits(id,d);
+    s["a_"+id]=a;s["g_"+id]=g;
+    $("r_"+id).className=ok?"fit":"";
+    $("f_"+id).textContent=ok?"✔ indicato":"–";
+    if(a===""&&g===""){$("t_"+id).textContent="–";return}
+    const t=(+a||0)+(+g||0)*d; $("t_"+id).textContent=t.toFixed(2);
+    if(ok&&t<bv){bv=t;best=id}});
+  if(best)$("r_"+best).className="fit best";
+  try{localStorage.setItem("accv_costi",JSON.stringify(s))}catch(e){}
+}
+function refresh(){evaluate();costUpdate()}
+const DAYS={1:3,2:10,3:21,4:90};
+$("dur").addEventListener("change",()=>{$("days").value=DAYS[$("dur").value]});
+$("days").addEventListener("input",()=>{const d=+$("days").value;$("dur").value=d<=5?1:d<=14?2:d<=30?3:4;refresh()});
+document.querySelectorAll("select,input").forEach(e=>{e.addEventListener("change",refresh);e.addEventListener("input",costUpdate)});
+refresh();
+</script>
+</body>
+</html>
