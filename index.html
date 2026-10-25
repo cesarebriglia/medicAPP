@@ -1,107 +1,290 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ClinicalTOOLs</title>
-    <style>
-        body {
-            font-family: 'Courier New', Courier, monospace;
-            background-color: #eae5d9;
-            color: #333;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 40px 20px;
-            line-height: 1.6;
-        }
-        h1 {
-            text-align: center;
-            font-size: 3rem;
-            margin-bottom: 10px;
-        }
-        .subtitle {
-            text-align: center;
-            font-style: italic;
-            margin-bottom: 20px;
-        }
-        .disclaimer {
-            text-align: center;
-            font-size: 0.85rem;
-            color: #c55a11;
-            margin-bottom: 40px;
-        }
-        .tool-section {
-            margin-bottom: 35px;
-        }
-        .tool-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #c55a11;
-            margin-bottom: 5px;
-        }
-        .tool-description {
-            font-size: 0.95rem;
-            margin-bottom: 10px;
-        }
-        .links a {
-            color: #c55a11;
-            text-decoration: none;
-            margin-right: 15px;
-            font-weight: bold;
-        }
-        .links a:hover {
-            text-decoration: underline;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClinicalTOOLs</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
+    background-color: #faf7f2; /* Crema caldo */
+    color: #3d2e1f; /* Marrone scuro per il testo */
+    min-height: 100vh;
+    padding: 16px;
+    line-height: 1.5;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 16px 12px;
+    background: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #e6ddd0;
+    box-shadow: 0 1px 3px rgba(139, 94, 60, 0.08);
+  }
+
+  h1 {
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    color: #7c4a2d; /* Marrone caldo */
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  .subtitle {
+    font-size: clamp(0.85rem, 2.5vw, 1rem);
+    color: #6b5344;
+    margin-bottom: 10px;
+  }
+
+  .disclaimer {
+    font-size: clamp(0.7rem, 2vw, 0.8rem);
+    color: #6b5344;
+    font-style: italic;
+    padding: 8px 12px;
+    background: #fdf3e7; /* Arancio/ambra molto chiaro */
+    border-left: 3px solid #d4845a; /* Terracotta */
+    border-radius: 4px;
+    text-align: left;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .card {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 16px;
+    border: 1px solid #e6ddd0; /* Beige caldo */
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    border-top: 4px solid #c47a4a; /* Terracotta */
+  }
+
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(139, 94, 60, 0.12);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .card-icon {
+    font-size: 1.8rem;
+  }
+
+  .card-title {
+    font-size: clamp(0.95rem, 2.8vw, 1.1rem);
+    font-weight: 600;
+    color: #5c3a21; /* Marrone medio */
+  }
+
+  .card-desc {
+    font-size: clamp(0.78rem, 2.2vw, 0.88rem);
+    color: #6b5344;
+    flex-grow: 1;
+    margin-bottom: 12px;
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    flex: 1;
+    min-width: 100px;
+    padding: 8px 12px;
+    font-size: clamp(0.75rem, 2vw, 0.85rem);
+    font-weight: 500;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    transition: background 0.15s ease;
+  }
+
+  .btn-primary {
+    background: #b5654a; /* Terracotta */
+    color: white;
+  }
+  .btn-primary:hover { background: #9c5238; }
+
+  .btn-secondary {
+    background: #f5ebe0; /* Beige caldo */
+    color: #5c3a21;
+    border: 1px solid #e6ddd0;
+  }
+  .btn-secondary:hover { background: #ecdfcf; }
+
+  footer {
+    text-align: center;
+    margin-top: 24px;
+    padding: 14px;
+    font-size: clamp(0.7rem, 2vw, 0.8rem);
+    color: #8b6f5c;
+  }
+
+  footer a { color: #b5654a; text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  @media (max-width: 480px) {
+    body { padding: 10px; }
+    .grid { grid-template-columns: 1fr; gap: 10px; }
+    .card { padding: 14px; }
+    header { padding: 12px 10px; }
+  }
+</style>
 </head>
 <body>
 
-    <h1>ClinicalTOOLs</h1>
-    <div class="subtitle">Raccolta di app a supporto della pratica in Medicina Interna</div>
-    <div class="disclaimer">
-        Strumenti di supporto alla decisione clinica: non sostituiscono il giudizio del medico né le indicazioni delle schede tecniche e delle linee guida vigenti.
-    </div>
+<header>
+  <h1>ClinicalTOOLs</h1>
+  <p class="subtitle">Raccolta di app a supporto della pratica in Medicina Interna</p>
+  <p class="disclaimer">⚠️ Strumenti di supporto alla decisione clinica: non sostituiscono il giudizio del medico né le indicazioni delle schede tecniche e delle linee guida vigenti.</p>
+</header>
 
-    <!-- Sezione Antibiotici AWaRe -->
-    <div class="tool-section">
-        <div class="tool-title">💊 Antibiotici AWaRe</div>
-        <div class="tool-description">Guida posologica clinica con classificazione AWaRe degli antibiotici e calcolatore della funzione renale (CKD-EPI / Cockcroft-Gault).</div>
-        <div class="links">
-            <a href="AWaRe_Antibiotici_v9.html">▶ avvia</a>
-            <a href="AWaRe_Antibiotici_v9.html" download>⤓ scarica</a>
-        </div>
-    </div>
+<div class="grid">
 
-    <!-- Sezione Dosaggio DOACs -->
-    <div class="tool-section">
-        <div class="tool-title">🩸 Dosaggio DOACs</div>
-        <div class="tool-description">Supporto al dosaggio degli anticoagulanti orali diretti.</div>
-        <div class="links">
-            <!-- Il codice %20 serve a gestire lo spazio rimasto prima del punto nel file GitHub -->
-            <a href="Dosaggio_DOACs.html">▶ avvia</a>
-            <a href="Dosaggio_DOACs.html" download>⤓ scarica</a>
-        </div>
+  <div class="card">
+    <div class="card-header">
+      <span class="card-icon">💊</span>
+      <span class="card-title">Antibiotici AWaRe</span>
     </div>
+    <p class="card-desc">Guida posologica clinica con classificazione AWaRe degli antibiotici e calcolatore della funzione renale (CKD-EPI / Cockcroft-Gault).</p>
+    <div class="card-actions">
+      <a class="btn btn-primary" href="AWaRe_Antibiotici_v9.html">▶ avvia</a>
+      <a class="btn btn-secondary" href="AWaRe_Antibiotici_v9.html" download>⤓ scarica</a>
+    </div>
+  </div>
 
-    <!-- Sezione Triage Troponina ESC -->
-    <div class="tool-section">
-        <div class="tool-title">🫀 Triage Troponina ESC</div>
-        <div class="tool-description">Triage biochimico della sospetta sindrome coronarica acuta: algoritmo ESC 0/1h-2h-3h e HEART score.</div>
-        <div class="links">
-            <a href="Triage%20Troponina%20ESC.html">▶ avvia</a>
-            <a href="Triage%20Troponina%20ESC.html" download>⤓ scarica</a>
-        </div>
+  <div class="card">
+    <div class="card-header">
+      <span class="card-icon">🩸</span>
+      <span class="card-title">Dosaggio DOACs</span>
     </div>
+    <p class="card-desc">Supporto al dosaggio degli anticoagulanti orali diretti.</p>
+    <div class="card-actions">
+      <a class="btn btn-primary" href="Dosaggio DOACs .html">▶ avvia</a>
+      <a class="btn btn-secondary" href="Dosaggio DOACs .html" download>⤓ scarica</a>
+    </div>
+  </div>
 
-    <!-- Sezione SCORE2 Rischio Cardiovascolare -->
-    <div class="tool-section">
-        <div class="tool-title">📈 SCORE2 – Rischio Cardiovascolare</div>
-        <div class="tool-description">Stima del rischio cardiovascolare con lo score SCORE2 ed indicazione ai farmaci ipolipemizzanti.</div>
-        <div class="links">
-            <a href="Score2_Cardiovascular_risk.html">▶ avvia</a>
-            <a href="Score2_Cardiovascular_risk.html" download>⤓ scarica</a>
-        </div>
+  <div class="card">
+    <div class="card-header">
+      <span class="card-icon">🫀</span>
+      <span class="card-title">Triage Troponina ESC</span>
     </div>
+    <p class="card-desc">Triage biochimico della sospetta sindrome coronarica acuta: algoritmo ESC 0/1h-2h-3h e HEART score.</p>
+    <div class="card-actions">
+      <a class="btn btn-primary" href="Triage Troponina ESC.html">▶ avvia</a>
+      <a class="btn btn-secondary" href="Triage Troponina ESC.html" download> scarica</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-icon">📈</span>
+      <span class="card-title">SCORE2 – Rischio Cardiovascolare</span>
+    </div>
+    <p class="card-desc">Stima del rischio cardiovascolare con lo score SCORE2 ed indicazione ai farmaci ipolipemizzanti.</p>
+    <div class="card-actions">
+      <a class="btn btn-primary" href="Score2_Cardiovascular_risk.html">▶ avvia</a>
+      <a class="btn btn-secondary" href="Score2_Cardiovascular_risk.html" download>⤓ scarica</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-icon">🩺</span>
+      <span class="card-title">Accessi Vascolari</span>
+    </div>
+    <p class="card-desc">Guida alla scelta e gestione degli accessi vascolari (CVC, PICC, midline, arteriosi).</p>
+    <div class="card-actions">
+      <a class="btn btn-primary" href="access_vascular_app.html">▶ avvia</a>
+      <a class="btn btn-secondary" href="access_vascular_app.html" download>⤓ scarica</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-icon">🤕</span>
+      <span class="card-title">Addome Acuto</span>
+    </div>
+    <p class="card-desc">Supporto decisionale per la valutazione del dolore addominale e dell'addome acuto.</p>
+    <div class="card-actions">
+      <a class="btn btn-primary" href="addome_app.html">▶ avvia</a>
+      <a class="btn btn-secondary" href="addome_app.html" download>⤓ scarica</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-icon"></span>
+      <span class="card-title">Polmonite</span>
+    </div>
+    <p class="card-desc">Score di gravità (CURB-65, PSI) e supporto alla terapia antibiotica della polmonite acquisita in comunità.</p>
+    <div class="card-actions">
+      <a class="btn btn-primary" href="polmonite_app.html">▶ avvia</a>
+      <a class="btn btn-secondary" href="polmonite_app.html" download>⤓ scarica</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-icon">🦠</span>
+      <span class="card-title">Sepsi</span>
+    </div>
+    <p class="card-desc">Screening e stratificazione del rischio: qSOFA, SOFA e criteri Sepsis-3.</p>
+    <div class="card-actions">
+      <a class="btn btn-primary" href="sepsi_app.html">▶ avvia</a>
+      <a class="btn btn-secondary" href="sepsi_app.html" download>⤓ scarica</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-icon">🧴</span>
+      <span class="card-title">SSTI – Infezioni Cutanee</span>
+    </div>
+    <p class="card-desc">Classificazione e trattamento delle infezioni della cute e dei tessuti molli (Skin and Soft Tissue Infections).</p>
+    <div class="card-actions">
+      <a class="btn btn-primary" href="srti_app.html">▶ avvia</a>
+      <a class="btn btn-secondary" href="srti_app.html" download>⤓ scarica</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-icon">🤧</span>
+      <span class="card-title">URLI – Infezioni Vie Aeree Superiori</span>
+    </div>
+    <p class="card-desc">Gestione delle infezioni delle vie aeree superiori (Upper Respiratory Tract Infections) e criterio antibiotico.</p>
+    <div class="card-actions">
+      <a class="btn btn-primary" href="urli_app.html">▶ avvia</a>
+      <a class="btn btn-secondary" href="urli_app.html" download> scarica</a>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  Ideato dal dr. C. Briglia (<a href="mailto:cesarebriglia@gmail.com">cesarebriglia@gmail.com</a>) con l'apporto di Claude – Anthropic
+</footer>
 
 </body>
 </html>
