@@ -56,6 +56,53 @@
   .cond-extra{margin-top:.75rem;padding:.75rem;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border);display:none}
   .cond-extra.visible{display:block}
 
+
+  /* ── Proposta: usare LDL pre-trattamento nel calcolo ── */
+  .bc-propose{margin-top:.6rem;padding:.8rem 1rem;border-radius:var(--radius);border:1px dashed var(--accent);background:var(--accent-light);font-size:12px;line-height:1.55;color:var(--text2)}
+  .bc-propose.on{border-style:solid;background:var(--green-light);border-color:#7ac964}
+  .bc-propose-title{font-weight:700;color:var(--text);margin-bottom:.3rem}
+  .bc-propose .dlcn-btn.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+  /* ── Calcolatore Dutch Lipid Clinic Network (DLCN) ── */
+  .dlcn-box{margin-top:1rem;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface)}
+  .dlcn-box>summary{cursor:pointer;padding:.8rem 1rem;font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.06em;list-style:none;display:flex;align-items:center;gap:6px}
+  .dlcn-box>summary::-webkit-details-marker{display:none}
+  .dlcn-box>summary::after{content:'▸';margin-left:auto;color:var(--text3);transition:transform .15s}
+  .dlcn-box[open]>summary::after{transform:rotate(90deg)}
+  .dlcn-body{padding:0 1rem 1rem}
+  .dlcn-intro{font-size:11px;color:var(--text3);line-height:1.5;margin-bottom:.75rem}
+  .dlcn-group{margin-bottom:.75rem;padding:.65rem .8rem;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border)}
+  .dlcn-gtitle{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.4rem}
+  .dlcn-opt{display:flex;align-items:flex-start;gap:8px;padding:4px 0;font-size:12px;color:var(--text);line-height:1.4;cursor:pointer}
+  .dlcn-opt input{margin-top:2px;flex-shrink:0;accent-color:var(--accent)}
+  .dlcn-pts{margin-left:auto;flex-shrink:0;font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--text3);padding-left:8px}
+  .dlcn-ldl-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .dlcn-ldl-row input[type="number"]{max-width:130px;padding:7px 10px;font-size:13px}
+  .dlcn-btn{font-family:var(--font);font-size:11px;padding:6px 10px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--surface);color:var(--accent);cursor:pointer}
+  .dlcn-btn:hover{border-color:var(--accent);background:var(--accent-light)}
+  .dlcn-result{margin-top:.5rem;padding:.8rem 1rem;border-radius:var(--radius);border:1px solid var(--border);font-size:12px;line-height:1.6;color:var(--text2)}
+  .dlcn-result .dlcn-tot{display:flex;align-items:center;gap:10px;margin-bottom:.35rem}
+  .dlcn-result .dlcn-num{font-family:var(--mono);font-size:22px;font-weight:600;color:var(--text)}
+  .dlcn-result .dlcn-cls{font-weight:700;font-size:12px;padding:3px 10px;border-radius:12px}
+  .dlcn-result.def{background:var(--danger-light);border-color:#e0a0a0}.dlcn-result.def .dlcn-cls{background:#f5c2c2;color:var(--danger)}
+  .dlcn-result.pro{background:var(--orange-light);border-color:#e8c28a}.dlcn-result.pro .dlcn-cls{background:#fbd9a5;color:var(--orange)}
+  .dlcn-result.pos{background:var(--warn-light);border-color:#ecd49a}.dlcn-result.pos .dlcn-cls{background:#f8e3b0;color:var(--warn)}
+  .dlcn-result.unl{background:var(--green-light);border-color:#b0d895}.dlcn-result.unl .dlcn-cls{background:#b8e68b;color:var(--green)}
+
+  /* ── Pannello informativo ⓘ (Lp(a)) ── */
+  .cond-wrapper{display:flex;flex-direction:column;gap:.4rem}
+  .cond-item-row{display:flex;align-items:flex-start;gap:10px;flex:1;min-width:0}
+  .cond-info-btn{flex-shrink:0;width:22px;height:22px;padding:0;border:1px solid var(--border2);border-radius:50%;background:var(--surface);color:var(--text3);font-size:12px;line-height:1;cursor:pointer;font-family:var(--font)}
+  .cond-info-btn:hover,.cond-info-btn.open{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+  .cond-info-panel{display:none;padding:.65rem .8rem;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);font-size:11px;line-height:1.5;color:var(--text2)}
+  .cond-info-panel.visible{display:block}
+  .cond-info-panel p{margin:0 0 .45rem}
+  .cond-info-panel p:last-child{margin-bottom:0;color:var(--text3)}
+  .cond-info-panel strong{color:var(--text);font-weight:600}
+  .cond-info-badge{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:12px;margin-right:4px}
+  .cib-red{background:var(--danger-light);color:var(--danger)}
+  .cib-orange{background:var(--orange-light);color:var(--orange)}
+
   /* ── Matrice KDIGO eGFR × UACR ── */
   .kdigo-result-box{border-radius:var(--radius);padding:1rem 1.1rem;border:2px solid}
   .kdigo-result-box.kdigo-low{background:var(--green-light);border-color:#7ac964}
@@ -362,9 +409,9 @@
   <h1>SCORE2 &amp; SCORE2-OP — Rischio Cardiovascolare Globale</h1>
   <p class="subtitle">Stima del rischio CV a 10 anni + classificazione finale del rischio con fattori modificatori · Linee guida ESC 2021</p>
   <p style="font-size:11px;color:var(--text3);margin-top:.4rem">
-    Ideata e realizzata dal Dr. C. Briglia
+    Ideato dal dr. C. Briglia
     (<a href="mailto:cesarebriglia@gmail.com" style="color:var(--text3);text-decoration:none;border-bottom:1px dotted var(--border2)">cesarebriglia@gmail.com</a>)
-    con il fondamentale aiuto di <strong style="color:var(--accent)">Claude</strong> · Anthropic
+    con l’apporto di <strong style="color:var(--accent)">Claude</strong> - Anthropic<br>Versione <span id="app-version"></span> · <span id="app-date"></span>
   </p>
 </header>
 
@@ -394,8 +441,8 @@
     <div class="field">
       <label class="field-label">Sesso biologico</label>
       <div class="radio-group">
-        <div class="radio-btn"><input type="radio" name="sex" id="sex-m" value="male" checked onchange="if(document.getElementById('cond-ckd').checked) calcEGFR()"><label for="sex-m">Maschio</label></div>
-        <div class="radio-btn"><input type="radio" name="sex" id="sex-f" value="female" onchange="if(document.getElementById('cond-ckd').checked) calcEGFR()"><label for="sex-f">Femmina</label></div>
+        <div class="radio-btn"><input type="radio" name="sex" id="sex-m" value="male" checked onchange="calcEGFR()"><label for="sex-m">Maschio</label></div>
+        <div class="radio-btn"><input type="radio" name="sex" id="sex-f" value="female" onchange="calcEGFR()"><label for="sex-f">Femmina</label></div>
       </div>
     </div>
 
@@ -500,7 +547,7 @@
       <input type="checkbox" id="cond-fh" onchange="onCondChange()">
       <div class="cond-text">
         <div class="cond-name">Ipercolesterolemia familiare (FH)</div>
-        <div class="cond-sub">FH con ASCVD o con altro fattore di rischio maggiore → rischio molto alto. FH senza altri FR → alto rischio</div>
+        <div class="cond-sub">FH con ASCVD o con altro fattore di rischio maggiore → rischio molto alto. FH senza altri FR → alto rischio · verifica con il calcolatore DLCN qui sotto</div>
       </div>
     </label>
 
@@ -528,13 +575,26 @@
       </div>
     </label>
 
-    <label class="cond-item" id="lbl-lp">
-      <input type="checkbox" id="cond-lp" onchange="onCondChange()">
-      <div class="cond-text">
-        <div class="cond-name">Lp(a) elevata</div>
-        <div class="cond-sub">Lipoproteina(a) &gt;180 mg/dL (≈ &gt;430 nmol/L) → rischio lifetime equivalente a FH eterozigote</div>
+    <!-- Lp(a) -->
+    <div class="cond-wrapper">
+      <label class="cond-item" id="lbl-lp">
+        <div class="cond-item-row">
+          <input type="checkbox" id="cond-lp" onchange="onCondChange()">
+          <div class="cond-text">
+            <div class="cond-name">Lp(a) — Lipoproteina(a) elevata</div>
+            <div class="cond-sub">&gt;180 mg/dL → molto alto rischio · 50–180 mg/dL → fattore modificatore · inserire il valore per classificazione precisa</div>
+          </div>
+        </div>
+        <button class="cond-info-btn" onclick="toggleInfo(event,'info-lp')" title="Approfondimento clinico">ⓘ</button>
+      </label>
+      <div class="cond-info-panel" id="info-lp">
+        <p><span class="cond-info-badge cib-red">&gt;180 mg/dL → Rischio molto alto</span> <span class="cond-info-badge cib-orange">50–180 mg/dL → Fattore modificatore</span></p>
+        <p><strong>Definizione ESC 2021.</strong> Lp(a) &gt;180 mg/dL (≈ &gt;430 nmol/L) conferisce un rischio CV lifetime paragonabile a FH eterozigote. Lp(a) 50–180 mg/dL è un fattore modificatore di rischio: può giustificare la reclassificazione verso una categoria superiore, specie in soggetti a rischio moderato-borderline. Lp(a) è geneticamente determinata e non si riduce significativamente con statine o dieta.</p>
+        <p><strong>Raccomandazione ESC.</strong> Misurazione almeno una volta nella vita in tutti gli adulti (Classe I-C, ESC/EAS 2019). Particolarmente urgente in: storia familiare prematura di MCV, rischio moderato inspiegato, FH sospetta, eventi CV ricorrenti nonostante terapia ottimizzata.</p>
+        <p><strong>Terapia specifica.</strong> Nessun farmaco approvato specificatamente in Italia al momento. Inclisiran e pelacarsen (anti-Lp(a)) sono in fase avanzata di sviluppo.</p>
+        <p><em>Fonte: ESC/EAS Guidelines 2019 par. 6 · ESC 2021 Tabella 2 · Nordestgaard et al., EHJ 2013</em></p>
       </div>
-    </label>
+    </div>
 
     <label class="cond-item" id="lbl-cac">
       <input type="checkbox" id="cond-cac" onchange="onCondChange()">
@@ -583,17 +643,90 @@
     </div>
   </div>
 
-  <!-- Calcolatore eGFR CKD-EPI 2021 condizionale -->
-  <div class="cond-extra" id="ckd-extra">
+  <!-- Campo Lp(a) condizionale -->
+  <div class="cond-extra" id="lp-extra">
     <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:.75rem;text-transform:uppercase;letter-spacing:.05em">
-      Calcolo eGFR — Formula CKD-EPI 2021 (race-free)
+      Valore Lp(a) — per classificazione precisa del rischio
+    </div>
+    <div class="grid-2">
+      <div class="field">
+        <label class="field-label">Lp(a) (mg/dL)</label>
+        <input type="number" id="lp-val" min="0" max="500" step="1"
+               placeholder="es. 85" oninput="onCondChange()"/>
+        <span class="hint limit">Range: 0–500 mg/dL · &lt;50 = normale · 50–180 = fattore modificatore · &gt;180 = molto alto rischio</span>
+      </div>
+      <div class="field" style="align-self:end">
+        <div id="lp-display" style="padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface2);font-size:13px;color:var(--text2);min-height:44px;display:flex;align-items:center"></div>
+      </div>
+    </div>
+    <div style="margin-top:.6rem;padding:.6rem .8rem;background:var(--accent-light);border-radius:var(--radius);font-size:11px;color:var(--text2);line-height:1.6;border-left:3px solid var(--accent)">
+      <strong>ESC/EAS 2019, par. 6:</strong> &gt;180 mg/dL (≈ &gt;430 nmol/L) → <strong>molto alto rischio</strong>. 50–180 mg/dL → <strong>fattore modificatore</strong>: valutare reclassificazione verso categoria superiore. &lt;50 mg/dL → nessun impatto aggiuntivo. Se valore non disponibile, la checkbox attiva il modificatore generico.
+    </div>
+  </div>
+
+  <!-- Calcolatore Dutch Lipid Clinic Network (DLCN) per FH eterozigote -->
+  <details class="dlcn-box" id="dlcn-box">
+    <summary><span>🧬</span> Verifica FH — Dutch Lipid Clinic Network score (DLCN)</summary>
+    <div class="dlcn-body">
+      <p class="dlcn-intro">Per ogni gruppo si seleziona <strong>una sola voce, la più alta applicabile</strong>; il punteggio finale è la somma dei gruppi. «Precoce» = uomini &lt;55 anni, donne &lt;60 anni. Il punteggio è uno strumento di probabilità clinica: non sostituisce la valutazione specialistica.</p>
+
+      <div class="dlcn-group">
+        <div class="dlcn-gtitle">1 · Storia familiare (parenti di 1° grado)</div>
+        <label class="dlcn-opt"><input type="radio" name="dlcn-fam" value="0" checked onchange="renderDLCN()"><span>Nessuno dei criteri sotto</span><span class="dlcn-pts">0</span></label>
+        <label class="dlcn-opt"><input type="radio" name="dlcn-fam" value="1" onchange="renderDLCN()"><span>Parente di 1° grado con malattia coronarica/vascolare precoce, <em>oppure</em> con LDL-C &gt;95° percentile (per età e sesso)</span><span class="dlcn-pts">1</span></label>
+        <label class="dlcn-opt"><input type="radio" name="dlcn-fam" value="2" onchange="renderDLCN()"><span>Parente di 1° grado con xantomi tendinei e/o arco corneale, <em>oppure</em> figlio/a &lt;18 anni con LDL-C &gt;95° percentile</span><span class="dlcn-pts">2</span></label>
+      </div>
+
+      <div class="dlcn-group">
+        <div class="dlcn-gtitle">2 · Storia clinica del paziente</div>
+        <label class="dlcn-opt"><input type="radio" name="dlcn-cli" value="0" checked onchange="renderDLCN()"><span>Nessuno dei criteri sotto</span><span class="dlcn-pts">0</span></label>
+        <label class="dlcn-opt"><input type="radio" name="dlcn-cli" value="2" onchange="renderDLCN()"><span>Coronaropatia precoce</span><span class="dlcn-pts">2</span></label>
+        <label class="dlcn-opt"><input type="radio" name="dlcn-cli" value="1" onchange="renderDLCN()"><span>Malattia cerebrovascolare o arteriopatia periferica precoce</span><span class="dlcn-pts">1</span></label>
+      </div>
+
+      <div class="dlcn-group">
+        <div class="dlcn-gtitle">3 · Esame obiettivo</div>
+        <label class="dlcn-opt"><input type="radio" name="dlcn-esa" value="0" checked onchange="renderDLCN()"><span>Nessuno dei criteri sotto</span><span class="dlcn-pts">0</span></label>
+        <label class="dlcn-opt"><input type="radio" name="dlcn-esa" value="6" onchange="renderDLCN()"><span>Xantomi tendinei</span><span class="dlcn-pts">6</span></label>
+        <label class="dlcn-opt"><input type="radio" name="dlcn-esa" value="4" onchange="renderDLCN()"><span>Arco corneale prima dei 45 anni</span><span class="dlcn-pts">4</span></label>
+      </div>
+
+      <div class="dlcn-group">
+        <div class="dlcn-gtitle">4 · LDL-C <u>pre-trattamento</u> (mg/dL)</div>
+        <div class="dlcn-ldl-row">
+          <input type="number" id="dlcn-ldl" min="0" max="800" step="1" placeholder="es. 260" oninput="renderDLCN()">
+          <button type="button" class="dlcn-btn" onclick="dlcnUseLDL()">Usa LDL del paziente</button>
+          <span class="hint" id="dlcn-ldl-src"></span>
+        </div>
+        <span class="hint" style="display:block;margin-top:4px">Valore massimo documentato <strong>prima</strong> di ogni terapia ipolipemizzante. Fasce: 155–190 → 1 · 191–250 → 3 · 251–325 → 5 · &gt;325 → 8 punti. Se il paziente è in terapia e manca un valore storico, «Usa LDL» inserisce la stima di back-calculation (sezione ③): solo orientativa.</span>
+      </div>
+
+      <div class="dlcn-group">
+        <div class="dlcn-gtitle">5 · Analisi del DNA</div>
+        <label class="dlcn-opt"><input type="checkbox" id="dlcn-dna" onchange="renderDLCN()"><span>Variante patogenetica/funzionale in LDLR, APOB o PCSK9 documentata</span><span class="dlcn-pts">8</span></label>
+      </div>
+
+      <div id="dlcn-result" class="dlcn-result unl" style="display:none"></div>
+    </div>
+  </details>
+
+  <!-- Funzione renale: eGFR + UACR, sempre disponibili (indipendenti dalla spunta IRC) -->
+  <div style="margin-top:1rem;padding:1rem;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border)">
+    <div style="font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem;display:flex;align-items:center;gap:6px">
+      <span>📋</span> Funzione renale — eGFR e UACR (KDIGO 2024 · CKM 2026)
+    </div>
+    <p style="font-size:11px;color:var(--text3);margin-bottom:.75rem;line-height:1.5">
+      eGFR e albuminuria si valutano <strong>indipendentemente</strong> dalla spunta «Insufficienza renale cronica»: l'albuminuria è un marker precoce di danno cardio-renale anche con filtrato conservato (G1–G2 con UACR ≥30 mg/g). Un singolo valore non stabilisce la diagnosi di IRC (serve persistenza &gt;3 mesi).
+    </p>
+    <div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.05em">
+      eGFR — Formula CKD-EPI 2021 (race-free) · calcolata sempre, anche senza IRC
     </div>
     <div class="grid-2">
       <div class="field">
         <label class="field-label">Creatinina sierica (mg/dL)</label>
         <input type="number" id="creatinina" min="0.3" max="20" step="0.01"
                placeholder="es. 1.20" oninput="calcEGFR()"/>
-        <span class="hint limit">Range: 0.30 – 20.0 mg/dL · da referto laboratorio</span>
+        <span class="hint limit">Range: 0.30 – 20.0 mg/dL · da referto laboratorio · usa età e sesso già inseriti</span>
       </div>
       <div class="field">
         <div style="display:flex;flex-direction:column;gap:5px;height:100%">
@@ -615,16 +748,8 @@
     <div id="egfr-note" style="display:none;margin-top:.6rem;padding:.6rem .8rem;background:rgba(0,0,0,.04);border-radius:var(--radius);font-size:11px;color:var(--text3);line-height:1.6">
       Formula CKD-EPI 2021 (Inker et al., <em>NEJM</em> 2021): utilizza età e sesso già inseriti nel form.
     </div>
-  </div>
 
-  <!-- UACR — Albuminuria: sezione autonoma, sempre disponibile -->
-  <div style="margin-top:1rem;padding:1rem;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border)">
-    <div style="font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem;display:flex;align-items:center;gap:6px">
-      <span>📋</span> UACR — Albuminuria urinaria (KDIGO 2024 · CKM 2026)
-    </div>
-    <p style="font-size:11px;color:var(--text3);margin-bottom:.75rem;line-height:1.5">
-      L'albuminuria è un marker precoce di danno cardiaco-renale, indipendente dalla riduzione del filtrato glomerulare. Rilevante anche in assenza di IRC conclamata (stadio G1–G2 con UACR ≥30 mg/g).
-    </p>
+    <div style="font-size:11px;font-weight:700;color:var(--text3);margin:1rem 0 .5rem;text-transform:uppercase;letter-spacing:.05em">UACR — Albuminuria urinaria</div>
     <div class="grid-2">
       <div class="field">
         <label class="field-label">UACR (mg/g)</label>
@@ -1178,6 +1303,19 @@
         </a>
       </div>
 
+      <div class="bib-item">
+        <a class="bib-link" href="https://doi.org/10.1038/nrdp.2017.93" target="_blank">
+          <span class="bib-num">14d</span>
+          <div class="bib-body">
+            <span class="bib-authors">Defesche JC, Gidding SS, Harada-Shiba M, Hegele RA, Santos RD, Wierzbicki AS.</span>
+            <span class="bib-title"> Familial hypercholesterolaemia.</span>
+            <span class="bib-journal"> Nature Reviews Disease Primers.</span> 2017;3:17093.
+            <span class="bib-doi">DOI: 10.1038/nrdp.2017.93</span>
+            <span class="bib-openlink">↗ Apri</span>
+          </div>
+        </a>
+      </div>
+
     </div>
   </div>
 
@@ -1195,7 +1333,11 @@
 
 <script>
 // ─── Costanti di conversione ───────────────────────────────────────────────
-const CHOL_CONV = 0.02586; // mg/dL → mmol/L
+const APP_VERSION = '2.5';
+const APP_DATE = '29/10/2026';      // data di creazione
+const APP_UPDATED = '30/10/2026';   // data ultimo aggiornamento
+const CHOL_CONV = 0.02586; // mg/dL → mmol/L per colesterolo (PM ~386 g/mol)
+const TG_CONV   = 0.01129; // mg/dL → mmol/L per trigliceridi (PM ~885 g/mol, trioleina)
 const VLDL_EST  = 30;      // stima VLDL in assenza di TG (mediana europea, mg/dL)
 
 // ─── Coefficienti SCORE2 (ESC/EHJ 2021 – SCORE2 Working Group) ────────────
@@ -1321,8 +1463,44 @@ function getFinalRisk(score2cls, condizioni, egfr, ldl_mmol, tg_mmol, hdl_mmol) 
     }
   }
   if (dm)    elevate('very-high', 'Diabete mellito con danno d\'organo, ≥3 FR maggiori o DM1 >20 anni');
-  if (fh)    elevate('very-high', 'Ipercolesterolemia familiare con ASCVD o fattore di rischio aggiuntivo');
-  if (lp)    elevate('very-high', 'Lp(a) >180 mg/dL (rischio lifetime equivalente a FH eterozigote)');
+  if (fh) {
+    // ESC/EAS 2019 (I-C): FH + ASCVD o altro fattore di rischio maggiore → molto alto; FH senza → alto
+    const abiV = parseFloat(document.getElementById('abi-val')?.value);
+    const ascvdEq = ascvd || (abi && !isNaN(abiV) && abiV < 0.9);
+    const altriFR = [];
+    if (dm || dmMod)                                altriFR.push('diabete mellito');
+    if (condizioni._smoking === 1)                  altriFR.push('fumo attivo');
+    if (htnSevere || condizioni._sbp >= 180)        altriFR.push('ipertensione severa');
+    if (ckd || parseFloat(egfr) < 60)               altriFR.push('IRC (eGFR <60)');
+    if (ascvdEq)
+      elevate('very-high', 'Ipercolesterolemia familiare con ASCVD (ESC/EAS 2019, I-C)');
+    else if (altriFR.length)
+      elevate('very-high', `Ipercolesterolemia familiare con altro fattore di rischio maggiore (${altriFR.join(', ')}) (ESC/EAS 2019, I-C)`);
+    else
+      elevate('high', 'Ipercolesterolemia familiare senza ASCVD né altri fattori di rischio maggiori (ESC/EAS 2019, I-C)');
+    modifiers.push('FH: i punteggi di rischio per la popolazione generale (SCORE2) non sono raccomandati in FH (ESC/EAS 2019, III-C); la categoria deriva dai criteri clinici sopra indicati. Altri fattori maggiori considerati: DM, fumo attivo, PA severa, IRC con eGFR <60.');
+  }
+  if (!fh) {
+    const dl = getDLCN();
+    if (dl.total >= 6)      modifiers.push(`⚠ DLCN ${dl.total} punti — ${dl.label}: la spunta «FH» non è attiva, quindi il rischio finale <strong>non</strong> considera FH. Se la diagnosi è confermata, spuntare FH per includerla nel rischio finale.`);
+    else if (dl.total >= 3) modifiers.push(`DLCN ${dl.total} punti — ${dl.label}: approfondire (LDL basale storico, anamnesi familiare, eventuale test genetico).`);
+  }
+  if (lp) {
+    const lpVal = parseFloat(document.getElementById('lp-val')?.value);
+    if (!isNaN(lpVal) && lpVal >= 0) {
+      // Soglie graduate ESC/EAS 2019 par. 6
+      if (lpVal > 180) {
+        elevate('very-high', `Lp(a) ${lpVal} mg/dL (>180 mg/dL / >430 nmol/L) — rischio lifetime equivalente a FH eterozigote (ESC/EAS 2019 I-C)`);
+      } else if (lpVal >= 50) {
+        modifiers.push(`Lp(a) ${lpVal} mg/dL (50–180 mg/dL) — fattore modificatore di rischio CV: valutare reclassificazione verso categoria superiore (ESC/EAS 2019)`);
+      } else {
+        modifiers.push(`Lp(a) ${lpVal} mg/dL (<50 mg/dL) — nella norma: nessun impatto aggiuntivo sul rischio CV`);
+      }
+    } else {
+      // Valore non inserito: applica elevazione generica (comportamento precedente)
+      elevate('very-high', 'Lp(a) elevata (>180 mg/dL) — rischio lifetime equivalente a FH eterozigote (ESC/EAS 2019 I-C)');
+    }
+  }
 
   // Estremo: ASCVD + DM o FH → ulteriore escalation
   if (ascvd && (dm || fh)) elevate('extreme', 'ASCVD in associazione con DM o FH (rischio estremo ESC 2021)');
@@ -1351,14 +1529,29 @@ function getFinalRisk(score2cls, condizioni, egfr, ldl_mmol, tg_mmol, hdl_mmol) 
     }
   }
 
-  // UACR standalone — danno cardio-renale precoce anche senza IRC conclamata
-  const uacrStandalone = parseFloat(document.getElementById('uacr')?.value);
-  if (!ckd && !isNaN(uacrStandalone) && uacrStandalone >= 0) {
-    const aStage = getUACRStage(uacrStandalone);
-    if (uacrStandalone >= 300) {
-      elevate('high', `Macroalbuminuria (UACR ${uacrStandalone} mg/g — ${aStage.code} ≥300) — danno glomerulare significativo indipendente da eGFR (CKM Stage 2+, AHA/ACC/ADA/ASN 2026)`);
-    } else if (uacrStandalone >= 30) {
-      modifiers.push(`Microalbuminuria (UACR ${uacrStandalone} mg/g — ${aStage.code} 30–299) — marker precoce di danno CKM; fattore modificatore di rischio CV (CKM Stage 1, AHA/ACC/ADA/ASN 2026)`);
+  // Funzione renale senza IRC spuntata: eGFR e/o UACR misurati valgono comunque
+  // (un singolo valore non stabilisce IRC: serve persistenza >3 mesi — da confermare)
+  if (!ckd) {
+    const gfrS  = parseFloat(egfr);
+    const uacrS = parseFloat(document.getElementById('uacr')?.value);
+    const hasG = !isNaN(gfrS), hasA = !isNaN(uacrS) && uacrS >= 0;
+    if (hasG && hasA) {
+      const gS = getGFRStage(gfrS).code, aS = getUACRStage(uacrS).code;
+      const kcls = KDIGO_MATRIX[gS][aS];
+      const txt = `Funzione renale (IRC non spuntata) — matrice KDIGO: eGFR ${gfrS} (${gS}) × UACR ${uacrS} mg/g (${aS}) → ${KDIGO_LABELS[kcls]} (da confermare: persistenza >3 mesi)`;
+      if (kcls === 'veryhigh') elevate('very-high', txt);
+      else if (kcls === 'high') elevate('high', txt);
+      else if (kcls === 'moderate') modifiers.push(txt);
+    } else if (hasG) {
+      if (gfrS < 30)      elevate('very-high', `eGFR ${gfrS} mL/min/1.73m² (&lt;30) — compatibile con IRC severa, da confermare (persistenza &gt;3 mesi)`);
+      else if (gfrS < 60) elevate('high', `eGFR ${gfrS} mL/min/1.73m² (30–59) — compatibile con IRC moderata, da confermare (persistenza &gt;3 mesi); inserire UACR per classificazione KDIGO completa`);
+    } else if (hasA) {
+      const aStage = getUACRStage(uacrS);
+      if (uacrS >= 300) {
+        elevate('high', `Macroalbuminuria (UACR ${uacrS} mg/g — ${aStage.code} ≥300) — danno glomerulare significativo indipendente da eGFR (CKM Stage 2+, AHA/ACC/ADA/ASN 2026)`);
+      } else if (uacrS >= 30) {
+        modifiers.push(`Microalbuminuria (UACR ${uacrS} mg/g — ${aStage.code} 30–299) — marker precoce di danno CKM; fattore modificatore di rischio CV (CKM Stage 1, AHA/ACC/ADA/ASN 2026)`);
+      }
     }
   }
 
@@ -1396,7 +1589,7 @@ function getFinalRisk(score2cls, condizioni, egfr, ldl_mmol, tg_mmol, hdl_mmol) 
   // Classificazione ESC 2021 Tabella 2 e par. 4.2 (ESC/EAS Dyslipidaemia Guidelines 2019/2021)
   let tgInfo = null;
   if (tg_mmol !== null) {
-    const tg_mgdl_val = Math.round(tg_mmol / CHOL_CONV);
+    const tg_mgdl_val = Math.round(tg_mmol / TG_CONV);
     const hdl_mgdl_val = hdl_mmol ? Math.round(hdl_mmol / CHOL_CONV) : null;
 
     // Soglie ESC: 1.7 mmol/L = 150 mg/dL, 5.6 mmol/L = 500 mg/dL
@@ -1673,6 +1866,7 @@ function calcEGFR() {
       <div class="kdigo-grid-label">eGFR ${gfrInfo.code} (${egfrRound} mL/min/1.73m²) + Albuminuria ${uacrInfo.code} (${uacrVal} mg/g)</div>
       <div class="kdigo-grid-desc">${gfrInfo.label} · ${uacrInfo.label}</div>
       ${renderKdigoMiniGrid(gfrInfo.code, uacrInfo.code)}
+      ${renderKdigoLegend(false)}
     `;
     matrixBox.style.display = 'block';
     if (uacrOnlyBox) uacrOnlyBox.style.display = 'none';
@@ -1699,9 +1893,10 @@ function calcEGFR() {
             Matrice KDIGO — colonna ${uacrInfo.code} evidenziata (eGFR non inserito)
           </div>
           ${renderKdigoMiniGridUACROnly(uacrInfo.code)}
+          ${renderKdigoLegend(true)}
         </div>
         <div style="font-size:11px;color:var(--text3);margin-top:.6rem;line-height:1.5">
-          ℹ Per la classificazione completa inserire anche la creatinina sierica (selezionare IRC se presente).
+          ℹ Per la classificazione completa inserire anche la creatinina sierica: il campo eGFR è sempre disponibile qui sopra.
         </div>
       </div>`;
     if (uacrOnlyBox) uacrOnlyBox.style.display = 'block';
@@ -1763,16 +1958,169 @@ function renderKdigoMiniGridUACROnly(currentA) {
   return html;
 }
 
+
+// ─── LDL pre-trattamento stimato: proposta d'uso nel calcolo ───────────────
+let _useLdlBase = false;   // scelta esplicita dell'utente (default: NO)
+
+function getLdlBaseEstimate() {
+  if (!document.getElementById('therapy-on').checked) return null;
+  const drugId  = parseInt(document.getElementById('therapy-drug').value);
+  const ldlOnTx = parseFloat(document.getElementById('therapy-ldl').value);
+  if (!drugId || isNaN(ldlOnTx) || ldlOnTx <= 0) return null;
+  const drug = FARMACI.find(f => f.id === drugId);
+  if (!drug) return null;
+  const ridMedia = (drug.da + drug.a) / 2;
+  const ldlPre = Math.min(Math.round(ldlOnTx * (1 / (1 - ridMedia / 100))), 387);
+  return {ldlPre, ldlOnTx, drug,
+          min: Math.min(Math.round(ldlOnTx / (1 - drug.a  / 100)), 387),
+          max: Math.min(Math.round(ldlOnTx / (1 - drug.da / 100)), 387)};
+}
+
+function setUseLdlBase(on) {
+  _useLdlBase = !!on;
+  const base = getLdlBaseEstimate();
+  const dl = document.getElementById('dlcn-ldl');
+  if (base && dl) {
+    if (on && (dl.value === '' || dl.dataset.auto === '1')) {
+      dl.value = base.ldlPre; dl.dataset.auto = '1';
+      document.getElementById('dlcn-ldl-src').textContent = '↳ stima LDL pre-trattamento (back-calculation, orientativa)';
+    } else if (!on && dl.dataset.auto === '1') {
+      dl.value = ''; dl.dataset.auto = '';
+      document.getElementById('dlcn-ldl-src').textContent = '';
+    }
+    renderDLCN();
+  }
+  window._noScroll = true;
+  try { calculate(); } finally { window._noScroll = false; }
+}
+
+function openDLCN() {
+  const box = document.getElementById('dlcn-box');
+  box.open = true;
+  dlcnUseLDL();
+  box.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+// ─── Dutch Lipid Clinic Network score (FH eterozigote) ─────────────────────
+function getDLCN() {
+  const radio = n => { const el = document.querySelector(`input[name="${n}"]:checked`); return el ? parseInt(el.value) : 0; };
+  const fam = radio('dlcn-fam'), cli = radio('dlcn-cli'), esa = radio('dlcn-esa');
+  const ldlRaw = parseFloat(document.getElementById('dlcn-ldl')?.value);
+  let ldlPts = 0;
+  if (!isNaN(ldlRaw)) {
+    if (ldlRaw > 325) ldlPts = 8;
+    else if (ldlRaw >= 251) ldlPts = 5;
+    else if (ldlRaw >= 191) ldlPts = 3;
+    else if (ldlRaw >= 155) ldlPts = 1;
+  }
+  const dna = document.getElementById('dlcn-dna')?.checked ? 8 : 0;
+  const total = fam + cli + esa + ldlPts + dna;
+  let key, label;
+  if (total > 8)       { key = 'def'; label = 'FH definita'; }
+  else if (total >= 6) { key = 'pro'; label = 'FH probabile'; }
+  else if (total >= 3) { key = 'pos'; label = 'FH possibile'; }
+  else                 { key = 'unl'; label = 'FH improbabile'; }
+  const touched = total > 0 || !isNaN(ldlRaw);
+  return {total, fam, cli, esa, ldlPts, ldl: isNaN(ldlRaw) ? null : ldlRaw, dna, key, label, touched};
+}
+
+function renderDLCN() {
+  const d = getDLCN();
+  const box = document.getElementById('dlcn-result');
+  if (!d.touched) { box.style.display = 'none'; autoRicalcola(); return; }
+  const fhOn = document.getElementById('cond-fh').checked;
+  const msgs = {
+    def: 'Diagnosi clinica di FH (punteggio &gt;8). Indicati test genetico (LDLR, APOB, PCSK9) e screening a cascata dei familiari di 1° grado; terapia ipolipemizzante intensiva secondo categoria di rischio.',
+    pro: 'FH probabile (6–8 punti). Indicata valutazione specialistica con test genetico e screening a cascata; trattare come FH ai fini del rischio finché non esclusa.',
+    pos: 'FH possibile (3–5 punti). Valutare approfondimento: ricerca di LDL basale storico, dati familiari, esame obiettivo (xantomi, arco corneale) ed eventuale test genetico.',
+    unl: 'FH improbabile (&lt;3 punti). Un valore basso non esclude una forma monogenica se i dati disponibili sono incompleti (LDL basale ignoto, anamnesi familiare non nota).'
+  };
+  const parts = [
+    ['Familiarità', d.fam], ['Clinica', d.cli], ['Esame obiettivo', d.esa],
+    ['LDL-C' + (d.ldl !== null ? ' ' + d.ldl + ' mg/dL' : ' (non inserito)'), d.ldlPts], ['DNA', d.dna]
+  ].map(([n, v]) => `${n}: <strong>${v}</strong>`).join(' · ');
+  let action = '';
+  if (d.total >= 6 && !fhOn) {
+    action = `<div style="margin-top:.5rem"><button type="button" class="dlcn-btn" onclick="dlcnApplyFH()">Spunta «Ipercolesterolemia familiare» nelle condizioni</button><span class="hint" style="margin-left:6px">Con la spunta il rischio finale tiene conto di FH.</span></div>`;
+  } else if (d.total >= 6 && fhOn) {
+    action = `<div class="hint" style="margin-top:.4rem">✓ FH già spuntata nelle condizioni: il rischio finale ne tiene conto.</div>`;
+  } else if (d.total < 6 && fhOn) {
+    action = `<div class="hint" style="margin-top:.4rem">Nota: FH è spuntata nelle condizioni (diagnosi posta altrove o per altri criteri); il punteggio DLCN da solo non la raggiunge.</div>`;
+  }
+  box.className = 'dlcn-result ' + d.key;
+  box.innerHTML = `<div class="dlcn-tot"><span class="dlcn-num">${d.total}</span><span class="dlcn-cls">${d.label}</span></div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:.35rem">${parts}</div>
+    <div>${msgs[d.key]}</div>${action}`;
+  box.style.display = 'block';
+  autoRicalcola();
+}
+
+function dlcnUseLDL() {
+  const therapy = document.getElementById('therapy-on').checked;
+  const src = document.getElementById('dlcn-ldl-src');
+  let v = NaN, from = '';
+  if (therapy) {
+    v = parseFloat(document.getElementById('bc-pre-val')?.textContent);
+    from = 'stima LDL pre-trattamento (back-calculation, orientativa)';
+  }
+  if (isNaN(v)) {
+    v = parseFloat(document.getElementById('ldl_mgdl').value);
+    from = therapy ? 'LDL attuale in terapia — NON valido per il DLCN (inserire il valore storico)' : 'LDL inserito (paziente non in terapia)';
+  }
+  if (isNaN(v)) { src.textContent = 'Nessun LDL disponibile: inserirlo manualmente.'; return; }
+  document.getElementById('dlcn-ldl').value = Math.round(v);
+  src.textContent = '↳ ' + from;
+  renderDLCN();
+}
+
+function dlcnApplyFH() {
+  const cb = document.getElementById('cond-fh');
+  cb.checked = true;
+  cb.dispatchEvent(new Event('change', {bubbles: true}));
+  renderDLCN();
+}
+
+// Legenda della matrice KDIGO (colori, colonne A, righe G, simboli)
+function renderKdigoLegend(uacrOnly) {
+  const sw = (c, txt) => `<span style="display:inline-flex;align-items:center;gap:5px;margin-right:10px;white-space:nowrap"><span class="kdigo-c-${c}" style="display:inline-block;width:14px;height:14px;border-radius:3px"></span>${txt}</span>`;
+  return `<div style="margin-top:.75rem;padding:.65rem .8rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);font-size:11px;line-height:1.7;color:var(--text2)">
+    <div style="font-weight:700;color:var(--text);margin-bottom:.2rem">Come leggere la matrice</div>
+    <div><strong>Colonne (albuminuria, UACR):</strong> <strong>A1</strong> &lt;30 mg/g normale o lievemente aumentata · <strong>A2</strong> 30–299 mg/g moderatamente aumentata (microalbuminuria) · <strong>A3</strong> ≥300 mg/g severamente aumentata (macroalbuminuria).</div>
+    <div><strong>Righe (eGFR, mL/min/1.73m²):</strong> G1 ≥90 · G2 60–89 · G3a 45–59 · G3b 30–44 · G4 15–29 · G5 &lt;15.</div>
+    <div style="margin-top:.2rem"><strong>Colori = rischio di progressione renale e CV:</strong><br>
+      ${sw('low','Basso (B)')}${sw('mod','Moderatamente aumentato (M)')}${sw('high','Alto (A)')}${sw('vhigh','Molto alto (MA)')}</div>
+    ${uacrOnly
+      ? `<div style="margin-top:.2rem"><strong>Griglia con eGFR non inserito:</strong> è evidenziata solo la colonna della UACR misurata (le altre sono attenuate). Ogni riga indica il rischio <em>se</em> l'eGFR fosse in quello stadio: inserire la creatinina per avere la cella esatta.</div>`
+      : `<div style="margin-top:.2rem"><strong>●</strong> (cella con bordo scuro) = posizione del paziente, data dall'incrocio tra stadio eGFR e categoria UACR.</div>`}
+  </div>`;
+}
+
 function onAgeChange() {
-  if (document.getElementById('cond-ckd').checked) calcEGFR();
+  calcEGFR();
 }
 
 function onCondChange() {
   const ckdChecked = document.getElementById('cond-ckd').checked;
   const abiChecked = document.getElementById('cond-abi').checked;
-  document.getElementById('ckd-extra').classList.toggle('visible', ckdChecked);
+  const lpChecked  = document.getElementById('cond-lp').checked;
   document.getElementById('abi-extra').classList.toggle('visible', abiChecked);
-  if (ckdChecked) calcEGFR();
+  document.getElementById('lp-extra').classList.toggle('visible', lpChecked);
+  calcEGFR();
+
+  // Display valore Lp(a)
+  if (lpChecked) {
+    const lpVal = parseFloat(document.getElementById('lp-val').value);
+    const disp  = document.getElementById('lp-display');
+    if (!isNaN(lpVal) && lpVal >= 0) {
+      let txt, color;
+      if      (lpVal > 180) { txt = `Lp(a) ${lpVal} mg/dL — ⚠ Molto alto rischio (>180)`; color = 'var(--danger)'; }
+      else if (lpVal >= 50) { txt = `Lp(a) ${lpVal} mg/dL — Fattore modificatore (50–180)`; color = 'var(--warn)'; }
+      else                   { txt = `Lp(a) ${lpVal} mg/dL — Normale (<50)`; color = 'var(--green)'; }
+      disp.innerHTML = `<span style="font-weight:600;color:${color}">${txt}</span>`;
+    } else {
+      disp.innerHTML = '<span style="color:var(--text3)">Inserire il valore Lp(a)</span>';
+    }
+  }
 
   // Display valore ABI
   if (abiChecked) {
@@ -1800,6 +2148,7 @@ function onTherapyToggle() {
   document.getElementById('therapy-fields').classList.toggle('visible', on);
   if (!on) {
     document.getElementById('bc-preview').style.display = 'none';
+    if (_useLdlBase) setUseLdlBase(false);
   }
 }
 
@@ -1916,6 +2265,16 @@ function renderBackCalc(targetMgdl, targetPct) {
         <span style="font-size:12px;color:var(--danger);font-weight:600">LDL basale stimato ≥193 mg/dL (≥5 mmol/L) — valutare screening FH (Dutch Lipid Clinic Score)</span>
       </div>` : ''}
     </div>
+    ${fhSuspect ? `<div style="margin:.4rem 0"><button type="button" class="dlcn-btn" onclick="openDLCN()">🧬 Apri il calcolatore DLCN con questo LDL</button></div>` : ''}
+    <div class="bc-propose ${_useLdlBase ? 'on' : ''}">
+      <div class="bc-propose-title">💡 Usare l'LDL pre-trattamento stimato (${ldlPre} mg/dL) nel calcolo?</div>
+      <div>SCORE2/SCORE2-OP si basa su valori <strong>non trattati</strong>: con la terapia in corso il rischio tende a essere sottostimato. Con «Sì» il non-HDL dello SCORE2 diventa LDL pre-trattamento + VLDL${window._ldlBaseCmp ? ` (${window._ldlBaseCmp.nhBase} invece di ${window._ldlBaseCmp.nhCur} mmol/L), con rischio a 10 anni <strong>${window._ldlBaseCmp.pctCur}% → ${window._ldlBaseCmp.pctBase}%</strong>` : ''}, e il valore viene proposto anche al calcolatore DLCN. Target LDL, tabella farmaci e valutazione della terapia restano riferiti all'LDL attuale. La stima è solo matematica (range ${ldlPreMin}–${ldlPreMax} mg/dL): da preferire un LDL basale storico documentato, se disponibile.</div>
+      <div style="margin-top:.5rem;display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+        <button type="button" class="dlcn-btn ${_useLdlBase ? 'sel' : ''}" onclick="setUseLdlBase(true)">✓ Sì, usa LDL pre-trattamento</button>
+        <button type="button" class="dlcn-btn ${_useLdlBase ? '' : 'sel'}" onclick="setUseLdlBase(false)">No, usa LDL attuale</button>
+        <span class="hint">${_useLdlBase ? 'In uso nel calcolo SCORE2.' : 'Al momento si usa l\'LDL attuale in terapia.'}</span>
+      </div>
+    </div>
     ${addInfo ? `<div class="add-therapy-note">${addInfo}<br>
       <span style="font-size:11px;margin-top:4px;display:block">Le opzioni terapeutiche aggiuntive sono mostrate nella tabella sottostante, calcolate sull'LDL attuale in terapia.</span>
     </div>` : ''}
@@ -1932,6 +2291,13 @@ function renderBackCalc(targetMgdl, targetPct) {
   if (!terapiaOk) {
     _currentLDL = ldlOnTx; // usa LDL on-treatment come punto di partenza per aggiunta
   }
+}
+
+function toggleInfo(ev, id) {
+  ev.preventDefault(); ev.stopPropagation();
+  const panel = document.getElementById(id);
+  const open = panel.classList.toggle('visible');
+  ev.currentTarget.classList.toggle('open', open);
 }
 
 function checked(id) { return document.getElementById(id).checked; }
@@ -1959,9 +2325,13 @@ function calculate() {
 
   // Calcolo non-HDL con Friedewald se TG disponibili
   const tg_mgdl  = parseFloat(document.getElementById('tg_mgdl').value);
-  const tg_mmol  = !isNaN(tg_mgdl) && tg_mgdl > 0 ? tg_mgdl * CHOL_CONV : null;
+  const tg_mmol  = !isNaN(tg_mgdl) && tg_mgdl > 0 ? tg_mgdl * TG_CONV : null;
   const vldl_mgdl= getVLDL(tg_mgdl);
-  const nonhdl_mgdl = ldl_mgdl + vldl_mgdl;
+  // LDL pre-trattamento stimato (paziente in terapia): usato nello SCORE2 solo se l'utente lo ha scelto
+  const ldlBase   = getLdlBaseEstimate();
+  const useBase   = !!(ldlBase && _useLdlBase);
+  const ldl_score = useBase ? ldlBase.ldlPre : ldl_mgdl;
+  const nonhdl_mgdl = ldl_score + vldl_mgdl;
   const nonhdl      = nonhdl_mgdl * CHOL_CONV;
   const ldl_mmol    = ldl_mgdl * CHOL_CONV;
 
@@ -1973,6 +2343,17 @@ function calculate() {
   } else {
     risk = calcScore2OP(age, sex, sbp, nonhdl, smoking, region);
     algo = 'SCORE2-OP';
+  }
+
+  // Confronto per la proposta: rischio con LDL attuale vs LDL pre-trattamento stimato
+  window._ldlBaseCmp = null;
+  if (ldlBase) {
+    const nhCur  = (ldl_mgdl + vldl_mgdl) * CHOL_CONV;
+    const nhBase = (ldlBase.ldlPre + vldl_mgdl) * CHOL_CONV;
+    const f = (nh) => (age < 70 ? calcScore2(age, sex, sbp, nh, smoking, region)
+                                : calcScore2OP(age, sex, sbp, nh, smoking, region)) * 100;
+    const fmt = v => v < 1 ? v.toFixed(1) : (Math.round(v * 10) / 10);
+    window._ldlBaseCmp = {pctCur: fmt(f(nhCur)), pctBase: fmt(f(nhBase)), nhCur: nhCur.toFixed(2), nhBase: nhBase.toFixed(2)};
   }
 
   const pct      = risk * 100;
@@ -1993,12 +2374,16 @@ function calculate() {
     af:        checked('cond-af'),
     abi:       checked('cond-abi'),
     _sex:      sex,
+    _smoking:  smoking,
+    _sbp:      sbp,
   };
 
   const hdl_mmol = hdl_mgdl * CHOL_CONV;
 
   // Rischio finale
   const fr = getFinalRisk(cls, condizioni, egfr, ldl_mmol, tg_mmol, hdl_mmol);
+  if (useBase) fr.modifiers.push(`ℹ SCORE2 calcolato con LDL pre-trattamento <strong>stimato</strong> ${ldlBase.ldlPre} mg/dL (back-calculation da LDL attuale ${ldlBase.ldlOnTx} mg/dL con ${ldlBase.drug.nome}; range ${ldlBase.min}–${ldlBase.max} mg/dL) al posto dell'LDL attuale. Target e valutazione della terapia restano riferiti all'LDL in terapia.`);
+  window._lastFr = fr;
 
   // ── Render SCORE2 card ──
   const sc = document.getElementById('score2-card');
@@ -2089,7 +2474,7 @@ function calculate() {
 
   document.getElementById('detail-rows').innerHTML = `
     ${pazLabel ? `<div class="detail-row"><span class="detail-label">Paziente</span><span class="detail-val" style="font-weight:600">${pazLabel.toUpperCase()}</span></div>` : ''}
-    <div class="detail-row"><span class="detail-label">Algoritmo</span><span class="detail-val">${algo}</span></div>
+    <div class="detail-row"><span class="detail-label">Algoritmo</span><span class="detail-val">${algo}${useBase ? ` · non-HDL da LDL pre-trattamento stimato (${ldlBase.ldlPre} mg/dL)` : ''}</span></div>
     <div class="detail-row"><span class="detail-label">Età / Sesso</span><span class="detail-val">${age} anni / ${sexLabel}</span></div>
     <div class="detail-row"><span class="detail-label">Fumatore</span><span class="detail-val">${smkLabel}</span></div>
     <div class="detail-row"><span class="detail-label">PA sistolica</span><span class="detail-val">${sbp} mmHg</span></div>
@@ -2109,15 +2494,18 @@ function calculate() {
     <div class="detail-row"><span class="detail-label">Regione ESC</span><span class="detail-val">${regionLabels[region]}</span></div>
     <div class="detail-row"><span class="detail-label">Rischio SCORE2 grezzo</span><span class="detail-val">${pct.toFixed(2)}% → ${label}</span></div>
     <div class="detail-row"><span class="detail-label">Condizioni patologiche</span><span class="detail-val">${condsOn.length > 0 ? condsOn.map(k=>condsLabels[k]).join(', ') : 'Nessuna'}</span></div>
-    ${checked('cond-ckd') ? `<div class="detail-row"><span class="detail-label">eGFR</span><span class="detail-val">${egfr} mL/min/1.73m²</span></div>` : ''}
-    ${checked('cond-ckd') && document.getElementById('uacr').value ? `<div class="detail-row"><span class="detail-label">UACR</span><span class="detail-val">${document.getElementById('uacr').value} mg/g (${getUACRStage(parseFloat(document.getElementById('uacr').value)).code})</span></div>` : ''}
-    ${checked('cond-ckd') && window._kdigoClass ? `<div class="detail-row"><span class="detail-label">Classe rischio KDIGO</span><span class="detail-val">${KDIGO_LABELS[window._kdigoClass]}</span></div>` : ''}
+    ${egfr !== '' ? `<div class="detail-row"><span class="detail-label">eGFR</span><span class="detail-val">${egfr} mL/min/1.73m²</span></div>` : ''}
+    ${document.getElementById('uacr').value ? `<div class="detail-row"><span class="detail-label">UACR</span><span class="detail-val">${document.getElementById('uacr').value} mg/g (${getUACRStage(parseFloat(document.getElementById('uacr').value)).code})</span></div>` : ''}
+    ${window._kdigoClass ? `<div class="detail-row"><span class="detail-label">Classe rischio KDIGO</span><span class="detail-val">${KDIGO_LABELS[window._kdigoClass]}</span></div>` : ''}
+    ${(()=>{ const v=parseFloat(document.getElementById('lp-val')?.value); if(checked('cond-lp')&&!isNaN(v)) { const cat=v>180?'molto alto rischio':v>=50?'fattore modificatore':'normale (<50 mg/dL)'; return `<div class="detail-row"><span class="detail-label">Lp(a)</span><span class="detail-val">${v} mg/dL — ${cat}</span></div>`; } return ''; })()}
+    ${(()=>{ const v=parseFloat(document.getElementById('abi-val')?.value); if(checked('cond-abi')&&!isNaN(v)) { const cat=v<0.9?'patologico (AOP)':v>1.4?'non interpretabile (>1.4)':'normale'; return `<div class="detail-row"><span class="detail-label">ABI</span><span class="detail-val">${v.toFixed(2)} — ${cat}</span></div>`; } return ''; })()}
+    ${(()=>{ const d=getDLCN(); return d.touched ? `<div class="detail-row"><span class="detail-label">Dutch Lipid Clinic Score (FH)</span><span class="detail-val">${d.total} punti — ${d.label} (familiarità ${d.fam} · clinica ${d.cli} · esame ${d.esa} · LDL ${d.ldlPts} · DNA ${d.dna})</span></div>` : ''; })()}
     <div class="detail-row"><span class="detail-label">Rischio CV globale finale</span><span class="detail-val">${labelMap[fr.riskLevel]}</span></div>
   `;
 
   document.getElementById('result-section').style.display = 'block';
   document.getElementById('print-btn-wrap').style.display = 'block';
-  document.getElementById('result-section').scrollIntoView({behavior:'smooth', block:'start'});
+  if (!window._noScroll) document.getElementById('result-section').scrollIntoView({behavior:'smooth', block:'start'});
   _calcoloDone = true;
 
   // ── Farmaci: passa LDL attuale e target ──
@@ -2272,13 +2660,16 @@ let _activeFilter = 'all';
 
 // ─── Listener globale per ricalcolo automatico dopo primo calcolo ─────────
 document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('app-version').textContent = APP_VERSION;
+  document.getElementById('app-date').textContent = 'creata il ' + APP_DATE + ' · aggiornata il ' + APP_UPDATED;
   const campi = [
     '#age','#sbp','#ldl_mgdl','#hdl_mgdl','#tg_mgdl','#tc_mgdl','#region',
     '#creatinina','#uacr','#abi-val','#therapy-drug','#therapy-ldl',
     'input[name="sex"]','input[name="smoking"]',
     '#cond-ascvd','#cond-dm','#cond-dm-mod','#cond-fh','#cond-ckd',
     '#cond-htn-severe','#cond-hf','#cond-lp','#cond-cac','#cond-af',
-    '#cond-abi','#therapy-on','#cognome','#nome'
+    '#cond-abi','#therapy-on','#cognome','#nome',
+    '#lp-val','#tc_mgdl','#dlcn-ldl','#dlcn-dna','input[name^="dlcn-"]'
   ];
   campi.forEach(sel => {
     document.querySelectorAll(sel).forEach(el => {
@@ -2681,6 +3072,26 @@ function renderIndagini(fr, condizioni, pct, age, sex, tg_mmol, hdl_mmol, sbp, l
     }
   }
 
+  // ── 3b. FH: test genetico e screening a cascata ───────────────────────────
+  {
+    const dl = getDLCN();
+    if (dl.total >= 6 || (hasFh && !dl.dna)) {
+      items.push({
+        prio:'red', icon:'🧬', name:'Test genetico FH e screening a cascata',
+        reason: dl.total >= 6
+          ? `Raccomandata: DLCN ${dl.total} punti (${dl.label}). Ricerca di varianti in LDLR, APOB, PCSK9 e screening a cascata dei familiari di 1° grado.`
+          : 'Raccomandata: FH indicata nelle condizioni. Test genetico (LDLR, APOB, PCSK9) e screening a cascata dei familiari di 1° grado.',
+        ref:'ESC/EAS 2019 · Nordestgaard et al., EHJ 2013 · Defesche et al., Nat Rev Dis Primers 2017'
+      });
+    } else if (dl.total >= 3) {
+      items.push({
+        prio:'yellow', icon:'🧬', name:'Approfondimento FH (DLCN possibile)',
+        reason:`Da considerare: DLCN ${dl.total} punti (FH possibile). Recuperare LDL basale storico e anamnesi familiare; valutare test genetico se il quadro è compatibile.`,
+        ref:'ESC/EAS 2019 · Defesche et al., Nat Rev Dis Primers 2017'
+      });
+    }
+  }
+
   // ── 4. hsCRP (Proteina C reattiva ad alta sensibilità) ────────────────────
   if (zonaGrigia || rl === 'high') {
     items.push({
@@ -2818,6 +3229,32 @@ function stampaPDF() {
   const frReason    = document.getElementById('fr-reason').innerHTML;
   const targetRows  = document.getElementById('target-rows').innerHTML;
   const detailRows  = document.getElementById('detail-rows').innerHTML;
+
+  // ── Blocchi aggiuntivi del referto (testo semplice, senza variabili CSS) ──
+  const lastFr = window._lastFr || {};
+  const modList = (lastFr.modifiers || []);
+  const modifiersHtml = modList.length
+    ? `<div style="margin-top:6px;font-size:10.5px;color:#5a574f"><strong>Fattori modificatori aggiuntivi:</strong><ul style="margin:3px 0 0 16px;padding:0">${modList.map(m=>`<li>${m}</li>`).join('')}</ul></div>` : '';
+
+  const tgI = lastFr.tgInfo;
+  const tgHtml = tgI
+    ? `<div style="margin-top:8px;font-size:11px"><strong>Trigliceridi:</strong> ${tgI.tg_mgdl} mg/dL (${tgI.tg_mmol.toFixed(2)} mmol/L) — ${tgI.tgTxt}</div>` : '';
+
+  const tcV = parseFloat(document.getElementById('tc_mgdl').value);
+  const hdlV = parseFloat(document.getElementById('hdl_mgdl').value);
+  const tgV = parseFloat(document.getElementById('tg_mgdl').value);
+  const ldlV = parseFloat(document.getElementById('ldl_mgdl').value);
+  const sampV = (!isNaN(tcV) && !isNaN(hdlV) && !isNaN(tgV)) ? calcSampson(tcV, hdlV, tgV) : null;
+  const sampHtml = sampV !== null
+    ? `<div style="margin-top:6px;font-size:11px"><strong>Confronto LDL:</strong> Friedewald (referto) ${ldlV.toFixed(0)} mg/dL · Sampson 2020 ${sampV.toFixed(0)} mg/dL · Δ ${(sampV-ldlV>0?'+':'')}${(sampV-ldlV).toFixed(0)} mg/dL${Math.abs(sampV-ldlV)>=10?' — <strong>discordanza clinicamente rilevante</strong> (con TG elevati Friedewald tende a sottostimare l\'LDL)':' — concordanza accettabile'}. <em>Sampson M et al., JAMA Intern Med 2020;180(10):1316-1323.</em></div>` : '';
+
+  const bcRows = Array.from(document.querySelectorAll('#bc-result-body .bc-row')).map(r => {
+    const l = r.querySelector('.bc-label')?.textContent.trim() || '';
+    const v = (r.querySelector('.bc-val, .bc-badge')?.textContent || r.lastElementChild?.textContent || '').replace(/\s+/g,' ').trim();
+    return l ? `<tr><td style="padding:3px 6px;border-bottom:1px solid #f0ede8;color:#5a574f">${l}</td><td style="padding:3px 6px;border-bottom:1px solid #f0ede8;font-family:monospace">${v}</td></tr>` : '';
+  }).join('');
+  const bcHtml = (document.getElementById('bc-result-section')?.style.display !== 'none' && bcRows)
+    ? `<div style="margin-top:8px;font-size:11px"><strong>Terapia in corso — back-calculation LDL:</strong><table style="width:100%;border-collapse:collapse;font-size:10.5px;margin-top:3px">${bcRows}</table></div>` : '';
   const rdPct       = needPct ? ` + riduzione ≥${needPct}%` : '';
 
   const statoLabels = {
@@ -2888,7 +3325,7 @@ function stampaPDF() {
   <div class="badge">ESC Guidelines 2021</div>
   <h1>Referto — Rischio Cardiovascolare Globale</h1>
   ${pazienteStr ? `<div style="font-size:15px;font-weight:600;color:#1a1917;margin:6px 0 2px;letter-spacing:.01em">Paziente: ${pazienteStr.toUpperCase()}</div>` : ''}
-  <div class="subtitle">SCORE2 / SCORE2-OP · Generato il ${new Date().toLocaleDateString('it-IT')} alle ${new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'})}</div>
+  <div class="subtitle">SCORE2 / SCORE2-OP · App v${APP_VERSION} (creata il ${APP_DATE}, aggiornata il ${APP_UPDATED}) · Ideato dal dr. C. Briglia (cesarebriglia@gmail.com) con l\'apporto di Claude - Anthropic · Generato il ${new Date().toLocaleDateString('it-IT')} alle ${new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'})}</div>
 
   <div style="text-align:right;margin-bottom:12px">
     <button onclick="window.print()" style="font-family:sans-serif;font-size:13px;font-weight:600;padding:8px 20px;background:#1a4a8a;color:#fff;border:none;border-radius:6px;cursor:pointer">🖨 Stampa / Salva PDF</button>
@@ -2908,12 +3345,16 @@ function stampaPDF() {
     <div class="fr-box">
       <div class="fr-level">${frBadge}</div>
       <div class="fr-reason">${frReason}</div>
+      ${modifiersHtml}
     </div>
   </div>
 
   <div class="section">
     <div class="section-title">③ Target terapeutici ESC 2021</div>
     ${targetRows}
+    ${tgHtml}
+    ${sampHtml}
+    ${bcHtml}
   </div>
 
   <div class="section">
@@ -2959,7 +3400,7 @@ function stampaPDF() {
   </div>
 
   <div class="section" style="margin-top:16px">
-    <div class="section-title">⑥ Bibliografia essenziale</div>
+    <div class="section-title">⑦ Bibliografia essenziale</div>
 
     <div class="bib-group">Algoritmi di rischio</div>
     <div class="bib-entry"><span class="bib-n">1</span><span>SCORE2 Working Group &amp; ESC CV Risk Collaboration. <strong>SCORE2 risk prediction algorithms.</strong> <em>Eur Heart J.</em> 2021;42(25):2439–2454. DOI: 10.1093/eurheartj/ehab309</span></div>
@@ -2983,6 +3424,7 @@ function stampaPDF() {
     <div class="bib-entry"><span class="bib-n">11c</span><span>Ndumele CE et al. <strong>2026 AHA/ACC/ADA/ASN Guideline for CKM Syndrome.</strong> <em>JACC.</em> 2026;87(22S):e1889–e2007.</span></div>
     <div class="bib-entry"><span class="bib-n">11d</span><span>Khan SS et al. <strong>Development and validation of the AHA's PREVENT equations.</strong> <em>Circulation.</em> 2024;149(6):430–449. DOI: 10.1161/CIRCULATIONAHA.123.067626</span></div>
     <div class="bib-entry"><span class="bib-n">12</span><span>Nordestgaard BG et al.; EAS Consensus Panel. <strong>Familial hypercholesterolaemia is underdiagnosed and undertreated in the general population.</strong> <em>Eur Heart J.</em> 2013;34(45):3478–3490. DOI: 10.1093/eurheartj/eht273</span></div>
+    <div class="bib-entry"><span class="bib-n">14d</span><span>Defesche JC et al. <strong>Familial hypercholesterolaemia.</strong> <em>Nat Rev Dis Primers.</em> 2017;3:17093. DOI: 10.1038/nrdp.2017.93</span></div>
   </div>
 </body></html>`;
 
