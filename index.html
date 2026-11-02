@@ -7,10 +7,25 @@
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
+  :root {
+    --bg: #f6f1e7;
+    --surface: #f6f1e7;
+    --border: #ddd2b9;
+    --text: #3f4b49;
+    --text-soft: #675f4f;
+    --title: #3f5f5b;
+    --accent: #c9b27c;
+    --accent-hover: #b59b5f;
+    --soft-btn: #e6dac0;
+    --soft-btn-hover: #d9c9a5;
+    --note-bg: #f6f1e7;
+    --note-border: #cdb98a;
+  }
+
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
-    background-color: #faf7f2; /* Crema caldo */
-    color: #3d2e1f; /* Marrone scuro per il testo */
+    background-color: var(--bg);
+    color: var(--text);
     min-height: 100vh;
     padding: 16px;
     line-height: 1.5;
@@ -18,34 +33,35 @@
 
   header {
     text-align: center;
-    margin-bottom: 20px;
-    padding: 16px 12px;
-    background: #ffffff;
-    border-radius: 8px;
-    border: 1px solid #e6ddd0;
-    box-shadow: 0 1px 3px rgba(139, 94, 60, 0.08);
+    max-width: 1100px;
+    margin: 0 auto 20px;
+    padding: 18px 14px;
+    background: var(--surface);
+    border-radius: 10px;
+    border: 1px solid var(--border);
   }
 
   h1 {
     font-size: clamp(1.4rem, 4vw, 2rem);
-    color: #7c4a2d; /* Marrone caldo */
+    color: var(--title);
     margin-bottom: 4px;
     letter-spacing: 0.5px;
+    font-weight: 600;
   }
 
   .subtitle {
     font-size: clamp(0.85rem, 2.5vw, 1rem);
-    color: #6b5344;
+    color: var(--text-soft);
     margin-bottom: 10px;
   }
 
   .disclaimer {
     font-size: clamp(0.7rem, 2vw, 0.8rem);
-    color: #6b5344;
+    color: var(--text-soft);
     font-style: italic;
     padding: 8px 12px;
-    background: #fdf3e7; /* Arancio/ambra molto chiaro */
-    border-left: 3px solid #d4845a; /* Terracotta */
+    background: var(--note-bg);
+    border-left: 3px solid var(--note-border);
     border-radius: 4px;
     text-align: left;
   }
@@ -59,19 +75,19 @@
   }
 
   .card {
-    background: #ffffff;
-    border-radius: 8px;
+    background: var(--surface);
+    border-radius: 10px;
     padding: 16px;
-    border: 1px solid #e6ddd0; /* Beige caldo */
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--accent);
     display: flex;
     flex-direction: column;
     transition: transform 0.15s ease, box-shadow 0.15s ease;
-    border-top: 4px solid #c47a4a; /* Terracotta */
   }
 
   .card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(139, 94, 60, 0.12);
+    box-shadow: 0 4px 12px rgba(79, 70, 50, 0.12);
   }
 
   .card-header {
@@ -81,28 +97,22 @@
     margin-bottom: 8px;
   }
 
-  .card-icon {
-    font-size: 1.8rem;
-  }
+  .card-icon { font-size: 1.7rem; }
 
   .card-title {
     font-size: clamp(0.95rem, 2.8vw, 1.1rem);
     font-weight: 600;
-    color: #5c3a21; /* Marrone medio */
+    color: var(--title);
   }
 
   .card-desc {
     font-size: clamp(0.78rem, 2.2vw, 0.88rem);
-    color: #6b5344;
+    color: var(--text-soft);
     flex-grow: 1;
     margin-bottom: 12px;
   }
 
-  .card-actions {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
+  .card-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
   .btn {
     flex: 1;
@@ -118,29 +128,30 @@
     transition: background 0.15s ease;
   }
 
-  .btn-primary {
-    background: #b5654a; /* Terracotta */
-    color: white;
-  }
-  .btn-primary:hover { background: #9c5238; }
+  .btn-primary { background: var(--accent); color: #3d3220; font-weight: 600; }
+  .btn-primary:hover { background: var(--accent-hover); }
 
   .btn-secondary {
-    background: #f5ebe0; /* Beige caldo */
-    color: #5c3a21;
-    border: 1px solid #e6ddd0;
+    background: var(--soft-btn);
+    color: #3d3220;
+    border: 1px solid #c9b27c;
+    font-weight: 600;
   }
-  .btn-secondary:hover { background: #ecdfcf; }
+  .btn-secondary:hover { background: var(--soft-btn-hover); }
 
   footer {
     text-align: center;
-    margin-top: 24px;
+    max-width: 1100px;
+    margin: 24px auto 0;
     padding: 14px;
     font-size: clamp(0.7rem, 2vw, 0.8rem);
-    color: #8b6f5c;
+    color: var(--text-soft);
+    border-top: 1px solid var(--border);
   }
 
-  footer a { color: #b5654a; text-decoration: none; }
+  footer a { color: var(--title); text-decoration: none; }
   footer a:hover { text-decoration: underline; }
+  .meta { margin-top: 4px; font-size: 0.95em; opacity: 0.85; }
 
   @media (max-width: 480px) {
     body { padding: 10px; }
@@ -161,10 +172,7 @@
 <div class="grid">
 
   <div class="card">
-    <div class="card-header">
-      <span class="card-icon">💊</span>
-      <span class="card-title">Antibiotici AWaRe</span>
-    </div>
+    <div class="card-header"><span class="card-icon">💊</span><span class="card-title">Antibiotici AWaRe</span></div>
     <p class="card-desc">Guida posologica clinica con classificazione AWaRe degli antibiotici e calcolatore della funzione renale (CKD-EPI / Cockcroft-Gault).</p>
     <div class="card-actions">
       <a class="btn btn-primary" href="AWaRe_Antibiotici_v9.html">▶ avvia</a>
@@ -173,23 +181,16 @@
   </div>
 
   <div class="card">
-    <div class="card-header">
-      <span class="card-icon">🩸</span>
-      <span class="card-title">Dosaggio DOACs</span>
-    </div>
+    <div class="card-header"><span class="card-icon">🩸</span><span class="card-title">Dosaggio DOACs</span></div>
     <p class="card-desc">Supporto al dosaggio degli anticoagulanti orali diretti.</p>
     <div class="card-actions">
-      <!-- Codifica URL per gestire correttamente lo spazio finale nel nome del file -->
-      <a class="btn btn-primary" href="Dosaggio%20DOACs%20.html">▶ avvia</a>
-      <a class="btn btn-secondary" href="Dosaggio%20DOACs%20.html" download>⤓ scarica</a>
+      <a class="btn btn-primary" href="Dosaggio_DOACs.html">▶ avvia</a>
+      <a class="btn btn-secondary" href="Dosaggio_DOACs.html" download>⤓ scarica</a>
     </div>
   </div>
 
   <div class="card">
-    <div class="card-header">
-      <span class="card-icon">🫀</span>
-      <span class="card-title">Triage Troponina ESC</span>
-    </div>
+    <div class="card-header"><span class="card-icon">🫀</span><span class="card-title">Triage Troponina ESC</span></div>
     <p class="card-desc">Triage biochimico della sospetta sindrome coronarica acuta: algoritmo ESC 0/1h-2h-3h e HEART score.</p>
     <div class="card-actions">
       <a class="btn btn-primary" href="Triage%20Troponina%20ESC.html">▶ avvia</a>
@@ -198,10 +199,7 @@
   </div>
 
   <div class="card">
-    <div class="card-header">
-      <span class="card-icon">📈</span>
-      <span class="card-title">SCORE2 – Rischio Cardiovascolare</span>
-    </div>
+    <div class="card-header"><span class="card-icon">📈</span><span class="card-title">SCORE2 – Rischio Cardiovascolare</span></div>
     <p class="card-desc">Stima del rischio cardiovascolare con lo score SCORE2 ed indicazione ai farmaci ipolipemizzanti.</p>
     <div class="card-actions">
       <a class="btn btn-primary" href="Score2_Cardiovascular_risk.html">▶ avvia</a>
@@ -210,22 +208,16 @@
   </div>
 
   <div class="card">
-    <div class="card-header">
-      <span class="card-icon">🩺</span>
-      <span class="card-title">Accessi Vascolari</span>
-    </div>
+    <div class="card-header"><span class="card-icon">🩺</span><span class="card-title">Accessi Vascolari</span></div>
     <p class="card-desc">Guida alla scelta e gestione degli accessi vascolari (CVC, PICC, midline, arteriosi).</p>
     <div class="card-actions">
-      <a class="btn btn-primary" href="access_vascular_app.html">▶ avvia</a>
-      <a class="btn btn-secondary" href="access_vascular_app.html" download> scarica</a>
+      <a class="btn btn-primary" href="accessi_vascolari_app.html">▶ avvia</a>
+      <a class="btn btn-secondary" href="accessi_vascolari_app.html" download>⤓ scarica</a>
     </div>
   </div>
 
   <div class="card">
-    <div class="card-header">
-      <span class="card-icon">🤕</span>
-      <span class="card-title">Addome Acuto</span>
-    </div>
+    <div class="card-header"><span class="card-icon">🤕</span><span class="card-title">Addome Acuto</span></div>
     <p class="card-desc">Supporto decisionale per la valutazione del dolore addominale e dell'addome acuto.</p>
     <div class="card-actions">
       <a class="btn btn-primary" href="addome_app.html">▶ avvia</a>
@@ -234,10 +226,7 @@
   </div>
 
   <div class="card">
-    <div class="card-header">
-      <span class="card-icon">🫁</span>
-      <span class="card-title">Polmonite</span>
-    </div>
+    <div class="card-header"><span class="card-icon">🫁</span><span class="card-title">Polmonite</span></div>
     <p class="card-desc">Score di gravità (CURB-65, PSI) e supporto alla terapia antibiotica della polmonite acquisita in comunità.</p>
     <div class="card-actions">
       <a class="btn btn-primary" href="polmonite_app.html">▶ avvia</a>
@@ -246,10 +235,7 @@
   </div>
 
   <div class="card">
-    <div class="card-header">
-      <span class="card-icon">🦠</span>
-      <span class="card-title">Sepsi</span>
-    </div>
+    <div class="card-header"><span class="card-icon">🦠</span><span class="card-title">Sepsi</span></div>
     <p class="card-desc">Screening e stratificazione del rischio: qSOFA, SOFA e criteri Sepsis-3.</p>
     <div class="card-actions">
       <a class="btn btn-primary" href="sepsi_app.html">▶ avvia</a>
@@ -258,33 +244,28 @@
   </div>
 
   <div class="card">
-    <div class="card-header">
-      <span class="card-icon">🧴</span>
-      <span class="card-title">SSTI – Infezioni Cutanee</span>
-    </div>
+    <div class="card-header"><span class="card-icon">🧴</span><span class="card-title">SSTI – Infezioni Cutanee</span></div>
     <p class="card-desc">Classificazione e trattamento delle infezioni della cute e dei tessuti molli (Skin and Soft Tissue Infections).</p>
     <div class="card-actions">
-      <a class="btn btn-primary" href="srti_app.html">▶ avvia</a>
-      <a class="btn btn-secondary" href="srti_app.html" download>⤓ scarica</a>
+      <a class="btn btn-primary" href="ssti_app.html">▶ avvia</a>
+      <a class="btn btn-secondary" href="ssti_app.html" download>⤓ scarica</a>
     </div>
   </div>
 
   <div class="card">
-    <div class="card-header">
-      <span class="card-icon">🚽</span>
-      <span class="card-title">UTI – Infezioni del Tratto Urinario</span>
-    </div>
+    <div class="card-header"><span class="card-icon">🚽</span><span class="card-title">UTI – Infezioni del Tratto Urinario</span></div>
     <p class="card-desc">Gestione delle infezioni del tratto urinario (Urinary Tract Infections) e criterio antibiotico.</p>
     <div class="card-actions">
       <a class="btn btn-primary" href="uti_app.html">▶ avvia</a>
-      <a class="btn btn-secondary" href="uti_app.html" download> scarica</a>
+      <a class="btn btn-secondary" href="uti_app.html" download>⤓ scarica</a>
     </div>
   </div>
 
 </div>
 
 <footer>
-  Ideato dal dr. C. Briglia (<a href="mailto:cesarebriglia@gmail.com">cesarebriglia@gmail.com</a>) con l'apporto di Claude – Anthropic
+  <div>Ideato dal dr. C.Briglia (<a href="mailto:cesarebriglia@gmail.com">cesarebriglia@gmail.com</a>) con l'apporto di Claude - Anthropic</div>
+  <div class="meta">Versione 2.2 · Data di creazione: 02/11/2026</div>
 </footer>
 
 </body>
