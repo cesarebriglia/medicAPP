@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calcolatore Posologico Antifungini Sistemici</title>
+<style>
+  :root {
+    --bg: #f8f9fa; --card: #ffffff; --text: #1a1a2e; --text-sec: #4a4a5a;
+    --text-ter: #8a8a9a; --border: #e0e0e5; --accent: #2563eb;
+    --danger: #dc2626; --warning: #d97706; --success: #16a34a; --info: #0891b2;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg); color: var(--text); margin: 0; padding: 20px; line-height: 1.5;
+  }
+  .container { max-width: 900px; margin: 0 auto; }
+  h1 { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+  .subtitle { font-size: 13px; color: var(--text-ter); margin-bottom: 20px; }
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .section-title {
+    font-size: 11px; font-weight: 600; color: var(--text-sec);
+    text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 14px;
+  }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label { font-size: 12px; font-weight: 500; color: var(--text-sec); }
+  .field input, .field select {
+    padding: 9px 11px; border: 1px solid var(--border); border-radius: 8px;
+    background: #fff; color: var(--text); font-size: 14px; outline: none; width: 100%;
+  }
+  .field input:focus, .field select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+  .btn {
+    padding: 11px 22px; border: none; background: var(--text); color: #fff;
+    border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer;
+    margin-top: 14px; transition: opacity 0.2s;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn:active { transform: translateY(1px); }
+  .error {
+    display: none; padding: 10px 12px; border-radius: 8px;
+    background: rgba(220,38,38,0.08); border: 1px solid rgba(220,38,38,0.25);
+    color: var(--danger); font-size: 13px; margin-top: 10px;
+  }
+  .error.show { display: block; }
+  .dose-box { display: flex; align-items: baseline; gap: 10px; margin: 6px 0 4px; }
+  .dose-num { font-size: 42px; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .dose-unit { font-size: 16px; color: var(--text-sec); }
+  .dose-detail { font-size: 13px; color: var(--text-sec); margin-top: 4px; }
+  .badge {
+    display: inline-block; padding: 3px 8px; border-radius: 6px;
+    font-size: 11px; font-weight: 600; margin-top: 8px; margin-right: 4px;
+  }
+  .badge.ok { background: rgba(22,163,74,0.12); color: var(--success); }
+  .badge.warn { background: rgba(217,119,6,0.12); color: var(--warning); }
+  .badge.danger { background: rgba(220,38,38,0.12); color: var(--danger); }
+  .badge.info { background: rgba(8,145,178,0.12); color: var(--info); }
+  .results { display: none; }
+  .results.show { display: block; }
+  .param-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; }
+  .param-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 9px 12px; border-radius: 8px; background: rgba(0,0,0,0.025);
+  }
+  .param-label { font-size: 12px; color: var(--text-sec); }
+  .param-value { font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border); margin-top: 16px; overflow-x: auto; }
+  .tab {
+    padding: 9px 16px; font-size: 12px; font-weight: 600; border: none;
+    background: transparent; color: var(--text-ter); cursor: pointer;
+    border-bottom: 2px solid transparent; white-space: nowrap;
+  }
+  .tab.active { color: var(--text); border-bottom-color: var(--text); }
+  .tab:hover { color: var(--text); }
+  .tab-content { display: none; padding: 16px 0; font-size: 13px; line-height: 1.7; color: var(--text-sec); }
+  .tab-content.active { display: block; }
+  .tab-content p { margin-bottom: 8px; }
+  .tab-content strong { color: var(--text); font-weight: 600; }
+  .tab-content ul { padding-left: 18px; margin: 6px 0; }
+  .tab-content li { margin-bottom: 4px; }
+  .bib-item { padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .bib-item:last-child { border-bottom: none; }
+  .bib-item a { color: var(--accent); text-decoration: none; font-weight: 600; font-size: 13px; }
+  .bib-item a:hover { text-decoration: underline; }
+  .bib-item span { display: block; font-size: 11px; color: var(--text-ter); margin-top: 2px; }
+  .disclaimer {
+    margin-top: 16px; padding: 12px 14px; border-radius: 8px;
+    background: rgba(217,119,6,0.06); border: 1px solid rgba(217,119,6,0.2);
+    font-size: 11px; color: var(--text-sec); line-height: 1.5;
+  }
+  .note-box {
+    padding: 10px 12px; border-radius: 8px; background: rgba(37,99,235,0.06);
+    border: 1px solid rgba(37,99,235,0.18); font-size: 12px; color: var(--text-sec); margin-top: 10px;
+  }
+  @media (max-width: 600px) {
+    .grid, .param-grid { grid-template-columns: 1fr; }
+    .dose-num { font-size: 32px; }
+  }
+  .box-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; margin-top: 6px; }
+  .box { border-radius: 10px; padding: 11px 13px; border: 1px solid; border-left-width: 5px; }
+  .box .box-tag { display: block; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+  .box .box-txt { font-size: 13px; line-height: 1.5; color: var(--text); }
+  .box.red { background: rgba(220,38,38,0.08); border-color: rgba(220,38,38,0.35); border-left-color: var(--danger); }
+  .box.red .box-tag { color: var(--danger); }
+  .box.amber { background: rgba(217,119,6,0.09); border-color: rgba(217,119,6,0.35); border-left-color: var(--warning); }
+  .box.amber .box-tag { color: var(--warning); }
+  .box.green { background: rgba(22,163,74,0.08); border-color: rgba(22,163,74,0.35); border-left-color: var(--success); }
+  .box.green .box-tag { color: var(--success); }
+  .box.blue { background: rgba(37,99,235,0.08); border-color: rgba(37,99,235,0.3); border-left-color: var(--accent); }
+  .box.blue .box-tag { color: var(--accent); }
+  .box.teal { background: rgba(8,145,178,0.09); border-color: rgba(8,145,178,0.3); border-left-color: var(--info); }
+  .box.teal .box-tag { color: var(--info); }
+  .box.purple { background: rgba(124,58,237,0.08); border-color: rgba(124,58,237,0.3); border-left-color: #7c3aed; }
+  .box.purple .box-tag { color: #7c3aed; }
+  .box-legend { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+  .dist-wrap { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--card); margin-top: 6px; }
+  .dist-head { background: #e8effc; color: #1d4ed8; font-family: "SFMono-Regular", Consolas, "Courier New", monospace; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 12px 16px; border-bottom: 1px solid #c9d8f5; }
+  .dist-body { padding: 14px 16px 16px; }
+  .dist-pk { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .dist-pk span { font-size: 11px; background: #f1f2f5; color: var(--text-sec); border-radius: 999px; padding: 3px 10px; }
+  .dist-pk b { color: var(--text); font-weight: 600; }
+  .tiles { display: flex; flex-wrap: wrap; gap: 10px; }
+  .tile { flex: 0 1 150px; min-width: 130px; border-radius: 10px; border: 1px solid; padding: 11px 10px; text-align: center; }
+  .tile .t-name { display: block; font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+  .tile .t-dots { display: inline-flex; gap: 2px; align-items: center; vertical-align: middle; }
+  .tile .t-dots i { width: 7px; height: 7px; border-radius: 50%; display: inline-block; border: 1.5px solid; }
+  .tile .t-lab { font-family: "SFMono-Regular", Consolas, "Courier New", monospace; font-size: 11px; margin-left: 5px; vertical-align: middle; }
+  .tile .t-note { display: block; font-size: 10.5px; color: var(--text-sec); margin-top: 5px; line-height: 1.35; }
+  .tile.lv-E, .tile.lv-O { background: #e6f4ea; border-color: #a8d5b5; color: #14532d; }
+  .tile.lv-B { background: #eef6ff; border-color: #a9cdea; color: #1e3a8a; }
+  .tile.lv-S { background: #fff4e0; border-color: #f1c98a; color: #92400e; }
+  .tile.lv-T { background: #fdecec; border-color: #f0b3b3; color: #991b1b; }
+  .tile i { border-color: currentColor; }
+  .tile i.on { background: currentColor; }
+  .dist-leg { font-size: 11px; color: var(--text-ter); margin-top: 12px; }
+</style>
+<base target="_blank">
+</head>
+<body>
+<div class="container">
+  <h1>Calcolatore posologico antifungini sistemici</h1>
+  <div class="subtitle">Dose effettiva su peso, clearance renale (Cockcroft-Gault), dialisi e funzione epatica</div>
+
+  <div class="card">
+    <div class="section-title">Dati paziente</div>
+    <div class="grid">
+      <div class="field"><label>Farmaco *</label><select id="af-farmaco"><option value="">Seleziona...</option><option value="fluconazolo">Fluconazolo</option><option value="itraconazolo">Itraconazolo</option><option value="voriconazolo">Voriconazolo</option><option value="posaconazolo">Posaconazolo</option><option value="isavuconazolo">Isavuconazolo</option><option value="anidulafungina">Anidulafungina</option><option value="caspofungina">Caspofungina</option><option value="micafungina">Micafungina</option><option value="amb-desossicolato">Amfotericina B desossicolato</option><option value="amb-liposomiale">Amfotericina B liposomiale</option><option value="flucitosina">Flucitosina</option></select></div>
+      <div class="field"><label>Via *</label><select id="af-via"><option value="">Seleziona...</option><option value="ev">Endovenosa (EV)</option><option value="os">Orale (OS)</option></select></div>
+      <div class="field"><label>Peso (kg) *</label><input id="af-peso" type="number" min="1" max="250" step="0.1" placeholder="es. 70"></div>
+      <div class="field"><label>Altezza (cm)</label><input id="af-altezza" type="number" min="50" max="250" placeholder="es. 170"></div>
+      <div class="field"><label>Età (anni) *</label><input id="af-eta" type="number" min="0" max="120" placeholder="es. 65"></div>
+      <div class="field"><label>Creatininemia (mg/dL) *</label><input id="af-creatinina" type="number" min="0.1" max="30" step="0.01" placeholder="es. 1.2"></div>
+      <div class="field"><label>Sesso *</label><select id="af-sesso"><option value="M">Maschio</option><option value="F">Femmina</option></select></div>
+      <div class="field"><label>Emodialisi</label><select id="af-dialisi"><option value="no">No</option><option value="si">Sì</option></select></div>
+      <div class="field"><label>Child-Pugh (epatica)</label><select id="af-child"><option value="none">Nessuna / A</option><option value="B">B (moderata)</option><option value="C">C (grave)</option></select></div>
+    </div>
+    <button class="btn" id="btn-calcola">Calcola dose effettiva</button>
+    <div id="af-error" class="error"></div>
+  </div>
+
+  <div id="af-results" class="results">
+    <div class="card">
+      <div class="section-title">Dose calcolata</div>
+      <div class="dose-box"><span class="dose-num" id="af-dose-num">--</span><span class="dose-unit" id="af-dose-unit"></span></div>
+      <div class="dose-detail" id="af-dose-detail"></div>
+      <div id="af-dose-badges"></div>
+      <div class="note-box" id="af-dose-note" style="display:none"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Parametri paziente</div>
+      <div class="param-grid">
+        <div class="param-item"><span class="param-label">CrCl (Cockcroft-Gault)</span><span class="param-value" id="af-crcl">--</span></div>
+        <div class="param-item"><span class="param-label">BMI</span><span class="param-value" id="af-bmi">--</span></div>
+        <div class="param-item"><span class="param-label">Superficie corporea</span><span class="param-value" id="af-sc">--</span></div>
+        <div class="param-item"><span class="param-label">Aggiustamento renale</span><span class="param-value" id="af-renal">--</span></div>
+        <div class="param-item"><span class="param-label">Aggiustamento epatico</span><span class="param-value" id="af-hepatic">--</span></div>
+        <div class="param-item"><span class="param-label">Note età</span><span class="param-value" id="af-elderly">--</span></div>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="tab-met">Metabolismo</button>
+      <button class="tab" data-tab="tab-dist">Distribuzione</button>
+      <button class="tab" data-tab="tab-int">Interazioni</button>
+      <button class="tab" data-tab="tab-tdm">TDM / PK</button>
+      <button class="tab" data-tab="tab-lg">Linee guida</button>
+      <button class="tab" data-tab="tab-bib">Bibliografia</button>
+    </div>
+
+    <div id="tab-met" class="tab-content active"></div>
+    <div id="tab-dist" class="tab-content"></div>
+    <div id="tab-int" class="tab-content"></div>
+    <div id="tab-tdm" class="tab-content"></div>
+    <div id="tab-lg" class="tab-content"></div>
+    <div id="tab-bib" class="tab-content"></div>
+  </div>
+
+  <div class="disclaimer">
+    <strong>Disclaimer:</strong> strumento di supporto decisionale. Non sostituisce il giudizio clinico. Verificare RCP AIFA/EMA aggiornate e linee guida ESCMID/ECMM. Clearance calcolata con Cockcroft-Gault. Dosi pediatriche, gravidanza, condizioni speciali: valutazione specialistica.
+  </div>
+  <div class="disclaimer" style="text-align:center">
+    Ideato dal dr. C.Briglia (cesarebriglia@gmail.com) con l'apporto di Claude - Antropic<br>
+    Versione 1.4 &middot; Data di creazione: 02/11/2026
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var AF_DATA = {
+    fluconazolo: {
+      vie: ["ev","os"],
+      carico: "Dose iniziale doppia (800 mg) il primo giorno per raggiungere steady-state",
+      renale: { regole: ["CrCl >50: 400 mg/die","CrCl <=50 (no dialisi): 200 mg/die (50%)","Emodialisi: 400 mg post-seduta, 200 mg altri giorni"] },
+      epatico: { aggiusta: false },
+      metabolismo: "Metabolismo epatico minimo (~11%). Moderato inibitore CYP2C9/CYP3A4; potente CYP2C19. Eliminazione ~80% renale immodificata.",
+      distribuzione: "Idrosolubile. Vd ~0,7 L/kg. Penetrazione liquor >=70% livelli sierici, strato corneo, unghie, pelle.",
+      distr: {"pk": [["Vd", "~0,7 L/kg"], ["Solubilità", "Idrosolubile"]], "t": [["Encefalo/LCR", "E", "≥70% dei livelli sierici"], ["Cute/Unghie", "E", "Strato corneo, unghie"], ["Urine", "E", "~80% eliminato immodificato"], ["Polmone", "O"], ["Osso", "B"], ["Occhio", "O"]]},
+      interazioni: [["a", "Aumenta i livelli di ciclosporina, tacrolimus, warfarin, fenitoina, calcio-antagonisti e rifabutina."], ["a", "Rifampicina ne riduce i livelli."], ["a", "Attenzione ai farmaci QT-prolunganti."]],
+      tdm: { consigliato: false, note: "Non richiesto di routine." },
+      lg: "Prima linea candidemia (non neutropenici) e meningite criptococcica. C. krusei resistente. C. glabrata sensibilita ridotta."
+    },
+    itraconazolo: {
+      vie: ["os","ev"],
+      doseDesc: { os: "200 mg bid x 3 gg, poi 200 mg/die", ev: "200 mg bid x 2 gg, poi 200 mg/die" },
+      carico: "Carico raccomandato per raggiungere concentrazioni terapeutiche",
+      renale: { regole: ["Nessun aggiustamento per clearance","EV con ciclodestrina: cautela se CrCl <30 ml/min"] },
+      epatico: { aggiusta: false },
+      metabolismo: "Esteso metabolismo epatico via CYP3A4. Metabolita attivo: idrossiitraconazolo. Legame proteico 99%.",
+      distribuzione: "Liposolubile. Legame proteico ~99%. Bassa penetrazione LCS. Buona distribuzione polmoni e cute.",
+      distr: {"pk": [["Legame proteico", "~99%"], ["Solubilità", "Liposolubile"]], "t": [["Polmone", "O"], ["Cute/Unghie", "E", "Accumulo nella cheratina"], ["Encefalo/LCR", "S", "Bassa penetrazione"], ["Urine", "T", "Escrezione non renale"]]},
+      interazioni: [["r", "Controindicato con cisapride, pimozide, quinidina, dofetilide ed ergotamine."], ["r", "Controindicato con statine e con midazolam/triazolam orali."], ["a", "Numerose altre interazioni (substrato e inibitore CYP3A4): verificare sempre la terapia concomitante."]],
+      tdm: { consigliato: true, note: "Mirato. Cmin >0,5 mg/L necessaria. Campionare valle dopo 4-5 giorni." },
+      lg: "Aspergillosi, blastomicosi, coccidioidomicosi, istoplasmosi. Assorbimento OS dipendente da pH gastrico e cibo."
+    },
+    voriconazolo: {
+      vie: ["ev","os"],
+      doseDesc: { ev: "Carico 6 mg/kg bid (giorno 1), mantenimento 3-4 mg/kg bid", os: ">=40 kg: carico 300 mg bid, mantenimento 150-200 mg bid; <40 kg: carico 150 mg bid, mantenimento 100 mg bid" },
+      carico: "Carico obbligatorio per raggiungere steady-state in 1 giorno",
+      renale: { regole: ["EV: cautela se CrCl <50 (accumulo ciclodestrina). Considerare passaggio a OS.","OS: nessun aggiustamento renale."] },
+      epatico: { aggiusta: true, regola: "Mantenimento 50% dose standard" },
+      metabolismo: "Esteso metabolismo epatico (CYP2C19 >> CYP3A4, CYP2C9). Forte variabilita per polimorfismo CYP2C19.",
+      distribuzione: "Vd ~4,6 L/kg. Penetrazione LCS ~50-60%. Elevate concentrazioni polmoni, fegato, milza. Bassa penetrazione urinaria.",
+      distr: {"pk": [["Vd", "~4,6 L/kg"]], "t": [["Encefalo/LCR", "O", "~50-60% dei livelli sierici"], ["Polmone", "O"], ["Fegato", "O"], ["Occhio", "O"], ["Osso", "B"], ["Urine", "T", "Bassa penetrazione urinaria"]]},
+      interazioni: [["a", "Forte inibitore CYP3A4, moderato CYP2C19, debole CYP2C9."], ["a", "Aumenta i livelli di ciclosporina (x1,7) e tacrolimus (x3): monitorare."], ["r", "Sirolimus controindicato."], ["r", "Rifampicina, carbamazepina e barbiturici controindicati."], ["a", "Omeprazolo aumenta i livelli di voriconazolo."]],
+      tdm: { consigliato: true, note: "Fortemente raccomandato. Cmin target >=1,7 mg/L (meglio 2-5); tossicita >5,5 mg/L." },
+      lg: "Farmaco di elezione aspergillosi invasiva (IDSA/ESCMID). Efficace Scedosporium e Fusarium. Disturbi visivi transitori. Fotosensibilita."
+    },
+    posaconazolo: {
+      vie: ["os","ev"],
+      doseDesc: { os: "Compresse DR: 300 mg bid (g1), poi 300 mg/die. Sospensione: 200 mg tid", ev: "300 mg bid (g1), poi 300 mg/die" },
+      carico: "Carico richiesto per compresse DR ed EV",
+      renale: { regole: ["Nessun aggiustamento in insufficienza renale","Non dializzabile (legame proteico 98%)"] },
+      epatico: { aggiusta: false },
+      metabolismo: "Minimo metabolismo CYP450. Principalmente glucuronidazione (UGT) ed escrezione biliare/fecale (~70%). Substrato/inibitore P-gp.",
+      distribuzione: "Vd ~450 L. Legame proteico ~98%. Buona penetrazione polmonare. LCS bassa ma concentrazioni efficaci parenchima cerebrale.",
+      distr: {"pk": [["Vd", "~450 L"], ["Legame proteico", "~98%"]], "t": [["Polmone", "O"], ["Parenchima cerebrale", "B", "Concentrazioni efficaci"], ["LCR", "S", "Livelli bassi"], ["Urine", "T"]]},
+      interazioni: [["a", "Inibitore CYP3A4 (meno potente del voriconazolo)."], ["r", "Lovastatina e simvastatina controindicate."], ["a", "Aumenta i livelli di ciclosporina e tacrolimus: ridurre la dose e monitorare."], ["a", "I PPI riducono l'assorbimento della sospensione orale."]],
+      tdm: { consigliato: true, note: "Raccomandato. Cmin profilassi >=0,7; terapia >=1,0 mg/L. Concentrazioni >2 mg/L tossicita maggiore." },
+      lg: "Profilassi di prima scelta neutropenia acuta e GVHD post-TCSE. Attivo contro Mucorales. Compresse DR preferite."
+    },
+    isavuconazolo: {
+      vie: ["ev","os"],
+      doseDesc: { ev: "200 mg tid x 2 gg, poi 200 mg/die", os: "200 mg tid x 2 gg, poi 200 mg/die" },
+      carico: "Carico obbligatorio nei primi 2 giorni",
+      renale: { regole: ["Nessun aggiustamento in insufficienza renale","Non dializzabile"] },
+      epatico: { aggiusta: false },
+      metabolismo: "Metabolismo epatico via CYP3A4, CYP3A5 e UGT. Profarmaco idrosolubile convertito in isavuconazolo attivo. Legame proteico >90%.",
+      distribuzione: "Vd elevato, legame proteico >90%. Semivita lunga (~130 h). Buona penetrazione tissutale.",
+      distr: {"pk": [["Vd", "Elevato"], ["Legame proteico", ">90%"], ["Emivita", "~130 h"]], "t": [["Polmone", "O"], ["Altri tessuti", "B", "Buona penetrazione tissutale"], ["LCR", "S"], ["Urine", "T"]]},
+      interazioni: [["g", "Interazioni piu deboli rispetto agli altri triazoli."], ["r", "Controindicato con forti inibitori CYP3A4/3A5: ketoconazolo, ritonavir ad alto dosaggio."], ["r", "Controindicato con forti induttori CYP3A4/3A5/UGT: carbamazepina, fenobarbital, fenitoina, rifabutina, rifampicina, erba di S. Giovanni."]],
+      tdm: { consigliato: false, note: "Generalmente non richiesto grazie a farmacocinetica prevedibile." },
+      lg: "Approvato per aspergillosi invasiva e mucormicosi. Studio SECURE: non inferiorita vs voriconazolo, migliore sicurezza. Unico triazolo che accorcia QT."
+    },
+    anidulafungina: {
+      vie: ["ev"],
+      doseDesc: { ev: "Carico 200 mg g1, mantenimento 100 mg/die" },
+      carico: "Carico raccomandato giorno 1",
+      renale: { regole: ["Nessun aggiustamento anche in grave insufficienza renale","Non eliminata renale (<1% urina)"] },
+      epatico: { aggiusta: false },
+      metabolismo: "Degradazione spontanea >90% nel sangue e nei tessuti. Non metabolizzata dal fegato (non substrato ne inibitore CYP450 ne P-gp).",
+      distribuzione: "Vd 30-50 L (0,5-0,6 L/kg). Legame proteico >99%. Penetrazione LCS, urina e occhio scarsa. Distribuzione ampia acqua corporea totale.",
+      distr: {"pk": [["Vd", "30-50 L (0,5-0,6 L/kg)"], ["Legame proteico", ">99%"]], "t": [["Polmone", "B"], ["Fegato", "B"], ["Encefalo/LCR", "S"], ["Occhio", "S"], ["Urine", "T", "<1% eliminato per via renale"]]},
+      interazioni: [["g", "Nessuna interazione farmacocinetica significativa documentata."]],
+      tdm: { consigliato: false, note: "Non raccomandato. Nessuna correlazione concentrazione-tossicita stabilita." },
+      lg: "Echinocandina di scelta per candidemia (vs fluconazolo: maggiore risposta globale). Fungicida vs Candida, fungistatica vs Aspergillus."
+    },
+    caspofungina: {
+      vie: ["ev"],
+      doseDesc: { ev: "Carico 70 mg g1, mantenimento 50 mg/die" },
+      carico: "Carico raccomandato giorno 1",
+      renale: { regole: ["Nessun aggiustamento in insufficienza renale","41% eliminata renale come metaboliti inattivi"] },
+      epatico: { aggiusta: true, regola: "Child-Pugh B: mantenimento 35 mg/die (dopo carico 70 mg). Non studiata in epatopatia grave." },
+      metabolismo: "Idrolisi spontanea anello esapeptidico. N-acetilazione epatica. Minimo substrato CYP3A4. Non inibisce CYP450.",
+      distribuzione: "Vd ~9-10 L (0,14 L/kg). Legame proteico 96-97%. Penetrazione LCS e urina scarsa.",
+      distr: {"pk": [["Vd", "~9-10 L (0,14 L/kg)"], ["Legame proteico", "96-97%"]], "t": [["Fegato", "O"], ["Polmone", "B"], ["Encefalo/LCR", "S"], ["Urine", "S"]]},
+      interazioni: [["a", "Rifampicina riduce l'AUC di circa il 30%: associazione sconsigliata."], ["a", "Ciclosporina aumenta l'AUC del 35% e le transaminasi: evitare se possibile."]],
+      tdm: { consigliato: false, note: "Non raccomandato." },
+      lg: "Terapia empirica neutropenia febbrile e candidosi invasiva. Superiorita vs fluconazolo in candidemia."
+    },
+    micafungina: {
+      vie: ["ev"],
+      doseDesc: { ev: "Candidosi invasiva: 100 mg/die; Esofagite: 150 mg/die; Profilassi: 50 mg/die" },
+      carico: "Nessun carico richiesto",
+      renale: { regole: ["Nessun aggiustamento in insufficienza renale","Solo ~10% eliminata renale"] },
+      epatico: { aggiusta: false },
+      metabolismo: "Metabolismo epatico via arilsulfatasi e COMT. Minimo coinvolgimento CYP3A4. Escrezione biliare >70%, renale ~10%.",
+      distribuzione: "Vd ~18 L (0,21-0,24 L/kg). Legame proteico >99,8%. Penetrazione LCS, urina e occhio scarsa.",
+      distr: {"pk": [["Vd", "~18 L (0,21-0,24 L/kg)"], ["Legame proteico", ">99,8%"]], "t": [["Polmone", "B"], ["Encefalo/LCR", "S"], ["Occhio", "S"], ["Urine", "S"]]},
+      interazioni: [["g", "Nessuna interazione farmacocinetica significativa."]],
+      tdm: { consigliato: false, note: "Non raccomandato." },
+      lg: "Profilassi anti-Candida post-TCSE. Esofagite da Candida: non inferiorita vs fluconazolo. Monitorare LFT."
+    },
+    "amb-desossicolato": {
+      vie: ["ev"],
+      doseDesc: { ev: "0,5-1 mg/kg/die (max 1,5 mg/kg/die)" },
+      carico: "Dose di prova 1 mg in 20 mL destrosio in 20-30 min con monitoraggio 2-4 h. Escalation graduale 5-10 mg/die.",
+      renale: { regole: ["Nessun aggiustamento posologico per clearance","Preferire liposomiale se insufficienza renale pre-esistente","Pre-idratazione con soluzione salina normale (1 L)"] },
+      epatico: { aggiusta: false },
+      metabolismo: "Non metabolizzato. Eliminazione reticoloendoteliale. Nessun coinvolgimento CYP450.",
+      distribuzione: "Vd elevato. Legame proteico ~90%. Penetrazione LCS scarsa ma clinicamente efficace per criptococcosi. Captazione reticoloendoteliale.",
+      distr: {"pk": [["Vd", "Elevato"], ["Legame proteico", "~90%"]], "t": [["Fegato/Milza", "O", "Captazione reticoloendoteliale"], ["Polmone", "B"], ["Encefalo/LCR", "S", "Scarsa ma clinicamente efficace nella criptococcosi"]]},
+      interazioni: [["a", "Altri nefrotossici (aminoglicosidi, ciclosporina, vancomicina, mezzi di contrasto): rischio additivo."], ["a", "Farmaci ipokaliemizzanti e QT-prolunganti."], ["a", "Flucitosina: sinergismo ma tossicita aumentata."]],
+      tdm: { consigliato: false, note: "Monitoraggio concentrazioni sierose controindicato. Monitorare K, Mg, creatinina, emocromo." },
+      lg: "Gold standard storico. Oggi riservato a infezioni refrattarie. Test dose obbligatorio. Infusione lenta (2-6 h)."
+    },
+    "amb-liposomiale": {
+      vie: ["ev"],
+      doseDesc: { ev: "Terapia empirica: 3 mg/kg/die; Invasiva: 3-5 mg/kg/die; Meningite criptococcica HIV: 6 mg/kg/die; Mucormicosi: 5-10 mg/kg/die" },
+      carico: "Nessuna dose di prova necessaria. Dose terapeutica fin da subito.",
+      renale: { regole: ["Nessun aggiustamento posologico","Formulazione di scelta in insufficienza renale pre-esistente","Non dializzabile"] },
+      epatico: { aggiusta: false },
+      metabolismo: "Non metabolizzato. Eliminazione reticoloendoteliale. Nessun coinvolgimento CYP450.",
+      distribuzione: "Captazione preferenziale sistema reticoloendoteliale (fegato, milza, linfonodi). SUVs. Concentrazione aumentata nei polmoni.",
+      distr: {"pk": [["Distribuzione", "Captazione reticoloendoteliale"]], "t": [["Fegato/Milza/Linfonodi", "O"], ["Polmone", "O", "Concentrazione aumentata"], ["Encefalo/LCR", "S"]]},
+      interazioni: [["a", "Stesse interazioni del desossicolato (nefrotossici, ipokaliemizzanti, QT-prolunganti), ma nefrotossicita e reazioni da infusione molto ridotte."], ["a", "Flucitosina: sinergismo ma tossicita aumentata."]],
+      tdm: { consigliato: false, note: "Monitorare elettroliti e funzione renale." },
+      lg: "Formulazione preferita vs desossicolato. Dosi fino a 10 mg/kg/die tollerate in mucormicosi. In gravidanza: formulazione di scelta."
+    },
+    flucitosina: {
+      vie: ["ev","os"],
+      carico: "Nessun carico",
+      renale: { regole: ["CrCl >40: 25 mg/kg q6h (4 dosi/die = 100 mg/kg/die)","CrCl 20-40: 25 mg/kg q12h (2 dosi/die = 50 mg/kg/die)","CrCl 10-20: 25 mg/kg q24h (1 dose/die = 25 mg/kg/die)","Emodialisi: 25 mg/kg q24h post-seduta"] },
+      epatico: { aggiusta: false },
+      metabolismo: "Minimo metabolismo epatico. Conversione intracellulare in 5-FU da parte dei funghi. Eliminazione renale immodificata (~90%).",
+      distribuzione: "Vd 0,5-0,9 L/kg. Elevata penetrazione LCS (~74% livelli sierici), unghie, occhio, articolazioni.",
+      distr: {"pk": [["Vd", "0,5-0,9 L/kg"]], "t": [["Encefalo/LCR", "E", "~74% dei livelli sierici"], ["Urine", "E", "~90% eliminato immodificato"], ["Occhio", "O"], ["Articolazioni", "O"], ["Unghie", "O"]]},
+      interazioni: [["a", "Amfotericina B: sinergismo ma tossicita aumentata."], ["a", "Citarabina e leucovorin: antagonismo."], ["a", "Farmaci mielosoppressivi: rischio additivo."]],
+      tdm: { consigliato: true, note: "Raccomandato. Concentrazioni target: 25-100 mg/L. AUC correlata a efficacia e tossicita." },
+      lg: "Sempre in associazione con amfotericina B per criptococcosi (sinergismo, previene resistenza). Almeno 2 settimane dopo negativizzazione emocolture."
+    }
+  };
+
+  var BIB = '<div class="bib-item"><a href="https://www.ncbi.nlm.nih.gov/books/NBK538168/" target="_blank">NCBI StatPearls – Antifungal Agents</a><span>Patel P, Zito P. StatPearls [Internet]. 2025. Panoramica completa su classi, meccanismi e indicazioni.</span></div>' +
+    '<div class="bib-item"><a href="https://www.ncbi.nlm.nih.gov/books/NBK551581/" target="_blank">NCBI StatPearls – Antifungal Ergosterol Synthesis Inhibitors (Azoles)</a><span>Yee G, Al Aboud AM. StatPearls [Internet]. 2024. Dettaglio su triazoli: farmacocinetica, epatotossicita, interazioni CYP450.</span></div>' +
+    '<div class="bib-item"><a href="https://www.ncbi.nlm.nih.gov/books/NBK537158/" target="_blank">NCBI StatPearls – Fluconazole</a><span>Govindarajan A. StatPearls [Internet]. 2024. Monografia dedicata: dosaggio, clearance renale, interazioni.</span></div>' +
+    '<div class="bib-item"><a href="https://emcrit.org/pulmcrit/antifungal/" target="_blank">EmCrit IBCC – Antifungal Agents</a><span>Farkas J. IBCC chapter & cast. 2020. Riferimento pratico per terapia intensiva: dosi, TDM, scelta farmaco.</span></div>' +
+    '<div class="bib-item"><a href="https://en.fungaleducation.org/guidelines/" target="_blank">Fungal Education – Clinical Guidelines for Fungal Infections</a><span>ESCMID-ECMM-ERS. Raccolta delle linee guida europee per aspergillosi, candidiasi, mucormicosi.</span></div>' +
+    '<div class="bib-item"><a href="https://www.agenziafarmaco.gov.it/bancadatifarmaci" target="_blank">AIFA – Banca Dati Farmaci (RCP italiane)</a><span>Agenzia Italiana del Farmaco. Foglietti illustrativi e Riassunti delle Caratteristiche del Prodotto ufficiali.</span></div>' +
+    '<div class="bib-item"><a href="https://www.msdmanuals.com/professional/infectious-diseases/fungi/antifungal-drugs" target="_blank">MSD Manuals Professional – Antifungal Drugs</a><span>MSD Manual. Riferimento classico per dosaggio, spettro d\'azione e effetti avversi.</span></div>';
+
+  function showError(msg) {
+    var el = document.getElementById('af-error');
+    el.textContent = msg;
+    el.classList.add('show');
+  }
+  function hideError() {
+    var el = document.getElementById('af-error');
+    el.classList.remove('show');
+    el.textContent = '';
+  }
+
+  function boxHtml(color, tag, txt) {
+    return '<div class="box ' + color + '"><span class="box-tag">' + tag + '</span><span class="box-txt">' + txt + '</span></div>';
+  }
+  function renderDistribuzione(d) {
+    var LV = { E: ['Eccellente', 4], O: ['Ottima', 3], B: ['Buona', 2], S: ['Scarsa', 1], T: ['Trascurabile', 0] };
+    var pk = '', tl = '';
+    for (var i = 0; i < d.pk.length; i++) pk += '<span>' + d.pk[i][0] + ': <b>' + d.pk[i][1] + '</b></span>';
+    for (var j = 0; j < d.t.length; j++) {
+      var x = d.t[j], lv = LV[x[1]], dots = '';
+      for (var k = 0; k < 4; k++) dots += '<i class="' + (k < lv[1] ? 'on' : '') + '"></i>';
+      tl += '<div class="tile lv-' + x[1] + '"><span class="t-name">' + x[0] + '</span><span class="t-dots">' + dots + '</span><span class="t-lab">' + lv[0] + '</span>' + (x[2] ? '<span class="t-note">' + x[2] + '</span>' : '') + '</div>';
+    }
+    return '<div class="dist-wrap"><div class="dist-head">&#129729; Distribuzione tissutale</div><div class="dist-body"><div class="dist-pk">' + pk + '</div><div class="tiles">' + tl + '</div><div class="dist-leg">Scala qualitativa di penetrazione: Eccellente, Ottima, Buona, Scarsa, Trascurabile. Valutazione indicativa, non sostitutiva dei dati PK dell\'RCP.</div></div></div>';
+  }
+  function renderInterazioni(items) {
+    var h = '', lab = { r: ['red', 'Controindicato / evitare'], a: ['amber', 'Cautela / monitorare'], g: ['green', 'Basso rischio'] };
+    for (var i = 0; i < items.length; i++) {
+      var x = lab[items[i][0]];
+      h += boxHtml(x[0], x[1], items[i][1]);
+    }
+    return '<div class="box-legend"><span class="badge danger">Controindicato</span><span class="badge warn">Cautela</span><span class="badge ok">Basso rischio</span></div><div class="box-grid">' + h + '</div>';
+  }
+
+  function afCalcola() {
+    try {
+      hideError();
+      var farmaco = document.getElementById('af-farmaco').value;
+      var via = document.getElementById('af-via').value;
+      var peso = parseFloat(document.getElementById('af-peso').value);
+      var altezza = parseFloat(document.getElementById('af-altezza').value);
+      var eta = parseFloat(document.getElementById('af-eta').value);
+      var creatinina = parseFloat(document.getElementById('af-creatinina').value);
+      var sesso = document.getElementById('af-sesso').value;
+      var dialisi = document.getElementById('af-dialisi').value;
+      var child = document.getElementById('af-child').value;
+
+      if (!farmaco || !via || !peso || !eta || !creatinina) {
+        showError('Compilare tutti i campi obbligatori contrassegnati con *');
+        return;
+      }
+      if (isNaN(peso) || isNaN(eta) || isNaN(creatinina) || peso <= 0 || eta < 0 || creatinina <= 0) {
+        showError('Inserire valori numerici validi per peso, eta e creatinina');
+        return;
+      }
+
+      var data = AF_DATA[farmaco];
+      if (!data) { showError('Farmaco non riconosciuto'); return; }
+      if (data.vie.indexOf(via) === -1) {
+        showError('Via ' + via.toUpperCase() + ' non disponibile per ' + farmaco);
+        return;
+      }
+
+      var crcl = ((140 - eta) * peso) / (72 * creatinina);
+      if (sesso === 'F') crcl *= 0.85;
+      crcl = Math.max(0, Math.round(crcl * 10) / 10);
+
+      var bmi = null, sc = null;
+      if (altezza && !isNaN(altezza) && altezza > 0) {
+        bmi = Math.round((peso / Math.pow(altezza / 100, 2)) * 10) / 10;
+        sc = Math.round(Math.sqrt((peso * altezza) / 3600) * 100) / 100;
+      }
+
+      document.getElementById('af-results').classList.add('show');
+      document.getElementById('af-crcl').textContent = crcl + ' ml/min';
+      document.getElementById('af-bmi').textContent = bmi ? bmi + ' kg/m2' : '--';
+      document.getElementById('af-sc').textContent = sc ? sc + ' m2' : '--';
+
+      var doseNum = null, doseUnit = '', doseDetail = '', doseNote = '';
+      var renalAdjText = 'Non richiesto', hepaticAdjText = 'Non richiesto';
+      var renalBadge = '<span class="badge ok">Nessun aggiustamento renale</span>';
+      var hepaticBadge = '<span class="badge ok">Nessun aggiustamento epatico</span>';
+
+      if (farmaco === 'fluconazolo') {
+        var dose = 400;
+        if (crcl <= 50 && dialisi === 'no') {
+          dose = 200; renalAdjText = 'Riduzione al 50% (CrCl <=50, no dialisi)';
+          renalBadge = '<span class="badge warn">Riduzione 50%</span>';
+          doseNote += 'Dose ridotta del 50% per insufficienza renale. ';
+        } else if (dialisi === 'si') {
+          dose = 400; renalAdjText = '400 mg post-dialisi, 200 mg altri giorni';
+          renalBadge = '<span class="badge warn">Aggiustamento dialisi</span>';
+          doseNote += 'Somministrare 400 mg dopo ogni seduta dialitica; 200 mg nei giorni senza dialisi. ';
+        }
+        if (eta < 18) {
+          doseNum = Math.round(peso * 6);
+          doseUnit = 'mg/die (pediatrico 6 mg/kg)';
+          doseDetail = 'Dose pediatrica: 6-12 mg/kg/die. Dose minima calcolata: ' + doseNum + ' mg/die.';
+        } else {
+          doseNum = dose; doseUnit = 'mg/die';
+          doseDetail = 'Dose standard adulto: ' + dose + ' mg/die (' + via.toUpperCase() + '). ' + data.carico;
+        }
+      }
+      else if (farmaco === 'flucitosina') {
+        var dosiPerGiorno = 4, intervallo = 'q6h', mgkgDie = 100;
+        if (dialisi === 'si') {
+          dosiPerGiorno = 1; intervallo = 'q24h post-dialisi'; mgkgDie = 25;
+          renalAdjText = '25 mg/kg q24h post-dialisi';
+          renalBadge = '<span class="badge danger">Aggiustamento obbligatorio</span>';
+          doseNote += 'Somministrare dopo ogni seduta dialitica. ';
+        } else if (crcl >= 10 && crcl < 20) {
+          dosiPerGiorno = 1; intervallo = 'q24h'; mgkgDie = 25;
+          renalAdjText = '25 mg/kg q24h (CrCl 10-20)';
+          renalBadge = '<span class="badge danger">Aggiustamento obbligatorio</span>';
+        } else if (crcl >= 20 && crcl <= 40) {
+          dosiPerGiorno = 2; intervallo = 'q12h'; mgkgDie = 50;
+          renalAdjText = '25 mg/kg q12h (CrCl 20-40)';
+          renalBadge = '<span class="badge danger">Aggiustamento obbligatorio</span>';
+        } else if (crcl < 10) {
+          dosiPerGiorno = 1; intervallo = 'q24h (da guidare con TDM)'; mgkgDie = 25;
+          renalAdjText = 'CrCl <10: 25 mg/kg q24h, guidare con TDM';
+          renalBadge = '<span class="badge danger">Aggiustamento obbligatorio</span>';
+          doseNote += 'CrCl <10 ml/min: rischio elevato di accumulo e mielotossicita; dose guidata dal TDM. ';
+        } else if (crcl > 40) {
+          renalAdjText = '25 mg/kg q6h (CrCl >40)';
+        }
+        var doseSingola = Math.round(peso * 25);
+        var doseTotale = Math.round(peso * mgkgDie);
+        doseNum = doseSingola; doseUnit = 'mg/dose (' + intervallo + ')';
+        doseDetail = doseTotale + ' mg/die totale (' + dosiPerGiorno + ' dosi/die). Equivalente a ' + mgkgDie + ' mg/kg/die. ' + data.carico;
+      }
+      else if (farmaco === 'caspofungina') {
+        var mantenimento = 50;
+        if (child === 'B') {
+          mantenimento = 35; hepaticAdjText = '35 mg/die (Child-Pugh B)';
+          hepaticBadge = '<span class="badge warn">Riduzione epatica</span>';
+          doseNote += 'In epatopatia moderata (Child-Pugh B): mantenimento ridotto a 35 mg/die. Carico rimane 70 mg giorno 1. ';
+        } else if (child === 'C') {
+          hepaticAdjText = 'Non studiata in epatopatia grave';
+          hepaticBadge = '<span class="badge danger">Dati insufficienti</span>';
+          doseNote += 'Non studiata in epatopatia grave (Child-Pugh C). Valutare rischio/beneficio. ';
+        }
+        doseNum = mantenimento; doseUnit = 'mg/die (mantenimento)';
+        doseDetail = 'Giorno 1: carico 70 mg EV. Da giorno 2: ' + mantenimento + ' mg/die EV. ' + data.carico;
+      }
+      else if (farmaco === 'voriconazolo') {
+        if (via === 'ev' && crcl < 50) {
+          renalAdjText = 'Cautela: accumulo ciclodestrina. Passare a OS se possibile.';
+          renalBadge = '<span class="badge danger">Cautela EV (CrCl <50)</span>';
+          doseNote += 'Formulazione EV contiene ciclodestrina (SBECD) che si accumula se CrCl<50. Passare a voriconazolo orale se fattibile. ';
+        }
+        if (data.epatico.aggiusta && (child === 'B' || child === 'C')) {
+          hepaticAdjText = 'Ridurre mantenimento al 50%';
+          hepaticBadge = '<span class="badge warn">Riduzione 50% epatica</span>';
+          doseNote += 'Epatopatia (Child-Pugh A/B): ridurre il mantenimento del 50%. Child-Pugh C: dati limitati, valutare rischio/beneficio con TDM. ';
+        }
+        doseNum = null; doseUnit = '';
+        doseDetail = data.doseDesc[via] + '. ' + data.carico;
+      }
+      else if (farmaco === 'amb-desossicolato' || farmaco === 'amb-liposomiale') {
+        var doseMin = farmaco === 'amb-desossicolato' ? 0.5 : 3;
+        var doseMax = farmaco === 'amb-desossicolato' ? 1.0 : 5;
+        var doseMgMin = Math.round(peso * doseMin * 10) / 10;
+        var doseMgMax = Math.round(peso * doseMax * 10) / 10;
+        doseNum = doseMgMin; doseUnit = 'mg/kg/die';
+        doseDetail = 'Range: ' + doseMgMin + '-' + doseMgMax + ' mg/die (' + doseMin + '-' + doseMax + ' mg/kg x ' + peso + ' kg). ' + data.carico;
+        if (crcl < 50) {
+          renalAdjText = 'Nessun aggiustamento posologico, ma alta nefrotossicita';
+          renalBadge = '<span class="badge warn">Nefrotossicita</span>';
+          doseNote += 'Monitorare creatinina, K, Mg quotidianamente inizialmente. Pre-idratazione con soluzione salina raccomandata. ';
+        }
+      }
+      else {
+        doseNum = null; doseUnit = '';
+        doseDetail = (data.doseDesc ? data.doseDesc[via] : '') + '. ' + data.carico;
+      }
+
+      var elderlyNote = 'Nessuna', elderlyBadge = '';
+      if (eta >= 65) {
+        elderlyNote = 'Anziano: possibile sovrastima CrCl per ridotta massa muscolare; maggiore rischio tossicita renale/epatica.';
+        elderlyBadge = '<span class="badge warn">Anziano</span>';
+        if (farmaco === 'fluconazolo') doseNote += 'Anziano: clearance renale del fluconazolo ridotta; considerare monitoraggio. ';
+      }
+
+      var doseNumEl = document.getElementById('af-dose-num');
+      var doseUnitEl = document.getElementById('af-dose-unit');
+      if (doseNum !== null) {
+        doseNumEl.textContent = doseNum;
+        doseUnitEl.textContent = ' ' + doseUnit;
+      } else {
+        doseNumEl.textContent = '--';
+        doseUnitEl.textContent = '';
+      }
+      document.getElementById('af-dose-detail').textContent = doseDetail;
+      document.getElementById('af-dose-badges').innerHTML = renalBadge + hepaticBadge + elderlyBadge;
+
+      var noteEl = document.getElementById('af-dose-note');
+      if (doseNote) { noteEl.style.display = 'block'; noteEl.textContent = doseNote; }
+      else { noteEl.style.display = 'none'; }
+
+      document.getElementById('af-renal').textContent = renalAdjText;
+      document.getElementById('af-hepatic').textContent = hepaticAdjText;
+      document.getElementById('af-elderly').textContent = elderlyNote;
+
+      document.getElementById('tab-met').innerHTML = '<p><strong>Metabolismo epatico:</strong></p><p>' + data.metabolismo + '</p>';
+      document.getElementById('tab-dist').innerHTML = renderDistribuzione(data.distr);
+      document.getElementById('tab-int').innerHTML = '<p><strong>Interazioni farmacologiche principali:</strong></p>' + renderInterazioni(data.interazioni);
+      document.getElementById('tab-tdm').innerHTML = '<p><strong>Monitoraggio terapeutico (TDM):</strong></p><p>' + (data.tdm.consigliato ? '<span class="badge danger">TDM raccomandato</span>' : '<span class="badge ok">TDM non richiesto</span>') + '</p><p>' + data.tdm.note + '</p>';
+      document.getElementById('tab-lg').innerHTML = '<p><strong>Linee guida / RCP:</strong></p><p>' + data.lg + '</p>';
+      document.getElementById('tab-bib').innerHTML = BIB;
+
+      var tabs = document.querySelectorAll('.tab');
+      var contents = document.querySelectorAll('.tab-content');
+      for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
+      for (var i = 0; i < contents.length; i++) contents[i].classList.remove('active');
+      tabs[0].classList.add('active');
+      document.getElementById('tab-met').classList.add('active');
+
+      // Scroll ai risultati
+      document.getElementById('af-results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    } catch (e) {
+      showError('Errore nel calcolo: ' + e.message);
+    }
+  }
+
+  // Attach event listeners (piu robusto di onclick inline)
+  document.getElementById('btn-calcola').addEventListener('click', afCalcola);
+
+  // Tab switching
+  var tabButtons = document.querySelectorAll('.tab');
+  for (var i = 0; i < tabButtons.length; i++) {
+    tabButtons[i].addEventListener('click', function() {
+      var tabId = this.getAttribute('data-tab');
+      var tabs = document.querySelectorAll('.tab');
+      var contents = document.querySelectorAll('.tab-content');
+      for (var j = 0; j < tabs.length; j++) tabs[j].classList.remove('active');
+      for (var j = 0; j < contents.length; j++) contents[j].classList.remove('active');
+      this.classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+    });
+  }
+});
+</script>
+</body>
+</html>
