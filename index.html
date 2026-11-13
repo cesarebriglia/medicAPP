@@ -74,6 +74,18 @@
     margin: 0 auto;
   }
 
+  .group { max-width: 1100px; margin: 0 auto 22px; }
+
+  .group-title {
+    font-size: clamp(0.95rem, 2.8vw, 1.15rem);
+    font-weight: 600;
+    color: var(--title);
+    letter-spacing: 0.4px;
+    margin-bottom: 10px;
+    padding: 0 2px 6px;
+    border-bottom: 2px solid var(--accent);
+  }
+
   .card {
     background: var(--surface);
     border-radius: 10px;
@@ -169,7 +181,9 @@
   <p class="disclaimer">⚠️ Strumenti di supporto alla decisione clinica: non sostituiscono il giudizio del medico né le indicazioni delle schede tecniche e delle linee guida vigenti.</p>
 </header>
 
-<div class="grid">
+<section class="group">
+  <h2 class="group-title">Antimicrobici – posologia</h2>
+  <div class="grid">
 
   <div class="card">
     <div class="card-header"><span class="card-icon">💊</span><span class="card-title">Antibiotici AWaRe</span></div>
@@ -181,13 +195,63 @@
   </div>
 
   <div class="card">
-    <div class="card-header"><span class="card-icon">🩸</span><span class="card-title">Dosaggio DOACs</span></div>
-    <p class="card-desc">Supporto al dosaggio degli anticoagulanti orali diretti.</p>
+    <div class="card-header"><span class="card-icon">🍄</span><span class="card-title">Antifungini – Calcolatore posologico</span></div>
+    <p class="card-desc">Dosaggio degli antifungini in base a peso, funzione renale (Cockcroft-Gault), dialisi e classe Child-Pugh.</p>
     <div class="card-actions">
-      <a class="btn btn-primary" href="Dosaggio_DOACs.html">▶ avvia</a>
-      <a class="btn btn-secondary" href="Dosaggio_DOACs.html" download>⤓ scarica</a>
+      <a class="btn btn-primary" href="Calcolatore_posologico_antifungini.Html">▶ avvia</a>
+      <a class="btn btn-secondary" href="Calcolatore_posologico_antifungini.Html" download>⤓ scarica</a>
     </div>
   </div>
+
+  </div>
+</section>
+
+<section class="group">
+  <h2 class="group-title">Infezioni – percorsi clinici</h2>
+  <div class="grid">
+
+  <div class="card">
+    <div class="card-header"><span class="card-icon">🦠</span><span class="card-title">Sepsi</span></div>
+    <p class="card-desc">Screening e stratificazione del rischio: qSOFA, SOFA e criteri Sepsis-3.</p>
+    <div class="card-actions">
+      <a class="btn btn-primary" href="sepsi_app.html">▶ avvia</a>
+      <a class="btn btn-secondary" href="sepsi_app.html" download>⤓ scarica</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="card-icon">🫁</span><span class="card-title">Polmonite</span></div>
+    <p class="card-desc">Score di gravità (CURB-65, PSI) e supporto alla terapia antibiotica della polmonite acquisita in comunità.</p>
+    <div class="card-actions">
+      <a class="btn btn-primary" href="polmonite_app.html">▶ avvia</a>
+      <a class="btn btn-secondary" href="polmonite_app.html" download>⤓ scarica</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="card-icon">🚽</span><span class="card-title">UTI – Infezioni del Tratto Urinario</span></div>
+    <p class="card-desc">Gestione delle infezioni del tratto urinario (Urinary Tract Infections) e criterio antibiotico.</p>
+    <div class="card-actions">
+      <a class="btn btn-primary" href="uti_app.html">▶ avvia</a>
+      <a class="btn btn-secondary" href="uti_app.html" download>⤓ scarica</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="card-icon">🧴</span><span class="card-title">SSTI – Infezioni Cutanee</span></div>
+    <p class="card-desc">Classificazione e trattamento delle infezioni della cute e dei tessuti molli (Skin and Soft Tissue Infections).</p>
+    <div class="card-actions">
+      <a class="btn btn-primary" href="ssti_app.html">▶ avvia</a>
+      <a class="btn btn-secondary" href="ssti_app.html" download>⤓ scarica</a>
+    </div>
+  </div>
+
+  </div>
+</section>
+
+<section class="group">
+  <h2 class="group-title">Cardiologia e anticoagulazione</h2>
+  <div class="grid">
 
   <div class="card">
     <div class="card-header"><span class="card-icon">🫀</span><span class="card-title">Triage Troponina ESC</span></div>
@@ -208,13 +272,54 @@
   </div>
 
   <div class="card">
-    <div class="card-header"><span class="card-icon">🩺</span><span class="card-title">Accessi Vascolari</span></div>
-    <p class="card-desc">Guida alla scelta e gestione degli accessi vascolari (CVC, PICC, midline, arteriosi).</p>
+    <div class="card-header"><span class="card-icon">🩸</span><span class="card-title">Dosaggio DOACs</span></div>
+    <p class="card-desc">Supporto al dosaggio degli anticoagulanti orali diretti.</p>
     <div class="card-actions">
-      <a class="btn btn-primary" href="accessi_vascolari_app.html">▶ avvia</a>
-      <a class="btn btn-secondary" href="accessi_vascolari_app.html" download>⤓ scarica</a>
+      <a class="btn btn-primary" href="Dosaggio_DOACs.html">▶ avvia</a>
+      <a class="btn btn-secondary" href="Dosaggio_DOACs.html" download>⤓ scarica</a>
     </div>
   </div>
+
+  <div class="card">
+    <div class="card-header"><span class="card-icon">🦴</span><span class="card-title">OrtoAnticoag</span></div>
+    <p class="card-desc">Profilassi del TEV e gestione dell'anticoagulazione nel paziente ortopedico con frattura.</p>
+    <div class="card-actions">
+      <a class="btn btn-primary" href="OrtoAnticoag.html">▶ avvia</a>
+      <a class="btn btn-secondary" href="OrtoAnticoag.html" download>⤓ scarica</a>
+    </div>
+  </div>
+
+  </div>
+</section>
+
+<section class="group">
+  <h2 class="group-title">Convertitori</h2>
+  <div class="grid">
+
+  <div class="card">
+    <div class="card-header"><span class="card-icon">⚖️</span><span class="card-title">Convertitore Steroidi</span></div>
+    <p class="card-desc">Equivalenze di dose tra corticosteroidi sistemici.</p>
+    <div class="card-actions">
+      <a class="btn btn-primary" href="Convrtitore%20Steroidi.html">▶ avvia</a>
+      <a class="btn btn-secondary" href="Convrtitore%20Steroidi.html" download>⤓ scarica</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="card-icon">💉</span><span class="card-title">Convertitore Oppioidi</span></div>
+    <p class="card-desc">Conversione equianalgesica tra oppioidi.</p>
+    <div class="card-actions">
+      <a class="btn btn-primary" href="convertitore_oppioidi.html">▶ avvia</a>
+      <a class="btn btn-secondary" href="convertitore_oppioidi.html" download>⤓ scarica</a>
+    </div>
+  </div>
+
+  </div>
+</section>
+
+<section class="group">
+  <h2 class="group-title">Urgenze e procedure</h2>
+  <div class="grid">
 
   <div class="card">
     <div class="card-header"><span class="card-icon">🤕</span><span class="card-title">Addome Acuto</span></div>
@@ -226,46 +331,20 @@
   </div>
 
   <div class="card">
-    <div class="card-header"><span class="card-icon">🫁</span><span class="card-title">Polmonite</span></div>
-    <p class="card-desc">Score di gravità (CURB-65, PSI) e supporto alla terapia antibiotica della polmonite acquisita in comunità.</p>
+    <div class="card-header"><span class="card-icon">🩺</span><span class="card-title">Accessi Vascolari</span></div>
+    <p class="card-desc">Guida alla scelta e gestione degli accessi vascolari (CVC, PICC, midline, arteriosi).</p>
     <div class="card-actions">
-      <a class="btn btn-primary" href="polmonite_app.html">▶ avvia</a>
-      <a class="btn btn-secondary" href="polmonite_app.html" download>⤓ scarica</a>
+      <a class="btn btn-primary" href="accessi_vascolari_app.html">▶ avvia</a>
+      <a class="btn btn-secondary" href="accessi_vascolari_app.html" download>⤓ scarica</a>
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-header"><span class="card-icon">🦠</span><span class="card-title">Sepsi</span></div>
-    <p class="card-desc">Screening e stratificazione del rischio: qSOFA, SOFA e criteri Sepsis-3.</p>
-    <div class="card-actions">
-      <a class="btn btn-primary" href="sepsi_app.html">▶ avvia</a>
-      <a class="btn btn-secondary" href="sepsi_app.html" download>⤓ scarica</a>
-    </div>
   </div>
-
-  <div class="card">
-    <div class="card-header"><span class="card-icon">🧴</span><span class="card-title">SSTI – Infezioni Cutanee</span></div>
-    <p class="card-desc">Classificazione e trattamento delle infezioni della cute e dei tessuti molli (Skin and Soft Tissue Infections).</p>
-    <div class="card-actions">
-      <a class="btn btn-primary" href="ssti_app.html">▶ avvia</a>
-      <a class="btn btn-secondary" href="ssti_app.html" download>⤓ scarica</a>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-header"><span class="card-icon">🚽</span><span class="card-title">UTI – Infezioni del Tratto Urinario</span></div>
-    <p class="card-desc">Gestione delle infezioni del tratto urinario (Urinary Tract Infections) e criterio antibiotico.</p>
-    <div class="card-actions">
-      <a class="btn btn-primary" href="uti_app.html">▶ avvia</a>
-      <a class="btn btn-secondary" href="uti_app.html" download>⤓ scarica</a>
-    </div>
-  </div>
-
-</div>
+</section>
 
 <footer>
   <div>Ideato dal dr. C.Briglia (<a href="mailto:cesarebriglia@gmail.com">cesarebriglia@gmail.com</a>) con l'apporto di Claude - Anthropic</div>
-  <div class="meta">Versione 2.2 · Data di creazione: 02/11/2026</div>
+  <div class="meta">Versione 2.4 · Data di creazione: 02/11/2026 · Ultimo aggiornamento: 13/11/2026</div>
 </footer>
 
 </body>
