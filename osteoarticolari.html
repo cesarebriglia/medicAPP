@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Infezioni Osteoarticolari — Percorso Diagnostico-Terapeutico</title>
+<style>
+:root{
+  --navy:#0f3460; --navy-dark:#0a2540; --blue:#1a5490; --teal:#0d7377;
+  --accent:#e94560; --amber:#c88719; --green:#2d7d46; --red:#c0392b;
+  --bg:#f4f6f9; --card:#ffffff; --border:#dde3ea; --text:#1e2a38; --muted:#5c6b7a;
+  --radius:10px;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:"Segoe UI",Calibri,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;}
+header{background:linear-gradient(135deg,var(--navy-dark),var(--navy));color:#fff;padding:22px 24px;}
+header h1{margin:0;font-size:1.5rem;}
+header p{margin:4px 0 0;font-size:.85rem;opacity:.85;}
+
+nav.entities{display:flex;flex-wrap:wrap;gap:8px;padding:14px 24px;background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;}
+nav.entities button{border:2px solid var(--border);background:#fff;color:var(--navy);padding:9px 16px;border-radius:20px;cursor:pointer;font-size:.85rem;font-weight:600;transition:.15s;}
+nav.entities button:hover{border-color:var(--blue);}
+nav.entities button.active{background:var(--navy);color:#fff;border-color:var(--navy);}
+
+main{max-width:1000px;margin:0 auto;padding:20px 24px 60px;}
+.entity{display:none;}
+.entity.active{display:block;animation:fade .25s;}
+@keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+
+.subtabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;}
+.subtabs button{border:1px solid var(--border);background:#eef2f7;color:var(--text);padding:7px 14px;border-radius:6px;cursor:pointer;font-size:.82rem;font-weight:600;}
+.subtabs button.active{background:var(--teal);color:#fff;border-color:var(--teal);}
+.subpanel{display:none;}
+.subpanel.active{display:block;animation:fade .2s;}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+.card h3{margin-top:0;color:var(--navy);border-bottom:2px solid var(--border);padding-bottom:8px;font-size:1.05rem;}
+.card h4{color:var(--blue);margin-bottom:6px;font-size:.95rem;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:700px){.grid2{grid-template-columns:1fr;}}
+
+table{width:100%;border-collapse:collapse;font-size:.85rem;margin:8px 0;}
+th,td{border:1px solid var(--border);padding:7px 9px;text-align:left;vertical-align:top;}
+th{background:#eef2f7;color:var(--navy);font-size:.78rem;text-transform:uppercase;letter-spacing:.3px;}
+tr:nth-child(even){background:#fafbfc;}
+
+.badge{display:inline-block;padding:2px 9px;border-radius:12px;font-size:.72rem;font-weight:700;color:#fff;}
+.b-strong{background:var(--green);} .b-weak{background:var(--amber);} .b-warn{background:var(--red);}
+
+.flow{display:flex;flex-direction:column;gap:6px;margin:10px 0;}
+.fnode{border:2px solid var(--blue);border-radius:8px;padding:10px 14px;background:#f0f6fc;font-size:.87rem;}
+.fnode.decision{border-color:var(--amber);background:#fdf6e8;border-radius:20px;}
+.fnode.action{border-color:var(--green);background:#eef8ef;}
+.fnode.alert{border-color:var(--red);background:#fdeeec;}
+.arrow{text-align:center;color:var(--muted);font-size:1.1rem;}
+.branch{display:flex;gap:10px;}
+.branch>div{flex:1;}
+@media(max-width:700px){.branch{flex-direction:column;}}
+
+.calcbox{background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:14px;margin:10px 0;}
+.calcbox label{display:block;font-size:.82rem;font-weight:600;margin:8px 0 3px;}
+.calcbox input, .calcbox select{width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:.88rem;}
+.calcbox .result{margin-top:10px;padding:10px;border-radius:6px;font-weight:700;font-size:.9rem;}
+.res-neg{background:#eef8ef;color:var(--green);} .res-pos{background:#fdeeec;color:var(--red);} .res-mid{background:#fdf6e8;color:var(--amber);}
+
+.note{background:#fff8e1;border-left:4px solid var(--amber);padding:10px 14px;border-radius:0 6px 6px 0;font-size:.85rem;margin:10px 0;}
+.warn{background:#fdeeec;border-left:4px solid var(--red);padding:10px 14px;border-radius:0 6px 6px 0;font-size:.85rem;margin:10px 0;}
+
+.src{font-size:.78rem;color:var(--muted);border-top:1px dashed var(--border);margin-top:10px;padding-top:8px;}
+.src ol{margin:4px 0 0;padding-left:18px;}
+ul{padding-left:20px;} li{margin-bottom:3px;}
+
+.printbar{text-align:right;margin-bottom:10px;}
+.printbar button{background:var(--navy);color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-size:.82rem;}
+sup.ref{font-size:.7rem;color:var(--blue);font-weight:700;margin-left:2px;white-space:nowrap;}
+.credit{font-size:.8rem;opacity:.95;margin-top:6px;font-weight:600;}
+.refhint{font-size:.78rem;color:var(--muted);margin:2px 0 6px;}
+footer{text-align:center;font-size:.72rem;color:var(--muted);padding:20px;}
+
+@media print{
+  nav.entities,.subtabs,.printbar{display:none!important;}
+  .entity{display:block!important;}
+  .subpanel{display:block!important;}
+  body{background:#fff;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Infezioni Osteoarticolari</h1>
+  <p>Percorso diagnostico-terapeutico basato su linee guida internazionali — UOC Medicina, ASL Latina</p>
+  <p class="credit">Ideato dal dr. C.Briglia (cesarebriglia@gmail.com) con l'apporto di Claude - Antropic</p>
+</header>
+
+<nav class="entities" id="entityNav"></nav>
+
+<main id="main"></main>
+
+<footer>Strumento di supporto decisionale clinico. Non sostituisce il giudizio clinico individuale. Verificare sempre le linee guida aggiornate e le politiche locali di antibiotico-stewardship.<br><strong>Ideato dal dr. C.Briglia (cesarebriglia@gmail.com) con l'apporto di Claude - Antropic</strong></footer>
+
+<script>
+/* ============================================================
+   DATI STRUTTURA APP
+   ============================================================ */
+const ENTITIES = [
+  {id:"vertebrale", label:"Osteomielite Vertebrale"},
+  {id:"settica", label:"Artrite Settica Nativa"},
+  {id:"protesica", label:"Infezione Protesica (PJI)"},
+  {id:"diabetico", label:"Piede Diabetico — Osteomielite"},
+  {id:"frattura", label:"Infezione su Frattura (FRI)"}
+];
+
+document.addEventListener("DOMContentLoaded", ()=>{
+  const nav = document.getElementById("entityNav");
+  ENTITIES.forEach((e,i)=>{
+    const b = document.createElement("button");
+    b.textContent = e.label;
+    b.dataset.id = e.id;
+    b.type = "button";
+    b.setAttribute("aria-pressed", i===0 ? "true" : "false");
+    if(i===0) b.classList.add("active");
+    b.onclick = ()=>showEntity(e.id);
+    nav.appendChild(b);
+  });
+  const main = document.getElementById("main");
+  ENTITIES.forEach((e,i)=>{
+    const div = document.createElement("div");
+    div.className = "entity" + (i===0?" active":"");
+    div.id = "ent-"+e.id;
+    div.innerHTML = BUILDERS[e.id]();
+    main.appendChild(div);
+  });
+  ENTITIES.forEach(e=>initSubtabs(e.id));
+  ["wbcSyn","pmnSyn"].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.addEventListener("keydown", ev=>{ if(ev.key==="Enter") calcSynovial(); });
+  });
+});
+
+function showEntity(id){
+  document.querySelectorAll("nav.entities button").forEach(b=>{
+    const on = b.dataset.id===id;
+    b.classList.toggle("active", on);
+    b.setAttribute("aria-pressed", on ? "true" : "false");
+  });
+  document.querySelectorAll(".entity").forEach(d=>d.classList.toggle("active", d.id==="ent-"+id));
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function initSubtabs(entId){
+  const root = document.getElementById("ent-"+entId);
+  const tabBtns = root.querySelectorAll(".subtabs button");
+  root.querySelectorAll(".subtabs").forEach(el=>el.setAttribute("role","tablist"));
+  tabBtns.forEach(btn=>{
+    btn.type = "button";
+    btn.setAttribute("role","tab");
+    btn.setAttribute("aria-selected", btn.classList.contains("active") ? "true" : "false");
+    btn.onclick = ()=>{
+      tabBtns.forEach(b=>{ b.classList.remove("active"); b.setAttribute("aria-selected","false"); });
+      btn.classList.add("active");
+      btn.setAttribute("aria-selected","true");
+      root.querySelectorAll(".subpanel").forEach(p=>p.classList.remove("active"));
+      root.querySelector("#"+btn.dataset.target).classList.add("active");
+    };
+  });
+}
+
+function printPage(){ window.print(); }
+
+/* ============================================================
+   BUILDERS — HTML per ciascuna entità
+   ============================================================ */
+const BUILDERS = {};
+
+/* ---------- 1. OSTEOMIELITE VERTEBRALE ---------- */
+BUILDERS.vertebrale = function(){
+return `
+<div class="printbar"><button onclick="printPage()">🖨️ Stampa</button></div>
+<div class="subtabs">
+  <button class="active" data-target="ver-diag">Diagnosi</button>
+  <button data-target="ver-flow">Percorso</button>
+  <button data-target="ver-microbio">Sospetto Microbiologico</button>
+  <button data-target="ver-terapia">Terapia</button>
+  <button data-target="ver-chirurgia">Chirurgia</button>
+  <button data-target="ver-follow">Follow-up</button>
+  <button data-target="ver-fonti">Fonti</button>
+</div>
+
+<div class="subpanel active" id="ver-diag">
+  <div class="card">
+    <h3>Presentazione clinica e sospetto diagnostico</h3>
+    <p>La osteomielite vertebrale nativa (OVN/spondilodiscite) va sospettata in presenza di <b>dolore rachideo di nuova insorgenza o in peggioramento</b>, associato a markers infiammatori elevati (VES, PCR), con o senza febbre. Il ritardo diagnostico medio è elevato: mantenere alto indice di sospetto in pazienti anziani, diabetici, dializzati, tossicodipendenti EV, con batteriemia recente o procedure spinali/endovascolari pregresse.</p>
+    <div class="grid2">
+      <div>
+        <h4>Esami di laboratorio</h4>
+        <ul>
+          <li>VES e PCR (sensibilità elevata, utili anche nel follow-up) <sup class="ref">[1]</sup></li>
+          <li>Emocolture ×2 prima di iniziare antibiotici, se paziente stabile</li>
+          <li>Non è necessaria l'aspirazione discale se emocolture positive per <i>S. aureus</i> con RM compatibile</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Imaging</h4>
+        <ul>
+          <li><b>RM con mezzo di contrasto</b> = gold standard (sensibilità/specificità più elevate) <sup class="ref">[1]</sup></li>
+          <li>TC con contrasto o PET-TC se RM controindicata</li>
+          <li>Rx rachide: bassa sensibilità in fase precoce</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Diagnosi microbiologica</h3>
+    <p>In pazienti con sospetto clinico/radiologico di OVN ed <b>emocolture negative</b>, è indicata <b>biopsia disco-vertebrale image-guided</b> (ago aspirato o core biopsy) per esame colturale, istologico e — se disponibile — molecolare (PCR 16S rRNA), prima di iniziare terapia antibiotica empirica, salvo instabilità clinica/sepsi/deficit neurologico progressivo. <sup class="ref">[1]</sup></p>
+    <div class="note">Se la prima biopsia è negativa e il sospetto clinico rimane alto, ripetere la biopsia (immagine o chirurgica) prima di iniziare antibiotico empirico, in assenza di urgenza.</div>
+  </div>
+</div>
+
+<div class="subpanel" id="ver-flow">
+  <div class="card">
+    <h3>Percorso diagnostico-terapeutico</h3>
+    <div class="flow">
+      <div class="fnode">Sospetto clinico: rachialgia + VES/PCR elevate ± febbre</div>
+      <div class="arrow">↓</div>
+      <div class="fnode">RM rachide con mdc (o TC/PET se controindicata)</div>
+      <div class="arrow">↓</div>
+      <div class="fnode decision">Deficit neurologico progressivo, instabilità spinale o sepsi?</div>
+      <div class="branch">
+        <div>
+          <div class="fnode alert">SÌ → consulenza chirurgica urgente + terapia empirica immediata dopo prelievi colturali</div>
+        </div>
+        <div>
+          <div class="fnode action">NO → emocolture ×2</div>
+        </div>
+      </div>
+      <div class="arrow">↓</div>
+      <div class="fnode decision">Emocolture positive (S. aureus) + RM compatibile?</div>
+      <div class="branch">
+        <div><div class="fnode action">SÌ → terapia mirata, biopsia non necessaria</div></div>
+        <div><div class="fnode">NO → biopsia disco-vertebrale image-guided</div></div>
+      </div>
+      <div class="arrow">↓</div>
+      <div class="fnode decision">Coltura/istologia positiva?</div>
+      <div class="branch">
+        <div><div class="fnode action">SÌ → terapia mirata su antibiogramma</div></div>
+        <div><div class="fnode">NO, sospetto persistente → ripetere biopsia (o chirurgica)</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="subpanel" id="ver-microbio">
+  <div class="card">
+    <h3>Orientamento eziologico in base ai fattori di rischio</h3>
+    <p><i>S. aureus</i> è il patogeno più frequente in assoluto nella OVN. I seguenti elementi anamnestici, coerenti con l'epidemiologia descritta dalla linea guida IDSA 2015 <sup class="ref">[1]</sup>, orientano verso classi di patogeni specifiche e aiutano a impostare la copertura empirica in caso di instabilità clinica, in attesa dell'antibiogramma:</p>
+    <table>
+      <tr><th>Classe di patogeno</th><th>Elementi che ne aumentano il sospetto</th></tr>
+      <tr><td><b>MRSA</b></td><td>Colonizzazione nota da MRSA, ospedalizzazione recente/prolungata, ricovero in RSA, emodialisi cronica, uso di droghe EV, infezione cutanea/tessuti molli da MRSA pregressa, elevata prevalenza locale</td></tr>
+      <tr><td>MSSA / streptococchi</td><td>Assenza dei fattori di rischio MRSA sopra elencati; fonte odontogena o cutanea; endocardite infettiva concomitante (frequente associazione con OVN da <i>S. aureus</i> o streptococchi)</td></tr>
+      <tr><td>Enterobacterales (Gram-negativi)</td><td>Fonte urinaria o procedura genito-urinaria recente, età avanzata, sesso femminile, batteriemia da Gram-negativi documentata</td></tr>
+      <tr><td>Pseudomonas aeruginosa</td><td>Uso di droghe EV, immunosoppressione severa, procedure spinali invasive recenti, provenienza da strutture con elevata prevalenza di MDR</td></tr>
+      <tr><td>Brucella spp.</td><td>Provenienza/soggiorno in area endemica (bacino del Mediterraneo, Medio Oriente, penisola arabica), consumo di latticini/formaggi non pastorizzati, contatto professionale con ovini/caprini/bovini, decorso subacuto</td></tr>
+      <tr><td>Miceti (Candida spp. e altri)</td><td>Immunosoppressione severa, uso di droghe EV, catetere venoso centrale prolungato, nutrizione parenterale totale, candidemia recente</td></tr>
+      <tr><td><i>Mycobacterium tuberculosis</i> (morbo di Pott)</td><td>Provenienza da area endemica per TBC, immunodepressione (incl. HIV), decorso lento e progressivo, interessamento di più corpi vertebrali contigui con relativo risparmio del disco</td></tr>
+    </table>
+    <div class="note">Questi elementi orientano la copertura empirica nei casi che la richiedono (instabilità, sepsi, deficit neurologico) e guidano le richieste microbiologiche mirate (es. sierologia/coltura per Brucella, colorazione per BAAR) da eseguire sul materiale bioptico.</div>
+  </div>
+</div>
+
+<div class="subpanel" id="ver-terapia">
+  <div class="card">
+    <h3>Terapia antimicrobica</h3>
+    <p>Nei pazienti emodinamicamente stabili e senza deficit neurologico, la linea guida IDSA suggerisce di <b>attendere l'identificazione microbiologica</b> prima di iniziare l'antibiotico (raccomandazione debole, evidenza bassa). Solo in caso di instabilità emodinamica, sepsi, shock settico o sintomi neurologici severi/progressivi è indicata l'associazione tra prelievi colturali urgenti e <b>avvio immediato di terapia empirica</b> (raccomandazione debole, evidenza bassa). <sup class="ref">[1]</sup></p>
+    <div class="calcbox">
+      <h4 style="margin-top:0;">Terapia empirica ad ampio spettro (solo se instabilità/sepsi/deficit neurologico)</h4>
+      <p style="font-size:.85rem;">La linea guida non indica un regime empirico unico obbligatorio: l'obiettivo è coprire <i>S. aureus</i> (incluso MRSA) e i bacilli Gram-negativi più frequenti, in attesa dell'antibiogramma. Schema ragionevole, coerente con la pratica clinica corrente:</p>
+      <table style="margin:6px 0;">
+        <tr><th>Componente</th><th>Farmaco</th><th>Razionale</th></tr>
+        <tr><td>Copertura Gram+ (incl. MRSA)</td><td>Vancomicina EV (target su trough/AUC)</td><td>Patogeno più frequente in assoluto nella OVN</td></tr>
+        <tr><td>Copertura Gram-negativi</td><td>Ceftriaxone EV (o cefepime/piperacillina-tazobactam se rischio Pseudomonas: recente strumentazione urinaria/spinale, immunosoppressione, provenienza da RSA)</td><td>Copre Enterobacterales, principali agenti Gram-negativi nella OVN</td></tr>
+      </table>
+      <p style="font-size:.8rem;color:var(--muted);">Rivalutare e ristringere lo spettro (de-escalation) appena disponibile l'esito colturale/istologico.</p>
+    </div>
+    <table>
+      <tr><th>Patogeno</th><th>Terapia di prima scelta</th><th>Alternative</th></tr>
+      <tr><td>MSSA / streptococchi</td><td>Oxacillina o cefazolina EV</td><td>Clindamicina, vancomicina se allergia</td></tr>
+      <tr><td>MRSA</td><td>Vancomicina EV (target trough/AUC)</td><td>Daptomicina</td></tr>
+      <tr><td>Enterobacterales (sensibili)</td><td>Ceftriaxone EV</td><td>Fluorochinolone orale (ciprofloxacina/levofloxacina) — <span class="badge b-warn">uso ristretto, restrizioni EMA/AIFA <sup class="ref">[4]</sup></span></td></tr>
+      <tr><td>Pseudomonas aeruginosa</td><td>Cefepime o piperacillina-tazobactam</td><td>Meropenem</td></tr>
+    </table>
+    <div class="note"><b>Durata:</b> la maggior parte dei pazienti guarisce con <b>6 settimane</b> di terapia antimicrobica (EV o orale ad alta biodisponibilità); non è raccomandato prolungare oltre le 6 settimane in assenza di complicanze (ascesso non drenato, endocardite associata, immunosoppressione severa). <sup class="ref">[1][2][3]</sup></div>
+    <div class="warn">Doxiciclina EV non disponibile in Italia: per regimi che la prevedono come opzione, utilizzare la formulazione orale se il paziente è in grado di assumerla, o selezionare alternativa.</div>
+  </div>
+  <div class="card">
+    <h3>Monitoraggio della risposta</h3>
+    <ul>
+      <li>PCR seriata (declino atteso entro le prime 4 settimane) <sup class="ref">[1]</sup></li>
+      <li>RM di controllo NON di routine se il paziente risponde clinicamente — l'evoluzione radiologica è più lenta della clinica</li>
+      <li>RM di controllo solo se: peggioramento clinico, nuova sintomatologia neurologica, sospetto ascesso</li>
+    </ul>
+  </div>
+</div>
+
+<div class="subpanel" id="ver-chirurgia">
+  <div class="card">
+    <h3>Indicazioni chirurgiche <sup class="ref">[1]</sup></h3>
+    <table>
+      <tr><th>Indicazione</th><th>Forza raccomandazione</th></tr>
+      <tr><td>Deficit neurologico progressivo, deformità progressiva, instabilità spinale (con o senza dolore) nonostante terapia adeguata</td><td><span class="badge b-strong">Forte, evidenza bassa</span></td></tr>
+      <tr><td>Batteriemia persistente/ricorrente (senza fonte alternativa) o dolore in peggioramento nonostante terapia medica appropriata</td><td><span class="badge b-weak">Debole, evidenza bassa</span></td></tr>
+      <tr><td>Debridement/stabilizzazione routinaria in assenza delle condizioni sopra</td><td><span class="badge b-warn">Sconsigliato</span></td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="subpanel" id="ver-follow">
+  <div class="card">
+    <h3>Follow-up</h3>
+    <ul>
+      <li>Rivalutazione clinica e PCR a 4 settimane dall'inizio della terapia</li>
+      <li>Valutare consulenza infettivologica e chirurgica in caso di mancata risposta clinica o laboratoristica</li>
+      <li>Non è necessaria RM di routine a fine terapia in assenza di segni di allarme</li>
+    </ul>
+  </div>
+</div>
+
+<div class="subpanel" id="ver-fonti">
+  <div class="card src">
+    <h3>Fonti bibliografiche</h3>
+    <p class="refhint">I numeri tra parentesi quadre nelle schede rimandano a questo elenco.</p>
+    <ol>
+      <li>Berbari EF, Kanj SS, Kowalski TJ, et al. 2015 Infectious Diseases Society of America (IDSA) Clinical Practice Guidelines for the Diagnosis and Treatment of Native Vertebral Osteomyelitis in Adults. <i>Clin Infect Dis.</i> 2015;61(6):e26-e46. <a href="https://doi.org/10.1093/cid/civ482" target="_blank" rel="noopener">doi:10.1093/cid/civ482</a></li>
+      <li>Bernard L, Dinh A, Ghout I, et al. Antibiotic treatment for 6 weeks versus 12 weeks in patients with pyogenic vertebral osteomyelitis: an open-label, non-inferiority, randomised, controlled trial. <i>Lancet.</i> 2015;385(9971):875-882. <a href="https://doi.org/10.1016/S0140-6736(14)61233-2" target="_blank" rel="noopener">doi:10.1016/S0140-6736(14)61233-2</a></li>
+      <li>Li HK, Rombach I, Zambellas R, et al. Oral versus intravenous antibiotics for bone and joint infection (OVIVA). <i>N Engl J Med.</i> 2019;380(5):425-436. <a href="https://doi.org/10.1056/NEJMoa1710926" target="_blank" rel="noopener">doi:10.1056/NEJMoa1710926</a></li>
+      <li>European Medicines Agency (EMA). Disabling and potentially permanent side effects lead to suspension or restrictions of quinolone and fluoroquinolone antibiotics. 2018. Vedi anche promemoria AIFA/PRAC (maggio 2023) sulle misure di restrizione. <a href="https://www.ema.europa.eu/en/news/disabling-potentially-permanent-side-effects-lead-suspension-or-restrictions-quinolone-fluoroquinolone-antibiotics" target="_blank" rel="noopener">ema.europa.eu</a></li>
+    </ol>
+  </div>
+</div>
+`;};
+
+/* ---------- 2. ARTRITE SETTICA NATIVA ---------- */
+BUILDERS.settica = function(){
+return `
+<div class="printbar"><button onclick="printPage()">🖨️ Stampa</button></div>
+<div class="subtabs">
+  <button class="active" data-target="art-diag">Diagnosi</button>
+  <button data-target="art-calc">Calcolatore Liquido Sinoviale</button>
+  <button data-target="art-microbio">Sospetto Microbiologico</button>
+  <button data-target="art-terapia">Terapia</button>
+  <button data-target="art-chirurgia">Drenaggio</button>
+  <button data-target="art-fonti">Fonti</button>
+</div>
+
+<div class="subpanel active" id="art-diag">
+  <div class="card">
+    <h3>Sospetto clinico <sup class="ref">[1][2][4]</sup></h3>
+    <p>L'artrite settica di articolazione nativa è un'<b>emergenza medica</b>: ogni artrite acuta monoarticolare — soprattutto ginocchio e anca — va considerata infettiva fino a prova contraria. Fattori di rischio: età &gt;80 anni, diabete, artrite reumatoide/artropatia pre-esistente, protesi articolare, infiltrazioni articolari recenti, immunosoppressione, uso di droghe EV, infezione cutanea sovrastante.</p>
+    <div class="grid2">
+      <div>
+        <h4>Valutazione iniziale</h4>
+        <ul>
+          <li>Artrocentesi <b>prima</b> di iniziare antibiotici (se possibile e non controindicata)</li>
+          <li>Liquido sinoviale: conta cellulare + formula, Gram, coltura, ricerca cristalli</li>
+          <li>Emocolture ×2</li>
+          <li>VES/PCR (bassa specificità, utili nel follow-up)</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Imaging</h4>
+        <ul>
+          <li>Rx articolazione (basale, esclude altre cause)</li>
+          <li>Ecografia utile per guidare l'artrocentesi (specie anca)</li>
+          <li>RM se sospetta osteomielite contigua o ascesso</li>
+        </ul>
+      </div>
+    </div>
+    <div class="note">La coltura negativa del liquido sinoviale <b>non esclude</b> l'artrite settica (falsi negativi, specie dopo terapia antibiotica pregressa): il quadro va sempre integrato clinicamente (criteri di Newman). <sup class="ref">[5]</sup></div>
+  </div>
+</div>
+
+<div class="subpanel" id="art-calc">
+  <div class="card">
+    <h3>Interpretazione del liquido sinoviale <sup class="ref">[3]</sup></h3>
+    <div class="calcbox">
+      <label>Conta leucocitaria liquido sinoviale (cellule/mm³)</label>
+      <input type="number" id="wbcSyn" placeholder="es. 55000">
+      <label>Percentuale neutrofili (%)</label>
+      <input type="number" id="pmnSyn" placeholder="es. 90">
+      <button onclick="calcSynovial()" style="margin-top:10px;background:var(--teal);color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;">Valuta</button>
+      <div id="synResult"></div>
+    </div>
+    <table>
+      <tr><th>Conta leucocitaria</th><th>Interpretazione orientativa</th></tr>
+      <tr><td>&lt; 25.000/mm³</td><td>Bassa probabilità di artrite settica (non la esclude)</td></tr>
+      <tr><td>25.000–50.000/mm³</td><td>Zona intermedia — correlare con clinica, Gram, PMN%</td></tr>
+      <tr><td>&gt; 50.000/mm³ con PMN &gt; 90%</td><td>Alta probabilità di artrite settica</td></tr>
+      <tr><td>In portatore di protesi</td><td>Soglie diagnostiche differenti — vedi sezione PJI</td></tr>
+    </table>
+    <div class="note">Questi valori sono orientativi (criteri storici derivati da studi su ginocchio nativo); vanno sempre integrati con quadro clinico, fattori di rischio, Gram e coltura secondo il giudizio clinico.</div>
+  </div>
+</div>
+
+<div class="subpanel" id="art-microbio">
+  <div class="card">
+    <h3>Orientamento eziologico in base ai fattori di rischio</h3>
+    <p><i>S. aureus</i> è il patogeno più comune nell'artrite settica dell'adulto. <sup class="ref">[4]</sup> I seguenti elementi anamnestici orientano la scelta della copertura empirica prima dell'esito colturale:</p>
+    <table>
+      <tr><th>Classe di patogeno</th><th>Elementi che ne aumentano il sospetto</th></tr>
+      <tr><td><b>MRSA</b></td><td>Colonizzazione nota da MRSA, ospedalizzazione recente/prolungata, ricovero in RSA, emodialisi cronica, uso di droghe EV, infezione da MRSA pregressa, elevata prevalenza locale</td></tr>
+      <tr><td>MSSA / streptococchi</td><td>Assenza dei fattori di rischio MRSA; artrite reumatoide o altra artropatia infiammatoria pre-esistente; infiltrazione articolare recente; ferita cutanea sovrastante</td></tr>
+      <tr><td>Neisseria gonorrhoeae (artrite gonococcica disseminata)</td><td>Giovane età, attività sessuale a rischio, poliartralgie migranti, tenosinovite associata, lesioni cutanee pustolose, spesso Gram e coltura del liquido sinoviale negativi (richiede terreni/PCR dedicati)</td></tr>
+      <tr><td>Bacilli Gram-negativi (Enterobacterales, Pseudomonas)</td><td>Età avanzata, immunosoppressione, uso di droghe EV (tipicamente articolazioni assiali: sacroiliaca, sternoclavicolare), infezione post-procedurale (artrocentesi/infiltrazione), ferita penetrante</td></tr>
+      <tr><td>Patogeni atipici (micobatteri, funghi, Brucella)</td><td>Decorso subacuto/cronico, mancata risposta alla terapia empirica standard, immunosoppressione, provenienza da area endemica</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="subpanel" id="art-terapia">
+  <div class="card">
+    <h3>Terapia antimicrobica empirica <sup class="ref">[1][2]</sup></h3>
+    <p>La scelta empirica si basa su esito del Gram sul liquido sinoviale, fattori di rischio del paziente ed epidemiologia locale delle resistenze; va sempre avviata <b>dopo</b> i prelievi microbiologici (artrocentesi ed emocolture), senza attenderne l'esito se il quadro clinico è severo.</p>
+    <table>
+      <tr><th>Scenario</th><th>Terapia empirica</th><th>Note</th></tr>
+      <tr><td>Cocchi Gram+ al Gram, o nessun fattore di rischio MRSA</td><td>Oxacillina o cefazolina EV</td><td>Copre stafilococchi meticillino-sensibili e streptococchi</td></tr>
+      <tr><td>Fattori di rischio MRSA (colonizzazione nota, prevalenza locale elevata, dialisi, ospedalizzazione recente)</td><td>Vancomicina EV (target su trough/AUC)</td><td>Sostituire con beta-lattamico anti-stafilococcico se coltura conferma MSSA</td></tr>
+      <tr><td>Bacilli Gram-negativi al Gram, anziano, immunodepresso, infezione post-procedurale</td><td>Ceftriaxone EV; cefepime o piperacillina-tazobactam se rischio Pseudomonas (tossicodipendenza EV, ferita penetrante, immunosoppressione)</td><td>Associare copertura Gram+ empirica se Gram non dirimente</td></tr>
+      <tr><td>Sospetta artrite gonococcica disseminata (giovane, sessualmente attivo, poliartralgie migranti, rash)</td><td>Ceftriaxone EV/IM</td><td>Considerare copertura empirica concomitante per Chlamydia trachomatis (azitromicina o doxiciclina) secondo epidemiologia locale</td></tr>
+    </table>
+    <div class="note"><b>De-escalation</b> su antibiogramma appena disponibile. <b>Durata tipica:</b> 2-4 settimane totali (EV iniziale seguita da switch orale precoce se buona risposta clinica e biodisponibilità adeguata), da personalizzare su patogeno, risposta clinica e adeguatezza del drenaggio.</div>
+  </div>
+</div>
+
+<div class="subpanel" id="art-chirurgia">
+  <div class="card">
+    <h3>Drenaggio articolare <sup class="ref">[1][2][4]</sup></h3>
+    <p>Il drenaggio del focolaio settico è parte essenziale della terapia, in aggiunta alla terapia antimicrobica:</p>
+    <ul>
+      <li><b>Artrocentesi ripetuta</b> (needle aspiration seriata) per articolazioni facilmente accessibili (es. ginocchio), se il liquido non si riaccumula rapidamente e la risposta clinica è buona</li>
+      <li><b>Artroscopia/lavaggio chirurgico</b>: indicato per articolazioni difficili da drenare per via percutanea (anca), mancata risposta clinica dopo 48-72h, liquido molto denso/loculato</li>
+      <li>L'anca settica nell'adulto richiede quasi sempre drenaggio chirurgico o artroscopico</li>
+    </ul>
+  </div>
+</div>
+
+<div class="subpanel" id="art-fonti">
+  <div class="card src">
+    <h3>Fonti bibliografiche</h3>
+    <p class="refhint">I numeri tra parentesi quadre nelle schede rimandano a questo elenco.</p>
+    <ol>
+      <li>Ravn C, Neyt J, Benito N, et al. Guideline for management of septic arthritis in native joints (SANJO), European Bone and Joint Infection Society (EBJIS). <i>J Bone Jt Infect.</i> 2023;8(1):29-37. <a href="https://doi.org/10.5194/jbji-8-29-2023" target="_blank" rel="noopener">doi:10.5194/jbji-8-29-2023</a></li>
+      <li>Benito N, Martínez-Pastor JC, Lora-Tamayo J, et al. Guidelines for the diagnosis and treatment of septic arthritis in adults and children (GEIO-SEIMC, SEIP, SECOT). <i>Enferm Infecc Microbiol Clin.</i> 2024;42(4):208-214. <a href="https://doi.org/10.1016/j.eimce.2023.07.007" target="_blank" rel="noopener">doi:10.1016/j.eimce.2023.07.007</a></li>
+      <li>Margaretten ME, Kohlwes J, Moore D, Bent S. Does this adult patient have septic arthritis? <i>JAMA.</i> 2007;297(13):1478-1488. <a href="https://doi.org/10.1001/jama.297.13.1478" target="_blank" rel="noopener">doi:10.1001/jama.297.13.1478</a></li>
+      <li>Mathews CJ, Weston VC, Jones A, Field M, Coakley G. Bacterial septic arthritis in adults. <i>Lancet.</i> 2010;375(9717):846-855. <a href="https://doi.org/10.1016/S0140-6736(09)61595-6" target="_blank" rel="noopener">doi:10.1016/S0140-6736(09)61595-6</a></li>
+      <li>Newman JH. Review of septic arthritis throughout the antibiotic era. <i>Ann Rheum Dis.</i> 1976;35(3):198-205. <a href="https://doi.org/10.1136/ard.35.3.198" target="_blank" rel="noopener">doi:10.1136/ard.35.3.198</a></li>
+    </ol>
+  </div>
+</div>
+`;};
+
+/* ---------- 3. INFEZIONE PROTESICA (PJI) ---------- */
+BUILDERS.protesica = function(){
+return `
+<div class="printbar"><button onclick="printPage()">🖨️ Stampa</button></div>
+<div class="subtabs">
+  <button class="active" data-target="pji-diag">Diagnosi</button>
+  <button data-target="pji-timing">Timing dell'infezione</button>
+  <button data-target="pji-microbio">Sospetto Microbiologico</button>
+  <button data-target="pji-chirurgia">Strategia Chirurgica</button>
+  <button data-target="pji-terapia">Terapia Antibiotica</button>
+  <button data-target="pji-fonti">Fonti</button>
+</div>
+
+<div class="subpanel active" id="pji-diag">
+  <div class="card">
+    <h3>Definizione di PJI <sup class="ref">[2][3]</sup></h3>
+    <p>La diagnosi di infezione protesica articolare (PJI) è considerata presente se è soddisfatto <b>almeno uno</b> dei seguenti criteri maggiori, oppure una combinazione di criteri minori:</p>
+    <h4>Criteri maggiori (uno solo sufficiente)</h4>
+    <ul>
+      <li>Presenza di due colture periprotesiche (tessuto o liquido) positive per lo stesso microrganismo</li>
+      <li>Presenza di fistola comunicante con la protesi</li>
+    </ul>
+    <h4>Criteri minori (combinazione)</h4>
+    <table>
+      <tr><th>Parametro</th><th>Ruolo diagnostico</th></tr>
+      <tr><td>VES e PCR elevate</td><td>Test di screening iniziale</td></tr>
+      <tr><td>Conta leucocitaria liquido sinoviale / % neutrofili elevate</td><td>Soglie diverse da articolazione nativa; differiscono per infezione acuta vs cronica</td></tr>
+      <tr><td>Test leucocito-esterasi su liquido sinoviale</td><td>Test rapido di supporto</td></tr>
+      <tr><td>Istologia periprotesica positiva</td><td>Conferma intraoperatoria</td></tr>
+      <tr><td>Singola coltura positiva</td><td>Da correlare con altri criteri (rischio contaminazione)</td></tr>
+    </table>
+    <div class="note">I criteri qui riportati corrispondono alla definizione MSIS/ICM 2018 <sup class="ref">[2]</sup>. Esiste anche la definizione EBJIS 2021 <sup class="ref">[3]</sup>, articolata su tre livelli (infezione improbabile / probabile / confermata).</div>
+    <div class="note">La sonicazione dell'impianto rimosso aumenta la sensibilità colturale rispetto alla sola coltura tissutale, specie in pazienti con terapia antibiotica recente.</div>
+  </div>
+</div>
+
+<div class="subpanel" id="pji-timing">
+  <div class="card">
+    <h3>Classificazione in base al timing di insorgenza <sup class="ref">[1][4]</sup></h3>
+    <table>
+      <tr><th>Tipo</th><th>Timing</th><th>Patogeni tipici</th><th>Approccio chirurgico tipico</th></tr>
+      <tr><td>Precoce post-operatoria</td><td>&lt; 3 mesi dall'impianto</td><td>S. aureus, streptococchi, bacilli Gram-negativi</td><td>Debridement con ritenzione protesi (DAIR) se impianto stabile</td></tr>
+      <tr><td>Ematogena acuta</td><td>Insorgenza acuta, qualsiasi epoca dopo impianto, protesi precedentemente ben funzionante</td><td>S. aureus, streptococchi (spesso da fonte a distanza)</td><td>DAIR se sintomi &lt; 3 settimane e impianto stabile</td></tr>
+      <tr><td>Cronica tardiva</td><td>&gt; 3 mesi, sintomi indolenti/progressivi</td><td>Stafilococchi coagulasi-negativi, Cutibacterium acnes (spalla)</td><td>Revisione in uno o due tempi (espianto della protesi)</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="subpanel" id="pji-microbio">
+  <div class="card">
+    <h3>Orientamento eziologico in base al timing e ai fattori di rischio</h3>
+    <p>Nella PJI il timing di insorgenza (vedi scheda precedente) è il principale elemento guida per il sospetto eziologico, integrato dai fattori di rischio individuali: <sup class="ref">[4]</sup></p>
+    <table>
+      <tr><th>Classe di patogeno</th><th>Elementi che ne aumentano il sospetto</th></tr>
+      <tr><td>S. aureus (MSSA/MRSA)</td><td>Infezione precoce post-operatoria o ematogena acuta; per MRSA: colonizzazione nota, ospedalizzazione recente/prolungata, RSA, emodialisi, uso di droghe EV, elevata prevalenza locale</td></tr>
+      <tr><td>Streptococchi</td><td>Infezione ematogena acuta, spesso da fonte a distanza identificabile (dentaria, cutanea, gastrointestinale, endocardite)</td></tr>
+      <tr><td>Enterobacterales / Gram-negativi</td><td>Infezione precoce post-operatoria (contaminazione intraoperatoria), fonte urinaria concomitante, immunosoppressione</td></tr>
+      <tr><td>Stafilococchi coagulasi-negativi</td><td>Infezione cronica tardiva (>3 mesi), decorso indolente, spesso multi-resistenti alla meticillina</td></tr>
+      <tr><td>Cutibacterium acnes</td><td>Infezione cronica tardiva di <b>protesi di spalla</b>, decorso indolente, colture a lenta crescita (richiede incubazione prolungata, ≥ 14 giorni)</td></tr>
+      <tr><td>Infezione polimicrobica</td><td>Più frequente nelle infezioni croniche associate a fistola cutanea, in pazienti con comorbidità multiple o ferite chirurgiche complicate</td></tr>
+    </table>
+    <div class="note">Questa correlazione timing-patogeno guida sia la scelta della copertura empirica post-operatoria sia l'interpretazione dei risultati colturali (una singola coltura positiva per un patogeno a bassa virulenza va sempre correlata con gli altri criteri diagnostici, per distinguere infezione da contaminazione).</div>
+  </div>
+</div>
+
+<div class="subpanel" id="pji-chirurgia">
+  <div class="card">
+    <h3>Strategie chirurgiche <sup class="ref">[1]</sup></h3>
+    <div class="flow">
+      <div class="fnode decision">Sintomi &lt; 3 settimane E impianto stabile/ben fissato E tessuti molli integri?</div>
+      <div class="branch">
+        <div><div class="fnode action">SÌ → DAIR (debridement, antibiotici, ritenzione impianto) + componenti mobili sostituibili se possibile</div></div>
+        <div><div class="fnode">NO → considerare rimozione dell'impianto</div></div>
+      </div>
+      <div class="arrow">↓</div>
+      <div class="fnode decision">Paziente candidabile a reimpianto (condizioni generali, tessuti molli adeguati)?</div>
+      <div class="branch">
+        <div><div class="fnode action">SÌ → resezione + reimpianto (1 o 2 tempi, secondo microrganismo/tessuti/preferenza centro)</div></div>
+        <div><div class="fnode alert">NO → artroplastica di resezione permanente, artrodesi, o (extrema ratio) amputazione</div></div>
+      </div>
+    </div>
+    <div class="note">Il <b>DAIR</b> è generalmente sconsigliato per infezioni croniche, impianto instabile, tessuti molli compromessi, o microrganismi difficili da trattare (es. resistenti, fungini) senza opzioni di terapia soppressiva efficace.</div>
+  </div>
+</div>
+
+<div class="subpanel" id="pji-terapia">
+  <div class="card">
+    <h3>Terapia antibiotica empirica post-operatoria</h3>
+    <p>Dopo il prelievo di campioni intraoperatori multipli (idealmente 3-6, da sedi diverse), in attesa dell'esito colturale (che può richiedere fino a 2 settimane per patogeni a lenta crescita) è prassi consolidata iniziare una copertura empirica ad ampio spettro, da restringere non appena disponibile l'antibiogramma.</p>
+    <div class="calcbox">
+      <h4 style="margin-top:0;">Schema empirico post-operatorio (in attesa di coltura)</h4>
+      <table style="margin:6px 0;">
+        <tr><th>Componente</th><th>Farmaco</th><th>Razionale</th></tr>
+        <tr><td>Copertura Gram+ (incl. stafilococchi meticillino-resistenti/coagulasi-negativi)</td><td>Vancomicina EV (target su trough/AUC secondo TDM locale)</td><td>Stafilococchi = patogeni più frequenti in assoluto nella PJI, incluse specie coagulasi-negative spesso resistenti alla meticillina</td></tr>
+        <tr><td>Copertura Gram-negativi</td><td>Cefepime, ceftriaxone o piperacillina-tazobactam EV, secondo epidemiologia locale e funzione renale</td><td>Enterobacterales e, in centri con prevalenza rilevante, Pseudomonas aeruginosa</td></tr>
+      </table>
+      <p style="font-size:.8rem;color:var(--muted);">Regime coerente con la pratica clinica corrente basata sul framework IDSA 2013 <sup class="ref">[1]</sup>; monitorare tollerabilità (nefrotossicità da vancomicina, specie in combinazione con piperacillina-tazobactam) e de-escalare appena disponibile l'antibiogramma.</p>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Terapia antibiotica mirata dopo DAIR <sup class="ref">[1][5][6]</sup></h3>
+    <table>
+      <tr><th>Patogeno</th><th>Regime con attività su biofilm</th><th>Durata companion orale</th></tr>
+      <tr><td>Stafilococchi rifampicina-sensibili</td><td>Rifampicina + companion (chinolone di prima scelta se sensibile)</td><td>3 mesi (anca), 6 mesi (ginocchio) — protocollo totale comprensivo di fase EV iniziale</td></tr>
+      <tr><td>Companion alternativo al chinolone</td><td>Cotrimossazolo, minociclina/doxiciclina, cefalosporina orale di 1ª generazione o penicillina anti-stafilococcica</td><td>Come sopra</td></tr>
+      <tr><td>Streptococchi</td><td>Beta-lattamico EV, poi step-down orale mirato</td><td>4-6 settimane totali</td></tr>
+    </table>
+    <div class="warn">L'uso dei fluorochinoloni come companion va valutato secondo le restrizioni EMA/AIFA sui fluorochinoloni <sup class="ref">[7]</sup> (rischio effetti avversi tendinei, aortici, neuropsichiatrici); considerare alternative quando appropriato.</div>
+    <div class="note">Dopo resezione con reimpianto differito, la durata della terapia antibiotica sistemica prima del reimpianto e l'eventuale terapia soppressiva post-reimpianto vanno personalizzate con l'infettivologo, in base a microrganismo, margini chirurgici e comorbidità.</div>
+  </div>
+</div>
+
+<div class="subpanel" id="pji-fonti">
+  <div class="card src">
+    <h3>Fonti bibliografiche</h3>
+    <p class="refhint">I numeri tra parentesi quadre nelle schede rimandano a questo elenco.</p>
+    <ol>
+      <li>Osmon DR, Berbari EF, Berendt AR, et al. Diagnosis and Management of Prosthetic Joint Infection: Clinical Practice Guidelines by the Infectious Diseases Society of America. <i>Clin Infect Dis.</i> 2013;56(1):e1-e25. <a href="https://doi.org/10.1093/cid/cis803" target="_blank" rel="noopener">doi:10.1093/cid/cis803</a></li>
+      <li>Parvizi J, Tan TL, Goswami K, et al. The 2018 Definition of Periprosthetic Hip and Knee Infection: An Evidence-Based and Validated Criteria. <i>J Arthroplasty.</i> 2018;33(5):1309-1314.e2. <a href="https://doi.org/10.1016/j.arth.2018.02.078" target="_blank" rel="noopener">doi:10.1016/j.arth.2018.02.078</a></li>
+      <li>McNally M, Sousa R, Wouthuyzen-Bakker M, et al. The EBJIS definition of periprosthetic joint infection: a practical guide for clinicians. <i>Bone Joint J.</i> 2021;103-B(1):18-25. <a href="https://doi.org/10.1302/0301-620X.103B1.BJJ-2020-1381.R1" target="_blank" rel="noopener">doi:10.1302/0301-620X.103B1.BJJ-2020-1381.R1</a></li>
+      <li>Zimmerli W, Trampuz A, Ochsner PE. Prosthetic-joint infections. <i>N Engl J Med.</i> 2004;351(16):1645-1654. <a href="https://doi.org/10.1056/NEJMra040181" target="_blank" rel="noopener">doi:10.1056/NEJMra040181</a></li>
+      <li>Zimmerli W, Widmer AF, Blatter M, Frei R, Ochsner PE. Role of rifampin for treatment of orthopedic implant-related staphylococcal infections: a randomized controlled trial. <i>JAMA.</i> 1998;279(19):1537-1541. <a href="https://doi.org/10.1001/jama.279.19.1537" target="_blank" rel="noopener">doi:10.1001/jama.279.19.1537</a></li>
+      <li>Li HK, Rombach I, Zambellas R, et al. Oral versus intravenous antibiotics for bone and joint infection (OVIVA). <i>N Engl J Med.</i> 2019;380(5):425-436. <a href="https://doi.org/10.1056/NEJMoa1710926" target="_blank" rel="noopener">doi:10.1056/NEJMoa1710926</a></li>
+      <li>European Medicines Agency (EMA). Disabling and potentially permanent side effects lead to suspension or restrictions of quinolone and fluoroquinolone antibiotics. 2018. Vedi anche promemoria AIFA/PRAC (maggio 2023) sulle misure di restrizione. <a href="https://www.ema.europa.eu/en/news/disabling-potentially-permanent-side-effects-lead-suspension-or-restrictions-quinolone-fluoroquinolone-antibiotics" target="_blank" rel="noopener">ema.europa.eu</a></li>
+    </ol>
+  </div>
+</div>
+`;};
+
+/* ---------- 4. PIEDE DIABETICO ---------- */
+BUILDERS.diabetico = function(){
+return `
+<div class="printbar"><button onclick="printPage()">🖨️ Stampa</button></div>
+<div class="subtabs">
+  <button class="active" data-target="dfo-diag">Diagnosi</button>
+  <button data-target="dfo-class">Classificazione IWGDF/IDSA</button>
+  <button data-target="dfo-microbio">Sospetto Microbiologico</button>
+  <button data-target="dfo-terapia">Terapia</button>
+  <button data-target="dfo-fonti">Fonti</button>
+</div>
+
+<div class="subpanel active" id="dfo-diag">
+  <div class="card">
+    <h3>Sospetto di osteomielite del piede diabetico <sup class="ref">[1][3][4]</sup></h3>
+    <p>Sospettare osteomielite in presenza di ulcera cronica/ricorrente, specie se profonda, di lunga durata (&gt; 4-6 settimane), sovrastante prominenza ossea, con esposizione ossea visibile o palpabile.</p>
+    <div class="grid2">
+      <div>
+        <h4>Test di prima linea (combinazione consigliata)</h4>
+        <ul>
+          <li><b>Probe-to-bone test</b> (positivo = contatto osseo con sonda sterile)</li>
+          <li>Rx piede in proiezioni standard</li>
+          <li>VES, PCR, procalcitonina</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Se diagnosi ancora incerta</h4>
+        <ul>
+          <li><b>RM</b> con mdc = imaging di scelta di seconda linea</li>
+          <li>Biopsia ossea per coltura + istologia = gold standard, quando fattibile e sicura</li>
+        </ul>
+      </div>
+    </div>
+    <div class="note">Una VES marcatamente elevata (&gt; 70 mm/h) in un paziente con ulcera del piede aumenta significativamente la probabilità di osteomielite sottostante. <sup class="ref">[3]</sup></div>
+  </div>
+  <div class="card">
+    <h3>Valutazione vascolare</h3>
+    <p>Eseguire sempre <b>valutazione della vascolarizzazione periferica</b> (polsi, ABI o test non invasivi equivalenti) in ogni paziente con infezione del piede diabetico: l'arteriopatia periferica concomitante peggiora prognosi e guarigione, e condiziona le scelte chirurgiche.</p>
+  </div>
+</div>
+
+<div class="subpanel" id="dfo-class">
+  <div class="card">
+    <h3>Classificazione di gravità IWGDF/IDSA <sup class="ref">[1][2]</sup></h3>
+    <table>
+      <tr><th>Grado</th><th>Definizione</th></tr>
+      <tr><td>1 — Non infetta</td><td>Nessun segno/sintomo di infezione</td></tr>
+      <tr><td>2 — Lieve</td><td>Infezione solo cutanea/sottocutanea locale (≤ 2 cm attorno all'ulcera)</td></tr>
+      <tr><td>3 — Moderata</td><td>Infezione più estesa, o coinvolgimento più profondo (fascia, tendine, muscolo, articolazione, osso), senza SIRS</td></tr>
+      <tr><td>4 — Severa</td><td>Infezione locale con segni sistemici di sepsi (≥ 2 criteri SIRS)</td></tr>
+      <tr><td>Suffisso (O)</td><td>Aggiunto quando è presente osteomielite documentata — es. 3(O) o 4(O) secondo criteri SIRS associati</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="subpanel" id="dfo-microbio">
+  <div class="card">
+    <h3>Orientamento eziologico in base ai fattori di rischio (IWGDF/IDSA 2023) <sup class="ref">[1]</sup></h3>
+    <p>Nei climi temperati (come l'Italia) e senza esposizione antibiotica recente, i cocchi Gram-positivi aerobi sono i patogeni più frequenti nelle infezioni del piede diabetico. La linea guida IWGDF/IDSA 2023 fornisce criteri specifici (Tabella 4, da Lipsky et al.) per il sospetto di MRSA e Pseudomonas:</p>
+    <table>
+      <tr><th>Classe di patogeno</th><th>Elementi che ne aumentano il sospetto</th></tr>
+      <tr><td><b>MRSA — rischio elevato</b></td><td>Infezione o colonizzazione da MRSA pregressa</td></tr>
+      <tr><td>MRSA — fattori di rischio aggiuntivi</td><td>Ospedalizzazione prolungata, ricovero in terapia intensiva, ospedalizzazione recente, uso recente di antibiotici, procedure invasive recenti, infezione da HIV, ricovero in RSA, ferite aperte, emodialisi, dimissione con accesso venoso centrale a lungo termine</td></tr>
+      <tr><td>Pseudomonas aeruginosa</td><td><b>Non</b> va coperto empiricamente di routine nei climi temperati; considerarlo solo se isolato da colture del sito interessato nelle settimane precedenti, in infezione moderata-severa, oppure se il paziente risiede in area (sub)tropicale (Asia, Nord Africa)</td></tr>
+      <tr><td>Enterobacterales / Gram-negativi (in generale)</td><td>Da considerare come possibile copertura aggiuntiva in Nord America/Europa in assenza di storia recente di esposizione antibiotica, secondo dichiarazione di buona pratica della linea guida</td></tr>
+      <tr><td>Anaerobi</td><td>Ischemia tissutale, necrosi, gangrena, ferite profonde e maleodoranti</td></tr>
+      <tr><td>Organismi multi-resistenti (MDRO) in generale</td><td>Infezione ricorrente, esposizione antibiotica prolungata/ripetuta, provenienza da area o struttura con elevata prevalenza di MDRO</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="subpanel" id="dfo-terapia">
+  <div class="card">
+    <h3>Terapia antibiotica empirica per gravità <sup class="ref">[1]</sup></h3>
+    <p>Per le infezioni <b>lievi</b> in Nord America/Europa occidentale, la linea guida IWGDF/IDSA 2023 raccomanda (dichiarazione di buona pratica) di mirare la terapia empirica sui cocchi Gram-positivi aerobi, i patogeni più frequenti in questo contesto. Per le forme <b>moderate-severe</b>, propone uno schema empirico più ampio, da adattare a fattori di rischio individuali ed epidemiologia locale:</p>
+    <table>
+      <tr><th>Gravità / fattore di rischio</th><th>Terapia empirica proposta</th></tr>
+      <tr><td>Lieve, nessun fattore di rischio</td><td>Copertura mirata su cocchi Gram+ aerobi: amoxicillina-clavulanato orale, o cefalosporina di 1ª generazione, o clindamicina se allergia ai beta-lattamici</td></tr>
+      <tr><td>Moderata-severa, senza rischio MRSA/Pseudomonas</td><td>Beta-lattamico ad ampio spettro con copertura anche su anaerobi (es. amoxicillina-clavulanato EV, piperacillina-tazobactam se severa)</td></tr>
+      <tr><td>Rischio elevato di MRSA (colonizzazione nota, infezione MRSA pregressa, prevalenza locale elevata)</td><td>Aggiungere copertura anti-MRSA: vancomicina, linezolid o daptomicina EV secondo il contesto</td></tr>
+      <tr><td>Rischio di Pseudomonas aeruginosa</td><td>Aggiungere copertura specifica <b>solo se</b> isolato da colture recenti (poche settimane) del sito interessato in infezione moderata-severa, oppure provenienza da area geografica (sub)tropicale (Asia, Nord Africa) — non raccomandata come copertura empirica di routine nei climi temperati come l'Italia</td></tr>
+    </table>
+    <div class="note">Principio guida: iniziare, quando possibile, con lo spettro <b>più stretto</b>, la durata più breve efficace e la via più sicura/economica, poi de-escalare su antibiogramma non appena disponibile (source control chirurgico associato quando indicato).</div>
+  </div>
+  <div class="card">
+    <h3>Principi generali di trattamento <sup class="ref">[1]</sup></h3>
+    <ul>
+      <li>Terapia antimicrobica mirata su coltura ossea quando disponibile (evitare colturale superficiale della sola ulcera, poco affidabile)</li>
+      <li>Preferire tecniche colturali <b>convenzionali</b> (non molecolari) su tessuto osseo o dei tessuti molli per l'identificazione del patogeno</li>
+      <li>Il debridement chirurgico/resezione ossea conservativa (limitata, evitando l'amputazione quando possibile) può essere necessario, ma nel piede in avampiede senza arteriopatia periferica e senza esposizione ossea si può considerare la sola terapia antibiotica</li>
+      <li>Drenaggio chirurgico urgente (entro 24h) in presenza di raccolte purulente</li>
+    </ul>
+    <div class="note"><b>Durata tipica:</b> terapia antibiotica per osteomielite del piede diabetico generalmente prolungata (settimane), personalizzata su adeguatezza del debridement chirurgico, patogeno e risposta clinica: da personalizzare con l'infettivologo/team multidisciplinare piede diabetico. <sup class="ref">[1][5]</sup></div>
+    <div class="warn">Sconsigliati come terapia adiuvante per la guarigione della ferita: G-CSF, antisettici topici, argento, miele, terapia fagica, terapia a pressione negativa, ossigenoterapia iperbarica o topica — evidenza insufficiente secondo IWGDF/IDSA 2023.</div>
+  </div>
+</div>
+
+<div class="subpanel" id="dfo-fonti">
+  <div class="card src">
+    <h3>Fonti bibliografiche</h3>
+    <p class="refhint">I numeri tra parentesi quadre nelle schede rimandano a questo elenco.</p>
+    <ol>
+      <li>Senneville É, Albalawi Z, van Asten SA, et al. IWGDF/IDSA Guidelines on the Diagnosis and Treatment of Diabetes-related Foot Infections (IWGDF/IDSA 2023). <i>Clin Infect Dis.</i> 2023;ciad527. <a href="https://doi.org/10.1093/cid/ciad527" target="_blank" rel="noopener">doi:10.1093/cid/ciad527</a>; anche pubblicato in <i>Diabetes Metab Res Rev.</i> 2024;40(3):e3687.</li>
+      <li>Lipsky BA, Berendt AR, Cornia PB, et al. 2012 Infectious Diseases Society of America Clinical Practice Guideline for the Diagnosis and Treatment of Diabetic Foot Infections. <i>Clin Infect Dis.</i> 2012;54(12):e132-e173. <a href="https://doi.org/10.1093/cid/cis346" target="_blank" rel="noopener">doi:10.1093/cid/cis346</a></li>
+      <li>Butalia S, Palda VA, Sargeant RJ, Detsky AS, Mourad O. Does this patient with diabetes have osteomyelitis of the lower extremity? <i>JAMA.</i> 2008;299(7):806-813. <a href="https://doi.org/10.1001/jama.299.7.806" target="_blank" rel="noopener">doi:10.1001/jama.299.7.806</a></li>
+      <li>Dinh MT, Abad CL, Safdar N. Diagnostic accuracy of the physical examination and imaging tests for osteomyelitis underlying diabetic foot ulcers: meta-analysis. <i>Clin Infect Dis.</i> 2008;47(4):519-527. <a href="https://doi.org/10.1086/590011" target="_blank" rel="noopener">doi:10.1086/590011</a></li>
+      <li>Tone A, Nguyen S, Devemy F, et al. Six-week versus twelve-week antibiotic therapy for nonsurgically treated diabetic foot osteomyelitis: a multicenter open-label controlled randomized study. <i>Diabetes Care.</i> 2015;38(2):302-307. <a href="https://doi.org/10.2337/dc14-1514" target="_blank" rel="noopener">doi:10.2337/dc14-1514</a></li>
+    </ol>
+  </div>
+</div>
+`;};
+
+/* ---------- 5. INFEZIONE SU FRATTURA (FRI) ---------- */
+BUILDERS.frattura = function(){
+return `
+<div class="printbar"><button onclick="printPage()">🖨️ Stampa</button></div>
+<div class="subtabs">
+  <button class="active" data-target="fri-diag">Diagnosi</button>
+  <button data-target="fri-microbio">Sospetto Microbiologico</button>
+  <button data-target="fri-chirurgia">Strategia Chirurgica</button>
+  <button data-target="fri-terapia">Terapia Antibiotica</button>
+  <button data-target="fri-fonti">Fonti</button>
+</div>
+
+<div class="subpanel active" id="fri-diag">
+  <div class="card">
+    <h3>Definizione consensuale di FRI <sup class="ref">[1][2]</sup></h3>
+    <p>La fracture-related infection (FRI) è definita dal consenso internazionale AO Foundation / European Bone and Joint Infection Society (EBJIS) tramite criteri suggestivi e criteri confermatori, distinti da quelli usati per la PJI per la presenza concomitante di frattura e lesione dei tessuti molli.</p>
+    <div class="grid2">
+      <div>
+        <h4>Criteri confermatori (uno solo sufficiente)</h4>
+        <ul>
+          <li>Fistola, tramite senoso o deiescenza della ferita con comunicazione all'osso/impianto</li>
+          <li>Presenza di pus franco nella sede chirurgica o attorno all'impianto</li>
+          <li>Presenza di microrganismi isolati da almeno 2 campioni tissutali/impianto separati (coltura fenotipicamente indistinguibile)</li>
+          <li>Presenza di microrganismi confermata da coltura in una singola biopsia profonda + segni istopatologici di infezione</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Criteri suggestivi (richiedono ulteriore approfondimento)</h4>
+        <ul>
+          <li>Segni clinici locali: nuova insorgenza di eritema, tumefazione, dolore locale in aumento</li>
+          <li>Segni radiologici: osteolisi periimplantare, mancata consolidazione, mancata formazione di callo</li>
+          <li>Febbre persistente/ricorrente senza altra fonte identificata</li>
+          <li>Comparsa di secrezione nella ferita</li>
+          <li>Elevazione di PCR/VES/leucociti senza altra causa</li>
+        </ul>
+      </div>
+    </div>
+    <div class="note">In presenza di criteri suggestivi, procedere a ulteriore work-up diagnostico (prelievi microbiologici intraoperatori multipli, istologia, imaging) prima di iniziare terapia antibiotica empirica, salvo urgenza clinica.</div>
+  </div>
+  <div class="card">
+    <h3>Campionamento microbiologico <sup class="ref">[2]</sup></h3>
+    <ul>
+      <li>Raccogliere <b>almeno 3-5 campioni tissutali profondi</b> intraoperatori da sedi diverse, con strumenti sterili dedicati per ciascun prelievo</li>
+      <li>Sonicazione dell'impianto rimosso, se disponibile, per aumentare la resa colturale</li>
+      <li>Sospendere l'antibiotico empirico prima dei prelievi quando clinicamente possibile (idealmente ≥ 2 settimane), per non falsare la resa colturale</li>
+      <li>Includere sempre esame istopatologico dei tessuti periimplantari</li>
+    </ul>
+  </div>
+</div>
+
+<div class="subpanel" id="fri-microbio">
+  <div class="card">
+    <h3>Orientamento eziologico in base al timing e al meccanismo del trauma</h3>
+    <p>Gli stafilococchi (<i>S. aureus</i> e coagulasi-negativi) sono i patogeni più frequenti in assoluto nella FRI, indipendentemente dal timing. Il momento di insorgenza e le caratteristiche della lesione orientano ulteriormente il sospetto:</p>
+    <table>
+      <tr><th>Classe di patogeno</th><th>Elementi che ne aumentano il sospetto</th></tr>
+      <tr><td>S. aureus, streptococchi, bacilli Gram-negativi</td><td>Infezione precoce (nelle prime settimane dopo trauma/intervento), verosimile contaminazione perioperatoria o cutanea</td></tr>
+      <tr><td>Stafilococchi coagulasi-negativi, patogeni a bassa virulenza</td><td>Infezione tardiva/cronica, decorso indolente, spesso solo dolore o non-union senza segni infiammatori eclatanti</td></tr>
+      <tr><td>Bacilli Gram-negativi, anaerobi, flora polimicrobica ambientale</td><td>Frattura esposta, contaminazione con terra/acqua, trauma ad alta energia, lesione dei tessuti molli estesa</td></tr>
+      <tr><td><b>MRSA</b></td><td>Colonizzazione nota, ospedalizzazione recente/prolungata, RSA, emodialisi, elevata prevalenza locale — stessi principi generali validi per le altre infezioni correlate a impianto</td></tr>
+      <tr><td>Clostridium spp. e altri anaerobi sporigeni</td><td>Contaminazione terrosa/agricola della ferita, ischemia tissutale associata</td></tr>
+    </table>
+    <div class="note">La FRI è più spesso polimicrobica rispetto alla PJI, specie nelle fratture esposte: questo va tenuto presente sia nel campionamento (numero di prelievi) sia nell'impostazione della copertura empirica.</div>
+  </div>
+</div>
+
+<div class="subpanel" id="fri-chirurgia">
+  <div class="card">
+    <h3>Strategia chirurgica <sup class="ref">[3]</sup></h3>
+    <p>La scelta tra ritenzione e rimozione dell'impianto dipende principalmente da <b>tempo trascorso dalla fissazione</b>, <b>stabilità della sintesi</b> e <b>stadio di consolidazione della frattura</b> — non esclusivamente dal timing dell'infezione come nella PJI.</p>
+    <div class="flow">
+      <div class="fnode decision">Impianto stabile E infezione precoce/acuta E tessuti molli vitali?</div>
+      <div class="branch">
+        <div><div class="fnode action">SÌ → debridement (DAIR-equivalente) con ritenzione dell'impianto fino a consolidamento della frattura, poi rimozione elettiva</div></div>
+        <div><div class="fnode">NO (impianto instabile, infezione cronica, non-union) → rimozione dell'impianto</div></div>
+      </div>
+      <div class="arrow">↓</div>
+      <div class="fnode decision">Dopo rimozione: la stabilità è ancora necessaria per la consolidazione?</div>
+      <div class="branch">
+        <div><div class="fnode action">SÌ → sostituzione con fissazione esterna temporanea o spaziatore, secondo il quadro</div></div>
+        <div><div class="fnode">NO, frattura già consolidata → nessuna nuova sintesi necessaria</div></div>
+      </div>
+    </div>
+    <div class="note">Debridement chirurgico radicale (rimozione di tutto il tessuto necrotico/infetto) è indicato in ogni scenario, indipendentemente dalla decisione su ritenzione o rimozione dell'impianto. Coinvolgere precocemente il chirurgo plastico se è necessaria copertura dei tessuti molli.</div>
+  </div>
+</div>
+
+<div class="subpanel" id="fri-terapia">
+  <div class="card">
+    <h3>Terapia empirica in attesa di coltura <sup class="ref">[4]</sup></h3>
+    <p>Il consenso internazionale AO/EBJIS raccomanda l'avvio di <b>antibiotici empirici ad ampio spettro subito dopo il prelievo dei campioni tissutali</b>, in caso di sospetta FRI, da adattare poi in base all'antibiogramma. Non è indicato uno schema empirico fisso, poiché la FRI è spesso polimicrobica (specie nelle fratture esposte) e la scelta va guidata dall'epidemiologia locale e dal contesto (frattura chiusa vs esposta, trauma ad alta energia, esposizione ambientale). Uno schema ragionevole, coerente con la pratica per infezioni correlate a impianto, è:</p>
+    <table>
+      <tr><th>Componente</th><th>Farmaco</th><th>Razionale</th></tr>
+      <tr><td>Copertura Gram+ (stafilococchi, incl. MRSA)</td><td>Vancomicina EV</td><td>Patogeni più frequenti, incluse forme biofilm-formanti su impianto</td></tr>
+      <tr><td>Copertura Gram-negativi</td><td>Cefepime, ceftriaxone o piperacillina-tazobactam EV secondo epidemiologia locale</td><td>Enterobacterales, più frequenti nelle fratture esposte/contaminazione ambientale</td></tr>
+      <tr><td>Copertura anaerobi/contaminazione ambientale (fratture esposte, contaminazione terrosa)</td><td>Aggiungere metronidazolo o scegliere piperacillina-tazobactam come beta-lattamico di base</td><td>Rischio di anaerobi e patogeni ambientali (es. Clostridium spp.)</td></tr>
+    </table>
+    <div class="note">Questo schema è un'estrapolazione ragionevole dai principi di terapia empirica delle infezioni correlate a impianto, non una raccomandazione esplicita del consenso AO/EBJIS: la decisione va sempre condivisa con l'infettivologo, considerando meccanismo del trauma ed esposizione ambientale.</div>
+  </div>
+  <div class="card">
+    <h3>Principi di terapia antimicrobica mirata <sup class="ref">[3][4]</sup></h3>
+    <ul>
+      <li>Terapia mirata su antibiogramma dopo campionamento adeguato; evitare terapia empirica prolungata senza identificazione microbiologica salvo urgenza clinica</li>
+      <li>In caso di ritenzione dell'impianto con microrganismi biofilm-formanti (stafilococchi), considerare regimi con attività su biofilm (es. rifampicina in associazione, se sensibile e non controindicata) analogamente alla PJI</li>
+      <li><b>Durata</b>: non esistono trial randomizzati; il consenso di esperti (livello di evidenza V) suggerisce <b>12 settimane</b> di terapia con attività anti-biofilm in caso di ritenzione dell'impianto (DAIR) o scambio in un tempo, e il completamento di <b>6 settimane dalla rimozione</b> dell'impianto nelle strategie con rimozione/scambio in più tempi <sup class="ref">[4]</sup>. Da personalizzare su radicalità del debridement, patogeno e risposta clinica</li>
+      <li>Coinvolgimento multidisciplinare (traumatologo, infettivologo, microbiologo, chirurgo plastico) raccomandato in tutti i casi</li>
+    </ul>
+    <div class="warn">L'obiettivo primario del trattamento è il <b>consolidamento della frattura</b> in assenza di infezione persistente: le decisioni terapeutiche vanno sempre bilanciate tra eradicazione dell'infezione e mantenimento della stabilità meccanica necessaria alla guarigione ossea.</div>
+  </div>
+</div>
+
+<div class="subpanel" id="fri-fonti">
+  <div class="card src">
+    <h3>Fonti bibliografiche</h3>
+    <p class="refhint">I numeri tra parentesi quadre nelle schede rimandano a questo elenco.</p>
+    <ol>
+      <li>Metsemakers WJ, Morgenstern M, McNally MA, et al. Fracture-related infection: a consensus on definition from an international expert group. <i>Injury.</i> 2018;49(3):505-510. <a href="https://doi.org/10.1016/j.injury.2017.08.040" target="_blank" rel="noopener">doi:10.1016/j.injury.2017.08.040</a></li>
+      <li>Govaert GAM, Kuehl R, Atkins BL, et al. Diagnosing fracture-related infection: current concepts and recommendations. <i>J Orthop Trauma.</i> 2020;34(1):8-17. <a href="https://doi.org/10.1097/BOT.0000000000001614" target="_blank" rel="noopener">doi:10.1097/BOT.0000000000001614</a></li>
+      <li>Metsemakers WJ, Morgenstern M, Senneville E, et al. General treatment principles for fracture-related infection: recommendations from an international expert group. <i>Arch Orthop Trauma Surg.</i> 2020;140(8):1013-1027. <a href="https://doi.org/10.1007/s00402-019-03287-4" target="_blank" rel="noopener">doi:10.1007/s00402-019-03287-4</a></li>
+      <li>Depypere M, Kuehl R, Metsemakers WJ, et al. Recommendations for Systemic Antimicrobial Therapy in Fracture-Related Infection: A Consensus From an International Expert Group. <i>J Orthop Trauma.</i> 2020;34(1):30-41. <a href="https://doi.org/10.1097/BOT.0000000000001626" target="_blank" rel="noopener">doi:10.1097/BOT.0000000000001626</a></li>
+    </ol>
+  </div>
+</div>
+`;};
+
+/* ============================================================
+   CALCOLATORI
+   ============================================================ */
+function calcSynovial(){
+  const wbc = parseFloat(document.getElementById("wbcSyn").value);
+  const pmnRaw = document.getElementById("pmnSyn").value.trim();
+  const pmn = pmnRaw === "" ? NaN : parseFloat(pmnRaw);
+  const box = document.getElementById("synResult");
+  const show = (cls, msg)=>{ box.innerHTML = `<div class="result ${cls}" role="status">${msg}</div>`; };
+
+  if(isNaN(wbc) || wbc < 0){
+    show("res-mid", "Inserire una conta leucocitaria valida (≥ 0 cellule/mm³).");
+    return;
+  }
+  if(!isNaN(pmn) && (pmn < 0 || pmn > 100)){
+    show("res-mid", "La percentuale di neutrofili deve essere compresa tra 0 e 100.");
+    return;
+  }
+  const pmnNote = isNaN(pmn) ? " (% neutrofili non inserita: valutazione basata sulla sola conta cellulare)" : "";
+
+  if(wbc > 50000 && (isNaN(pmn) || pmn > 90)){
+    show("res-pos", "Alta probabilità di artrite settica — quadro compatibile con infezione" + pmnNote + ". Procedere con coltura, Gram, terapia empirica e valutazione chirurgica per drenaggio, integrando sempre con il quadro clinico.");
+  } else if(wbc >= 25000){
+    const extra = (wbc > 50000) ? " Conta &gt; 50.000/mm³ ma neutrofili ≤ 90%: quadro non sovrapponibile al criterio di alta probabilità." : "";
+    show("res-mid", "Zona intermedia — non diagnostica da sola." + extra + " Correlare strettamente con Gram, coltura, fattori di rischio e presentazione clinica; non escludere né confermare l'artrite settica solo su questo valore.");
+  } else {
+    show("res-neg", "Bassa probabilità in base alla sola conta cellulare — ma una conta bassa NON esclude l'artrite settica (falsi negativi possibili, specie dopo terapia antibiotica pregressa o infezioni indolenti). Il giudizio clinico prevale sempre.");
+  }
+}
+</script>
+</body>
+</html>
