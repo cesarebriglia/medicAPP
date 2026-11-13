@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Convertitore corticosteroidi sistemici</title>
+<style>
+:root{--blu:#1565c0;--blu-ch:#e8f1fb;--testo:#263238;--grigio:#59656d;--bordo:#d5dce1;--sfondo:#f4f6f8}
+*{box-sizing:border-box}
+body{font-family:Arial,Helvetica,sans-serif;background:var(--sfondo);margin:0;color:var(--testo);line-height:1.45}
+.container{max-width:1100px;margin:24px auto;padding:0 16px}
+.card{background:#fff;border-radius:12px;padding:22px;box-shadow:0 2px 10px rgba(0,0,0,.07);margin-bottom:18px}
+h1{margin:0 0 6px;font-size:25px}
+h2{margin:0 0 10px;font-size:19px}
+h3{margin:16px 0 6px;font-size:15px}
+p{margin:6px 0}
+.grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:14px;align-items:end;margin-top:14px}
+label{display:block;font-weight:bold;margin-bottom:6px;font-size:14px}
+select,input,button{width:100%;padding:11px;border:1px solid #bcc5cc;border-radius:7px;font-size:15px;font-family:inherit;background:#fff;color:var(--testo)}
+select:focus,input:focus,button:focus{outline:3px solid #90caf9;outline-offset:1px}
+button{background:var(--blu);color:#fff;border:0;font-weight:bold;cursor:pointer;margin-top:16px}
+button:hover{background:#0d4f9c}
+.chips{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
+.chip{width:auto;margin:0;padding:5px 10px;border-radius:14px;background:var(--blu-ch);color:var(--blu);font-size:13px;font-weight:normal;border:1px solid #c5dcf5}
+.chip:hover{background:#d3e6fa}
+.note{font-size:13px;color:var(--grigio)}
+.errore{display:none;margin-top:12px;background:#fdecea;border-left:4px solid #c62828;padding:10px 12px;font-size:14px}
+.result{display:none}
+.riepilogo{background:var(--blu-ch);border-radius:8px;padding:12px 14px;margin-bottom:14px}
+.tab-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:760px}
+th,td{padding:9px 10px;border-bottom:1px solid #e2e6e9;text-align:left;vertical-align:top;font-size:14px}
+th{background:#eef3f7;font-size:13px;white-space:nowrap}
+tr.partenza td{background:#fffde7}
+.eq{font-weight:bold;font-size:15px;white-space:nowrap}
+.small{font-size:12px;color:#68747c}
+.tag{display:inline-block;padding:2px 7px;border-radius:10px;font-size:11px;background:#fff3e0;color:#b45309;border:1px solid #fcd9a6;margin-top:3px}
+.warning{background:#fff8e1;border-left:4px solid #ffb300;padding:12px;margin-top:15px;font-size:13px}
+ul{margin:6px 0 6px 18px;padding:0}
+li{margin-bottom:4px;font-size:13px}
+ol{margin:6px 0 6px 18px;padding:0}
+footer{text-align:center;font-size:12px;color:var(--grigio);padding:6px 16px 28px}
+footer strong{color:var(--testo)}
+@media(max-width:700px){.grid{grid-template-columns:1fr}h1{font-size:21px}.card{padding:16px}}
+@media print{button,.chips{display:none}body{background:#fff}.card{box-shadow:none;border:1px solid var(--bordo)}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="card">
+  <h1>Convertitore di corticosteroidi sistemici</h1>
+  <p>Scegli la specialità di partenza, la via e la dose giornaliera: l'app calcola le dosi a pari attività glucocorticoide (antinfiammatoria) degli altri corticosteroidi disponibili per la stessa via.</p>
+
+  <div class="grid">
+    <div>
+      <label for="drug">Corticosteroide di partenza</label>
+      <select id="drug"></select>
+    </div>
+    <div>
+      <label for="route">Via di somministrazione</label>
+      <select id="route"></select>
+    </div>
+    <div>
+      <label for="dose">Dose giornaliera (mg/die)</label>
+      <input id="dose" type="number" inputmode="decimal" min="0" step="any" placeholder="es. 25">
+    </div>
+  </div>
+  <div class="chips" id="chips" aria-label="Dosaggi unitari in commercio"></div>
+  <button id="btn" type="button">Calcola equivalenze</button>
+  <div class="errore" id="errore" role="alert"></div>
+  <p class="note" style="margin-top:12px">I pulsanti sotto il campo dose riportano i dosaggi unitari in commercio della specialità scelta; la dose può comunque essere digitata liberamente (es. 37,5 mg).</p>
+</div>
+
+<div class="card result" id="result">
+  <h2>Risultato</h2>
+  <div class="riepilogo" id="summary"></div>
+  <div class="tab-wrap">
+    <table>
+      <thead><tr>
+        <th>Specialità</th><th>Principio attivo</th><th>Dose equivalente/die</th><th>In pratica</th><th>Durata d'azione</th><th>Attività mineralcorticoide</th><th>Somministrazioni/die</th>
+      </tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+  <div class="warning">
+    <strong>Nota clinica.</strong> Equivalenza glucocorticoide non significa equivalenza terapeutica: le conversioni sono approssimative, non tengono conto dell'attività mineralcorticoide né della diversa durata d'azione, e valgono solo per le vie orale ed endovenosa/intramuscolare con formulazioni a pronto rilascio. Vanno sempre verificate rispetto a indicazione, RCP e contesto clinico. Come riscontro: AIFA, per la terapia corticosteroidea del COVID-19, indica desametasone 6 mg ≈ metilprednisolone 32 mg ≈ prednisone 40 mg ≈ idrocortisone 160 mg.
+  </div>
+</div>
+
+<div class="card">
+  <h2>Criterio di calcolo</h2>
+  <p class="note">Dosi equivalenti di riferimento (attività glucocorticoide): <strong>prednisone 5 mg = prednisolone 5 mg = metilprednisolone 4 mg = deflazacort 6 mg = desametasone 0,75 mg = betametasone 0,6 mg = idrocortisone 20 mg = cortisone acetato 25 mg</strong>.</p>
+  <ul>
+    <li>Per deflazacort e betametasone le fonti non sono concordi: alcune tabelle riportano deflazacort 7,5 mg e betametasone 0,75 mg per 5 mg di prednisone.</li>
+    <li>Prednisone e cortisone acetato sono profarmaci attivati dal fegato (a prednisolone e idrocortisone): nell'insufficienza epatica grave la conversione può essere meno affidabile.</li>
+    <li>Le fiale di desametasone e betametasone contengono l'estere fosfato; il titolo in mg è quello dichiarato in etichetta.</li>
+    <li>La colonna «In pratica» propone la combinazione più vicina con i dosaggi unitari in commercio (arrotondamento a mezza unità); la divisibilità della singola compressa va verificata sul foglio illustrativo.</li>
+  </ul>
+
+  <h3>Corticosteroidi in commercio in Italia <u>non</u> inclusi nel calcolo</h3>
+  <ul>
+    <li><strong>Formulazioni depot</strong> (cinetica non confrontabile): Depo-Medrol (metilprednisolone acetato 40 mg/ml), Kenacort e Triacort (triamcinolone acetonide 40 mg/ml), betametasone acetato + fosfato.</li>
+    <li><strong>Rilascio modificato</strong>: Lodotra (prednisone 1-2-5 mg, non sostituibile con il rilascio immediato nello stesso schema); Plenadren (idrocortisone 5-20 mg) per l'insufficienza surrenalica.</li>
+    <li><strong>Terapia sostitutiva</strong>: Alkindi, Efmody (idrocortisone); idrocortisone 10 mg compresse e fludrocortisone solo per importazione dall'estero.</li>
+    <li><strong>Alte dosi onco-ematologiche</strong>: Neofordex (desametasone 40 mg).</li>
+    <li><strong>Steroidi orali ad azione prevalentemente locale intestinale</strong> (budesonide, beclometasone dipropionato): non convertibili in dose sistemica.</li>
+    <li>Deflazacort è disponibile anche in gocce orali 22,75 mg/ml (Deflan, Flantadin; circa 1 mg per goccia).</li>
+  </ul>
+
+  <h3>Fonti</h3>
+  <ol class="note">
+    <li>AIFA – Banca Dati Farmaci (medicinali.aifa.gov.it): RCP e confezioni delle specialità citate. Tabella di equivalenza: RCP Decadron compresse; RCP Urbason.</li>
+    <li>AIFA – Raccomandazioni sui farmaci per la gestione domiciliare di COVID-19 (dosi equivalenti al desametasone 6 mg).</li>
+    <li>Parente L. Deflazacort: therapeutic index, relative potency and equivalent doses versus other corticosteroids. BMC Pharmacol Toxicol 2017;18:1.</li>
+    <li>Società Italiana di Endocrinologia – Comunicazione sulla carenza di Flebocortid 100 mg (ottobre 2025).</li>
+  </ol>
+  <p class="note">Nomi commerciali, dosaggi e disponibilità (carenze comprese) cambiano nel tempo: verificare periodicamente sulla banca dati AIFA. Strumento di supporto per medici: non sostituisce RCP e giudizio clinico. Dati verificati al 13/11/2026.</p>
+</div>
+
+</div>
+
+<footer>
+  <strong>Ideato dal dr. C. Briglia (cesarebriglia@gmail.com) con l'apporto di Claude - Anthropic</strong><br>
+  Versione 1.2 · creata il 13/11/2026
+</footer>
+
+<script>
+/* ---------- Dati ----------
+   eq5 = mg equivalenti a 5 mg di prednisone (attività glucocorticoide) */
+const MOLECOLE = {
+  prednisone:  {nome:"Prednisone",        eq5:5,    durata:"Intermedia (12–36 h)", mc:"Lieve (0,8)",  freq:"1/die (talora 2)"},
+  prednisolone:{nome:"Prednisolone",      eq5:5,    durata:"Intermedia (12–36 h)", mc:"Lieve (0,8)",  freq:"1/die (talora 2)"},
+  mp:          {nome:"Metilprednisolone", eq5:4,    durata:"Intermedia (12–36 h)", mc:"Minima (0,5)", freq:"1/die (talora 2)"},
+  deflazacort: {nome:"Deflazacort",       eq5:6,    durata:"Intermedia (12–36 h)", mc:"Minima",       freq:"1/die"},
+  desametasone:{nome:"Desametasone",      eq5:0.75, durata:"Lunga (36–72 h)",      mc:"Assente",      freq:"1/die"},
+  betametasone:{nome:"Betametasone",      eq5:0.6,  durata:"Lunga (36–72 h)",      mc:"Assente",      freq:"1/die"},
+  idrocortisone:{nome:"Idrocortisone",    eq5:20,   durata:"Breve (8–12 h)",       mc:"Presente (1)", freq:"2–4/die"},
+  cortisone:   {nome:"Cortisone acetato", eq5:25,   durata:"Breve (8–12 h)",       mc:"Presente (0,8)", freq:"2–3/die"}
+};
+
+/* dosi = dosaggi unitari in commercio (mg); unita = [singolare, plurale] */
+const PRODOTTI = [
+  // --- OS ---
+  {nome:"Deltacortene",      mol:"prednisone",   vie:["OS"], forma:"compresse", dosi:[5,25], unita:["cpr","cpr"]},
+  {nome:"Prednisone EG",     mol:"prednisone",   vie:["OS"], forma:"compresse", dosi:[5,25], unita:["cpr","cpr"]},
+  {nome:"Sintredius",        mol:"prednisolone", vie:["OS"], forma:"soluzione orale 1 mg/ml", dosi:[5], unita:["contenitore monodose","contenitori monodose"]},
+  {nome:"Medrol",            mol:"mp",           vie:["OS"], forma:"compresse", dosi:[2,4,16], unita:["cpr","cpr"]},
+  {nome:"Urbason",           mol:"mp",           vie:["OS"], forma:"compresse", dosi:[4], unita:["cpr","cpr"]},
+  {nome:"Metildrol",         mol:"mp",           vie:["OS"], forma:"compresse", dosi:[4,16], unita:["cpr","cpr"]},
+  {nome:"Deflan",            mol:"deflazacort",  vie:["OS"], forma:"compresse", dosi:[6,30], unita:["cpr","cpr"]},
+  {nome:"Flantadin",         mol:"deflazacort",  vie:["OS"], forma:"compresse", dosi:[6,30], unita:["cpr","cpr"]},
+  {nome:"Deflazacort EG",    mol:"deflazacort",  vie:["OS"], forma:"compresse", dosi:[6,30], unita:["cpr","cpr"]},
+  {nome:"Decadron compresse",mol:"desametasone", vie:["OS"], forma:"compresse", dosi:[0.5,0.75], unita:["cpr","cpr"]},
+  {nome:"Decadron / Soldesam gocce", mol:"desametasone", vie:["OS"], forma:"gocce orali 2 mg/ml", dosi:[2], unita:["ml","ml"], passo:0.25},
+  {nome:"Dexabem",           mol:"desametasone", vie:["OS"], forma:"compresse effervescenti", dosi:[2,4,8], unita:["cpr eff.","cpr eff."]},
+  {nome:"Varcodes",          mol:"desametasone", vie:["OS"], forma:"compresse effervescenti", dosi:[2,4,8], unita:["cpr eff.","cpr eff."]},
+  {nome:"Bentelan compresse",mol:"betametasone", vie:["OS"], forma:"compresse effervescenti", dosi:[0.5,1], unita:["cpr eff.","cpr eff."]},
+  {nome:"Cortone Acetato",   mol:"cortisone",    vie:["OS"], forma:"compresse", dosi:[25], unita:["cpr","cpr"]},
+  // --- EV / IM ---
+  {nome:"Solu-Medrol",       mol:"mp",           vie:["EV","IM"], forma:"polvere e solvente (sodio succinato)", dosi:[40,125,500,1000], unita:["flacone","flaconi"]},
+  {nome:"Urbason solubile",  mol:"mp",           vie:["EV","IM"], forma:"polvere e solvente (emisuccinato)", dosi:[20,40], unita:["fiala","fiale"]},
+  {nome:"Decadron fiale",    mol:"desametasone", vie:["EV","IM"], forma:"soluzione iniettabile (fosfato)", dosi:[4,8], unita:["fiala","fiale"]},
+  {nome:"Soldesam fiale",    mol:"desametasone", vie:["EV","IM"], forma:"soluzione iniettabile (fosfato)", dosi:[4,8], unita:["fiala","fiale"]},
+  {nome:"Desametasone equivalenti (es. Kalceks, Hameln)", mol:"desametasone", vie:["EV","IM"], forma:"soluzione iniettabile 4 mg/ml", dosi:[4,8], unita:["fiala","fiale"]},
+  {nome:"Bentelan fiale",    mol:"betametasone", vie:["EV","IM"], forma:"soluzione iniettabile (fosfato)", dosi:[1.5,4], unita:["fiala","fiale"]},
+  {nome:"Flebocortid Richter", mol:"idrocortisone", vie:["EV","IM"], forma:"polvere e solvente (emisuccinato)", dosi:[100,500,1000], unita:["flacone","flaconi"],
+     avviso:"100 mg in carenza dal 2025; 500 mg e 1 g solo EV"},
+  {nome:"Solu-Cortef",       mol:"idrocortisone", vie:["EV","IM"], forma:"polvere e solvente (sodio succinato)", dosi:[100,250,500], unita:["flacone","flaconi"],
+     avviso:"verificare la disponibilità in Italia"}
+];
+
+const NOMI_VIA = {OS:"Orale (OS)", EV:"Endovenosa (EV)", IM:"Intramuscolare (IM)"};
+
+/* ---------- Logica (senza DOM) ---------- */
+function fmt(x){
+  const dec = x>=100 ? 0 : x>=10 ? 1 : 2;
+  return x.toLocaleString("it-IT",{maximumFractionDigits:dec});
+}
+function prednisoneEq(dose, molKey){ return dose * 5 / MOLECOLE[molKey].eq5; }
+function doseEquivalente(predEq, molKey){ return predEq * MOLECOLE[molKey].eq5 / 5; }
+
+/* combinazione più vicina con un solo dosaggio unitario, a passi di mezza unità */
+function inPratica(eq, p){
+  const passo = p.passo || 0.5;
+  let best = null;
+  p.dosi.forEach(s=>{
+    const n = Math.round(eq/s/passo)*passo;
+    if(n<=0) return;
+    const err = Math.abs(n*s-eq)/eq;
+    /* costo: scarto dalla dose + penalità per numero di unità e per unità frazionate */
+    const costo = err + 0.01*n + (Number.isInteger(n) ? 0 : 0.02);
+    if(!best || costo < best.costo) best = {s, n, err, costo};
+  });
+  if(!best || best.err>0.2) return {testo:"Nessuna combinazione semplice con i dosaggi in commercio", ok:false};
+  const u = best.n===1 ? p.unita[0] : p.unita[1];
+  const descr = p.unita[0]==="ml"
+      ? `${fmt(best.n)} ml (= ${fmt(best.n*best.s)} mg)`
+      : `${fmt(best.n)} ${u} da ${fmt(best.s)} mg (= ${fmt(best.n*best.s)} mg)`;
+  return {testo:"≈ "+descr, ok:true, tante: best.n>10};
+}
+
+/* ---------- Interfaccia ---------- */
+if(typeof document!=="undefined"){
+  const $ = id=>document.getElementById(id);
+  const drugSel=$("drug"), routeSel=$("route"), doseInp=$("dose");
+
+  function opzione(sel, value, text){
+    const o=document.createElement("option"); o.value=value; o.textContent=text; sel.appendChild(o);
+  }
+  function popolaFarmaci(){
+    Object.keys(MOLECOLE).forEach(k=>{
+      const lista = PRODOTTI.map((p,i)=>({p,i})).filter(x=>x.p.mol===k);
+      if(!lista.length) return;
+      const g=document.createElement("optgroup"); g.label=MOLECOLE[k].nome;
+      lista.forEach(x=>opzione(g, x.i, `${x.p.nome} – ${x.p.forma}`));
+      drugSel.appendChild(g);
+    });
+    aggiornaVie();
+  }
+  function prodottoScelto(){ return PRODOTTI[parseInt(drugSel.value,10)]; }
+  function aggiornaVie(){
+    const p=prodottoScelto();
+    routeSel.innerHTML="";
+    p.vie.forEach(v=>opzione(routeSel, v, NOMI_VIA[v]));
+    const chips=$("chips"); chips.innerHTML="";
+    p.dosi.forEach(s=>{
+      const b=document.createElement("button");
+      b.type="button"; b.className="chip"; b.textContent=fmt(s)+" mg";
+      b.addEventListener("click",()=>{doseInp.value=s; doseInp.focus();});
+      chips.appendChild(b);
+    });
+    doseInp.value="";
+    $("result").style.display="none";
+    mostraErrore("");
+  }
+  function mostraErrore(msg){
+    const e=$("errore"); e.textContent=msg; e.style.display=msg?"block":"none";
+  }
+  function cella(tr, html){ const td=document.createElement("td"); td.innerHTML=html; tr.appendChild(td); }
+
+  function converti(){
+    const p=prodottoScelto(), via=routeSel.value;
+    const dose=parseFloat(String(doseInp.value).replace(",","."));
+    if(!isFinite(dose) || dose<=0){
+      $("result").style.display="none";
+      mostraErrore("Inserire una dose giornaliera valida (in mg, maggiore di zero).");
+      return;
+    }
+    mostraErrore("");
+    const m=MOLECOLE[p.mol], pred=prednisoneEq(dose,p.mol);
+
+    $("summary").innerHTML =
+      `Dose di partenza: <strong>${fmt(dose)} mg/die di ${m.nome.toLowerCase()}</strong> (${p.nome}), via <strong>${NOMI_VIA[via]}</strong>.<br>`+
+      `Equivalente a <strong>${fmt(pred)} mg/die di prednisone</strong>.`;
+
+    const tbody=$("tbody"); tbody.innerHTML="";
+    PRODOTTI.filter(x=>x.vie.includes(via)).forEach(x=>{
+      const mx=MOLECOLE[x.mol], eq=doseEquivalente(pred,x.mol), pr=inPratica(eq,x);
+      const tr=document.createElement("tr");
+      if(x===p) tr.className="partenza";
+      cella(tr, `<strong>${x.nome}</strong><br><span class="small">${x.forma}</span>`+
+                (x.avviso?`<br><span class="tag">${x.avviso}</span>`:"")+
+                (x===p?`<br><span class="small">farmaco di partenza</span>`:""));
+      cella(tr, mx.nome);
+      cella(tr, `<span class="eq">${fmt(eq)} mg</span>`);
+      cella(tr, `<span class="small">${pr.testo}</span>`+(pr.tante?`<br><span class="tag">numero di unità elevato</span>`:""));
+      cella(tr, mx.durata);
+      cella(tr, mx.mc);
+      cella(tr, mx.freq);
+      tbody.appendChild(tr);
+    });
+    const r=$("result"); r.style.display="block"; r.scrollIntoView({behavior:"smooth"});
+  }
+
+  drugSel.addEventListener("change",aggiornaVie);
+  $("btn").addEventListener("click",converti);
+  doseInp.addEventListener("keydown",e=>{ if(e.key==="Enter") converti(); });
+  popolaFarmaci();
+}
+if(typeof module!=="undefined") module.exports={MOLECOLE,PRODOTTI,prednisoneEq,doseEquivalente,inPratica,fmt};
+</script>
+</body>
+</html>
