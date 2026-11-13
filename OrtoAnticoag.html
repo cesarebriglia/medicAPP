@@ -1,0 +1,792 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OrtoAnticoag – supporto decisionale</title>
+<style>
+:root{--ink:#172b3a;--muted:#5b6b76;--line:#d9e1e5;--paper:#f4f7f8;--blue:#174d68;--teal:#187c78;--warn:#fff2d7;--red:#fff0ee;--green:#eaf5ef}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.48 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{background:linear-gradient(115deg,#123d55,#187c78);color:white;padding:26px 20px}
+header .wrap,main{max-width:1100px;margin:auto}
+h1{margin:0;font-size:clamp(25px,4vw,36px);letter-spacing:-.5px}
+header p{margin:8px 0 0;max-width:780px;color:#e4f1f2}
+header .credit{font-size:12.5px;color:#cfe6e8;margin-top:10px}
+header .credit a{color:#fff}
+main{padding:20px 14px 50px}
+.notice{background:#fff;border:1px solid var(--line);border-left:5px solid #d08b23;padding:13px 15px;border-radius:10px;margin-bottom:18px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.panel{background:white;border:1px solid var(--line);border-radius:13px;padding:17px;box-shadow:0 2px 9px #1837480a}
+.panel h2{font-size:18px;margin:0 0 13px;color:var(--blue)}
+.panel h3{font-size:14px;margin:14px 0 4px;color:#344b59}
+.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+label{display:block;font-size:13px;font-weight:650;color:#344b59}
+input,select{width:100%;margin-top:4px;border:1px solid #bdcbd2;border-radius:8px;padding:10px;background:white;color:var(--ink);font:inherit;min-height:42px}
+.checks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:6px}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13px;font-weight:500}
+.check input{width:17px;min-height:17px;margin:2px 0 0;flex:none}
+.full{grid-column:1/-1}
+.panel.full .checks{grid-template-columns:repeat(3,minmax(0,1fr))}
+.hint{font-size:12px;color:var(--muted);margin:5px 0 0}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin:17px 0}
+button{border:0;border-radius:9px;padding:12px 18px;font-weight:700;font-size:14px;cursor:pointer}
+.primary{background:var(--blue);color:white}
+.secondary{background:#e3ecef;color:var(--blue)}
+#results{display:none;margin-top:18px}
+.result{border-radius:12px;padding:15px;margin:12px 0;border:1px solid var(--line);background:white}
+.result h3{margin:0 0 7px;font-size:17px}
+.alert{background:var(--warn);border-color:#e7c77d}
+.danger{background:var(--red);border-color:#e7b3ad}
+.good{background:var(--green);border-color:#b8d9c5}
+ul,ol{margin:7px 0;padding-left:20px}
+li{margin:4px 0}
+.tag{display:inline-block;padding:3px 8px;border-radius:20px;background:#e8eff2;font-size:12px;font-weight:700;margin:2px}
+footer{color:var(--muted);font-size:12px;margin-top:20px}
+.refs a{color:var(--blue);overflow-wrap:anywhere}
+[hidden]{display:none !important}
+@media screen and (max-width:720px){
+.grid,.fields,.checks,.panel.full .checks{grid-template-columns:1fr}
+.full{grid-column:auto}
+}
+
+@page{size:A4;margin:9mm}
+@media print{
+ html,body{background:white !important;color:#111 !important;font-size:9pt !important;line-height:1.2 !important;margin:0 !important;padding:0 !important}
+ main{width:100% !important;max-width:none !important;margin:0 !important;padding:0 !important}
+ header{background:white !important;color:black !important;padding:4px 0 !important;margin-bottom:5px !important}
+ header h1{font-size:16pt !important;margin:2px 0 !important}
+ header p,header .credit,header .credit a{color:black !important;font-size:8pt !important;margin:2px 0 !important;line-height:1.15 !important}
+ .actions,.notice{display:none !important}
+ .grid{grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:5px !important}
+ .fields,.checks{grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:3px 6px !important}
+ .panel{padding:6px !important;margin:0 !important;box-shadow:none !important;border:1px solid #bbb !important;border-radius:3px !important}
+ .panel h2{font-size:10pt !important;margin:2px 0 4px !important}
+ h3{font-size:9pt !important;margin:5px 0 3px !important}
+ p,li,label,.result{font-size:8.5pt !important;line-height:1.2 !important}
+ p{margin:2px 0 4px !important}
+ ul,ol{margin:3px 0 !important;padding-left:17px !important}
+ li{margin:1px 0 !important}
+ input,select{font-size:8pt !important;line-height:1.15 !important;padding:2px 4px !important;margin:1px 0 !important;min-height:0 !important;height:22px !important}
+ .check input{height:auto !important;width:12px !important}
+ #results{width:100% !important;margin-top:5px !important}
+ .result{padding:6px !important;margin:4px 0 !important;box-shadow:none !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ footer{font-size:7pt !important;line-height:1.15 !important;margin-top:5px !important}
+ h2,h3{break-after:avoid !important}
+}
+</style>
+</head>
+<body>
+<header>
+<div class="wrap">
+<h1>OrtoAnticoag</h1>
+<p>Supporto decisionale per profilassi TEV e gestione dell'anticoagulazione nel paziente adulto ricoverato in Ortopedia per frattura.</p>
+<p class="credit">Ideato dal dr. C.Briglia (<a href="mailto:cesarebriglia@gmail.com">cesarebriglia@gmail.com</a>) con l'apporto di Claude - Anthropic · Data di creazione: 12/11/2026 · Versione 2.3</p>
+</div>
+</header>
+<main>
+<div class="notice">
+<b>Versione dimostrativa – non prescrittiva.</b>
+L'output è un promemoria ragionato, non una prescrizione automatica.
+Prima dell'uso clinico va validato da Ortopedia, Medicina, Anestesia e Farmacia ospedaliera, confrontato con RCP AIFA aggiornati e protocolli locali.
+In caso di sanguinamento attivo, trauma maggiore, chirurgia urgente o anestesia neurassiale, decidere con il team responsabile.
+</div>
+
+<form id="f" novalidate>
+<div class="grid">
+
+<section class="panel">
+<h2>1 · Dati del paziente</h2>
+<div class="fields">
+<label>Età (anni)
+<input id="age" type="number" min="18" max="120" value="78">
+</label>
+<label>Sesso (per Cockcroft-Gault)
+<select id="sex">
+<option value="F">Femmina</option>
+<option value="M">Maschio</option>
+</select>
+</label>
+<label>Peso (kg)
+<input id="weight" type="number" min="25" max="250" value="65" step=".1">
+</label>
+<label>Creatinina (mg/dL)
+<input id="scr" type="number" min=".1" max="20" value="1.0" step=".01">
+</label>
+<label>Piastrine (×10⁹/L)
+<input id="plt" type="number" min="0" max="1500" value="210">
+</label>
+<label>Emoglobina (g/dL)
+<input id="hb" type="number" min="2" max="22" value="12" step=".1">
+</label>
+<label class="full">Classe Child-Pugh
+<select id="liver">
+<option value="A">Nessuna epatopatia / classe A</option>
+<option value="B">B – moderata</option>
+<option value="C">C – grave</option>
+<option value="unknown">Non nota</option>
+</select>
+</label>
+<div class="full checks">
+<label class="check"><input id="aki" type="checkbox"> Insufficienza renale acuta o creatinina instabile</label>
+<label class="check"><input id="obesity" type="checkbox"> Obesità (BMI ≥30)</label>
+</div>
+</div>
+<p class="hint">La clearance della creatinina è calcolata dall'app con Cockcroft-Gault (peso reale) ed è l'unico valore di funzione renale usato in tutta la valutazione: le schede tecniche di DOAC ed eparine fanno riferimento a questa formula, non all'eGFR.</p>
+</section>
+
+<section class="panel">
+<h2>2 · Frattura, intervento e anestesia</h2>
+<div class="fields">
+<label>Sede della frattura
+<select id="fracture">
+<option value="hip">Femore prossimale (collo / pertrocanterica / sottotrocanterica)</option>
+<option value="pelvis">Bacino / acetabolo</option>
+<option value="femur">Femore diafisario o distale</option>
+<option value="tibia">Tibia / ginocchio / rotula</option>
+<option value="ankle">Caviglia / piede</option>
+<option value="upper">Arto superiore</option>
+<option value="spine">Vertebrale</option>
+<option value="multiple">Fratture multiple / politrauma</option>
+</select>
+</label>
+<label>Trattamento
+<select id="treatment">
+<option value="surgery">Chirurgico</option>
+<option value="conservative">Conservativo</option>
+<option value="pending">Da definire</option>
+</select>
+</label>
+<label>Mobilità prevista
+<select id="mobility">
+<option value="bed">Allettamento / mobilità molto ridotta</option>
+<option value="limited">Carico limitato / immobilizzazione</option>
+<option value="mobile">Deambulazione precoce</option>
+</select>
+</label>
+<label data-surg>Fase
+<select id="phase">
+<option value="pre">Preoperatoria</option>
+<option value="post">Postoperatoria</option>
+</select>
+</label>
+<label data-surg data-pre>Urgenza dell'intervento
+<select id="urgency">
+<option value="emergency">Emergenza: non differibile</option>
+<option value="urgent" selected>Urgente: entro 24–48 ore</option>
+<option value="defer">Differibile: è possibile attendere</option>
+</select>
+</label>
+<label data-surg>Anestesia prevista / eseguita
+<select id="anesthesia">
+<option value="unknown">Non ancora definita</option>
+<option value="general">Generale</option>
+<option value="spinal">Spinale / epidurale</option>
+<option value="block">Blocco periferico profondo</option>
+<option value="superficial">Blocco superficiale / locale</option>
+</select>
+</label>
+<label data-surg data-post>Ore trascorse dall'intervento
+<input id="postop" type="number" min="0" max="720" value="12">
+</label>
+<label data-surg data-post>Emostasi postoperatoria
+<select id="hemostasis">
+<option value="notyet">Non ancora valutabile</option>
+<option value="secure">Raggiunta e stabile</option>
+<option value="uncertain">Incerta</option>
+</select>
+</label>
+<div class="full checks">
+<label class="check" data-surg data-pre><input id="delay" type="checkbox"> Intervento previsto oltre il giorno successivo al ricovero</label>
+<label class="check" data-surg><input id="catheter" type="checkbox"> Catetere neurassiale presente o previsto</label>
+<label class="check"><input id="bleed" type="checkbox"> Sanguinamento attivo (qualsiasi sede, inclusa la ferita chirurgica)</label>
+<label class="check"><input id="head" type="checkbox"> Trauma cranico / emorragia intracranica o spinale</label>
+</div>
+</div>
+</section>
+
+<section class="panel">
+<h2>3 · Rischio trombotico ed emorragico</h2>
+<h3>Trombotico</h3>
+<div class="checks">
+<label class="check"><input id="prevVte" type="checkbox"> Pregressa TVP / embolia polmonare</label>
+<label class="check"><input id="recentVte" type="checkbox"> TVP / EP negli ultimi 3 mesi</label>
+<label class="check"><input id="recentStroke" type="checkbox"> Ictus / TIA negli ultimi 3 mesi</label>
+<label class="check"><input id="cancer" type="checkbox"> Neoplasia attiva</label>
+<label class="check"><input id="thromb" type="checkbox"> Trombofilia nota</label>
+</div>
+<h3>Emorragico</h3>
+<div class="checks">
+<label class="check"><input id="ulcer" type="checkbox"> Ulcera / sanguinamento gastrointestinale recente</label>
+<label class="check"><input id="coag" type="checkbox"> Coagulopatia (anche da epatopatia)</label>
+<label class="check"><input id="fall" type="checkbox"> Cadute ricorrenti / fragilità elevata</label>
+<label class="check"><input id="hit" type="checkbox"> HIT pregressa o sospetta</label>
+</div>
+<h3>Farmaci concomitanti</h3>
+<div class="checks">
+<label class="check"><input id="aspirin" type="checkbox"> Aspirina</label>
+<label class="check"><input id="p2y12" type="checkbox"> Clopidogrel / prasugrel / ticagrelor</label>
+<label class="check"><input id="nsaid" type="checkbox"> FANS</label>
+<label class="check"><input id="ssri" type="checkbox"> SSRI / SNRI</label>
+<label class="check"><input id="interact" type="checkbox"> Inibitori/induttori P-gp o CYP3A4 (azolici, ritonavir, rifampicina, carbamazepina…)</label>
+<label class="check"><input id="otherBleed" type="checkbox"> Altro farmaco che aumenta il sanguinamento</label>
+</div>
+</section>
+
+<section class="panel">
+<h2>4 · Indicazioni e terapia anticoagulante abituale</h2>
+<div class="checks">
+<label class="check"><input id="af" type="checkbox"> Fibrillazione atriale</label>
+<label class="check"><input id="valve" type="checkbox"> Protesi valvolare meccanica</label>
+<label class="check"><input id="mitral" type="checkbox"> Stenosi mitralica moderata-grave</label>
+<label class="check"><input id="otherInd" type="checkbox"> Altra indicazione all'anticoagulazione</label>
+</div>
+<div class="fields" style="margin-top:11px">
+<label>Anticoagulante abituale
+<select id="drug">
+<option value="none">Nessuno</option>
+<option value="apixaban">Apixaban</option>
+<option value="rivaroxaban">Rivaroxaban</option>
+<option value="edoxaban">Edoxaban</option>
+<option value="dabigatran">Dabigatran</option>
+<option value="warfarin">Warfarin</option>
+<option value="acenocoumarol">Acenocumarolo</option>
+<option value="lmwh">EBPM a dose terapeutica</option>
+<option value="ufh">Eparina non frazionata</option>
+<option value="fondaparinux">Fondaparinux</option>
+<option value="other">Altro / non noto</option>
+</select>
+</label>
+<label data-ac><span id="doseLabel">Dose abituale / schema</span>
+<select id="dose"></select>
+</label>
+<label data-doseother>Specificare dose / schema
+<input id="doseOther" type="text" placeholder="Testo libero">
+</label>
+<label data-ac>Ultima assunzione
+<input id="last" type="datetime-local">
+</label>
+<label data-avk>INR
+<input id="inr" type="number" min="0.5" max="15" step="0.1" placeholder="Ultimo valore">
+</label>
+<label data-xa>Anti-Xa calibrato per il DOAC (ng/mL)
+<input id="xa" type="number" min="0" step="1" placeholder="Se disponibile">
+</label>
+<label data-dabi>Dabigatran: dTT / ecarina calibrato (ng/mL)
+<input id="dabi" type="number" min="0" step="1" placeholder="Se disponibile">
+</label>
+</div>
+<p class="hint">L'indicazione all'anticoagulazione è ricavata dalle condizioni spuntate qui e dal quadro 3 (TVP/EP). La sola presenza di FA non equivale automaticamente a un'indicazione: verificare il rischio tromboembolico reale.</p>
+</section>
+
+<section class="panel full">
+<h2>5 · Voci per CHA₂DS₂-VASc e HAS-BLED</h2>
+<div class="checks">
+<label class="check"><input id="chf" type="checkbox"> Scompenso cardiaco / disfunzione ventricolare sinistra</label>
+<label class="check"><input id="htn" type="checkbox"> Ipertensione arteriosa</label>
+<label class="check"><input id="diab" type="checkbox"> Diabete mellito</label>
+<label class="check"><input id="stroke" type="checkbox"> Pregresso ictus / TIA / tromboembolia arteriosa</label>
+<label class="check"><input id="vasc" type="checkbox"> Malattia vascolare (infarto, arteriopatia periferica, placca aortica)</label>
+<label class="check"><input id="htnUnc" type="checkbox"> Pressione sistolica non controllata (&gt;160 mmHg)</label>
+<label class="check"><input id="dialysis" type="checkbox"> Dialisi o trapianto renale</label>
+<label class="check"><input id="cirrh" type="checkbox"> Cirrosi, o bilirubina &gt;2× con transaminasi/ALP &gt;3× la norma</label>
+<label class="check"><input id="prevBleed" type="checkbox"> Pregresso sanguinamento maggiore o anemia</label>
+<label class="check"><input id="alcohol" type="checkbox"> Alcol ≥8 unità/settimana</label>
+<label class="check" data-avk><input id="labile" type="checkbox"> INR labile (tempo in range &lt;60%)</label>
+</div>
+<p class="hint">Età, sesso, creatinina, classe Child-Pugh, antiaggreganti/FANS, ictus recente e sanguinamenti sono ripresi dai quadri 1–4 e non vanno reinseriti. I punteggi vengono mostrati se è presente FA o una terapia anticoagulante.</p>
+</section>
+</div>
+
+<div class="actions">
+<button class="primary" type="submit">Valuta il caso</button>
+<button class="secondary" type="reset">Azzera</button>
+<button class="secondary" type="button" id="printBtn">Stampa valutazione</button>
+</div>
+</form>
+
+<div id="results" aria-live="polite"></div>
+<footer>
+OrtoAnticoag · Supporto decisionale per adulti · Non sostituisce valutazione specialistica, RCP, protocolli aziendali o giudizio clinico. Nessun dato viene inviato o salvato.<br>
+Ideato dal dr. C.Briglia (cesarebriglia@gmail.com) con l'apporto di Claude - Anthropic · Data di creazione: 12/11/2026 · Versione 2.3
+</footer>
+</main>
+
+<script>
+(function(){
+'use strict';
+
+const $=id=>document.getElementById(id);
+const on=id=>$(id).checked;
+const val=id=>$(id).value;
+const num=id=>{const v=$(id).value.trim();return v===''?null:Number(v);};
+const label=id=>{const s=$(id);return s.options[s.selectedIndex].text;};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const box=(title,body,kind)=>'<div class="result '+(kind||'')+'"><h3>'+title+'</h3>'+body+'</div>';
+const list=(items,tag)=>'<'+(tag||'ul')+'>'+items.map(x=>'<li>'+x+'</li>').join('')+'</'+(tag||'ul')+'>';
+
+const XABANS=['apixaban','rivaroxaban','edoxaban'];
+const DOACS=XABANS.concat('dabigatran');
+const AVK=['warfarin','acenocoumarol'];
+
+/* Schemi posologici coerenti con il farmaco selezionato (l'ultima voce è sempre "Altro") */
+const INR_TARGETS=['Dose variabile – INR target 2,0–3,0','Dose variabile – INR target 2,5–3,5'];
+const DOSES={
+ apixaban:['5 mg × 2/die (dose piena)','2,5 mg × 2/die (dose ridotta FA o prevenzione estesa TEV)','10 mg × 2/die (primi 7 giorni di TVP/EP)'],
+ rivaroxaban:['20 mg × 1/die (dose piena)','15 mg × 1/die (dose ridotta per funzione renale)','15 mg × 2/die (primi 21 giorni di TVP/EP)','10 mg × 1/die (prevenzione estesa TEV)','2,5 mg × 2/die (con antiaggregante, indicazione vascolare)'],
+ edoxaban:['60 mg × 1/die (dose piena)','30 mg × 1/die (dose ridotta)'],
+ dabigatran:['150 mg × 2/die (dose piena)','110 mg × 2/die (dose ridotta)'],
+ warfarin:INR_TARGETS,
+ acenocoumarol:INR_TARGETS,
+ lmwh:['Enoxaparina 100 UI/kg × 2/die','Enoxaparina 150 UI/kg × 1/die','Enoxaparina 100 UI/kg × 1/die (CrCl 15–29 ml/min)','Altra EBPM a dose terapeutica'],
+ ufh:['Infusione endovenosa continua (aPTT-guidata)','Sottocutanea a dose terapeutica × 2–3/die'],
+ fondaparinux:['7,5 mg × 1/die (terapeutica, 50–100 kg)','5 mg × 1/die (terapeutica, <50 kg)','10 mg × 1/die (terapeutica, >100 kg)','2,5 mg × 1/die (profilassi / trombosi venosa superficiale)','1,5 mg × 1/die (profilassi con CrCl 20–50 ml/min)'],
+ other:[]
+};
+const DOSE_OTHER='Altro / non nota';
+let doseDrug=null;
+function fillDoses(drug){
+ if(drug===doseDrug) return;
+ doseDrug=drug;
+ const sel=$('dose');
+ sel.innerHTML='';
+ const add=(t,v)=>{const o=document.createElement('option');o.textContent=t;o.value=v===undefined?t:v;sel.appendChild(o);};
+ const opts=DOSES[drug]||[];
+ if(opts.length) add('— Selezionare —','');
+ opts.forEach(t=>add(t));
+ add(DOSE_OTHER);
+ $('doseOther').value='';
+ $('doseLabel').textContent=AVK.includes(drug)?'Schema / INR target':'Dose abituale / schema';
+}
+function doseText(){
+ const v=val('dose');
+ if(v===DOSE_OTHER) return val('doseOther').trim()||'non nota';
+ return v||'non specificata';
+}
+
+/* ---------- Campi condizionali: un solo punto decide cosa è visibile ---------- */
+function sync(){
+ const drug=val('drug');
+ const surg=val('treatment')!=='conservative';
+ const post=surg&&val('phase')==='post';
+ const show=(sel,cond)=>document.querySelectorAll(sel).forEach(el=>{el.hidden=!cond;});
+ show('[data-surg]',surg);
+ if(surg){
+  show('[data-pre]',!post);
+  show('[data-post]',post);
+ }
+ show('[data-af]',on('af'));
+ fillDoses(drug);
+ show('[data-ac]',drug!=='none');
+ show('[data-doseother]',drug!=='none'&&val('dose')===DOSE_OTHER);
+ show('[data-avk]',AVK.includes(drug));
+ show('[data-xa]',XABANS.includes(drug));
+ show('[data-dabi]',drug==='dabigatran');
+}
+['drug','dose','treatment','phase','af'].forEach(id=>$(id).addEventListener('change',sync));
+
+/* ---------- Lettura e validazione: unico stato del caso ---------- */
+function readCase(){
+ const errors=[];
+ const need=(id,name,min,max)=>{
+  const v=num(id);
+  if(v===null||!isFinite(v)||v<min||v>max){errors.push(name+': inserire un valore tra '+min+' e '+max+'.');return null;}
+  return v;
+ };
+ const c={
+  age:need('age','Età',18,120),
+  wt:need('weight','Peso',25,250),
+  scr:need('scr','Creatinina',0.1,20),
+  plt:need('plt','Piastrine',0,1500),
+  hb:need('hb','Emoglobina',2,22),
+  female:val('sex')==='F',
+  liver:val('liver'),
+  fracture:val('fracture'),
+  treat:val('treatment'),
+  mob:val('mobility'),
+  drug:val('drug')
+ };
+ c.surg=c.treat!=='conservative';
+ c.post=c.surg&&val('phase')==='post';
+ c.pre=c.surg&&!c.post;
+ c.urgency=c.pre?val('urgency'):null;
+ c.anesthesia=c.surg?val('anesthesia'):'none';
+ c.catheter=c.surg&&on('catheter');
+ c.delay=c.pre&&on('delay');
+ c.postopH=c.post?need('postop','Ore dall\'intervento',0,720):null;
+ c.hemostasis=c.post?val('hemostasis'):null;
+ c.af=on('af');
+ c.onAc=c.drug!=='none';
+ c.inr=AVK.includes(c.drug)?num('inr'):null;
+ c.xa=XABANS.includes(c.drug)?num('xa'):null;
+ c.dabi=c.drug==='dabigatran'?num('dabi'):null;
+ c.hours=null;
+ if(c.onAc&&val('last')){
+  const t=new Date(val('last')).getTime();
+  if(isNaN(t)) errors.push('Ultima assunzione: data non valida.');
+  else{
+   c.hours=(Date.now()-t)/3600000;
+   if(c.hours<0){errors.push('Ultima assunzione: la data è nel futuro.');c.hours=null;}
+  }
+ }
+ if(!errors.length){
+  const stroke=on('stroke')||on('recentStroke');
+  const vascItems=[
+   [on('chf'),1,'scompenso cardiaco'],
+   [on('htn')||on('htnUnc'),1,'ipertensione'],
+   [c.age>=75,2,'età ≥75'],
+   [c.age>=65&&c.age<75,1,'età 65–74'],
+   [on('diab'),1,'diabete'],
+   [stroke,2,'ictus/TIA/tromboembolia'],
+   [on('vasc'),1,'malattia vascolare']
+  ].filter(x=>x[0]);
+  c.cha=vascItems.reduce((a,x)=>a+x[1],0);          // CHA2DS2-VA
+  c.chaVasc=c.cha+(c.female?1:0);                    // CHA2DS2-VASc
+  c.chaItems=vascItems.map(x=>x[2]+' ('+x[1]+')').concat(c.female?['sesso femminile (1, solo VASc)']:[]);
+  const hbItems=[
+   [on('htnUnc'),'H – pressione sistolica >160 mmHg'],
+   [on('dialysis')||c.scr>=2.26,'A – funzione renale alterata'],
+   [on('cirrh')||c.liver==='B'||c.liver==='C','A – funzione epatica alterata'],
+   [stroke,'S – pregresso ictus'],
+   [on('prevBleed')||on('ulcer')||on('bleed')||on('coag'),'B – sanguinamento o predisposizione'],
+   [AVK.includes(c.drug)&&on('labile'),'L – INR labile'],
+   [c.age>65,'E – età >65'],
+   [on('aspirin')||on('p2y12')||on('nsaid'),'D – antiaggreganti o FANS'],
+   [on('alcohol'),'D – alcol']
+  ].filter(x=>x[0]).map(x=>x[1]);
+  c.hasbled=hbItems.length;
+  c.hbItems=hbItems;
+  c.crcl=((140-c.age)*c.wt)/(72*c.scr)*(c.female?0.85:1);
+ }
+ return {c,errors};
+}
+
+/* ---------- Valutazione ---------- */
+function run(){
+ const {c,errors}=readCase();
+ const res=$('results');
+ if(errors.length){
+  res.innerHTML=box('Dati da correggere',list(errors.map(esc)),'danger');
+  res.style.display='block';
+  res.scrollIntoView({behavior:'smooth',block:'start'});
+  return;
+ }
+
+ const crcl=c.crcl;
+ const isDoac=DOACS.includes(c.drug), isAvk=AVK.includes(c.drug), isHep=c.drug==='lmwh'||c.drug==='ufh', isFonda=c.drug==='fondaparinux';
+ const neuraxial=c.anesthesia==='spinal'||c.catheter;
+ const deepBlock=c.anesthesia==='block';
+
+ // Rischio emorragico: segnali maggiori che bloccano qualunque suggerimento farmacologico
+ const majorBleed=on('bleed')||on('head')||on('coag')||c.plt<50;
+ const unstableHemostasis=c.post&&c.hemostasis!=='secure';
+
+ // Rischio TEV legato a frattura e paziente
+ const highVte=['hip','pelvis','femur','multiple','spine'].includes(c.fracture)||c.mob!=='mobile'||
+  on('prevVte')||on('recentVte')||on('cancer')||on('thromb');
+
+ // Rischio tromboembolico dell'indicazione (rilevante per sospensione/ripresa)
+ const highTE=on('valve')||on('recentVte')||on('recentStroke')||(on('thromb')&&(on('prevVte')||on('recentVte')));
+
+ // Indicazioni dichiarate
+ const indications=[];
+ if(c.af) indications.push('fibrillazione atriale');
+ if(on('valve')) indications.push('protesi valvolare meccanica');
+ if(on('mitral')) indications.push('stenosi mitralica moderata-grave');
+ if(on('prevVte')||on('recentVte')) indications.push('TVP/EP'+(on('recentVte')?' (ultimi 3 mesi)':''));
+ if(on('otherInd')) indications.push('altra indicazione');
+
+ const flags=[];   // avvertenze (testo già sicuro, senza input utente)
+ const plan=[];    // piano perioperatorio
+
+ /* ---- Parametri calcolati ---- */
+ let out=box('Parametri calcolati',
+  '<span class="tag">CrCl Cockcroft-Gault: '+crcl.toFixed(0)+' ml/min</span>'+
+  '<span class="tag">Profilo TEV: '+(highVte?'aumentato':'da individualizzare')+'</span>'+
+  '<span class="tag">Rischio emorragico: '+(majorBleed?'segnali maggiori presenti':'nessun segnale maggiore selezionato')+'</span>'+
+  (c.onAc?'<span class="tag">Anticoagulante: '+esc(label('drug'))+'</span>':'')+
+  (c.onAc&&c.hours!==null?'<span class="tag">Ultima dose: '+c.hours.toFixed(1)+' ore fa</span>':'')+
+  (c.onAc?'<span class="tag">Rischio tromboembolico dell\'indicazione: '+(highTE?'elevato':'non elevato')+'</span>':'')+
+  '<p class="hint">Cockcroft-Gault calcolata con peso reale e creatinina inserita. Poco affidabile con creatinina instabile, sarcopenia marcata o pesi estremi.</p>');
+
+ /* ---- Avvertenze trasversali ---- */
+ if(on('aki')) flags.push('Insufficienza renale acuta o creatinina instabile: la clearance calcolata non è affidabile; ripetere la creatinina e ragionare in modo prudenziale sull\'accumulo di DOAC ed EBPM.');
+ if(crcl<15) flags.push('CrCl &lt;15 ml/min: enoxaparina non raccomandata da RCP; tutti i DOAC controindicati o non raccomandati. Considerare eparina non frazionata.');
+ else if(crcl<30) flags.push('CrCl 15–29 ml/min: rischio di accumulo. Enoxaparina richiede riduzione di dose da RCP; dabigatran controindicato; fondaparinux controindicato sotto 20 ml/min. Considerare eparina non frazionata nei casi selezionati.');
+ else if(crcl<50) flags.push('CrCl 30–49 ml/min: verificare aggiustamenti di dose e intervalli del farmaco scelto (in particolare fondaparinux e dabigatran).');
+ if(on('obesity')) flags.push('Obesità: Cockcroft-Gault con peso reale può sovrastimare la clearance; la dose profilattica fissa di EBPM può essere insufficiente (verificare protocollo locale).');
+ if(c.wt<50) flags.push('Peso &lt;50 kg: maggiore esposizione alle EBPM a dose fissa; valutare l\'adeguamento secondo RCP e protocollo.');
+ if(c.liver!=='A') flags.push('Epatopatia Child-Pugh B/C o funzione epatica non nota: i DOAC hanno limitazioni specifiche (rivaroxaban controindicato in B e C; gli altri non raccomandati in C); verificare INR/coagulazione e RCP.');
+ if(c.plt>=50&&c.plt<100) flags.push('Piastrinopenia (50–99 ×10⁹/L): valutazione individuale e controllo dell\'andamento prima di eparine/anticoagulanti.');
+ if(c.hb<8) flags.push('Hb &lt;8 g/dL: chiarire anemia/sanguinamento e stabilità emodinamica prima di anticoagulare.');
+ if(on('hit')) flags.push('HIT pregressa o sospetta: evitare eparina non frazionata ed EBPM; alternativa non eparinica (es. fondaparinux, se funzione renale adeguata) da concordare con lo specialista.');
+ if(on('interact')) flags.push('Possibili interazioni P-gp/CYP3A4: controllare molecola, intensità dell\'interazione e RCP del DOAC (l\'effetto può risultare aumentato o ridotto).');
+ if(on('aspirin')||on('p2y12')||on('nsaid')||on('ssri')||on('otherBleed')) flags.push('Farmaci concomitanti che aumentano il sanguinamento: rivalutare indicazione e combinazioni; sospendere i FANS se possibile; non interrompere antiaggreganti senza valutare stent o sindrome coronarica recente.');
+ if(on('ulcer')||on('fall')) flags.push('Fattori emorragici/fragilità: correggere quelli modificabili e documentare il bilancio rischio-beneficio. Il rischio di caduta da solo raramente giustifica la rinuncia all\'anticoagulazione indicata.');
+
+ /* ---- Sicurezza emostatica ---- */
+ if(majorBleed){
+  out+=box('Priorità: rivalutare la sicurezza emostatica',
+   '<p>È presente almeno un segnale maggiore: sanguinamento attivo, trauma cranico o emorragia intracranica/spinale, coagulopatia, oppure piastrine &lt;50 ×10⁹/L. Nessun suggerimento farmacologico viene generato.</p>'+
+   '<p>Controllare la fonte emorragica, esami e imaging se indicati; usare profilassi meccanica (compressione pneumatica intermittente) se non controindicata; rivalutare ogni giorno con il team la possibilità di iniziare la profilassi farmacologica.</p>',
+   'danger');
+ }
+
+ /* ---- Profilassi TEV legata alla frattura ---- */
+ if(!majorBleed){
+  const lowRiskUpper=c.fracture==='upper'&&c.mob==='mobile'&&!on('prevVte')&&!on('recentVte')&&!on('cancer')&&!on('thromb');
+  if(lowRiskUpper&&c.treat!=='surgery'){
+   out+=box('Profilassi TEV: generalmente non necessaria',
+    '<p>Frattura dell\'arto superiore senza limitazione importante della mobilità e senza fattori di rischio aggiuntivi: la profilassi farmacologica di norma non è necessaria. Rivalutare se le condizioni cambiano.</p>','good');
+  }else{
+   let rec;
+   if(c.fracture==='hip'||c.fracture==='pelvis'){
+    rec='<p><b>Frattura da fragilità di femore prossimale / bacino:</b> se il rischio TEV supera quello emorragico, NICE NG89 indica profilassi per un mese. Dopo l\'intervento: EBPM a partire da 6–12 ore, oppure fondaparinux a partire da 6 ore solo con basso rischio emorragico, sempre a emostasi raggiunta e nel rispetto dei vincoli anestesiologici.</p>'+
+     '<p>Se l\'intervento slitta oltre il giorno successivo al ricovero, considerare la profilassi preoperatoria con ultima dose almeno 12 ore prima dell\'intervento per EBPM e 24 ore per fondaparinux.</p>';
+   }else if(c.fracture==='femur'){
+    rec='<p><b>Femore diafisario o distale:</b> rischio TEV elevato per sede e immobilità; considerare profilassi con EBPM se il rischio TEV supera quello emorragico, con durata legata alla ripresa della mobilità e al protocollo locale.</p>';
+   }else if(c.fracture==='ankle'||c.fracture==='tibia'){
+    rec='<p><b>Arto inferiore immobilizzato:</b> considerare EBPM o fondaparinux se il rischio TEV supera quello emorragico. NICE NG89 suggerisce di considerare l\'interruzione se l\'immobilizzazione prosegue oltre 42 giorni. Non è una profilassi da estendere automaticamente a ogni frattura.</p>';
+   }else if(c.fracture==='upper'){
+    rec='<p><b>Arto superiore:</b> profilassi generalmente non necessaria per interventi in anestesia locale o regionale. Considerarla se anestesia generale di durata superiore a 90 minuti, mobilità compromessa dopo l\'intervento o fattori di rischio individuali.</p>';
+   }else{
+    rec='<p><b>Frattura vertebrale / politrauma:</b> scenario ad alta complessità. Escludere emorragia intracranica o spinale e definire la stabilità delle lesioni; iniziare con profilassi meccanica e passare alla farmacologica appena il rischio emorragico lo consente, decidendo i tempi con team trauma, ortopedico e anestesista.</p>';
+   }
+
+   let drugTxt;
+   if(on('hit')){
+    drugTxt='<p><b>Farmaco:</b> HIT pregressa o sospetta, eparine da evitare. Scegliere un\'alternativa non eparinica con lo specialista.</p>';
+   }else if(crcl<15){
+    drugTxt='<p><b>Farmaco:</b> con CrCl &lt;15 ml/min l\'enoxaparina non è raccomandata; considerare eparina non frazionata secondo protocollo.</p>';
+   }else if(crcl<30){
+    drugTxt='<p><b>Farmaco:</b> con CrCl 15–29 ml/min l\'RCP di enoxaparina prevede in profilassi 2.000 UI (20 mg) SC ogni 24 ore; in alternativa eparina non frazionata secondo protocollo. Fondaparinux è controindicato sotto 20 ml/min.</p>';
+   }else{
+    drugTxt='<p><b>Farmaco:</b> l\'EBPM è la scelta abituale in ortopedia-traumatologia. Enoxaparina 4.000 UI (40 mg) SC ogni 24 ore è la dose profilattica standard dell\'adulto con funzione renale adeguata; verificare comunque RCP, peso, emostasi, orario chirurgico e protocollo locale.</p>';
+   }
+
+   let acNote='';
+   if(c.onAc){
+    acNote='<p><b>Paziente in terapia anticoagulante:</b> la profilassi a dose profilattica copre solo l\'intervallo in cui la terapia abituale è sospesa; si interrompe alla ripresa della dose terapeutica. I due trattamenti non vanno sovrapposti.</p>';
+   }
+   out+=box('Profilassi TEV legata alla frattura',
+    rec+drugTxt+acNote+
+    '<p>Se la profilassi farmacologica è controindicata: compressione pneumatica intermittente e rivalutazione quotidiana.</p>','good');
+  }
+ }
+
+ /* ---- Intervento differito ---- */
+ if(c.delay||c.treat==='pending'){
+  out+=box('Intervento differito o da definire',
+   '<p>Rivalutare ogni giorno il rischio trombotico durante l\'attesa. Se indicata, pianificare la profilassi preoperatoria fissando l\'ultima dose in base a farmaco, funzione renale e orario previsto dell\'intervento.</p>'+
+   (c.fracture==='hip'?'<p>Nella frattura di femore prossimale il ritardo chirurgico peggiora la prognosi: l\'obiettivo abituale è operare entro 24–48 ore.</p>':''),
+   'alert');
+ }
+
+ /* ---- Punteggi ---- */
+ if(c.af||c.onAc){
+  let sc='';
+  if(c.af){
+   sc+='<p><span class="tag">CHA₂DS₂-VASc: '+c.chaVasc+'</span><span class="tag">CHA₂DS₂-VA: '+c.cha+'</span></p>'+
+    '<p>Voci presenti: '+(c.chaItems.length?c.chaItems.join(', '):'nessuna')+'.</p>'+
+    '<p>Le linee guida ESC 2024 usano il CHA₂DS₂-VA (senza la voce sesso): anticoagulazione raccomandata con punteggio ≥2, da considerare con 1. Con il CHA₂DS₂-VASc le soglie equivalenti sono ≥2 nell\'uomo e ≥3 nella donna (da considerare con 1 e 2).</p>';
+  }
+  sc+='<p><span class="tag">HAS-BLED: '+c.hasbled+' / 9</span></p>'+
+   '<p>Voci presenti: '+(c.hbItems.length?c.hbItems.map(esc).join('; '):'nessuna')+'.</p>'+
+   '<p>'+(c.hasbled>=3
+     ?'Punteggio ≥3: rischio emorragico elevato. Correggere i fattori modificabili (pressione, FANS e antiaggreganti non necessari, alcol, INR labile) e programmare controlli più ravvicinati.'
+     :'Punteggio &lt;3: rischio emorragico non elevato secondo il punteggio.')+
+   ' Un HAS-BLED alto non è di per sé un motivo per negare l\'anticoagulazione indicata.</p>'+
+   (c.af?'':'<p class="hint">HAS-BLED è validato nella fibrillazione atriale; in altre indicazioni ha valore solo orientativo.</p>')+
+   '<p class="hint">Entrambi i punteggi stimano il rischio a lungo termine in terapia cronica: non misurano il rischio emorragico perioperatorio della frattura.</p>';
+  out+=box('Punteggi di rischio',sc);
+ }
+
+ /* ---- Fibrillazione atriale ---- */
+ if(c.af){
+  let afTxt='<p>CHA₂DS₂-VA: <b>'+c.cha+'</b>. Secondo le linee guida ESC 2024 l\'anticoagulazione orale è raccomandata con punteggio ≥2 e va considerata con punteggio 1.</p>';
+  if(!c.onAc&&c.cha>=1){
+   afTxt+='<p>Il paziente non assume anticoagulanti: l\'indicazione va rivalutata, ma l\'inizio non è una priorità del periodo perioperatorio. Programmarlo a emostasi stabile, d\'accordo con il curante o il cardiologo, e riportarlo nella lettera di dimissione.</p>';
+  }
+  afTxt+='<p>La dose profilattica per il TEV non protegge dall\'ictus cardioembolico: sono due obiettivi distinti con dosi diverse.</p>';
+  out+=box('Fibrillazione atriale',afTxt);
+ }
+
+ /* ---- Coerenza tra indicazione e farmaco ---- */
+ if(on('valve')&&isDoac){
+  out+=box('Protesi valvolare meccanica in terapia con DOAC',
+   '<p>I DOAC sono controindicati nei portatori di protesi valvolare meccanica: l\'anticoagulante indicato è un antagonista della vitamina K. Verificare il dato anamnestico e coinvolgere subito il cardiologo.</p>','danger');
+ }
+ if(on('mitral')&&c.af&&isDoac){
+  out+=box('Stenosi mitralica moderata-grave con FA in terapia con DOAC',
+   '<p>In questa condizione le linee guida indicano un antagonista della vitamina K e non un DOAC. Rivalutare la terapia con il cardiologo.</p>','alert');
+ }
+ if(c.onAc&&!indications.length){
+  flags.push('Paziente in terapia anticoagulante senza indicazione dichiarata: ricostruire l\'indicazione prima di decidere sospensione e ripresa.');
+ }
+
+ /* ---- Gestione perioperatoria del paziente anticoagulato ---- */
+ if(c.onAc){
+  let recap=list([
+   'Farmaco: '+esc(label('drug')),
+   'Indicazione: '+(indications.length?indications.join(', '):'non dichiarata'),
+   'Dose / schema: '+esc(doseText()),
+   'Ultima assunzione: '+(c.hours!==null?c.hours.toFixed(1)+' ore fa':'non indicata'),
+   'CrCl: '+crcl.toFixed(0)+' ml/min'
+  ]);
+  out+=box('Anticoagulazione abituale: riconciliazione',recap+
+   '<p>Verificare aderenza e dose effettiva. Sospensione, eventuale antagonizzazione e ripresa vanno definite in un piano esplicito con chirurgo e anestesista.</p>','alert');
+
+  if(c.hours===null) flags.push('Manca l\'ora dell\'ultima assunzione dell\'anticoagulante: è il dato più importante per decidere i tempi.');
+
+  if(isDoac){
+   let d='<p>PT/INR e aPTT normali non escludono un effetto DOAC clinicamente rilevante. Se disponibili, usare test calibrati per la molecola (anti-Xa specifico; tempo di trombina diluito o ecarina per dabigatran).</p>';
+   d+='<p><b>Intervalli di riferimento per chirurgia elettiva ad alto rischio emorragico (EHRA 2021):</b> ';
+   if(c.drug==='dabigatran'){
+    d+='dabigatran ≥48 ore con CrCl ≥80 ml/min, ≥72 ore con CrCl 50–79, ≥96 ore con CrCl 30–49.';
+   }else{
+    d+='apixaban, rivaroxaban, edoxaban ≥48 ore dall\'ultima dose con CrCl ≥15 ml/min.';
+   }
+   d+=' Sono riferimenti per la chirurgia programmata: nella frattura urgente vanno bilanciati con il danno da ritardo chirurgico, non applicati in automatico.</p>';
+   out+=box('Percorso DOAC',d);
+
+   if(c.drug==='dabigatran'){
+    if(crcl<30) flags.push('Dabigatran con CrCl &lt;30 ml/min: farmaco controindicato a questa funzione renale e accumulo importante; effetto residuo prolungato.');
+    else if(crcl<50) flags.push('Dabigatran con CrCl 30–49 ml/min: eliminazione rallentata, effetto residuo più lungo.');
+    if(c.dabi!==null) flags.push('Concentrazione di dabigatran inserita: '+c.dabi+' ng/mL. Valori sotto 30 ng/mL sono spesso considerati compatibili con chirurgia ad alto rischio emorragico; applicare la soglia del protocollo locale.');
+   }else{
+    if(crcl<30) flags.push('Inibitore del fattore Xa con CrCl &lt;30 ml/min: possibile persistenza dell\'effetto oltre i tempi abituali.');
+    if(c.drug==='edoxaban') flags.push('Edoxaban: nessun antidoto specifico autorizzato.');
+    if(c.xa!==null) flags.push('Anti-Xa inserito: '+c.xa+' ng/mL (valido solo se calibrato per il DOAC assunto). Valori sotto 30 ng/mL sono spesso considerati compatibili con chirurgia ad alto rischio emorragico; applicare la soglia del protocollo locale.');
+   }
+
+   if(c.pre){
+    plan.push('Sospendere le dosi successive del DOAC e documentare l\'ora dell\'ultima assunzione.');
+    if(c.urgency==='emergency'){
+     plan.push('Emergenza non differibile: coinvolgere subito Anestesia ed esperto di emostasi. L\'antagonizzazione va considerata solo con effetto anticoagulante residuo rilevante e rapporto beneficio/rischio favorevole.');
+     if(c.drug==='dabigatran') plan.push('Dabigatran: idarucizumab è autorizzato anche per interventi d\'urgenza non differibili (secondo RCP).');
+     else plan.push('Inibitori del fattore Xa: concentrato di complesso protrombinico a 4 fattori secondo protocollo locale (uso fuori indicazione). Andexanet alfa è autorizzato nell\'UE solo per emorragie potenzialmente fatali o incontrollate in corso di apixaban o rivaroxaban, non per la preparazione all\'intervento.');
+    }else if(c.urgency==='urgent'){
+     plan.push('Intervento urgente: fissare l\'orario chirurgico integrando ore dall\'ultima dose, CrCl, interazioni, eventuale dosaggio specifico e rischio emorragico della procedura.');
+    }else{
+     plan.push('Intervento differibile: attendere gli intervalli di sospensione per chirurgia ad alto rischio emorragico indicati sopra.');
+    }
+    if(c.fracture==='hip') plan.push('Frattura di femore prossimale: evitare ritardi non necessari. Operare precocemente in anestesia generale è spesso possibile; questo non autorizza l\'anestesia spinale, che ha tempi propri.');
+    plan.push('Nessun bridging con eparina durante l\'interruzione del DOAC. Se l\'attesa si prolunga, vale la sola profilassi TEV a dose profilattica.');
+   }
+  }
+
+  if(isAvk){
+   let a='<p>INR all\'ingresso e controlli seriati. Verificare indicazione e intervallo terapeutico.</p>';
+   a+='<p>Soglia abituale per la chirurgia: INR ≤1,5. Per l\'anestesia neurassiale le soglie sono più restrittive (ASRA, ESAIC/ESRA).</p>';
+   out+=box('Percorso antagonisti della vitamina K',a);
+   if(c.inr===null) flags.push('INR non inserito: richiederlo con urgenza.');
+   else if(c.pre) plan.push('INR attuale: '+c.inr+(c.inr<=1.5?' (entro la soglia abituale per la chirurgia).':' (sopra la soglia abituale per la chirurgia: necessaria correzione).'));
+   if(c.pre){
+    plan.push('Sospendere l\'antagonista della vitamina K.');
+    if(c.urgency==='emergency') plan.push('Correzione immediata: concentrato di complesso protrombinico a 4 fattori più vitamina K endovena secondo INR, peso, RCP e protocollo locale; ricontrollare l\'INR dopo l\'infusione.');
+    else if(c.urgency==='urgent') plan.push('Intervento entro 24–48 ore: vitamina K a basse dosi (endovena o orale secondo protocollo) e nuovo INR dopo 6–12 ore; il complesso protrombinico è riservato ai casi in cui non si può attendere.');
+    else plan.push('Intervento differibile: attendere la discesa spontanea dell\'INR con controlli seriati.');
+    if(highTE) plan.push('Rischio tromboembolico elevato: valutare con lo specialista una copertura eparinica quando l\'INR scende sotto l\'intervallo terapeutico. Per la protesi meccanica definire tipo e posizione della valvola.');
+    else plan.push('Bridging con eparina non indicato di routine: nella FA non valvolare aumenta i sanguinamenti senza ridurre gli eventi tromboembolici.');
+   }
+  }
+
+  if(isHep){
+   out+=box('Percorso eparine a dose terapeutica',
+    '<p>Registrare molecola, dose, peso e orario dell\'ultima somministrazione.</p>'+
+    (c.drug==='lmwh'
+     ?'<p>EBPM a dose terapeutica: l\'ultima dose va somministrata almeno 24 ore prima dell\'intervento e di un\'eventuale puntura neurassiale; intervallo più lungo con funzione renale ridotta.</p>'
+     :'<p>Eparina non frazionata endovena: sospendere l\'infusione 4–6 ore prima dell\'intervento e verificare la normalizzazione dell\'aPTT. Per la via sottocutanea i tempi dipendono dalla dose.</p>'));
+   if(c.drug==='lmwh'&&crcl<30) flags.push('EBPM terapeutica con CrCl &lt;30 ml/min: accumulo, effetto residuo più lungo del previsto.');
+  }
+
+  if(isFonda){
+   out+=box('Percorso fondaparinux',
+    '<p>Emivita lunga (17–21 ore nell\'adulto, maggiore nell\'anziano e con funzione renale ridotta) ed eliminazione renale: l\'effetto persiste per giorni dopo l\'ultima dose. Non esiste un antidoto specifico e PT/aPTT non ne misurano l\'effetto; serve un anti-Xa calibrato per fondaparinux.</p>'+
+    '<p>Distinguere dose profilattica (2,5 mg o 1,5 mg) e terapeutica (5–10 mg secondo il peso): la seconda richiede intervalli di sospensione nettamente più lunghi.</p>');
+   if(crcl<20) flags.push('Fondaparinux con CrCl &lt;20 ml/min: controindicato a qualsiasi dose; accumulo marcato.');
+   else if(crcl<30) flags.push('Fondaparinux con CrCl 20–29 ml/min: dosi terapeutiche controindicate; effetto residuo prolungato.');
+   else if(crcl<50) flags.push('Fondaparinux con CrCl 30–49 ml/min: eliminazione rallentata; in profilassi l\'RCP prevede 1,5 mg/die.');
+   if(c.pre){
+    plan.push('Sospendere fondaparinux e documentare dose e ora dell\'ultima somministrazione.');
+    plan.push('Dose profilattica: ultima somministrazione almeno 24 ore prima dell\'intervento. Dose terapeutica: intervallo più lungo (in genere 2–4 giorni secondo funzione renale), da definire con l\'esperto di emostasi.');
+    if(c.urgency==='emergency') plan.push('Emergenza non differibile: nessun antidoto specifico; gestione dell\'emostasi secondo protocollo locale con l\'esperto di emostasi.');
+   }
+  }
+
+  if(c.drug==='other') flags.push('Anticoagulante non identificato: risalire a molecola e dose prima di qualunque decisione su tempi chirurgici, anestesia e ripresa.');
+
+  /* Ripresa postoperatoria */
+  let r='<p>Tenere distinte la profilassi TEV a dose profilattica (primi giorni) e la ripresa della dose terapeutica abituale.</p>';
+  if(isDoac) r+='<p>Dopo chirurgia ad alto rischio emorragico la dose piena del DOAC si riprende di norma non prima di 48–72 ore, a emostasi stabile. L\'effetto anticoagulante è completo entro poche ore dalla prima dose: non serve sovrapposizione con eparina.</p>';
+  if(isAvk) r+='<p>L\'antagonista della vitamina K può essere ripreso 12–24 ore dopo l\'intervento a emostasi stabile; nell\'attesa che l\'INR rientri nell\'intervallo, la copertura eparinica va decisa in base al rischio tromboembolico.</p>';
+  if(c.catheter) r+='<p>Con catetere neurassiale in sede non si riprende la dose terapeutica: rimozione e ripresa vanno concordate con l\'anestesista.</p>';
+  if(c.post){
+   if(majorBleed||c.hemostasis==='uncertain') r+='<p><b>Stato attuale:</b> sanguinamento o emostasi incerta. Non programmare la ripresa.</p>';
+   else if(c.hemostasis==='notyet') r+='<p><b>Stato attuale:</b> emostasi non ancora valutabile ('+c.postopH+' ore dall\'intervento). Rivalutare prima di programmare la ripresa.</p>';
+   else r+='<p><b>Stato attuale:</b> emostasi stabile a '+c.postopH+' ore dall\'intervento'+(c.postopH<48?': per la dose terapeutica è in genere ancora presto dopo chirurgia maggiore.':': la ripresa della dose terapeutica può essere valutata.')+'</p>';
+  }
+  if(highTE) r+='<p>Rischio tromboembolico elevato: concordare presto il piano di ripresa con lo specialista.</p>';
+  out+=box('Ripresa postoperatoria dell\'anticoagulazione',r);
+ }
+
+ /* ---- Anestesia neurassiale e blocchi profondi ---- */
+ if(neuraxial||deepBlock){
+  out+=box('Anestesia neurassiale o blocco profondo',
+   '<p>Il solo tempo trascorso dall\'ultima dose non basta per procedere. Applicare le raccomandazioni ASRA ed ESAIC/ESRA in base a farmaco, dose (profilattica o terapeutica), funzione renale e dosaggi disponibili.</p>'+
+   '<p>Riferimenti abituali per le EBPM: puntura o rimozione del catetere almeno 12 ore dopo una dose profilattica e 24 ore dopo una dose terapeutica; dose successiva non prima di 4 ore dalla puntura o dalla rimozione.</p>'+
+   (isFonda?'<p>Fondaparinux: per la dose profilattica ESAIC/ESRA indicano 36–42 ore prima della puntura; con dosi terapeutiche il neurassiale è di norma da evitare finché l\'effetto non è esaurito.</p>':'')+
+   (isDoac?'<p>Per un paziente in DOAC a dose piena le linee guida richiedono intervalli lunghi (in genere 72 ore, di più con funzione renale ridotta) o un dosaggio residuo trascurabile: spesso l\'anestesia generale è la via per non ritardare l\'intervento.</p>':''),
+   'danger');
+ }
+
+ if(unstableHemostasis&&!c.onAc) flags.push('Emostasi postoperatoria non stabile o non ancora valutabile: confermarla prima di somministrare la profilassi farmacologica.');
+
+ /* ---- Uscita ---- */
+ if(plan.length) out+=box('Piano perioperatorio proposto',list(plan.map(esc),'ol'),'good');
+ if(flags.length) out+=box('Avvertenze da verificare',list(flags),'alert');
+
+ out+=box('Checklist prima della prescrizione',list([
+  'Confermare l\'indicazione: profilassi TEV oppure anticoagulazione terapeutica.',
+  'Verificare emocromo, creatinina, funzione epatica e coagulazione.',
+  'Valutare emostasi chirurgica e rischio emorragico.',
+  'Controllare ultima dose dell\'anticoagulante e interazioni.',
+  'Concordare i tempi con l\'anestesista in caso di anestesia neurassiale o catetere.',
+  'Definire durata della profilassi e data di rivalutazione.',
+  'Documentare il piano di ripresa dell\'anticoagulazione cronica, anche in lettera di dimissione.'
+ ]));
+
+ out+=box('Fonti di riferimento',
+  '<div class="refs">'+list([
+   '<a href="https://www.nice.org.uk/guidance/ng89" target="_blank" rel="noopener">NICE NG89 – Venous thromboembolism in over 16s</a>',
+   '<a href="https://www.escardio.org/Guidelines/Clinical-Practice-Guidelines/Atrial-Fibrillation" target="_blank" rel="noopener">ESC 2024 – Guidelines for the management of atrial fibrillation</a>',
+   '<a href="https://doi.org/10.1093/europace/euab065" target="_blank" rel="noopener">EHRA 2021 – Practical guide on the use of NOACs in atrial fibrillation</a>',
+   '<a href="https://www.hematology.org/education/clinicians/guidelines-and-quality-care/clinical-practice-guidelines/venous-thromboembolism-guidelines" target="_blank" rel="noopener">ASH – VTE guidelines</a>',
+   '<a href="https://rapm.bmj.com/" target="_blank" rel="noopener">ASRA – Regional anesthesia in the patient receiving antithrombotic therapy (Reg Anesth Pain Med)</a>',
+   '<a href="https://esaic.org/" target="_blank" rel="noopener">ESAIC/ESRA – Regional anaesthesia in patients on antithrombotic drugs</a>',
+   '<a href="https://www.aifa.gov.it/" target="_blank" rel="noopener">AIFA – RCP dei medicinali</a>',
+   '<a href="https://www.ema.europa.eu/en/medicines" target="_blank" rel="noopener">EMA – Informazioni sui medicinali</a>'
+  ])+'</div>'+
+  '<p class="hint">Le fonti sono riferimenti da consultare, non una verifica automatica della versione più recente. Prima dell\'impiego clinico controllare il documento originale, l\'RCP della molecola e il protocollo aziendale. L\'app non calcola dosi di antagonisti né autorizza interventi o tecniche anestesiologiche.</p>');
+
+ res.innerHTML=out;
+ res.style.display='block';
+ res.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+$('f').addEventListener('submit',e=>{e.preventDefault();run();});
+$('f').addEventListener('reset',()=>{
+ setTimeout(()=>{
+  $('results').style.display='none';
+  $('results').innerHTML='';
+  doseDrug=null;
+  sync();
+ },0);
+});
+$('printBtn').addEventListener('click',()=>window.print());
+sync();
+
+})();
+</script>
+</body>
+</html>
