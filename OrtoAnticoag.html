@@ -81,7 +81,7 @@ footer{color:var(--muted);font-size:12px;margin-top:20px}
 <div class="wrap">
 <h1>OrtoAnticoag</h1>
 <p>Supporto decisionale per profilassi TEV e gestione dell'anticoagulazione nel paziente adulto ricoverato in Ortopedia per frattura.</p>
-<p class="credit">Ideato dal dr. C.Briglia (<a href="mailto:cesarebriglia@gmail.com">cesarebriglia@gmail.com</a>) con l'apporto di Claude - Anthropic · Data di creazione: 12/11/2026 · Versione 2.3</p>
+<p class="credit">Ideato dal dr. C.Briglia (<a href="mailto:cesarebriglia@gmail.com">cesarebriglia@gmail.com</a>) con l'apporto di Claude - Anthropic · Data di creazione: 12/11/2026 (agg. 13/11/2026) · Versione 2.4</p>
 </div>
 </header>
 <main>
@@ -294,7 +294,33 @@ In caso di sanguinamento attivo, trauma maggiore, chirurgia urgente o anestesia 
 <label class="check"><input id="alcohol" type="checkbox"> Alcol ≥8 unità/settimana</label>
 <label class="check" data-avk><input id="labile" type="checkbox"> INR labile (tempo in range &lt;60%)</label>
 </div>
-<p class="hint">Età, sesso, creatinina, classe Child-Pugh, antiaggreganti/FANS, ictus recente e sanguinamenti sono ripresi dai quadri 1–4 e non vanno reinseriti. I punteggi vengono mostrati se è presente FA o una terapia anticoagulante.</p>
+<p class="hint">Età, sesso, creatinina, classe Child-Pugh, antiaggreganti/FANS, ictus recente e sanguinamenti sono ripresi dai quadri 1–4 e non vanno reinseriti. Questi due punteggi vengono mostrati se è presente FA o una terapia anticoagulante.</p>
+</section>
+
+<section class="panel full">
+<h2>6 · Voci aggiuntive per il Caprini score</h2>
+<div class="checks">
+<label class="check"><input id="cBmi" type="checkbox"> Sovrappeso (BMI &gt;25)</label>
+<label class="check"><input id="cVarices" type="checkbox"> Vene varicose</label>
+<label class="check"><input id="cEdema" type="checkbox"> Edema attuale degli arti inferiori</label>
+<label class="check"><input id="cIbd" type="checkbox"> Malattia infiammatoria intestinale</label>
+<label class="check"><input id="cCopd" type="checkbox"> BPCO / funzione polmonare alterata</label>
+<label class="check"><input id="cPneum" type="checkbox"> Polmonite o grave malattia polmonare (ultimo mese)</label>
+<label class="check"><input id="cMi" type="checkbox"> Infarto miocardico acuto</label>
+<label class="check"><input id="cSepsis" type="checkbox"> Sepsi (ultimo mese)</label>
+<label class="check"><input id="cPrevSurg" type="checkbox"> Altra chirurgia maggiore nell'ultimo mese</label>
+<label class="check" data-surg><input id="cMinor" type="checkbox"> Intervento attuale minore (&lt;45 minuti)</label>
+<label class="check"><input id="cCast" type="checkbox"> Apparecchio gessato / immobilizzazione rigida</label>
+<label class="check"><input id="cCvc" type="checkbox"> Accesso venoso centrale</label>
+<label class="check"><input id="cPrevCancer" type="checkbox"> Neoplasia pregressa</label>
+<label class="check"><input id="cFamily" type="checkbox"> Familiarità per trombosi</label>
+<label class="check"><input id="cStroke1m" type="checkbox"> Ictus nell'ultimo mese</label>
+<label class="check"><input id="cCord" type="checkbox"> Lesione midollare acuta con paralisi</label>
+<label class="check" data-fem><input id="cHormone" type="checkbox"> Contraccettivi orali / terapia ormonale sostitutiva</label>
+<label class="check" data-fem><input id="cPreg" type="checkbox"> Gravidanza o puerperio (ultimo mese)</label>
+<label class="check" data-fem><input id="cObst" type="checkbox"> Storia ostetrica sfavorevole (aborti ricorrenti, morte fetale inspiegata)</label>
+</div>
+<p class="hint">Età, sede della frattura, intervento, allettamento, obesità, scompenso, neoplasia attiva, pregressa TVP/EP, trombofilia e HIT sono ripresi dagli altri quadri.</p>
 </section>
 </div>
 
@@ -308,7 +334,7 @@ In caso di sanguinamento attivo, trauma maggiore, chirurgia urgente o anestesia 
 <div id="results" aria-live="polite"></div>
 <footer>
 OrtoAnticoag · Supporto decisionale per adulti · Non sostituisce valutazione specialistica, RCP, protocolli aziendali o giudizio clinico. Nessun dato viene inviato o salvato.<br>
-Ideato dal dr. C.Briglia (cesarebriglia@gmail.com) con l'apporto di Claude - Anthropic · Data di creazione: 12/11/2026 · Versione 2.3
+Ideato dal dr. C.Briglia (cesarebriglia@gmail.com) con l'apporto di Claude - Anthropic · Data di creazione: 12/11/2026 (agg. 13/11/2026) · Versione 2.4
 </footer>
 </main>
 
@@ -376,6 +402,7 @@ function sync(){
   show('[data-post]',post);
  }
  show('[data-af]',on('af'));
+ show('[data-fem]',val('sex')==='F');
  fillDoses(drug);
  show('[data-ac]',drug!=='none');
  show('[data-doseother]',drug!=='none'&&val('dose')===DOSE_OTHER);
@@ -383,7 +410,7 @@ function sync(){
  show('[data-xa]',XABANS.includes(drug));
  show('[data-dabi]',drug==='dabigatran');
 }
-['drug','dose','treatment','phase','af'].forEach(id=>$(id).addEventListener('change',sync));
+['drug','dose','treatment','phase','af','sex'].forEach(id=>$(id).addEventListener('change',sync));
 
 /* ---------- Lettura e validazione: unico stato del caso ---------- */
 function readCase(){
@@ -456,6 +483,43 @@ function readCase(){
   ].filter(x=>x[0]).map(x=>x[1]);
   c.hasbled=hbItems.length;
   c.hbItems=hbItems;
+  const legFx=['hip','pelvis','femur','tibia','ankle'].includes(c.fracture);
+  const fem=c.female;
+  const capItems=[
+   [c.age>=41&&c.age<=60,1,'età 41–60'],
+   [c.age>=61&&c.age<=74,2,'età 61–74'],
+   [c.age>=75,3,'età ≥75'],
+   [c.treat==='surgery'&&on('cMinor'),1,'chirurgia minore'],
+   [c.treat==='surgery'&&!on('cMinor'),2,'chirurgia maggiore >45 minuti'],
+   [on('cPrevSurg'),1,'chirurgia maggiore nell\'ultimo mese'],
+   [on('obesity')||on('cBmi'),1,'BMI >25'],
+   [on('cVarices'),1,'vene varicose'],
+   [on('cEdema'),1,'edema arti inferiori'],
+   [on('cIbd'),1,'malattia infiammatoria intestinale'],
+   [on('cCopd'),1,'BPCO'],
+   [on('cPneum'),1,'polmonite / grave malattia polmonare'],
+   [on('cMi'),1,'infarto miocardico acuto'],
+   [on('chf'),1,'scompenso cardiaco'],
+   [on('cSepsis'),1,'sepsi'],
+   [fem&&on('cHormone'),1,'terapia ormonale'],
+   [fem&&on('cPreg'),1,'gravidanza / puerperio'],
+   [fem&&on('cObst'),1,'storia ostetrica sfavorevole'],
+   [c.mob==='bed',2,'allettamento >72 ore'],
+   [on('cCast'),2,'apparecchio gessato'],
+   [on('cCvc'),2,'accesso venoso centrale'],
+   [on('cancer')||on('cPrevCancer'),2,'neoplasia attuale o pregressa'],
+   [on('prevVte')||on('recentVte'),3,'pregressa TVP/EP'],
+   [on('cFamily'),3,'familiarità per trombosi'],
+   [on('thromb'),3,'trombofilia'],
+   [on('hit'),3,'HIT'],
+   [legFx,5,'frattura di anca, bacino o arto inferiore'],
+   [c.fracture==='multiple',5,'politrauma'],
+   [on('cStroke1m'),5,'ictus nell\'ultimo mese'],
+   [on('cCord'),5,'lesione midollare acuta']
+  ].filter(x=>x[0]);
+  c.caprini=capItems.reduce((a,x)=>a+x[1],0);
+  c.capItems=capItems.map(x=>x[2]+' ('+x[1]+')');
+  c.legFx=legFx;
   c.crcl=((140-c.age)*c.wt)/(72*c.scr)*(c.female?0.85:1);
  }
  return {c,errors};
@@ -583,21 +647,26 @@ function run(){
  }
 
  /* ---- Punteggi ---- */
- if(c.af||c.onAc){
-  let sc='';
+ {
+  const capClass=c.caprini>=5?'molto alto':c.caprini>=3?'alto':c.caprini===2?'moderato':'basso';
+  let sc='<p><span class="tag">Caprini: '+c.caprini+'</span><span class="tag">Rischio TEV: '+capClass+'</span></p>'+
+   '<p>Voci presenti: '+(c.capItems.length?c.capItems.map(esc).join(', '):'nessuna')+'.</p>'+
+   '<p>Classi (Caprini 2005): 0–1 basso, 2 moderato, 3–4 alto, ≥5 molto alto.'+
+   (c.legFx?' Una frattura di anca, bacino o arto inferiore vale da sola 5 punti: in questi pazienti il punteggio è sempre nella classe più alta e serve soprattutto a documentare i fattori aggiuntivi.':'')+'</p>'+
+   '<p class="hint">Il Caprini è validato soprattutto in chirurgia generale e plastica, meno in traumatologia ortopedica: integra, non sostituisce, le indicazioni per sede di frattura riportate sotto. Ogni trombofilia nota andrebbe contata separatamente (3 punti ciascuna); qui la voce è unica.</p>';
   if(c.af){
    sc+='<p><span class="tag">CHA₂DS₂-VASc: '+c.chaVasc+'</span><span class="tag">CHA₂DS₂-VA: '+c.cha+'</span></p>'+
     '<p>Voci presenti: '+(c.chaItems.length?c.chaItems.join(', '):'nessuna')+'.</p>'+
     '<p>Le linee guida ESC 2024 usano il CHA₂DS₂-VA (senza la voce sesso): anticoagulazione raccomandata con punteggio ≥2, da considerare con 1. Con il CHA₂DS₂-VASc le soglie equivalenti sono ≥2 nell\'uomo e ≥3 nella donna (da considerare con 1 e 2).</p>';
   }
-  sc+='<p><span class="tag">HAS-BLED: '+c.hasbled+' / 9</span></p>'+
+  if(c.af||c.onAc) sc+='<p><span class="tag">HAS-BLED: '+c.hasbled+' / 9</span></p>'+
    '<p>Voci presenti: '+(c.hbItems.length?c.hbItems.map(esc).join('; '):'nessuna')+'.</p>'+
    '<p>'+(c.hasbled>=3
      ?'Punteggio ≥3: rischio emorragico elevato. Correggere i fattori modificabili (pressione, FANS e antiaggreganti non necessari, alcol, INR labile) e programmare controlli più ravvicinati.'
      :'Punteggio &lt;3: rischio emorragico non elevato secondo il punteggio.')+
    ' Un HAS-BLED alto non è di per sé un motivo per negare l\'anticoagulazione indicata.</p>'+
    (c.af?'':'<p class="hint">HAS-BLED è validato nella fibrillazione atriale; in altre indicazioni ha valore solo orientativo.</p>')+
-   '<p class="hint">Entrambi i punteggi stimano il rischio a lungo termine in terapia cronica: non misurano il rischio emorragico perioperatorio della frattura.</p>';
+   '<p class="hint">CHA₂DS₂-VASc e HAS-BLED stimano il rischio a lungo termine in terapia cronica: non misurano il rischio emorragico perioperatorio della frattura.</p>';
   out+=box('Punteggi di rischio',sc);
  }
 
