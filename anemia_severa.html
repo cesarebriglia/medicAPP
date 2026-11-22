@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anemia Severa – Percorso guidato al primo riscontro</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  :root{
+    --bordeaux:#B35F5F; --bordeaux-l:#D08A8A; --bordeaux-d:#6E3434; --rose:#F4DEDB; --rose-d:#EACBC7;
+    --amber:#C8820A; --amber-l:#F5A623; --amber-bg:#FEF8EE;
+    --slate:#2C3440; --slate-m:#4A5568; --slate-l:#6B7686;
+    --bg:#F7F4F1; --card:#FFFFFF; --text:#1A1A1A; --border:#E2DDD8;
+    --green:#1A6B3C; --green-l:#EBF5EF; --red-l:#FDF2F2; --blue:#1A2F6B; --blue-l:#EBF1FF;
+    --r:8px;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;font-size:15px}
+
+  header{background:var(--rose);color:var(--bordeaux-d);border-bottom:1px solid var(--rose-d);padding:14px 20px;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(110,52,52,.12)}
+  .hrow{display:flex;align-items:center;gap:12px;max-width:820px;margin:0 auto}
+  header .icon{font-size:24px}
+  header h1{font-size:17px;font-weight:700;letter-spacing:-.2px}
+  header p{font-size:11px;opacity:.85;margin-top:1px}
+  header .badge{margin-left:auto;background:#F8DFB0;color:#1A1A1A;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.4px;white-space:nowrap}
+  .credit{font-size:10.5px;opacity:.85;max-width:820px;margin:6px auto 0}
+
+  nav{display:flex;justify-content:center;background:#E6DED6}
+  nav button{border:none;background:none;color:var(--slate-m);padding:11px 18px;font:600 12.5px inherit;font-family:inherit;cursor:pointer;border-bottom:2px solid transparent;letter-spacing:.3px}
+  nav button:hover{color:var(--bordeaux-d)}
+  nav button.active{color:var(--bordeaux-d);border-bottom-color:var(--bordeaux)}
+
+  main{max-width:820px;margin:0 auto;padding:18px 14px 50px}
+  .panel{display:none}.panel.active{display:block}
+
+  .intro{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--bordeaux);border-radius:var(--r);padding:12px 14px;margin-bottom:16px;font-size:13px;color:var(--slate-m)}
+  .intro b{color:var(--text)}
+
+  /* STEP */
+  .step{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px 12px;margin-bottom:12px;position:relative;animation:fadein .3s ease}
+  @keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .step-h{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .step-n{width:26px;height:26px;border-radius:50%;background:var(--bordeaux);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .step-t{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--slate-l)}
+  .step-q{font-size:15px;font-weight:700;margin-bottom:10px}
+  .step-q small{display:block;font-weight:400;font-size:12.5px;color:var(--slate-l);margin-top:2px}
+
+  .choices{display:flex;flex-wrap:wrap;gap:8px}
+  .ch{border:1.5px solid var(--border);background:#FAF7F4;border-radius:20px;padding:7px 14px;font:600 13px inherit;font-family:inherit;color:var(--slate);cursor:pointer;transition:all .15s;text-align:left}
+  .ch:hover{border-color:var(--bordeaux-l)}
+  .ch.sel{background:var(--bordeaux);border-color:var(--bordeaux);color:#fff}
+
+  .nums{display:flex;flex-wrap:wrap;gap:10px 16px;margin-bottom:6px}
+  .num{display:flex;flex-direction:column;gap:3px}
+  .num label{font-size:12px;font-weight:600;color:var(--slate-m)}
+  .num .iw{display:flex;align-items:center;gap:6px}
+  .num input{width:96px;padding:7px 9px;border:1.5px solid var(--border);border-radius:6px;font:700 16px inherit;font-family:inherit;color:var(--bordeaux);text-align:center;font-variant-numeric:tabular-nums}
+  .num input:focus{outline:none;border-color:var(--bordeaux)}
+  .num .u{font-size:12px;color:var(--slate-l)}
+  .sub{font-size:12px;font-weight:600;color:var(--slate-m);margin:8px 0 6px}
+
+  .checks{display:flex;flex-direction:column;gap:2px}
+  .checks label{display:flex;gap:9px;align-items:flex-start;font-size:13.5px;padding:6px 8px;border-radius:6px;cursor:pointer}
+  .checks label:hover{background:#FAF7F4}
+  .checks input{width:17px;height:17px;margin-top:2px;accent-color:var(--bordeaux);flex-shrink:0}
+  .checks .auto{font-size:10px;font-weight:700;color:var(--blue);background:var(--blue-l);border-radius:8px;padding:1px 6px;margin-left:6px;white-space:nowrap}
+
+  /* OUTCOME */
+  .out{margin-top:12px;border-radius:6px;padding:10px 13px;font-size:13.3px;border-left:4px solid;display:none}
+  .out.show{display:block}
+  .out .oh{font-weight:800;font-size:13.5px;margin-bottom:3px}
+  .out ul{margin:5px 0 2px 18px}.out li{margin:2px 0}
+  .out p{margin:4px 0}
+  .out.crit{background:#F8D7D5;color:#5E1E1E;border-color:#B84040;border-left-width:6px}
+  .out.crit b{color:#4A1212}
+  .out.alta{background:#FCEDEC;color:#6E3434;border-color:#D08A8A}
+  .out.media{background:var(--amber-bg);color:#5C3A00;border-color:var(--amber)}
+  .out.ok{background:var(--green-l);color:#14512D;border-color:var(--green)}
+  .out.info{background:var(--blue-l);color:var(--blue);border-color:#93B4F0}
+  .out .ref{font-size:11px;opacity:.8;margin-top:5px;font-style:italic}
+
+  /* SUMMARY */
+  .summary{background:var(--card);border:1.5px dashed var(--bordeaux-l);border-radius:var(--r);padding:14px 16px;margin-top:18px}
+  .summary h3{font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--bordeaux);margin-bottom:8px}
+  .summary pre{white-space:pre-wrap;font-family:inherit;font-size:12.5px;color:var(--slate);background:#FAF7F4;border-radius:6px;padding:10px;max-height:340px;overflow:auto}
+  .btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .btn{padding:8px 16px;border:none;border-radius:6px;background:var(--bordeaux);color:#fff;font:600 13px inherit;font-family:inherit;cursor:pointer}
+  .btn.sec{background:#fff;color:var(--slate);border:1.5px solid var(--border)}
+  .copied{font-size:12px;color:var(--green);align-self:center;display:none}
+
+  /* REFERENCE */
+  details{background:var(--card);border:1px solid var(--border);border-radius:var(--r);margin-bottom:10px;overflow:hidden}
+  summary{padding:12px 16px;font-weight:700;font-size:14px;cursor:pointer;list-style:none;display:flex;justify-content:space-between}
+  summary::after{content:'▼';font-size:11px;color:var(--slate-l)}
+  details[open] summary::after{content:'▲'}
+  details[open] summary{border-bottom:1px solid var(--border)}
+  .dbody{padding:12px 16px}
+  table{width:100%;border-collapse:collapse;font-size:12.8px}
+  th{text-align:left;padding:7px 9px;background:#F0EBE5;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--slate-m)}
+  td{padding:8px 9px;border-bottom:1px solid var(--border);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  .note{font-size:12px;color:var(--slate-l);margin-top:8px}
+  .bib{font-size:12px;color:var(--slate-m);padding:5px 0;border-bottom:1px solid #F0EBE5}
+  .bib:last-child{border-bottom:none}
+  .chg li{font-size:12.5px;margin:3px 0 3px 18px;color:var(--slate-m)}
+
+  footer{max-width:820px;margin:0 auto;padding:16px 14px 30px;font-size:11.5px;color:var(--slate-l);text-align:center;border-top:1px solid var(--border)}
+  footer b{color:var(--bordeaux)}
+
+  @media (max-width:520px){.num input{width:84px}header h1{font-size:15px}}
+  @media print{
+    header,nav,.btns,.intro{display:none!important}
+    body{background:#fff;font-size:12px}
+    .panel{display:block!important}
+    .step{break-inside:avoid;border-color:#bbb}
+    .out.crit{background:#fff;color:#000;border-color:#000}
+    .out.crit b{color:#000}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hrow">
+    <span class="icon">🩸</span>
+    <div>
+      <h1>Anemia Severa – Primo Riscontro</h1>
+      <p>Percorso guidato a passi · adulto · AABB 2023 · ESGE 2021 · BSG 2021 · KDIGO 2026 · ISTH 2020</p>
+    </div>
+    <span class="badge">v2.1 · 20/11/2026</span>
+  </div>
+  <div class="credit">Ideato dal dr. C.Briglia (cesarebriglia@gmail.com) con l'apporto di Claude - Antropic</div>
+</header>
+
+<nav>
+  <button class="active" data-tab="percorso">Percorso guidato</button>
+  <button data-tab="schede">Schede di consultazione</button>
+</nav>
+
+<main>
+<!-- ═════════ PERCORSO ═════════ -->
+<section class="panel active" id="tab-percorso">
+  <div class="intro">
+    Rispondi a una domanda alla volta: <b>sotto ogni campo compare subito l'esito</b> e si apre solo la domanda successiva pertinente.
+    Modificando una risposta precedente il percorso si ricalcola dai passi seguenti. Nessun dato viene salvato o trasmesso.
+  </div>
+  <div id="steps"></div>
+
+  <div class="summary" id="summaryBox">
+    <h3>📋 Riepilogo del percorso</h3>
+    <pre id="summaryText">—</pre>
+    <div class="btns">
+      <button class="btn" id="btnCopy">Copia riepilogo</button>
+      <button class="btn sec" id="btnPrint">Stampa</button>
+      <button class="btn sec" id="btnReset">Ricomincia</button>
+      <span class="copied" id="copiedMsg">✔ Copiato</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════ SCHEDE ═════════ -->
+<section class="panel" id="tab-schede">
+
+<details open>
+  <summary>🩸 Soglie trasfusionali GRC (adulto)</summary>
+  <div class="dbody">
+    <table>
+      <thead><tr><th>Contesto</th><th>Soglia Hb</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td>Ricoverato emodinamicamente stabile, incluso paziente critico</td><td><b>&lt; 7 g/dL</b></td><td>Raccomandazione forte AABB 2023 (TRICC, TRISS)</td></tr>
+        <tr><td>Chirurgia cardiaca</td><td><b>&lt; 7,5 g/dL</b></td><td>AABB 2023</td></tr>
+        <tr><td>Chirurgia ortopedica o malattia cardiovascolare nota</td><td><b>&lt; 8 g/dL</b></td><td>AABB 2023</td></tr>
+        <tr><td>Infarto miocardico acuto</td><td><b>&lt; 8 g/dL</b>; considerare <b>&lt; 10</b></td><td>MINT 2023: soglia liberale &lt;10 non significativamente superiore, ma stime puntuali favorevoli; non escluso danno della strategia restrittiva</td></tr>
+        <tr><td>Emorragia digestiva alta non varicosa, stabile</td><td><b>&lt; 7 g/dL</b> (target 7–9)</td><td>ESGE 2021; con malattia CV acuta/cronica: soglia 8, target ≥10</td></tr>
+        <tr><td>Emorragia da varici</td><td><b>&lt; 7 g/dL</b> (target 7–8)</td><td>Baveno VII: evitare sovra-espansione (↑ pressione portale)</td></tr>
+        <tr><td>Paziente onco-ematologico / ipoproliferativo</td><td><b>&lt; 7 g/dL</b></td><td>Individualizzare su sintomi e attività</td></tr>
+        <tr><td>Sintomi d'organo da anemia (angina, dispnea a riposo, sincope, confusione)</td><td colspan="2">Trasfondere indipendentemente dalla soglia, 1 unità e rivalutare</td></tr>
+        <tr><td>Emorragia attiva / shock</td><td colspan="2">Guidare la trasfusione su emodinamica e perdite, non sul solo valore di Hb (che inizialmente può essere falsamente normale)</td></tr>
+      </tbody>
+    </table>
+    <p class="note">Anemia falciforme e talassemia trasfusione-dipendente: soglie e target specialistici (evitare Hb &gt;10–11 nella drepanocitosi per iperviscosità). Gravidanza: coinvolgere l'ostetrico.</p>
+  </div>
+</details>
+
+<details>
+  <summary>⏱️ Acuzie dell'anemia e riconoscimento precoce dello shock</summary>
+  <div class="dbody">
+    <table>
+      <thead><tr><th>Parametro</th><th>Anemia acuta / shock in evoluzione</th><th>Anemia cronica compensata</th></tr></thead>
+      <tbody>
+        <tr><td>FC</td><td>&gt; 100 bpm (può mancare con beta-bloccanti, pacemaker, anziani)</td><td>Normale o lieve tachicardia</td></tr>
+        <tr><td>Shock index (FC/PAS)</td><td>≥ 0,9 allerta; ≥ 1 instabilità</td><td>&lt; 0,9</td></tr>
+        <tr><td>Lattato</td><td>≥ 2 mmol/L ipoperfusione; ≥ 4 grave</td><td>&lt; 2 mmol/L</td></tr>
+        <tr><td>Base excess</td><td>Classe II −2/−6; III −6/−10; IV &lt; −10 (necessità trasfusionale crescente)</td><td>&gt; −2 mmol/L</td></tr>
+        <tr><td>PA</td><td>Ipotensione = segno <b>tardivo</b> (perdita &gt; 30% della volemia)</td><td>Normale</td></tr>
+        <tr><td>Hb</td><td>Inizialmente può essere quasi normale: scende con l'emodiluizione</td><td>Spesso molto bassa ma ben tollerata</td></tr>
+        <tr><td>Indici</td><td>Reticolociti in aumento dopo 3–5 giorni; urea ↑ se sanguinamento alto</td><td>Microcitosi/macrocitosi, RDW ↑, ferritina ↓ o B12 ↓</td></tr>
+      </tbody>
+    </table>
+    <p class="note">Lattato elevato non è specifico (sepsi, metformina, epatopatia, convulsioni, beta-agonisti, ischemia mesenterica). L'EGA venoso è sufficiente per lattato e BE. La rianimazione è efficace se il lattato si riduce (clearance) nelle 2–6 h successive. Nel paziente anemico cronico compensato il rischio principale della trasfusione è il sovraccarico (TACO).</p>
+  </div>
+</details>
+
+<details>
+  <summary>⚙️ Pratica trasfusionale</summary>
+  <div class="dbody">
+    <ul class="chg">
+      <li><b>Prima di trasfondere</b> eseguire i prelievi che la trasfusione rende ininterpretabili: reticolociti, striscio, DAT, LDH/aptoglobina/bilirubina, elettroforesi Hb/HPLC, ferritina, B12, folati (conservare una provetta EDTA e una di siero).</li>
+      <li>Gruppo ABO/Rh + type &amp; screen; in emergenza non differibile GRC <b>0 Rh negativo</b> (obbligatori nelle donne in età fertile; 0 Rh positivo accettabile negli uomini secondo protocollo SIMT locale), poi gruppo-specifici.</li>
+      <li><b>Una unità alla volta</b> nel paziente non emorragico, poi rivalutare clinica e Hb (“perché due se ne basta una”).</li>
+      <li>Incremento atteso ≈ 1 g/dL per unità in adulto di 70 kg; nei pazienti di basso peso dosare a peso (≈ 4 mL/kg ⇒ +1 g/dL).</li>
+      <li>Durata: abitualmente 90–120 min per unità; completare entro 4 h dall'uscita dalla catena del freddo. Più lenta se rischio di TACO.</li>
+      <li>Rischio TACO (età &gt;70, scompenso, IRC, ipoalbuminemia, bilancio positivo, diuretici, basso peso, anemia cronica normovolemica): rallentare, considerare furosemide, monitorare SpO₂ e bilancio.</li>
+      <li>Parametri vitali prima, a 15 min dall'inizio e alla fine di ogni unità. Hb di controllo anche già a 15–60 min nel paziente non sanguinante.</li>
+      <li>In Italia i GRC sono già <b>leucodepleti</b> per tutti. <b>Irradiati</b> (prevenzione TA-GvHD): trapianto di CSE, linfoma di Hodgkin, analoghi delle purine (fludarabina, bendamustina, cladribina), alemtuzumab, ATG per aplasia midollare, immunodeficienze congenite T, donazioni da consanguinei o HLA-selezionate.</li>
+      <li>La premedicazione di routine (antistaminico/paracetamolo) non è raccomandata: non previene le reazioni e può mascherarle.</li>
+    </ul>
+  </div>
+</details>
+
+<details>
+  <summary>⚠️ Reazioni avverse trasfusionali</summary>
+  <div class="dbody">
+    <table>
+      <thead><tr><th>Reazione</th><th>Esordio</th><th>Gestione</th></tr></thead>
+      <tbody>
+        <tr><td><b>Emolitica acuta</b> (incompatibilità ABO)</td><td>Minuti</td><td>STOP, mantenere accesso con SF, ricontrollo identità/sacca, campioni a SIMT (DAT, emolisi), supporto, diuresi ≥1 mL/kg/h, ricerca CID</td></tr>
+        <tr><td><b>Anafilassi</b></td><td>Minuti</td><td>STOP, adrenalina 0,5 mg IM (ripetibile), O₂, liquidi; dosare IgA se ricorrente</td></tr>
+        <tr><td><b>TACO</b> (sovraccarico)</td><td>Durante / entro 12 h</td><td>STOP o rallentare, posizione seduta, O₂, diuretico EV; NT-proBNP aiuta il DD con TRALI</td></tr>
+        <tr><td><b>TRALI</b></td><td>Entro 6 h</td><td>STOP, O₂ / supporto ventilatorio; diuretici non indicati; segnalare a SIMT (indagine donatore)</td></tr>
+        <tr><td><b>Sepsi da contaminazione</b></td><td>Minuti–ore</td><td>STOP, emocolture paziente e sacca, antibiotico ad ampio spettro</td></tr>
+        <tr><td><b>Febbrile non emolitica</b></td><td>Durante / entro 4 h</td><td>Sospendere e valutare: se solo T &lt;39 °C (↑ &lt;2 °C) senza altri segni, si può riprendere lentamente con paracetamolo; altrimenti trattare come grave</td></tr>
+        <tr><td><b>Orticaria isolata</b></td><td>Minuti</td><td>Sospendere, antistaminico; riprendere se lieve e isolata</td></tr>
+        <tr><td><b>Emolitica ritardata</b></td><td>3–14 giorni</td><td>Calo Hb, ittero, DAT+: ricerca alloanticorpi, informare SIMT</td></tr>
+      </tbody>
+    </table>
+    <p class="note">Ogni reazione va notificata al SIMT (emovigilanza).</p>
+  </div>
+</details>
+
+<details>
+  <summary>🔬 Striscio periferico – lettura rapida</summary>
+  <div class="dbody">
+    <table>
+      <thead><tr><th>Reperto</th><th>Orientamento</th></tr></thead>
+      <tbody>
+        <tr><td>Schistociti (≥1%)</td><td>Microangiopatia trombotica: PTT, SEU, CID, ipertensione maligna, protesi valvolari → <b>urgente</b></td></tr>
+        <tr><td>Sferociti</td><td>AIHA calda, sferocitosi ereditaria, ustioni, sepsi da Clostridium</td></tr>
+        <tr><td>Cellule “a morso”, corpi di Heinz</td><td>Deficit di G6PD, emolisi ossidativa (farmaci)</td></tr>
+        <tr><td>Agglutinati</td><td>Malattia da agglutinine fredde</td></tr>
+        <tr><td>Cellule a bersaglio</td><td>Talassemie, emoglobinopatia C, epatopatia, iposplenismo</td></tr>
+        <tr><td>Cellule a matita, ipocromia</td><td>Carenza marziale</td></tr>
+        <tr><td>Macro-ovalociti + neutrofili ipersegmentati</td><td>Anemia megaloblastica (B12/folati)</td></tr>
+        <tr><td>Dacriociti + eritroblasti + mielociti (leucoeritroblastosi)</td><td>Mieloftisi, mielofibrosi, infiltrazione midollare</td></tr>
+        <tr><td>Corpi di Howell-Jolly</td><td>Asplenia / iposplenismo (celiachia), MDS</td></tr>
+        <tr><td>Acantociti</td><td>Epatopatia avanzata (spur cells), abetalipoproteinemia</td></tr>
+        <tr><td>Parassiti endoeritrocitari</td><td>Malaria, babesiosi (chiedere storia di viaggi)</td></tr>
+        <tr><td>Blasti, bastoncelli di Auer</td><td>Leucemia acuta → <b>ematologo subito</b> (LAP se coagulopatia)</td></tr>
+      </tbody>
+    </table>
+  </div>
+</details>
+
+<details>
+  <summary>🔭 Esami di 2° livello – indicazioni e tempi</summary>
+  <div class="dbody">
+    <table>
+      <thead><tr><th>Esame</th><th>Quando</th><th>Tempistica</th></tr></thead>
+      <tbody>
+        <tr><td><b>EGDS</b></td><td>Emorragia alta (ematemesi/melena); IDA (bidirezionale con colonscopia)</td><td>Emorragia: ≤24 h dopo stabilizzazione (≤12 h nel sospetto varicoso). IDA in ricovero: durante la degenza / percorso rapido</td></tr>
+        <tr><td><b>Colonscopia</b></td><td>Ematochezia; IDA in uomo o donna in post-menopausa</td><td>Emorragia bassa: durante il ricovero, dopo preparazione (l'urgenza non migliora gli esiti)</td></tr>
+        <tr><td><b>Angio-TC</b> (senza mdc + arteriosa + portale)</td><td>Emorragia con instabilità o sanguinamento attivo non localizzato; fallimento endoscopico</td><td>Immediata; allertare la radiologia interventistica prima della TC. Non ritardare per profilassi da mdc</td></tr>
+        <tr><td><b>Embolizzazione (TAE)</b></td><td>Angio-TC positiva o fallimento dell'emostasi endoscopica</td><td>Il prima possibile (entro 60 min dove disponibile H24)</td></tr>
+        <tr><td><b>Videocapsula del tenue</b></td><td>Sospetto sanguinamento del tenue dopo EGDS + colonscopia negative; IDA ricorrente/refrattaria</td><td>Sanguinamento manifesto: idealmente entro 48 h (al più entro 14 gg). Pacemaker/ICD <b>non</b> sono controindicazione. Capsula di pervietà se sospetta stenosi</td></tr>
+        <tr><td><b>Enteroscopia device-assistita</b></td><td>Conferma e terapia di lesioni viste in capsula</td><td>Programmata</td></tr>
+        <tr><td><b>Scintigrafia GR marcati</b></td><td>Sanguinamento intermittente con angio-TC negativa</td><td>Dove disponibile</td></tr>
+        <tr><td><b>Colon-TC</b></td><td>Colonscopia incompleta o non eseguibile</td><td>Programmata</td></tr>
+        <tr><td><b>Eco addome</b></td><td>Splenomegalia, epatopatia, adenopatie, versamento (POCUS/FAST se instabile)</td><td>Al letto, subito se instabile</td></tr>
+        <tr><td><b>Aspirato + biopsia midollare</b></td><td>Pancitopenia, blasti, sospetta MDS/aplasia/infiltrazione, anemia ipoproliferativa inspiegata</td><td>Su indicazione ematologica</td></tr>
+        <tr><td><b>Citofluorimetria (FLAER/CD59 su granulociti e monociti)</b></td><td>Emolisi DAT-negativa, trombosi in sedi atipiche, citopenie (EPN)</td><td>Differibile</td></tr>
+        <tr><td><b>Elettroforesi / HPLC Hb</b></td><td>Microcitosi con ferro normale; sospetta emoglobinopatia</td><td>Prelievo pre-trasfusionale</td></tr>
+      </tbody>
+    </table>
+  </div>
+</details>
+
+<details>
+  <summary>💊 Terapie – dosi di riferimento</summary>
+  <div class="dbody">
+    <table>
+      <thead><tr><th>Farmaco</th><th>Dose</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td><b>Ferro orale</b> (es. solfato ferroso RP 525 mg = 105 mg Fe)</td><td>1 cp/die, oppure a giorni alterni se intolleranza</td><td>Lontano dai pasti; dosi frazionate non migliorano l'assorbimento (epcidina). Risposta: ↑Hb ≥1 g/dL in 2 settimane. Proseguire 3 mesi dopo normalizzazione</td></tr>
+        <tr><td><b>Ferro carbossimaltosio</b></td><td>Fino a 1000 mg (o 20 mg/kg) per infusione; max 1000 mg/settimana</td><td>500–1000 mg in ≥15 min. Rischio di ipofosfatemia: controllare P se dosi ripetute</td></tr>
+        <tr><td><b>Ferro derisomaltosio</b></td><td>Fino a 20 mg/kg in singola infusione</td><td>Dosi &gt;1000 mg in ≥30 min. Minore rischio di ipofosfatemia</td></tr>
+        <tr><td><b>Ferro saccarato</b></td><td>Max 200 mg per seduta, fino a 3/settimana</td><td>Più accessi necessari; consolidato in dialisi</td></tr>
+        <tr><td colspan="3" class="note">Ferro EV: osservazione ≥30 min (personale e mezzi per anafilassi); evitare in batteriemia attiva e nel I trimestre. Ricontrollo Hb/ferritina non prima di 4 settimane.</td></tr>
+        <tr><td><b>Vitamina B12</b> IM (idrosso- o cianocobalamina)</td><td>1000 µg/die × 7 gg → settimanale × 4 → mensile (a vita se perniciosa). BSH: idrossocobalamina 1 mg 3/sett × 2 sett → ogni 3 mesi</td><td>Con segni neurologici: 1 mg a giorni alterni fino a stabilizzazione. Controllare K⁺ nei primi giorni. Via orale ad alte dosi possibile nel malassorbimento non autoimmune</td></tr>
+        <tr><td><b>Acido folico</b></td><td>5 mg/die per 4 mesi</td><td>Solo dopo aver escluso/avviato la correzione di un deficit di B12</td></tr>
+        <tr><td><b>Prednisone</b> (AIHA calda)</td><td>1 mg/kg/die, scalare dopo risposta (3–4 settimane)</td><td>Forme gravi: metilprednisolone EV ad alte dosi ± rituximab già in prima linea</td></tr>
+        <tr><td><b>Rituximab</b></td><td>375 mg/m²/sett × 4 oppure 1000 mg × 2 (giorni 1 e 15)</td><td>2ª linea AIHA calda (1ª nelle gravi); 1ª linea nelle agglutinine fredde (± bendamustina)</td></tr>
+        <tr><td><b>ESA in IRC</b> (KDIGO 2026)</td><td>Avvio in dialisi a Hb ≤9–10 g/dL; non in dialisi su sintomi (in genere Hb ≤8,5–10)</td><td>Correggere prima il ferro; dose minima efficace; non mantenere Hb ≥11,5; sospendere in ictus/trombosi. HIF-PHI alternativa (non con neoplasia attiva o evento trombotico recente)</td></tr>
+        <tr><td><b>ESA in chemioterapia</b></td><td>Hb &lt;10 g/dL in chemioterapia non curativa</td><td>ASCO/ASH 2019; valutare rischio trombotico</td></tr>
+      </tbody>
+    </table>
+  </div>
+</details>
+
+<details>
+  <summary>📚 Bibliografia</summary>
+  <div class="dbody">
+    <div class="bib"><b>1.</b> Carson JL, Stanworth SJ, Guyatt G, et al. Red blood cell transfusion: 2023 AABB international guidelines. <i>JAMA</i> 2023;330:1892–1902.</div>
+    <div class="bib"><b>2.</b> Carson JL, Brooks MM, Hébert PC, et al. Restrictive or liberal transfusion strategy in myocardial infarction and anemia (MINT). <i>N Engl J Med</i> 2023;389:2446–2456.</div>
+    <div class="bib"><b>3.</b> Hébert PC, et al. A multicenter, randomized, controlled clinical trial of transfusion requirements in critical care (TRICC). <i>N Engl J Med</i> 1999;340:409–417.</div>
+    <div class="bib"><b>4.</b> Holst LB, et al. Lower versus higher hemoglobin threshold for transfusion in septic shock (TRISS). <i>N Engl J Med</i> 2014;371:1381–1391.</div>
+    <div class="bib"><b>5.</b> Villanueva C, et al. Transfusion strategies for acute upper gastrointestinal bleeding. <i>N Engl J Med</i> 2013;368:11–21.</div>
+    <div class="bib"><b>6.</b> Gralnek IM, et al. Endoscopic diagnosis and management of nonvariceal upper gastrointestinal hemorrhage: ESGE Guideline – Update 2021. <i>Endoscopy</i> 2021;53:300–332.</div>
+    <div class="bib"><b>7.</b> Triantafyllou K, et al. Diagnosis and management of acute lower gastrointestinal bleeding: ESGE Guideline. <i>Endoscopy</i> 2021;53:850–868.</div>
+    <div class="bib"><b>8.</b> de Franchis R, et al. Baveno VII – Renewing consensus in portal hypertension. <i>J Hepatol</i> 2022;76:959–974.</div>
+    <div class="bib"><b>9.</b> Snook J, et al. British Society of Gastroenterology guidelines for the management of iron deficiency anaemia in adults. <i>Gut</i> 2021;70:2030–2051 (+ BSG/ACPGBI, ruolo del FIT nell'IDA, 2025).</div>
+    <div class="bib"><b>10.</b> Pennazio M, et al. Small-bowel capsule endoscopy and device-assisted enteroscopy: ESGE Guideline – Update 2022. <i>Endoscopy</i> 2023;55:58–95.</div>
+    <div class="bib"><b>11.</b> Camaschella C. Iron-deficiency anemia. <i>N Engl J Med</i> 2015;372:1832–1843.</div>
+    <div class="bib"><b>12.</b> Stoffel NU, et al. Iron absorption from oral iron supplements given on consecutive versus alternate days and as single morning doses versus twice-daily split dosing. <i>Lancet Haematol</i> 2017;4:e524–e533.</div>
+    <div class="bib"><b>13.</b> Devalia V, Hamilton MS, Molloy AM. Guidelines for the diagnosis and treatment of cobalamin and folate disorders (BSH). <i>Br J Haematol</i> 2014;166:496–513.</div>
+    <div class="bib"><b>14.</b> Hill QA, et al. The diagnosis and management of primary autoimmune haemolytic anaemia (BSH). <i>Br J Haematol</i> 2017;176:395–411.</div>
+    <div class="bib"><b>15.</b> Jäger U, et al. Diagnosis and treatment of autoimmune hemolytic anemia in adults: recommendations from the First International Consensus Meeting. <i>Blood Rev</i> 2020;41:100648.</div>
+    <div class="bib"><b>16.</b> Zheng XL, et al. ISTH guidelines for the diagnosis of thrombotic thrombocytopenic purpura. <i>J Thromb Haemost</i> 2020;18:2486–2495; ISTH guidelines for treatment of TTP. <i>J Thromb Haemost</i> 2020;18:2496–2502.</div>
+    <div class="bib"><b>17.</b> Killick SB, et al. Guidelines for the diagnosis and management of adult aplastic anaemia (BSH). <i>Br J Haematol</i> 2016;172:187–207.</div>
+    <div class="bib"><b>18.</b> KDIGO 2026 Clinical Practice Guideline for the Management of Anemia in CKD – Executive summary (Babitt JL, et al.). <i>Kidney Int</i> 2026;109:44–56.</div>
+    <div class="bib"><b>19.</b> WHO. Guideline on haemoglobin cutoffs to define anaemia in individuals and populations. Ginevra: WHO, 2024.</div>
+    <div class="bib"><b>20.</b> Bohlius J, et al. Management of cancer-associated anemia with erythropoiesis-stimulating agents: ASCO/ASH clinical practice guideline update. <i>J Clin Oncol</i> 2019;37:1336–1351.</div>
+    <div class="bib"><b>21.</b> Liumbruno G, et al. Raccomandazioni SIMTI per la trasfusione di emazie concentrate. <i>Blood Transfus</i> 2009;7:49–64.</div>
+    <div class="bib"><b>22.</b> Cappellini MD, Musallam KM, Taher AT. Iron deficiency anaemia revisited. <i>J Intern Med</i> 2020;287:153–170.</div>
+    <div class="bib"><b>23.</b> Mutschler M, et al. Renaissance of base deficit for the initial assessment of trauma patients: a base deficit-based classification for hypovolemic shock developed on data from 16,305 patients derived from the TraumaRegister DGU. <i>Crit Care</i> 2013;17:R42.</div>
+    <div class="bib"><b>24.</b> American College of Surgeons. ATLS – Advanced Trauma Life Support, 10th ed. Chicago: ACS, 2018 (classificazione dello shock emorragico con base deficit).</div>
+  </div>
+</details>
+
+<details>
+  <summary>📝 Note di revisione</summary>
+  <div class="dbody">
+    <p class="note"><b>v2.1 (20/11/2026)</b></p>
+    <ul class="chg">
+      <li>Palette con toni pastello al posto del bordeaux scuro.</li>
+      <li>Passo emodinamico: aggiunti lattato e base excess (EGA), beta-bloccanti/pacemaker; riconoscimento dello <b>shock compensato</b> (tachicardia + lattato ≥ 2 o BE ≤ −2 con PA conservata) e del profilo di anemia cronica compensata; lattato ≥ 4 o BE ≤ −6 = instabilità.</li>
+      <li>Nuova scheda “Acuzie dell'anemia e riconoscimento precoce dello shock”.</li>
+    </ul>
+    <p class="note"><b>v2.0 (20/11/2026) – rispetto alla v1</b></p>
+    <ul class="chg">
+      <li>Struttura trasformata in percorso guidato a passi con esito immediato sotto ogni risposta e riepilogo copiabile; rimossi lo “score di severità” non validato e il blocco note con salvataggio nel browser.</li>
+      <li>Severità dell'anemia secondo OMS 2024 (severa &lt;8 g/dL; &lt;7 in gravidanza), con soglie distinte per sesso.</li>
+      <li>Aggiunta la regola dei <b>prelievi pre-trasfusionali</b> (reticolociti, DAT, emolisi, elettroforesi, B12/folati, ferritina).</li>
+      <li>Soglie trasfusionali aggiornate ad AABB 2023 e MINT 2023: eliminati “target &gt;10 nel cardiopatico”, la soglia &lt;10 per gravidanza e drepanocitosi e il riferimento errato a TRISS (confronto 7 vs 9, non 7 vs 10). Trasfusione a unità singola e valutazione del rischio TACO.</li>
+      <li>Emorragia digestiva alta: EGDS ≤24 h dopo stabilizzazione (ESGE 2021 sconsiglia l'EGDS ≤12 h di routine); aggiunto il bundle per varici (vasoattivo, ceftriaxone, EGDS ≤12 h); acido tranexamico non raccomandato. Con Hb &lt;10 il Glasgow-Blatchford non può essere ≤1.</li>
+      <li>Emorragia bassa con instabilità: <b>angio-TC prima</b> dell'endoscopia (ESGE/BSG), non colonscopia immediata.</li>
+      <li>Videocapsula: pacemaker/ICD non sono controindicazione; la GAVE è gastrica (vista in EGDS, non in capsula); tempistica ideale ≤48 h nel sanguinamento manifesto.</li>
+      <li>Pancitopenia: rimosse PTT/SEU (non danno leucopenia), aggiunto il deficit di B12/folati come causa reversibile frequente.</li>
+      <li>IDA: TSAT &lt;20%; work-up BSG (anti-transglutaminasi, stick urine, endoscopia bidirezionale secondo sesso/età); ferro orale 1 volta/die o a giorni alterni; derisomaltosio fino a 20 mg/kg senza tetto a 1000 mg; calcolo Ganzoni.</li>
+      <li>AIHA: la trasfusione non va negata nell'anemia pericolosa per la vita (non “solo se Hb &lt;6”); aggiunte malattia da agglutinine fredde, tromboprofilassi e acido folico.</li>
+      <li>PTT: aggiunto il PLASMIC score; prelievo ADAMTS13 prima della plasmaferesi; niente trasfusione di piastrine di routine.</li>
+      <li>ESA in IRC aggiornati a KDIGO 2026 (non mantenere Hb ≥11,5). GRC già leucodepleti per tutti in Italia; indicazioni all'irradiazione precisate; premedicazione di routine non raccomandata.</li>
+      <li>Corretti: “ispessimento ST” → alterazioni ischemiche; pallore poco sensibile; sostituita la “coprocoltura” con antigene fecale/breath test per H. pylori; eliminate eco/scintigrafia tiroidea per macrocitosi; bibliografia verificata (rimossi riferimenti non rintracciabili e la dicitura AIEOP, pediatrica).</li>
+    </ul>
+  </div>
+</details>
+
+<details>
+  <summary>ℹ️ Disclaimer</summary>
+  <div class="dbody">
+    <p class="note">Strumento di supporto decisionale per medici e personale sanitario formato. Non sostituisce il giudizio clinico, i protocolli aziendali (SIMT, PDTA emorragia digestiva) né la consulenza specialistica. Destinato al paziente adulto. Dosi e soglie vanno verificate sulla scheda tecnica e sul contesto del singolo paziente.</p>
+  </div>
+</details>
+
+</section>
+</main>
+
+<footer>
+  <b>Anemia Severa – Primo Riscontro</b> · Versione 2.1 · data di creazione/aggiornamento: 20/11/2026<br>
+  Ideato dal dr. C.Briglia (cesarebriglia@gmail.com) con l'apporto di Claude - Antropic
+</footer>
+
+<script>
+'use strict';
+/* ═════════════ STATO ═════════════ */
+const S = { ans: {}, lab: {} };
+const txt = h => { const d = document.createElement('div'); d.innerHTML = h; return d.textContent.trim(); };
+const L = k => S.lab[k] || '';
+const flow = [];
+const outs = {};          // risultati per step
+const stepsEl = document.getElementById('steps');
+
+const a  = k => S.ans[k];
+const n  = k => { const v = S.ans[k]; return (typeof v === 'number' && isFinite(v)) ? v : null; };
+const has = (k, v) => Array.isArray(S.ans[k]) && S.ans[k].includes(v);
+const fmt = (x, d = 1) => (x === null || x === undefined) ? '—' : Number(x).toFixed(d).replace('.', ',');
+const ul = arr => '<ul>' + arr.filter(Boolean).map(x => '<li>' + x + '</li>').join('') + '</ul>';
+const R = (cls, head, body, next, done = true) => ({ cls, head, html: '<div class="oh">' + head + '</div>' + (body || ''), next, done });
+const PEND = { done: false };
+
+/* derivati */
+function sexCut() { const s = a('sesso'); return s === 'G' ? 11 : s === 'F' ? 12 : 13; }
+function isUnstable() {
+  const pas = n('pas'), fc = n('fc');
+  if (pas === null || fc === null || !a('ipoperf')) return false;
+  const lat = n('lat'), be = n('be');
+  return pas < 90 || (fc / pas) >= 1 || a('ipoperf') === 'si' || (lat !== null && lat >= 4) || (be !== null && be <= -6);
+}
+/* shock compensato / in avvicinamento: PA conservata ma segni di ipoperfusione biochimica o tachicardia */
+function preShock() {
+  if (isUnstable()) return false;
+  const pas = n('pas'), fc = n('fc'), lat = n('lat'), be = n('be');
+  if (pas === null || fc === null) return false;
+  return (lat !== null && lat >= 2) || (be !== null && be <= -2) || (fc > 100 && fc / pas >= 0.9);
+}
+function bleeding() { return ['alto', 'basso', 'altro'].includes(a('sang')); }
+
+/* ═════════════ BUILDER INPUT ═════════════ */
+function el(tag, attrs = {}, html) {
+  const e = document.createElement(tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (html !== undefined) e.innerHTML = html;
+  return e;
+}
+function choice(body, key, opts, id) {
+  const w = el('div', { class: 'choices' });
+  opts.forEach(([v, l]) => {
+    const b = el('button', { class: 'ch' + (S.ans[key] === v ? ' sel' : ''), type: 'button' }, l);
+    b.addEventListener('click', () => {
+      S.ans[key] = v; S.lab[key] = txt(l);
+      w.querySelectorAll('.ch').forEach(x => x.classList.toggle('sel', x === b));
+      update(id);
+    });
+    w.appendChild(b);
+  });
+  body.appendChild(w);
+}
+function nums(body, fields, id) {
+  const w = el('div', { class: 'nums' });
+  fields.forEach(([key, label, unit, min, max, step]) => {
+    const f = el('div', { class: 'num' });
+    const inpId = 'in-' + key;
+    f.appendChild(el('label', { for: inpId }, label));
+    const iw = el('div', { class: 'iw' });
+    const inp = el('input', { type: 'number', id: inpId, inputmode: 'decimal', min, max, step });
+    if (S.ans[key] !== undefined && S.ans[key] !== null) inp.value = S.ans[key];
+    inp.addEventListener('input', () => {
+      const v = parseFloat(String(inp.value).replace(',', '.'));
+      S.ans[key] = isFinite(v) ? v : null;
+      update(id);
+    });
+    iw.appendChild(inp);
+    if (unit) iw.appendChild(el('span', { class: 'u' }, unit));
+    f.appendChild(iw);
+    w.appendChild(f);
+  });
+  body.appendChild(w);
+}
+function checks(body, key, opts, id, autoSet) {
+  if (!Array.isArray(S.ans[key])) S.ans[key] = autoSet ? autoSet.slice() : [];
+  const w = el('div', { class: 'checks' });
+  S.lab[key] = opts.filter(o => S.ans[key].includes(o[0])).map(o => txt(o[1])).join('; ');
+  opts.forEach(([v, l, isAuto]) => {
+    const lab = el('label');
+    const cb = el('input', { type: 'checkbox' });
+    cb.checked = S.ans[key].includes(v);
+    cb.addEventListener('change', () => {
+      let arr = S.ans[key].filter(x => x !== v);
+      if (cb.checked) {
+        arr.push(v);
+        if (v === 'none') arr = ['none'];
+        else arr = arr.filter(x => x !== 'none');
+      }
+      S.ans[key] = arr;
+      S.lab[key] = opts.filter(o => arr.includes(o[0])).map(o => txt(o[1])).join('; ');
+      w.querySelectorAll('input').forEach((c, i) => { c.checked = arr.includes(opts[i][0]); });
+      update(id);
+    });
+    lab.appendChild(cb);
+    lab.appendChild(el('span', {}, l + (isAuto ? '<span class="auto">dai dati inseriti</span>' : '')));
+    w.appendChild(lab);
+  });
+  body.appendChild(w);
+}
+function sub(body, txt) { body.appendChild(el('div', { class: 'sub' }, txt)); }
+
+/* ═════════════ TESTI RICORRENTI ═════════════ */
+const PRELIEVI = [
+  'Gruppo ABO/Rh + type &amp; screen',
+  'Emocromo con formula, <b>striscio periferico</b>, <b>reticolociti</b>',
+  'Ferritina, sideremia, transferrina/TSAT; vitamina B12, folati',
+  'LDH, aptoglobina, bilirubina totale/indiretta, <b>test di Coombs diretto (DAT)</b>',
+  'Creatinina/eGFR, elettroliti, funzionalità epatica, albumina, PCR',
+  'PT/INR, aPTT, fibrinogeno (D-dimero se sospetta CID/microangiopatia), lattato',
+  'TSH; elettroforesi Hb/HPLC se microcitosi con ferro normale',
+  'Conservare una provetta EDTA e una di siero <b>pre-trasfusionali</b>'
+];
+
+/* ═════════════ DEFINIZIONE DEI PASSI ═════════════ */
+const STEPS = {
+
+  /* 1 ─ Paziente */
+  paz: {
+    t: 'Paziente', q: 'Sesso, età e peso<small>Il peso serve per il dosaggio trasfusionale e del ferro EV</small>',
+    build(b, id) {
+      choice(b, 'sesso', [['M', 'Uomo'], ['F', 'Donna'], ['G', 'Donna in gravidanza']], id);
+      nums(b, [['eta', 'Età', 'anni', 0, 120, 1], ['peso', 'Peso (facoltativo)', 'kg', 20, 250, 1]], id);
+    },
+    ev() {
+      if (!a('sesso') || n('eta') === null) return PEND;
+      const eta = n('eta');
+      if (eta < 18) return R('crit', 'Paziente in età pediatrica',
+        '<p>Il percorso è tarato sull\'adulto: soglie di Hb e dosi sono diverse. Riferirsi al pediatra / ematologo pediatrico.</p>', null);
+      const s = a('sesso');
+      const lab = s === 'M' ? 'Uomo' : s === 'F' ? 'Donna' : 'Donna in gravidanza';
+      let body = '<p>Soglia OMS di anemia: <b>Hb &lt; ' + sexCut() + ' g/dL</b>.</p>';
+      if (s === 'G') body += '<p>Gravidanza: coinvolgere subito l\'ostetrico; ferro EV possibile dal II trimestre.</p>';
+      if (n('peso') === null) body += '<p>Peso non inserito: i calcoli per peso (Ganzoni, dose trasfusionale) non saranno disponibili.</p>';
+      return R('info', lab + ', ' + eta + ' anni' + (n('peso') ? ', ' + n('peso') + ' kg' : ''), body, 'hb');
+    },
+    sum: () => L('sesso') + ', ' + (n('eta') ?? '') + ' anni' + (n('peso') ? ', ' + n('peso') + ' kg' : '')
+  },
+
+  /* 2 ─ Hb */
+  hb: {
+    t: 'Emoglobina', q: 'Valore di emoglobina',
+    build(b, id) { nums(b, [['hb', 'Hb', 'g/dL', 1, 25, 0.1]], id); },
+    ev() {
+      const hb = n('hb'); if (hb === null) return PEND;
+      if (hb < 2 || hb > 22) return R('media', 'Valore non plausibile', '<p>Ricontrollare il dato (unità in g/dL; 1 mmol/L ≈ 1,61 g/dL).</p>', null, false);
+      const s = a('sesso'), cut = sexCut();
+      if (hb >= cut) return R('ok', 'Hb ' + fmt(hb) + ' g/dL: non anemia secondo OMS', '<p>Il percorso non è applicabile.</p>', null);
+      let sev, cls;
+      if (s === 'G') { sev = hb < 7 ? 'SEVERA' : hb < 10 ? 'moderata' : 'lieve'; }
+      else { sev = hb < 8 ? 'SEVERA' : hb < 11 ? 'moderata' : 'lieve'; }
+      cls = sev === 'SEVERA' ? (hb < 6 ? 'crit' : 'alta') : sev === 'moderata' ? 'media' : 'ok';
+      let body = '';
+      if (sev === 'SEVERA') body = '<p>Prossimo passo: <b>stabilità emodinamica</b>. Prima di qualsiasi trasfusione eseguire i prelievi pre-trasfusionali.</p>' + (hb < 6 ? '<p><b>Hb &lt; 6 g/dL:</b> la trasfusione è quasi sempre necessaria; valutare subito sintomi e perdite in atto.</p>' : '');
+      else body = '<p>Il percorso è pensato per l\'anemia severa ma può essere usato per l\'inquadramento eziologico.</p>';
+      return R(cls, 'Anemia ' + sev + ' (OMS) – Hb ' + fmt(hb) + ' g/dL', body, 'emo');
+    },
+    sum: () => 'Hb ' + fmt(n('hb')) + ' g/dL'
+  },
+
+  /* 3 ─ Emodinamica */
+  emo: {
+    t: 'Stabilità emodinamica e acuzie', q: 'Parametri vitali, segni di ipoperfusione ed EGA<small>Lattato e base excess (EGA arterioso o venoso) aiutano a distinguere l\'anemia acuta con ipoperfusione da quella cronica compensata e a riconoscere lo shock prima dell\'ipotensione</small>',
+    build(b, id) {
+      nums(b, [['pas', 'PA sistolica', 'mmHg', 30, 260, 1], ['fc', 'Frequenza cardiaca', 'bpm', 20, 250, 1]], id);
+      sub(b, 'Segni clinici di ipoperfusione? (cute marezzata/fredda, refill &gt; 3 s, oliguria, alterazione della coscienza)');
+      choice(b, 'ipoperf', [['no', 'No'], ['si', 'Sì']], id);
+      sub(b, 'EGA (facoltativo ma consigliato)');
+      nums(b, [['lat', 'Lattato', 'mmol/L', 0, 30, 0.1], ['be', 'Base excess', 'mmol/L', -30, 15, 0.1]], id);
+      sub(b, 'Terapia con beta-bloccanti / pacemaker (tachicardia attenuata)?');
+      choice(b, 'bb', [['no', 'No'], ['si', 'Sì']], id);
+    },
+    ev() {
+      const pas = n('pas'), fc = n('fc');
+      if (pas === null || fc === null || !a('ipoperf')) return PEND;
+      const si = fc / pas;
+      const lat = n('lat'), be = n('be');
+      /* interpretazione dell'EGA e dell'acuzie */
+      const ega = [];
+      if (lat !== null) ega.push('Lattato ' + fmt(lat) + ' mmol/L: ' + (lat >= 4 ? '<b>ipoperfusione severa</b>' : lat >= 2 ? '<b>ipoperfusione tissutale</b>' : 'nella norma'));
+      if (be !== null) {
+        const cl = be > -2 ? 'I (nessuno shock)' : be > -6 ? 'II (shock lieve)' : be > -10 ? 'III (shock moderato)' : 'IV (shock grave)';
+        ega.push('Base excess ' + fmt(be) + ' mmol/L: classe ' + cl + (be <= -6 ? ' – probabile necessità trasfusionale' + (be <= -10 ? ' massiva' : '') : ''));
+      }
+      if (lat === null && be === null) ega.push('EGA non inserito: un lattato/BE aiuta a cogliere lo shock compensato');
+      if (a('bb') === 'si') ega.push('<b>Beta-bloccante / pacemaker</b>: la tachicardia può mancare anche in shock; dare più peso a lattato, BE, diuresi e clinica');
+      if (lat !== null && lat >= 2) ega.push('Lattato elevato non è specifico: considerare anche sepsi, metformina, insufficienza epatica, convulsioni, beta-agonisti');
+      const egaHtml = '<p><b>Acuzie / perfusione:</b></p>' + ul(ega);
+      if (isUnstable()) return R('crit', 'INSTABILE (shock index ' + fmt(si, 2) + (lat !== null ? ', lattato ' + fmt(lat) : '') + ') – percorso di emergenza', egaHtml + ul([
+        'Chiamare aiuto (rianimatore/MET), ABCDE, O₂ per SpO₂ 94–98%, monitoraggio continuo',
+        'Due accessi venosi di grosso calibro (16–18G)',
+        '<b>Prelievi PRIMA di trasfondere</b>: gruppo + type &amp; screen, emocromo, reticolociti, striscio, coagulazione + fibrinogeno, emolisi (LDH, aptoglobina, bilirubina), DAT, ferritina, B12/folati, creatinina, lattato',
+        'GRC urgenti; se non differibile: <b>0 Rh negativo</b> (donne in età fertile), 0 Rh positivo accettabile negli uomini secondo protocollo SIMT, poi gruppo-specifici',
+        'Emorragia massiva: attivare il <b>Protocollo Trasfusionale Massivo</b> (plasma, piastrine, fibrinogeno &gt;1,5 g/L, calcio, normotermia)',
+        'La trasfusione segue emodinamica e perdite, non il solo valore di Hb',
+        'Ripetere l\'EGA ogni 1–2 h: la <b>clearance del lattato</b> e la correzione del BE indicano l\'efficacia della rianimazione'
+      ]), 'sang');
+      if (preShock()) return R('alta', 'SHOCK COMPENSATO / IN AVVICINAMENTO (shock index ' + fmt(si, 2) + ')', egaHtml + ul([
+        'PA ancora conservata ma tachicardia e/o lattato/BE alterati: <b>anemia acuta</b> con perdita in atto fino a prova contraria',
+        'Due accessi venosi, monitoraggio continuo, prelievi pre-trasfusionali e GRC prenotati (type &amp; screen)',
+        'Rivalutare PA, FC e lattato ogni 30–60 min; l\'ipotensione è un segno tardivo (perdita già &gt; 30% della volemia)',
+        'Cercare subito la sede del sanguinamento (passo successivo)'
+      ]) + '<div class="ref">ATLS 10ª ed. · Mutschler 2013 (classi di BE)</div>', 'sang');
+      const cron = fc <= 100 && (lat === null || lat < 2) && (be === null || be > -2);
+      return R('ok', 'Emodinamicamente stabile (shock index ' + fmt(si, 2) + ')', egaHtml +
+        (cron && n('hb') < 8 ? '<p>Hb molto bassa con FC, lattato e BE normali: profilo di <b>anemia a lenta insorgenza, compensata</b> (aumento del 2,3-DPG e della portata). Bassa urgenza emodinamica ma <b>maggior rischio di sovraccarico</b> se si trasfonde: 1 unità lenta.</p>' : '') +
+        '<p>Prossimo passo: ricerca di un sanguinamento in atto o recente.</p>', 'sang');
+    },
+    sum: () => 'PAS ' + n('pas') + ' mmHg, FC ' + n('fc') + ' bpm, ipoperfusione: ' + L('ipoperf') + (n('lat') !== null ? ', lattato ' + fmt(n('lat')) : '') + (n('be') !== null ? ', BE ' + fmt(n('be')) : '') + (a('bb') === 'si' ? ', beta-bloccato' : '')
+  },
+
+  /* 4 ─ Sanguinamento */
+  sang: {
+    t: 'Sanguinamento', q: 'C\'è un sanguinamento in atto o recente?',
+    build(b, id) {
+      choice(b, 'sang', [['alto', 'Ematemesi / melena'], ['basso', 'Ematochezia / rettorragia'],
+        ['altro', 'Altra sede (trauma, retroperitoneo, ginecologico, urinario, emottisi)'], ['nessuno', 'Nessun sanguinamento evidente']], id);
+    },
+    ev() {
+      const s = a('sang'); if (!s) return PEND;
+      const u = isUnstable();
+      if (s === 'alto') return R(u ? 'crit' : 'alta', 'Emorragia digestiva alta' + (u ? ' con instabilità' : ''), ul([
+        'Rianimazione emodinamica prima dell\'endoscopia; digiuno; con Hb &lt; 10 g/dL il Glasgow-Blatchford è comunque alto ⇒ ricovero',
+        u ? 'Se l\'instabilità <b>persiste nonostante la rianimazione</b>: EGDS urgente con protezione delle vie aeree; allertare radiologia interventistica e chirurgia' : 'EGDS <b>entro 24 h</b> dalla presentazione, dopo stabilizzazione (l\'EGDS ≤ 12 h di routine non migliora gli esiti)',
+        'Acido tranexamico: <b>non raccomandato</b> (HALT-IT)',
+        'Prossimo passo: sospetto di origine varicosa?'
+      ]) + '<div class="ref">ESGE 2021</div>', 'varici');
+      if (s === 'basso') return R(u ? 'crit' : 'alta', 'Emorragia digestiva bassa' + (u ? ' con instabilità' : ''), ul(u ? [
+        'Ematochezia con instabilità: fino al 15% ha origine <b>alta</b> ⇒ EGDS se sospetto (melena pregressa, urea elevata, IBP/FANS)',
+        '<b>Angio-TC prima di qualsiasi endoscopia</b> per localizzare il sanguinamento',
+        'Angio-TC positiva ⇒ <b>embolizzazione (TAE)</b> il prima possibile; allertare la radiologia interventistica prima della TC',
+        'Angio-TC negativa ⇒ EGDS, poi colonscopia dopo preparazione'
+      ] : [
+        'Ricovero (anemia severa); colonscopia <b>durante il ricovero</b> dopo preparazione completa (l\'urgenza non migliora gli esiti)',
+        'Angio-TC se sanguinamento attivo o comparsa di instabilità',
+        'Escludere fonte alta se melena o urea sproporzionata'
+      ]) + '<div class="ref">ESGE 2021 · BSG 2019</div>', 'antitromb');
+      if (s === 'altro') return R(u ? 'crit' : 'alta', 'Sanguinamento non digestivo', ul([
+        'Trauma: TC total body; <b>acido tranexamico</b> 1 g in 10 min + 1 g in 8 h se entro 3 h dal trauma',
+        'Sospetto ematoma retroperitoneale/muscolare (anticoagulati, post-procedura): TC con mdc',
+        'Ginecologico: consulenza ostetrico-ginecologica (in età fertile escludere gravidanza ectopica)',
+        'Ematuria macroscopica: urologo; emottisi: TC torace ± broncoscopia'
+      ]), 'antitromb');
+      // nessuno
+      if (u) return R('crit', 'Instabilità senza sanguinamento evidente', ul([
+        'Cercare un\'emorragia occulta: retroperitoneo, emoperitoneo/emotorace, rottura di aneurisma aortico, gravidanza ectopica, ematoma muscolare in anticoagulati ⇒ <b>POCUS/eco FAST</b>, poi TC con mdc',
+        'Considerare anche shock settico o cardiogeno ed emolisi massiva (urine scure, LDH)'
+      ]), 'trasf');
+      return R('info', 'Nessun sanguinamento evidente', '<p>Prossimo passo: decisione trasfusionale, poi inquadramento eziologico.</p>', 'trasf');
+    },
+    sum: () => ({ alto: 'emorragia digestiva alta', basso: 'emorragia digestiva bassa', altro: 'sanguinamento non digestivo', nessuno: 'nessun sanguinamento evidente' })[a('sang')] || ''
+  },
+
+  /* 4b ─ Varici */
+  varici: {
+    t: 'Emorragia alta', q: 'Cirrosi nota o segni di ipertensione portale (sospetto sanguinamento da varici)?',
+    build(b, id) { choice(b, 'varici', [['no', 'No'], ['si', 'Sì']], id); },
+    ev() {
+      const v = a('varici'); if (!v) return PEND;
+      if (v === 'si') return R('crit', 'Sospetta emorragia da varici – bundle Baveno VII', ul([
+        '<b>Vasoattivo subito</b>, anche prima dell\'EGDS, per 2–5 giorni: terlipressina 2 mg EV ogni 4 h (poi 1 mg ogni 4 h) <i>oppure</i> somatostatina 250 µg bolo + 250–500 µg/h <i>oppure</i> octreotide 50 µg bolo + 50 µg/h',
+        '<b>Profilassi antibiotica</b>: ceftriaxone 1 g/24 h fino a 7 giorni',
+        'EGDS <b>entro 12 h</b> dopo stabilizzazione (legatura elastica); eritromicina 250 mg EV 30–120 min prima',
+        'Trasfusione restrittiva: soglia 7 g/dL, target 7–8 g/dL; evitare la sovra-espansione volemica',
+        'TIPS pre-emptive entro 72 h se Child-Pugh C &lt; 14 o B &gt; 7 con sanguinamento attivo all\'EGDS'
+      ]) + '<div class="ref">Baveno VII 2022</div>', 'antitromb');
+      return R('alta', 'Emorragia alta non varicosa', ul([
+        '<b>IBP EV ad alte dosi</b> in attesa dell\'EGDS (es. esomeprazolo/pantoprazolo 80 mg bolo + 8 mg/h); dopo emostasi endoscopica proseguire alte dosi per 72 h',
+        'Eritromicina 250 mg EV 30–120 min prima dell\'EGDS se sanguinamento attivo o grave',
+        'Trasfusione: soglia 7 g/dL, target 7–9 (soglia 8, target ≥10 se malattia cardiovascolare)',
+        'Fallimento dell\'emostasi endoscopica ⇒ angio-TC ⇒ TAE; chirurgia se TAE non disponibile o fallita',
+        'Ricerca e trattamento di <i>H. pylori</i>'
+      ]) + '<div class="ref">ESGE 2021</div>', 'antitromb');
+    },
+    sum: () => 'sospetto varicoso: ' + L('varici')
+  },
+
+  /* 4c ─ Antitrombotici */
+  antitromb: {
+    t: 'Terapia antitrombotica', q: 'Il paziente assume anticoagulanti o antiaggreganti?',
+    build(b, id) {
+      choice(b, 'at', [['no', 'Nessuno'], ['avk', 'Warfarin / acenocumarolo'], ['xa', 'Apixaban / rivaroxaban / edoxaban'],
+        ['dabi', 'Dabigatran'], ['apt', 'Antiaggreganti'], ['epa', 'Eparina / EBPM']], id);
+    },
+    ev() {
+      const t = a('at'); if (!t) return PEND;
+      const M = {
+        no: R('ok', 'Nessuna terapia antitrombotica', '', 'trasf'),
+        avk: R('alta', 'AVK: reversal se sanguinamento maggiore', ul(['Sospendere; INR urgente', 'Vitamina K 10 mg EV lenta', '<b>Complesso protrombinico a 4 fattori</b> 25–50 UI/kg in base all\'INR (il plasma è alternativa di seconda scelta)', 'Ripresa da concordare in base al rischio trombotico']), 'trasf'),
+        xa: R('alta', 'Anti-Xa: sospendere', ul(['Annotare ora dell\'ultima dose e funzione renale', 'Sanguinamento pericoloso per la vita: andexanet alfa (apixaban/rivaroxaban, se disponibile) oppure CCP 4 fattori 50 UI/kg', 'Carbone attivo se assunzione &lt; 2–4 h']), 'trasf'),
+        dabi: R('alta', 'Dabigatran: sospendere', ul(['Sanguinamento maggiore: <b>idarucizumab 5 g EV</b>', 'Valutare emodialisi se insufficienza renale e antidoto non disponibile']), 'trasf'),
+        apt: R('media', 'Antiaggreganti', ul(['ASA in prevenzione secondaria: non sospendere, o riprendere entro 3–5 giorni', 'Doppia antiaggregazione (stent recente): mantenere ASA, decidere il P2Y12 con il cardiologo', 'Trasfusione di piastrine non raccomandata di routine']), 'trasf'),
+        epa: R('media', 'Eparina / EBPM', ul(['Sospendere', 'ENF: protamina 1 mg/100 UI somministrate nelle ultime 2–3 h', 'EBPM: protamina neutralizza solo parzialmente (60%)']), 'trasf')
+      };
+      return M[t];
+    },
+    sum: () => L('at')
+  },
+
+  /* 5 ─ Trasfusione */
+  trasf: {
+    t: 'Decisione trasfusionale', q: 'Contesto clinico (selezionare tutto ciò che è presente)',
+    build(b, id) {
+      checks(b, 'ctx', [
+        ['sint', '<b>Sintomi d\'organo da anemia</b>: angina, alterazioni ischemiche ECG, dispnea a riposo, sincope, confusione'],
+        ['sca', 'Sindrome coronarica acuta / infarto in corso o recente'],
+        ['cv', 'Malattia cardiovascolare nota (cardiopatia ischemica, vasculopatia), stabile'],
+        ['cch', 'Chirurgia cardiaca'],
+        ['orto', 'Chirurgia ortopedica / frattura'],
+        ['none', 'Nessuno di questi']
+      ], id);
+    },
+    ev() {
+      const c = a('ctx'); if (!c || !c.length) return PEND;
+      const hb = n('hb');
+      if (isUnstable()) return R('crit', 'Trasfondere ora, guidati dall\'emodinamica', ul([
+        'Nell\'emorragia acuta l\'Hb iniziale sottostima la perdita',
+        'Rivalutare dopo ogni unità/ciclo: PA, FC, lattato, diuresi, perdite',
+        'Emorragia massiva: Protocollo Trasfusionale Massivo'
+      ]), 'prelievi');
+      let thr = 7, why = 'paziente ricoverato stabile (AABB 2023)', extra = [];
+      if (has('ctx', 'cch')) { thr = 7.5; why = 'chirurgia cardiaca (AABB 2023)'; }
+      if (has('ctx', 'cv') || has('ctx', 'orto')) { thr = 8; why = has('ctx', 'cv') ? 'malattia cardiovascolare (AABB 2023)' : 'chirurgia ortopedica (AABB 2023)'; }
+      if (has('ctx', 'sca')) { thr = 8; why = 'infarto miocardico'; extra.push('MINT 2023: una soglia liberale (&lt; 10 g/dL) può essere considerata nell\'infarto; nessuna differenza significativa ma stime puntuali favorevoli'); }
+      const gi = ['alto', 'basso'].includes(a('sang'));
+      if (gi && a('varici') === 'si') { extra.push('Emorragia da varici: target 7–8 g/dL'); }
+      else if (gi) { extra.push('Emorragia digestiva: target ' + (thr >= 8 ? '≥ 10 (malattia CV)' : '7–9') + ' g/dL'); }
+      const sint = has('ctx', 'sint');
+      if (preShock()) extra.unshift('<b>Shock compensato</b> (tachicardia/lattato/BE): l\'Hb sottostima la perdita; se il sanguinamento è in atto trasfondere sulla base di emodinamica ed EGA seriati, non della sola soglia');
+      const ind = hb < thr || sint || (preShock() && bleeding());
+      const head = ind
+        ? 'Trasfusione INDICATA' + (hb < thr ? ' (Hb ' + fmt(hb) + ' < soglia ' + fmt(thr) + ')' : sint ? ' per sintomi d\'organo' : ': shock compensato con sanguinamento in atto')
+        : 'Trasfusione non indicata ora (Hb ' + fmt(hb) + ' ≥ soglia ' + fmt(thr) + ')';
+      let body = '<p>Soglia applicata: <b>' + fmt(thr) + ' g/dL</b> – ' + why + '.</p>';
+      if (ind) {
+        const w = n('peso');
+        body += ul([
+          '<b>Prelievi pre-trasfusionali</b> prima della prima unità',
+          bleeding() ? 'Sanguinamento in atto: unità successive in base a perdite ed emodinamica' : '<b>1 unità di GRC</b>, poi rivalutare sintomi e Hb prima della seconda',
+          'Incremento atteso ≈ 1 g/dL per unità' + (w && w < 50 ? '; con ' + w + ' kg l\'incremento sarà maggiore: considerare ≈ 4 mL/kg (' + Math.round(w * 4) + ' mL)' : ''),
+          'Anemia carenziale cronica senza sintomi gravi: la terapia causale (ferro EV, B12) è spesso preferibile a trasfusioni ripetute'
+        ].concat(extra));
+      } else {
+        body += ul([
+          'Trattare la causa; ricontrollare Hb e sintomi',
+          'Trasfondere se compaiono sintomi d\'organo o l\'Hb scende sotto soglia'
+        ].concat(extra));
+      }
+      return R(ind ? 'alta' : 'ok', head, body + '<div class="ref">AABB 2023 · ESGE 2021 · MINT 2023</div>', ind ? 'taco' : 'prelievi');
+    },
+    sum: () => L('ctx')
+  },
+
+  /* 5b ─ TACO */
+  taco: {
+    t: 'Rischio di sovraccarico (TACO)', q: 'Fattori di rischio presenti?',
+    build(b, id) {
+      const auto = [];
+      if (n('eta') !== null && n('eta') > 70) auto.push('eta');
+      if (n('peso') !== null && n('peso') < 50) auto.push('peso');
+      checks(b, 'taco', [
+        ['eta', 'Età &gt; 70 anni', n('eta') > 70],
+        ['sc', 'Scompenso cardiaco / disfunzione ventricolare / valvulopatia severa'],
+        ['irc', 'Insufficienza renale (eGFR &lt; 30 o dialisi)'],
+        ['alb', 'Ipoalbuminemia, edemi, bilancio idrico positivo'],
+        ['diu', 'Terapia diuretica in corso'],
+        ['peso', 'Peso &lt; 50 kg', n('peso') !== null && n('peso') < 50],
+        ['cron', 'Anemia cronica normovolemica severa (es. megaloblastica)'],
+        ['none', 'Nessuno']
+      ], id, auto.length ? auto : null);
+    },
+    ev() {
+      const t = a('taco'); if (!t || !t.length) return PEND;
+      if (t.includes('none')) return R('ok', 'Rischio TACO basso', '<p>1 unità in 90–120 min; parametri vitali prima, a 15 min e a fine unità.</p>', 'prelievi');
+      return R('media', 'Rischio TACO presente (' + t.length + ' fattor' + (t.length > 1 ? 'i' : 'e') + ')', ul([
+        'Una unità alla volta, infusione lenta (2–3 h, comunque entro 4 h dall\'uscita dalla frigoemoteca)',
+        'Considerare furosemide 20–40 mg EV prima/dopo l\'unità',
+        'Monitorare SpO₂, FR, PA, bilancio idrico; sospendere se dispnea o ipossia',
+        n('peso') ? 'Dosaggio a peso: ≈ 4 mL/kg ⇒ ' + Math.round(n('peso') * 4) + ' mL per +1 g/dL' : 'Inserire il peso per il dosaggio a peso'
+      ]), 'prelievi');
+    },
+    sum: () => L('taco')
+  },
+
+  /* 6 ─ Prelievi */
+  prelievi: {
+    t: 'Prelievi diagnostici', q: 'I prelievi per l\'inquadramento sono stati eseguiti prima di trasfondere?',
+    build(b, id) {
+      choice(b, 'prel', [['pre', 'Sì, prima della trasfusione'], ['nontr', 'Paziente non trasfuso'], ['post', 'No, già trasfuso']], id);
+    },
+    ev() {
+      const p = a('prel'); if (!p) return PEND;
+      if (p === 'post') return R('media', 'Interpretazione limitata dopo trasfusione', ul([
+        'Poco attendibili: reticolociti, DAT, morfologia, aptoglobina/LDH, elettroforesi Hb (per ~3 mesi), G6PD',
+        'Ancora utili: B12 e folati sierici (meno quelli eritrocitari), ferritina (con cautela)',
+        'Chiedere al SIMT/laboratorio se esistono campioni pre-trasfusionali conservati'
+      ]), 'emocromo');
+      return R('ok', 'Pannello di primo livello', ul(PRELIEVI), 'emocromo');
+    },
+    sum: () => L('prel')
+  },
+
+  /* 7 ─ Emocromo */
+  emocromo: {
+    t: 'Emocromo', q: 'Leucociti, piastrine e striscio',
+    build(b, id) {
+      nums(b, [['gb', 'Leucociti', '×10³/µL', 0, 500, 0.1], ['plt', 'Piastrine', '×10³/µL', 0, 2000, 1]], id);
+      sub(b, 'Blasti allo striscio?');
+      choice(b, 'blasti', [['no', 'No'], ['si', 'Sì'], ['nd', 'Striscio non ancora disponibile']], id);
+    },
+    ev() {
+      const gb = n('gb'), plt = n('plt'), bl = a('blasti');
+      if (gb === null || plt === null || !bl) return PEND;
+      if (bl === 'si') return R('crit', 'Blasti circolanti: sospetta leucemia acuta', ul([
+        '<b>Ematologo subito</b>; coagulazione e fibrinogeno (CID: sospetta leucemia promielocitica ⇒ ATRA urgente)',
+        'Indici di lisi tumorale (K, P, Ca, urato, creatinina, LDH), idratazione',
+        'Emocomponenti irradiati se il centro ematologico lo richiede'
+      ]), 'mcv');
+      const leuco = gb < 4, pltL = plt < 150;
+      if (leuco && pltL) return R('alta', 'PANCITOPENIA', ul([
+        'Consulenza ematologica urgente (aplasia, leucemia, MDS, infiltrazione midollare)',
+        'Cause reversibili frequenti: <b>deficit di B12/folati</b>, alcol, farmaci (metotrexato, chemioterapia, linezolid, azatioprina), ipersplenismo/cirrosi, infezioni (HIV, HBV/HCV, sepsi)',
+        gb < 1 ? 'Leucociti &lt; 1000/µL: verificare i neutrofili; se &lt; 500/µL e febbre ⇒ neutropenia febbrile, antibiotico entro 1 h' : 'Verificare la conta assoluta dei neutrofili',
+        plt < 20 ? 'PLT &lt; 20.000: rischio emorragico, profilassi piastrinica secondo SIMT' : null
+      ]), 'mcv');
+      if (pltL) return R('alta', 'Anemia + piastrinopenia (' + plt + '.000/µL)', ul([
+        'Escludere <b>microangiopatia trombotica</b> (PTT/SEU): striscio per schistociti URGENTE, LDH, aptoglobina, creatinina',
+        'Escludere CID (PT, aPTT, fibrinogeno, D-dimero), ipersplenismo, deficit di B12, infiltrazione midollare',
+        'Non trasfondere piastrine se sospetta PTT, salvo emorragia pericolosa per la vita'
+      ]), 'mcv');
+      if (leuco) return R('media', 'Anemia + leucopenia', ul(['Verificare i neutrofili; considerare deficit di B12/folati, farmaci, infezioni virali, malattie autoimmuni, ematologia se persistente']), 'mcv');
+      return R('ok', 'Leucociti e piastrine nella norma', '<p>Anemia isolata: prossimo passo MCV.</p>', 'mcv');
+    },
+    sum: () => 'GB ' + n('gb') + '×10³/µL, PLT ' + n('plt') + '×10³/µL, blasti: ' + L('blasti')
+  },
+
+  /* 8 ─ MCV */
+  mcv: {
+    t: 'Volume corpuscolare medio', q: 'MCV',
+    build(b, id) { nums(b, [['mcv', 'MCV', 'fL', 40, 160, 1]], id); },
+    ev() {
+      const m = n('mcv'); if (m === null) return PEND;
+      if (m < 80) return R('info', 'Microcitica (' + m + ' fL)', '<p>Carenza marziale (più frequente), anemia infiammatoria di lunga durata, trait talassemico, sideroblastica. Prossimo passo: reticolociti.</p>', 'retic');
+      if (m <= 100) return R('info', 'Normocitica (' + m + ' fL)', '<p>Emorragia acuta, emolisi, IRC, anemia infiammatoria, carenze iniziali o combinate, ipoproliferazione midollare. Prossimo passo: reticolociti.</p>', 'retic');
+      return R('info', 'Macrocitica (' + m + ' fL)', '<p>Deficit di B12/folati, reticolocitosi (emolisi), alcol, epatopatia, ipotiroidismo, farmaci (idrossiurea, metotrexato, azatioprina, antiretrovirali), MDS' + (m > 115 ? '; <b>MCV &gt; 115 fL suggerisce megaloblastosi o MDS</b>' : '') + '. Prossimo passo: reticolociti.</p>', 'retic');
+    },
+    sum: () => 'MCV ' + n('mcv') + ' fL'
+  },
+
+  /* 9 ─ Reticolociti */
+  retic: {
+    t: 'Risposta midollare', q: 'Reticolociti<small>Inserire il valore assoluto e/o la percentuale (con la % si calcola il Reticulocyte Production Index)</small>',
+    build(b, id) { nums(b, [['reta', 'Assoluti', '×10³/µL', 0, 1000, 1], ['retp', 'Percentuale', '%', 0, 60, 0.1]], id); },
+    ev() {
+      const ra = n('reta'), rp = n('retp'); if (ra === null && rp === null) return PEND;
+      let adeg, txt;
+      if (rp !== null) {
+        const hct = n('hb') * 3;               // stima dell'ematocrito
+        const mf = hct >= 40 ? 1 : hct >= 35 ? 1.5 : hct >= 25 ? 2 : hct >= 15 ? 2.5 : 3;
+        const rpi = rp * (hct / 45) / mf;
+        adeg = rpi >= 2;
+        txt = 'RPI = ' + fmt(rpi, 2) + ' (Ht stimato ' + fmt(hct, 0) + '%, fattore di maturazione ' + fmt(mf, 1) + ')';
+        if (ra !== null) txt += ' · assoluti ' + ra + '.000/µL';
+      } else { adeg = ra >= 100; txt = 'Reticolociti ' + ra + '.000/µL'; }
+      const post = a('prel') === 'post' ? '<p><b>Attenzione:</b> dopo trasfusione il dato è poco affidabile.</p>' : '';
+      if (adeg) return R('media', 'Risposta midollare ADEGUATA – ' + txt, '<p>Midollo funzionante: <b>perdita ematica</b> o <b>emolisi</b> (o recupero dopo terapia). Prossimo passo: indici di emolisi.</p>' + post, 'emolisi');
+      const m = n('mcv');
+      const next = m < 80 ? 'ferro' : m <= 100 ? 'normo' : 'macro';
+      const dest = { ferro: 'assetto marziale', normo: 'funzione renale e assetto marziale', macro: 'B12 e folati' }[next];
+      return R('info', 'Risposta midollare INADEGUATA – ' + txt, '<p>Anemia ipoproliferativa: carenze, infiammazione, IRC, patologia midollare. Prossimo passo: ' + dest + '.</p>' + post, next);
+    },
+    sum: () => [n('reta') !== null ? n('reta') + '×10³/µL' : '', n('retp') !== null ? n('retp') + '%' : ''].filter(Boolean).join(', ')
+  },
+
+  /* 10 ─ Emolisi */
+  emolisi: {
+    t: 'Indici di emolisi', q: 'Almeno 2 tra: LDH ↑, aptoglobina ↓/indosabile, bilirubina indiretta ↑?',
+    build(b, id) { choice(b, 'emol', [['si', 'Sì, emolisi presente'], ['no', 'No']], id); },
+    ev() {
+      const e = a('emol'); if (!e) return PEND;
+      if (e === 'no') return R('media', 'Reticolocitosi senza emolisi', ul([
+        'Probabile <b>perdita ematica</b> acuta/recente, anche occulta: ricercare con esplorazione rettale, FIT, eco/TC addome (retroperitoneo), EGDS/colonscopia',
+        'Oppure recupero midollare dopo ferro, B12 o chemioterapia'
+      ]), null);
+      return R('alta', 'Anemia emolitica', '<p>Prossimo passo: <b>test di Coombs diretto</b>. Somministrare acido folico 5 mg/die. Urine scure/emoglobinuria ⇒ emolisi intravascolare: idratazione e monitoraggio della funzione renale.</p>', 'dat');
+    },
+    sum: () => L('emol')
+  },
+
+  /* 11 ─ DAT */
+  dat: {
+    t: 'Test di Coombs diretto', q: 'Esito del DAT',
+    build(b, id) { choice(b, 'dat', [['igg', 'Positivo IgG (± C3d)'], ['c3', 'Positivo solo C3d'], ['neg', 'Negativo']], id); },
+    ev() {
+      const d = a('dat'); if (!d) return PEND;
+      const recentTx = '<p>Se trasfuso negli ultimi 3–14 giorni considerare una <b>reazione emolitica ritardata</b> (informare il SIMT).</p>';
+      if (d === 'igg') return R('alta', 'Anemia emolitica autoimmune a anticorpi caldi', ul([
+        'Consulenza ematologica; ricerca di cause secondarie: LLC/linfoma, LES, farmaci, infezioni (HIV, HCV), immunodeficit',
+        '<b>Prednisone 1 mg/kg/die</b>; forme gravi: metilprednisolone EV ad alte dosi e rituximab già in prima linea',
+        'Acido folico 5 mg/die; <b>tromboprofilassi</b> se non controindicata (alto rischio trombotico)',
+        '<b>La trasfusione non va negata</b> se l\'anemia è pericolosa per la vita: avvisare il SIMT, unità “meno incompatibili”, infusione lenta e monitorata'
+      ]) + recentTx + '<div class="ref">BSH 2017 · ICWG 2020</div>', null);
+      if (d === 'c3') return R('alta', 'Probabile malattia da agglutinine fredde', ul([
+        'Titolo delle agglutinine fredde (campione mantenuto a 37 °C); ricerca di linfoproliferativo, <i>Mycoplasma</i>, EBV',
+        '<b>Evitare il freddo</b>; trasfondere con scaldasangue',
+        'Steroidi inefficaci: rituximab ± bendamustina; sutimlimab (anti-C1s) su indicazione ematologica',
+        'Raramente emoglobinuria parossistica a frigore (test di Donath-Landsteiner)'
+      ]) + recentTx, null);
+      return R('media', 'Emolisi DAT-negativa', '<p>Prossimo passo: <b>striscio periferico</b>.</p>', 'striscio');
+    },
+    sum: () => 'DAT ' + L('dat')
+  },
+
+  /* 12 ─ Striscio */
+  striscio: {
+    t: 'Striscio periferico', q: 'Reperto principale allo striscio',
+    build(b, id) {
+      choice(b, 'smear', [['schisto', 'Schistociti ≥ 1%'], ['sfero', 'Sferociti'], ['morso', 'Cellule “a morso” / corpi di Heinz'], ['para', 'Parassiti endoeritrocitari'], ['nulla', 'Nessun reperto specifico']], id);
+    },
+    ev() {
+      const s = a('smear'); if (!s) return PEND;
+      if (s === 'schisto') return R('crit', 'Anemia emolitica microangiopatica', '<p>Emergenza: calcolare subito la probabilità di <b>PTT</b> (PLASMIC score) e contattare l\'ematologo.</p>', 'plasmic');
+      if (s === 'sfero') return R('media', 'Sferociti con DAT negativo', ul(['Sferocitosi ereditaria (anamnesi familiare, splenomegalia, test EMA)', 'AIHA DAT-negativa (anticorpi a bassa affinità o IgA: test di secondo livello)', 'Ustioni estese, sepsi da Clostridium, veleni']), null);
+      if (s === 'morso') return R('media', 'Emolisi ossidativa', ul(['<b>Deficit di G6PD</b>: dosaggio a distanza dalla crisi (falsi negativi con reticolocitosi)', 'Sospendere il farmaco scatenante (dapsone, primachina, rasburicase, sulfamidici, nitrofurantoina) ed evitare le fave']), null);
+      if (s === 'para') return R('crit', 'Sospetta malaria / babesiosi', ul(['Goccia spessa + striscio + test antigenico rapido; quantificare la parassitemia', 'Consulenza infettivologica urgente: la malaria da <i>P. falciparum</i> grave richiede artesunato EV']), null);
+      return R('media', 'Emolisi DAT-negativa senza reperti specifici', ul([
+        '<b>EPN</b>: citofluorimetria (FLAER/CD59 su granulociti e monociti), soprattutto se trombosi atipiche o citopenie',
+        'Emoglobinopatie instabili / enzimopatie (PK): HPLC, dosaggi enzimatici',
+        'Farmaci, infezioni, protesi valvolari (emolisi meccanica), emoglobinuria da marcia',
+        'Consulenza ematologica'
+      ]), null);
+    },
+    sum: () => L('smear')
+  },
+
+  /* 13 ─ PLASMIC */
+  plasmic: {
+    t: 'PLASMIC score', q: 'Criteri presenti (1 punto ciascuno)',
+    build(b, id) {
+      const auto = [];
+      if (n('plt') !== null && n('plt') < 30) auto.push('p1');
+      if (a('emol') === 'si') auto.push('p2');
+      if (n('mcv') !== null && n('mcv') < 90) auto.push('p5');
+      checks(b, 'plasmic', [
+        ['p1', 'Piastrine &lt; 30.000/µL', n('plt') < 30],
+        ['p2', 'Emolisi (reticolociti &gt; 2,5%, aptoglobina indosabile o bilirubina indiretta &gt; 2 mg/dL)', a('emol') === 'si'],
+        ['p3', 'Assenza di neoplasia attiva (trattata nell\'ultimo anno)'],
+        ['p4', 'Assenza di trapianto d\'organo solido o di cellule staminali'],
+        ['p5', 'MCV &lt; 90 fL', n('mcv') < 90],
+        ['p6', 'INR &lt; 1,5'],
+        ['p7', 'Creatinina &lt; 2,0 mg/dL']
+      ], id, auto);
+    },
+    ev() {
+      const sc = (a('plasmic') || []).filter(x => x !== 'none').length;
+      if (sc >= 6) return R('crit', 'PLASMIC ' + sc + '/7 – ALTA probabilità di PTT', ul([
+        'Prelevare <b>ADAMTS13</b> (attività + inibitore/anti-ADAMTS13) <b>prima</b> della plasmaferesi',
+        '<b>Plasmaferesi urgente</b> (contatto immediato SIMT/centro di aferesi; trasferire se non disponibile) + corticosteroidi',
+        'Caplacizumab se ADAMTS13 disponibile entro 72 h o probabilità clinica molto alta (decisione ematologica); rituximab',
+        'Plasma fresco congelato in infusione solo come ponte se l\'aferesi è ritardata',
+        '<b>Non trasfondere piastrine</b> salvo emorragia pericolosa per la vita; troponina ed ECG (coinvolgimento cardiaco)'
+      ]) + '<div class="ref">ISTH 2020</div>', null);
+      if (sc === 5) return R('alta', 'PLASMIC 5/7 – probabilità INTERMEDIA', ul(['ADAMTS13 urgente e discussione immediata con l\'ematologo sull\'avvio della plasmaferesi', 'Ricercare in parallelo le altre microangiopatie (sotto)']), null);
+      return R('media', 'PLASMIC ' + sc + '/7 – probabilità BASSA di PTT', ul([
+        'SEU da STEC (diarrea ematica): ricerca shigatossina/STEC nelle feci',
+        'SEU atipica (danno renale prevalente): complemento, nefrologo (eculizumab/ravulizumab)',
+        'CID (sepsi), ipertensione maligna, HELLP/gravidanza, farmaci (gemcitabina, inibitori calcineurina, chinino), neoplasie metastatiche, protesi valvolari'
+      ]), null);
+    },
+    sum: () => L('plasmic')
+  },
+
+  /* 14a ─ Microcitica ipoproliferativa: ferro */
+  ferro: {
+    t: 'Assetto marziale', q: 'Ferritina, saturazione della transferrina e infiammazione',
+    build(b, id) {
+      nums(b, [['ferr', 'Ferritina', 'ng/mL', 0, 10000, 1], ['tsat', 'TSAT (facoltativa)', '%', 0, 100, 1], ['gr', 'GR (facoltativo)', '×10⁶/µL', 0.5, 9, 0.01]], id);
+      sub(b, 'PCR elevata / infiammazione cronica attiva?');
+      choice(b, 'pcr', [['no', 'No'], ['si', 'Sì']], id);
+    },
+    ev() {
+      const f = n('ferr'), t = n('tsat'), p = a('pcr'); if (f === null || !p) return PEND;
+      const tsLow = t !== null && t < 20;
+      if (f < 30) return R('alta', 'Anemia sideropenica (ferritina ' + f + ' ng/mL)', '<p>Ferritina &lt; 30 ng/mL conferma la carenza marziale. <b>Va sempre cercata la causa.</b> Prossimo passo: profilo del paziente per il work-up.</p>', 'ida_ctx');
+      if (f <= 100 && (p === 'si' || tsLow)) return R('media', 'Carenza marziale probabile in contesto infiammatorio', '<p>Ferritina 30–100 ng/mL con infiammazione' + (tsLow ? ' e TSAT &lt; 20%' : '') + ': carenza assoluta mascherata o forma mista. Trattare come carenza marziale e cercarne la causa.</p>', 'ida_ctx');
+      if (tsLow && p === 'si') return R('media', 'Anemia infiammatoria (malattie croniche)', ul([
+        'Ferritina &gt; 100 ng/mL con TSAT &lt; 20%: blocco del ferro mediato dall\'epcidina',
+        'Raramente causa da sola un\'anemia severa microcitica: cercare una seconda causa (perdite, emolisi, midollo)',
+        'Trattare la malattia di base; ferro EV utile se TSAT &lt; 20% in IRC o scompenso cardiaco'
+      ]), null);
+      let m = '';
+      if (n('gr') && n('mcv')) { const mz = n('mcv') / n('gr'); m = ' Indice di Mentzer = ' + fmt(mz, 1) + (mz < 13 ? ' (&lt; 13: orienta verso trait talassemico)' : ' (≥ 13: orienta verso carenza marziale)') + '.'; }
+      return R('info', 'Microcitosi con riserve marziali adeguate', '<p>Sospettare <b>trait talassemico</b> o emoglobinopatia (elettroforesi/HPLC con HbA₂ e HbF, pre-trasfusione), anemia sideroblastica (striscio midollare con colorazione di Perls), intossicazione da piombo.' + m + ' Un trait talassemico non spiega da solo un\'anemia severa: cercare una seconda causa.</p>', null);
+    },
+    sum: () => 'ferritina ' + n('ferr') + ' ng/mL, TSAT ' + (n('tsat') ?? '—') + '%, PCR elevata: ' + L('pcr')
+  },
+
+  /* 14b ─ Normocitica ipoproliferativa */
+  normo: {
+    t: 'Anemia normocitica ipoproliferativa', q: 'Funzione renale, ferritina e infiammazione',
+    build(b, id) {
+      nums(b, [['egfr', 'eGFR', 'mL/min/1,73m²', 0, 200, 1], ['ferr', 'Ferritina', 'ng/mL', 0, 10000, 1], ['tsat', 'TSAT (facoltativa)', '%', 0, 100, 1]], id);
+      sub(b, 'PCR elevata / infiammazione cronica attiva?');
+      choice(b, 'pcr', [['no', 'No'], ['si', 'Sì']], id);
+    },
+    ev() {
+      const g = n('egfr'), f = n('ferr'), t = n('tsat'), p = a('pcr');
+      if (g === null || f === null || !p) return PEND;
+      if (f < 30) return R('alta', 'Carenza marziale (ferritina ' + f + ' ng/mL) in fase iniziale o mista', '<p>La carenza può essere normocitica all\'inizio o se combinata con deficit di B12/folati. Cercarne la causa.</p>', 'ida_ctx');
+      const items = [];
+      let cls = 'info', head = 'Nessuna causa evidente: approfondire';
+      if (g < 30) {
+        cls = 'media'; head = 'Probabile anemia renale (eGFR ' + g + ')';
+        items.push('Diagnosi di esclusione: escludere comunque perdite, emolisi, carenze');
+        items.push('Correggere prima il ferro: ferro (EV preferito in emodialisi) se TSAT ≤ 30% e ferritina ≤ 500 ng/mL');
+        items.push('ESA (KDIGO 2026): in dialisi avvio a Hb ≤ 9–10 g/dL; non in dialisi su base sintomatica (in genere Hb ≤ 8,5–10); <b>non mantenere Hb ≥ 11,5</b>; sospendere in caso di ictus/trombosi');
+        items.push('HIF-PHI alternativa (preferenza orale, intolleranza ESA), non con neoplasia attiva o evento trombotico recente');
+      } else if (g < 60) {
+        items.push('eGFR ' + g + ': la componente renale è possibile ma raramente causa da sola un\'anemia severa');
+      }
+      if (f > 100 && p === 'si' && (t === null || t < 20)) {
+        if (cls === 'info') { cls = 'media'; head = 'Probabile anemia infiammatoria'; }
+        items.push('Anemia infiammatoria: trattare la malattia di base; da sola raramente &lt; 8 g/dL ⇒ cercare una seconda causa');
+      }
+      items.push('Se la causa non è chiara: <b>protidogramma + immunofissazione sierica e urinaria + catene leggere libere</b> (mieloma), TSH, funzione epatica, B12/folati, alcol, HIV/HCV, revisione dei farmaci');
+      items.push('Anemia isolata con reticolociti molto bassi: aplasia pura della serie rossa (parvovirus B19, timoma, farmaci)');
+      items.push('Persistenza o altre citopenie ⇒ <b>ematologo</b> e aspirato/biopsia midollare (MDS, infiltrazione, aplasia)');
+      return R(cls, head, ul(items), null);
+    },
+    sum: () => 'eGFR ' + n('egfr') + ', ferritina ' + n('ferr') + ' ng/mL, TSAT ' + (n('tsat') ?? '—') + '%, PCR elevata: ' + L('pcr')
+  },
+
+  /* 14c ─ Macrocitica ipoproliferativa */
+  macro: {
+    t: 'Anemia macrocitica ipoproliferativa', q: 'Vitamina B12 e folati sierici',
+    build(b, id) { nums(b, [['b12', 'Vitamina B12', 'pg/mL', 0, 3000, 1], ['fol', 'Folati sierici', 'ng/mL', 0, 50, 0.1]], id); },
+    ev() {
+      const v = n('b12'), f = n('fol'); if (v === null || f === null) return PEND;
+      const b12d = v < 200, b12b = v >= 200 && v <= 300, fold = f < 3, folb = f >= 3 && f < 4;
+      const items = [];
+      let cls = 'info', head;
+      if (b12d || fold) {
+        cls = 'alta';
+        head = 'Anemia megaloblastica da deficit di ' + (b12d && fold ? 'B12 e folati' : b12d ? 'vitamina B12' : 'folati');
+        if (b12d) {
+          items.push('<b>B12 IM</b> 1000 µg/die × 7 gg, poi settimanale × 4, poi mensile (a vita se anemia perniciosa); con segni neurologici 1 mg a giorni alterni fino a stabilizzazione');
+          items.push('Causa: anticorpi anti-fattore intrinseco (specifici, sensibilità ~50%) e anti-cellule parietali; EGDS con biopsie se gastrite atrofica; metformina, IBP, chirurgia gastrica/ileale, dieta vegana');
+        }
+        if (fold) items.push('<b>Acido folico 5 mg/die × 4 mesi</b>, solo dopo aver avviato la B12 se coesiste deficit; cercare malnutrizione, alcol, celiachia, farmaci (metotrexato, antiepilettici)');
+        items.push('Primi giorni di terapia: <b>controllare il potassio</b> (ipokaliemia); reticolocitosi attesa in 5–7 giorni');
+        items.push('Trasfusione solo se sintomi d\'organo: anemia cronica normovolemica ⇒ 1 unità lenta (rischio TACO)');
+        if (n('plt') < 150 || n('gb') < 4) items.push('Le citopenie associate sono compatibili con la megaloblastosi: ricontrollare dopo 7–10 giorni di terapia; se non migliorano ⇒ ematologo');
+      } else if (b12b || folb) {
+        cls = 'media'; head = 'Valori borderline';
+        items.push('B12 200–300 pg/mL: dosare <b>acido metilmalonico</b> e/o <b>omocisteina</b> (o olotranscobalamina)');
+        items.push('Nel dubbio con anemia severa: prelevare e avviare la B12 (non tossica), poi i folati');
+      } else {
+        head = 'B12 e folati nella norma';
+        items.push('Considerare alcol, epatopatia, ipotiroidismo (TSH), farmaci (idrossiurea, metotrexato, azatioprina, zidovudina)');
+        items.push('Anemia severa macrocitica senza carenze, soprattutto con altre citopenie o MCV &gt; 110: sospettare <b>mielodisplasia</b> ⇒ ematologo, aspirato midollare con citogenetica');
+      }
+      return R(cls, head, ul(items) + '<div class="ref">BSH 2014</div>', null);
+    },
+    sum: () => 'B12 ' + n('b12') + ' pg/mL, folati ' + n('fol') + ' ng/mL'
+  },
+
+  /* 15 ─ Work-up IDA */
+  ida_ctx: {
+    t: 'Ricerca della causa della carenza marziale', q: 'Profilo del paziente',
+    build(b, id) {
+      choice(b, 'idactx', [['alto', 'Uomo, o donna in post-menopausa'],
+        ['rf', 'Donna in pre-menopausa con sintomi GI, età ≥ 50 o familiarità per carcinoma colorettale'],
+        ['basso', 'Donna in pre-menopausa senza questi elementi']], id);
+    },
+    ev() {
+      const c = a('idactx'); if (!c) return PEND;
+      const common = [
+        '<b>Per tutti</b>: anticorpi anti-transglutaminasi IgA + IgA totali (celiachia); stick urine (ematuria); anamnesi di FANS/antitrombotici, dieta, perdite, donazioni',
+        'Ricerca di <i>H. pylori</i> (antigene fecale o breath test) e di gastrite atrofica autoimmune nell\'IDA refrattaria'
+      ];
+      if (c === 'basso') return R('media', 'Work-up mirato', ul(common.concat([
+        'Valutare perdite mestruali (consulenza ginecologica se menorragia)',
+        'Endoscopia solo se sierologia per celiachia positiva, sintomi, IDA refrattaria/ricorrente o mancata risposta al ferro'
+      ])) + '<div class="ref">BSG 2021</div>', 'iron_tx');
+      return R('alta', 'Endoscopia bidirezionale indicata', ul(common.concat([
+        '<b>EGDS + colonscopia</b> (in unica seduta se possibile), con biopsie duodenali; nel ricoverato con anemia severa da programmare durante la degenza o in percorso rapido',
+        'Colon-TC se la colonscopia non è eseguibile o incompleta',
+        'Endoscopie negative con IDA ricorrente/refrattaria ⇒ <b>videocapsula del tenue</b>',
+        'Una lesione banale in EGDS (es. esofagite, erosioni) non esime dalla colonscopia'
+      ])) + '<div class="ref">BSG 2021 · BSG/ACPGBI 2025</div>', 'iron_tx');
+    },
+    sum: () => L('idactx')
+  },
+
+  /* 16 ─ Terapia marziale */
+  iron_tx: {
+    t: 'Terapia marziale', q: 'Via di somministrazione<small>Ferro EV se: intolleranza o inefficacia del ferro orale, malassorbimento (celiachia, chirurgia bariatrica, gastrite atrofica), IBD attiva, IRC, scompenso cardiaco, gravidanza nel II–III trimestre, anemia severa con necessità di risposta rapida</small>',
+    build(b, id) { choice(b, 'via', [['os', 'Ferro orale'], ['ev', 'Ferro endovenoso']], id); },
+    ev() {
+      const v = a('via'); if (!v) return PEND;
+      if (v === 'os') return R('ok', 'Ferro orale', ul([
+        '1 compressa al giorno (es. solfato ferroso RP 525 mg = 105 mg Fe), oppure a <b>giorni alterni</b> se intolleranza: dosi frazionate non aumentano l\'assorbimento',
+        'A stomaco vuoto, con acqua o vitamina C; distanziare da IBP, antiacidi, tè, caffè, calcio',
+        'Controllo Hb a 2–4 settimane: atteso ↑ ≥ 1 g/dL in 2 settimane; altrimenti verificare aderenza e passare al ferro EV',
+        'Proseguire per 3 mesi dopo la normalizzazione dell\'Hb per ricostituire le riserve'
+      ]) + '<div class="ref">BSG 2021 · Stoffel 2017</div>', null);
+      const w = n('peso'), hb = n('hb');
+      let calc;
+      if (w) {
+        const stores = w < 35 ? Math.round(15 * w) : 500;
+        const tgt = w < 35 ? 13 : 15;
+        const def = Math.round(w * (tgt - hb) * 2.4 + stores);
+        const maxCarb = Math.min(1000, Math.round(20 * w));
+        const maxDer = Math.round(20 * w);
+        calc = 'Fabbisogno stimato (Ganzoni): ' + w + ' × (' + tgt + ' − ' + fmt(hb) + ') × 2,4 + ' + stores + ' = <b>' + def + ' mg</b> di ferro' +
+          '<br>Carbossimaltosio: max ' + maxCarb + ' mg per infusione e 1000 mg/settimana ⇒ ' + Math.ceil(def / maxCarb) + ' somministrazion' + (Math.ceil(def / maxCarb) > 1 ? 'i' : 'e') + ' a distanza di ≥ 7 giorni' +
+          '<br>Derisomaltosio: fino a 20 mg/kg (' + maxDer + ' mg) in singola infusione ⇒ ' + Math.ceil(def / maxDer) + ' somministrazion' + (Math.ceil(def / maxDer) > 1 ? 'i' : 'e');
+      } else calc = 'Inserire il peso al passo 1 per il calcolo di Ganzoni.';
+      return R('ok', 'Ferro endovenoso', '<p>' + calc + '</p>' + ul([
+        'Saccarato ferrico: max 200 mg per seduta, fino a 3 volte/settimana',
+        'Somministrare dove sono disponibili personale e mezzi per l\'anafilassi; osservazione ≥ 30 min',
+        'Evitare in batteriemia attiva e nel I trimestre di gravidanza',
+        'Carbossimaltosio: rischio di <b>ipofosfatemia</b> (controllare P se dosi ripetute)',
+        'Ricontrollo Hb, ferritina e TSAT non prima di 4 settimane dall\'ultima dose'
+      ]) + '<div class="ref">RCP Ferinject® / Monofer® · BSG 2021</div>', null);
+    },
+    sum: () => L('via')
+  }
+};
+
+/* ═════════════ MOTORE ═════════════ */
+const cards = {};
+function addStep(id, scroll) {
+  const def = STEPS[id];
+  const card = el('section', { class: 'step', id: 'st-' + id });
+  const h = el('div', { class: 'step-h' });
+  h.appendChild(el('div', { class: 'step-n' }, String(flow.length + 1)));
+  h.appendChild(el('div', { class: 'step-t' }, def.t));
+  card.appendChild(h);
+  card.appendChild(el('div', { class: 'step-q' }, def.q));
+  const body = el('div');
+  card.appendChild(body);
+  def.build(body, id);
+  const out = el('div', { class: 'out' });
+  card.appendChild(out);
+  stepsEl.appendChild(card);
+  cards[id] = { card, out };
+  flow.push(id);
+  if (scroll) setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 60);
+}
+function trimAfter(i) {
+  while (flow.length > i + 1) {
+    const id = flow.pop();
+    cards[id].card.remove();
+    delete cards[id]; delete outs[id];
+  }
+}
+function setOut(id, r) {
+  const o = cards[id].out;
+  outs[id] = r;
+  if (r && r.html) { o.className = 'out show ' + (r.cls || ''); o.innerHTML = r.html; }
+  else { o.className = 'out'; o.innerHTML = ''; }
+}
+function update(fromId) {
+  let i = flow.indexOf(fromId);
+  if (i < 0) return;
+  for (; i < flow.length; i++) {
+    const id = flow[i];
+    const r = STEPS[id].ev();
+    setOut(id, r);
+    if (!r.done || !r.next) { trimAfter(i); break; }
+    if (flow[i + 1] !== r.next) { trimAfter(i); addStep(r.next, true); }
+  }
+  renderSummary();
+}
+
+/* ═════════════ RIEPILOGO ═════════════ */
+function plain(html) { const d = document.createElement('div'); d.innerHTML = html; return d.textContent.replace(/\s+/g, ' ').trim(); }
+function renderSummary() {
+  const now = new Date();
+  const lines = ['ANEMIA SEVERA – percorso al primo riscontro (v2.1)', 'Data: ' + now.toLocaleDateString('it-IT') + ' ' + now.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' }), ''];
+  flow.forEach((id, k) => {
+    const r = outs[id];
+    if (!r || !r.head) return;
+    const s = STEPS[id].sum ? STEPS[id].sum() : '';
+    lines.push((k + 1) + '. ' + STEPS[id].t + (s ? ' [' + s.trim() + ']' : '') + ' → ' + plain(r.head));
+  });
+  lines.push('', 'Strumento di supporto decisionale; non sostituisce il giudizio clinico.');
+  document.getElementById('summaryText').textContent = lines.join('\n');
+}
+
+/* ═════════════ UI ═════════════ */
+document.querySelectorAll('nav button').forEach(btn => btn.addEventListener('click', () => {
+  document.querySelectorAll('nav button').forEach(b => b.classList.toggle('active', b === btn));
+  document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + btn.dataset.tab));
+}));
+document.getElementById('btnCopy').addEventListener('click', () => {
+  const txt = document.getElementById('summaryText').textContent;
+  const ok = () => { const m = document.getElementById('copiedMsg'); m.style.display = 'inline'; setTimeout(() => m.style.display = 'none', 1800); };
+  const fallback = () => { const t = document.createElement('textarea'); t.value = txt; document.body.appendChild(t); t.select(); try { document.execCommand('copy'); ok(); } catch (e) {} t.remove(); };
+  if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(txt).then(ok, fallback); else fallback();
+});
+document.getElementById('btnPrint').addEventListener('click', () => window.print());
+document.getElementById('btnReset').addEventListener('click', () => {
+  if (!confirm('Ricominciare il percorso? Tutte le risposte verranno cancellate.')) return;
+  for (const k in S.ans) delete S.ans[k];
+  trimAfter(-1);
+  stepsEl.innerHTML = '';
+  addStep('paz'); update('paz');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+window.addEventListener('beforeprint', () => document.querySelectorAll('details').forEach(d => d.open = true));
+
+addStep('paz');
+update('paz');
+</script>
+</body>
+</html>
