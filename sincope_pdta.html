@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDTA Sincope — Percorso guidato a passi</title>
+<style>
+  :root{
+    --bg:#f3f6f9; --card:#ffffff; --ink:#1d2b36; --muted:#5d6f80; --line:#dbe4ec;
+    --pri:#1f6f9f; --pri-soft:#e7f1f8;
+    --ok:#2e7d4f;  --ok-bg:#e9f6ee;
+    --info:#1f6f9f;--info-bg:#e8f2fa;
+    --warn:#9a5b00;--warn-bg:#fff4df;
+    --danger:#b3261e;--danger-bg:#fdecea;
+    --radius:12px; --font:'Segoe UI',system-ui,-apple-system,Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.5;min-height:100vh}
+  header{background:linear-gradient(120deg,#1f6f9f 0%,#2b8bb8 60%,#3aa7b5 100%);color:#fff;padding:16px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  header .ico{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:24px}
+  header h1{font-size:1.2rem;font-weight:700;line-height:1.2}
+  header p{font-size:.75rem;opacity:.85}
+  .hbtns{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+  .hbtn{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:8px;padding:6px 11px;font-size:.76rem;cursor:pointer}
+  .hbtn:hover{background:rgba(255,255,255,.28)}
+  main{max-width:820px;margin:0 auto;padding:18px 14px 30px}
+  .intro{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:12px 16px;font-size:.8rem;color:var(--muted);margin-bottom:14px}
+  .intro b{color:var(--ink)}
+  .step{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--pri);border-radius:var(--radius);padding:16px 18px;margin-bottom:12px;box-shadow:0 1px 4px rgba(20,40,60,.05);animation:fade .25s ease}
+  .step.done{border-left-color:#9fb6c8}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .shead{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+  .num{background:var(--pri);color:#fff;border-radius:50%;width:24px;height:24px;font-size:.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .step.done .num{background:#8aa4b8}
+  .sez{font-size:.66rem;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);font-weight:700}
+  .q{font-size:1.02rem;font-weight:650;margin-bottom:4px}
+  .hint{font-size:.8rem;color:var(--muted);margin-bottom:8px}
+  details.info{background:#f7fafc;border:1px solid var(--line);border-radius:8px;margin:6px 0 10px;font-size:.78rem}
+  details.info summary{cursor:pointer;padding:7px 11px;color:var(--pri);font-weight:600}
+  details.info .ib{padding:2px 12px 10px}
+  details.info ul{padding-left:18px;margin:4px 0}
+  details.info li{margin-bottom:2px}
+  table.t{border-collapse:collapse;width:100%;margin:6px 0;font-size:.75rem}
+  table.t th,table.t td{border:1px solid var(--line);padding:4px 7px;text-align:left;vertical-align:top}
+  table.t th{background:var(--pri-soft);color:var(--pri)}
+  .opts{display:flex;flex-direction:column;gap:7px;margin-top:6px}
+  .opt{background:#fff;border:1.5px solid var(--line);border-radius:9px;padding:9px 12px;text-align:left;font:inherit;font-size:.86rem;color:var(--ink);cursor:pointer;display:flex;gap:9px;align-items:flex-start;transition:border-color .15s,background .15s}
+  .opt:hover{border-color:var(--pri);background:var(--pri-soft)}
+  .opt .dot{width:16px;height:16px;border-radius:50%;border:2px solid #9fb3c4;flex-shrink:0;margin-top:2px}
+  .opt.sel{border-color:var(--pri);background:var(--pri-soft);font-weight:600}
+  .opt.sel .dot{border-color:var(--pri);background:radial-gradient(circle,var(--pri) 45%,transparent 50%)}
+  .step.done .opt:not(.sel){opacity:.6}
+  .esito{margin-top:10px;border-radius:8px;padding:9px 12px;font-size:.82rem;border-left:4px solid}
+  .esito b.et{display:block;font-size:.68rem;text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px}
+  .esito ul{padding-left:18px;margin-top:3px}
+  .l-ok{background:var(--ok-bg);border-color:var(--ok);color:#1c4d31}
+  .l-info{background:var(--info-bg);border-color:var(--info);color:#174a6b}
+  .l-warn{background:var(--warn-bg);border-color:var(--warn);color:#5e3a00}
+  .l-danger{background:var(--danger-bg);border-color:var(--danger);color:#7a1a14}
+  .sitem{display:flex;gap:10px;align-items:flex-start;padding:6px 2px;border-bottom:1px solid #eef2f6;font-size:.83rem;cursor:pointer}
+  .sitem:last-of-type{border-bottom:none}
+  .sitem input{width:17px;height:17px;margin-top:2px;accent-color:var(--pri);flex-shrink:0}
+  .sitem .pt{margin-left:auto;font-weight:700;color:var(--pri);white-space:nowrap}
+  .stot{font-size:.8rem;color:var(--muted);text-align:right;margin-top:4px}
+  .btn{background:var(--pri);color:#fff;border:none;border-radius:8px;padding:8px 15px;font:inherit;font-size:.84rem;font-weight:600;cursor:pointer;margin-top:10px}
+  .btn:hover{filter:brightness(1.08)}
+  .btn.sec{background:#fff;color:var(--pri);border:1.5px solid var(--pri)}
+  .end{border-left-width:6px}
+  .end.e-ok{border-left-color:var(--ok)} .end.e-warn{border-left-color:var(--warn)} .end.e-danger{border-left-color:var(--danger)} .end.e-info{border-left-color:var(--info)}
+  .end h2{font-size:1.08rem;margin:2px 0 8px}
+  .end h3{font-size:.86rem;color:var(--pri);margin:12px 0 4px}
+  .end p,.end li{font-size:.83rem}
+  .end ul{padding-left:19px}
+  .end li{margin-bottom:3px}
+  .reasons{margin:6px 0 4px}
+  .mini{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-top:10px;background:#fbfcfe}
+  .mini .mt{font-size:.8rem;font-weight:700;color:var(--pri)}
+  .mini .ms{font-size:.72rem;color:var(--muted);margin-bottom:4px}
+  .riep{font-size:.78rem;margin-top:6px}
+  .riep li{margin-bottom:2px}
+  .riep .rq{color:var(--muted)}
+  .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .refs{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;margin-top:18px;font-size:.74rem;color:var(--muted)}
+  .refs h3{font-size:.85rem;color:var(--ink);margin-bottom:6px}
+  .refs ol{padding-left:20px}
+  .refs li{margin-bottom:3px}
+  sup.r{color:var(--pri);font-weight:700;font-size:.68em}
+  abbr{text-decoration:none;border-bottom:1px dotted var(--pri);cursor:help}
+  footer{max-width:820px;margin:0 auto;padding:6px 14px 40px;text-align:center;font-size:.74rem;color:var(--muted)}
+  footer .auth{font-weight:600;color:var(--ink)}
+  #gloss{display:none;position:fixed;inset:0;background:rgba(15,30,45,.45);z-index:50;align-items:flex-start;justify-content:center;padding:24px 12px}
+  #gloss.open{display:flex}
+  .gbox{background:#fff;border-radius:12px;max-width:640px;width:100%;max-height:85vh;overflow:auto;box-shadow:0 10px 40px rgba(0,0,0,.25)}
+  .ghead{position:sticky;top:0;background:#fff;padding:12px 16px;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:center}
+  .ghead h2{font-size:.95rem;color:var(--pri)}
+  .ghead input{flex:1;border:1px solid var(--line);border-radius:7px;padding:6px 10px;font:inherit;font-size:.8rem}
+  .ghead button{background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--muted)}
+  #gtab{width:100%;border-collapse:collapse;font-size:.78rem}
+  #gtab td{padding:6px 14px;border-bottom:1px solid #eef2f6;vertical-align:top}
+  #gtab td:first-child{font-weight:700;color:var(--pri);white-space:nowrap;width:92px}
+  @media print{
+    header .hbtns,.btn,.acts,#gloss{display:none!important}
+    body{background:#fff}
+    .step{box-shadow:none;break-inside:avoid}
+    .step.done .opt:not(.sel){display:none}
+    details.info{display:none}
+  }
+  @media(max-width:520px){header h1{font-size:1.02rem}.q{font-size:.96rem}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="ico">&#x1F493;</div>
+  <div>
+    <h1>Sincope &amp; perdita di coscienza transitoria</h1>
+    <p>PDTA guidato a passi — PS / Medicina Interna · ESC 2018</p>
+  </div>
+  <div class="hbtns">
+    <button class="hbtn" id="b-gloss">&#x1F4D6; Glossario</button>
+    <button class="hbtn" id="b-print">&#x1F5A8;&#xFE0F; Stampa</button>
+    <button class="hbtn" id="b-reset">&#x21BB; Nuovo caso</button>
+  </div>
+</header>
+
+<main>
+  <div class="intro">
+    <b>Come si usa.</b> Compare una domanda alla volta: ogni risposta mostra subito l'esito sotto il campo e apre solo il passo successivo pertinente.
+    Per correggere una risposta basta sceglierne un'altra: i passi successivi vengono ricalcolati. I numeri in apice rimandano alla bibliografia.
+  </div>
+  <div id="flow"></div>
+
+  <div class="refs" id="refs"></div>
+</main>
+
+<footer>
+  <div class="auth">Ideato dal dr. C.Briglia (cesarebriglia@gmail.com) con l'apporto di Claude - Antropic</div>
+  <div>Versione 2.0 · creata il 22/11/2026</div>
+  <div style="margin-top:4px">Strumento di supporto per professionisti sanitari: non sostituisce il giudizio clinico né i protocolli aziendali.</div>
+</footer>
+
+<div id="gloss">
+  <div class="gbox">
+    <div class="ghead">
+      <h2>&#x1F4D6; Glossario</h2>
+      <input type="text" id="gsearch" placeholder="Cerca sigla o definizione…">
+      <button id="gclose" aria-label="Chiudi">&times;</button>
+    </div>
+    <table id="gtab"><tbody></tbody></table>
+  </div>
+</div>
+
+<script>
+"use strict";
+// =====================================================================
+//  GLOSSARIO — unica fonte per tabella e tooltip
+// =====================================================================
+const GLOSS = {
+  'AAA':'Aneurisma dell\'aorta addominale',
+  'ABCDE':'Airway, Breathing, Circulation, Disability, Exposure — valutazione primaria',
+  'ADD-RS':'Aortic Dissection Detection Risk Score',
+  'ALS':'Advanced Life Support',
+  'BAV':'Blocco atrioventricolare',
+  'BDZ':'Benzodiazepine',
+  'BNP':'Peptide natriuretico di tipo B',
+  'CSRS':'Canadian Syncope Risk Score',
+  'DOAC':'Anticoagulante orale diretto',
+  'ECG':'Elettrocardiogramma',
+  'EEG':'Elettroencefalogramma',
+  'EGA':'Emogasanalisi',
+  'EGSYS':'Evaluation of Guidelines in SYncope Study (score)',
+  'EP':'Embolia polmonare',
+  'EPS':'Studio elettrofisiologico endocavitario',
+  'ESA':'Emorragia subaracnoidea',
+  'ESC':'European Society of Cardiology',
+  'EV':'Endovena',
+  'FA':'Fibrillazione atriale',
+  'FC':'Frequenza cardiaca',
+  'FE':'Frazione di eiezione del ventricolo sinistro',
+  'FR':'Frequenza respiratoria',
+  'FV':'Fibrillazione ventricolare',
+  'GCS':'Glasgow Coma Scale (3–15)',
+  'GEU':'Gravidanza extrauterina',
+  'HV':'Intervallo His-ventricolo (studio elettrofisiologico)',
+  'ICD':'Defibrillatore impiantabile',
+  'ILR':'Implantable Loop Recorder — registratore impiantabile (batteria 2–4 anni circa)',
+  'IMA':'Infarto miocardico acuto',
+  'IO':'Ipotensione ortostatica',
+  'LQTS':'Sindrome del QT lungo',
+  'MMG':'Medico di medicina generale',
+  'MSA':'Atrofia multisistemica',
+  'NIHSS':'National Institutes of Health Stroke Scale (0–42)',
+  'OBI':'Osservazione breve intensiva',
+  'PA':'Pressione arteriosa',
+  'PAD':'Pressione arteriosa diastolica',
+  'PAS':'Pressione arteriosa sistolica',
+  'PdC':'Perdita di coscienza',
+  'PM':'Pacemaker',
+  'POCUS':'Ecografia point-of-care',
+  'POTS':'Sindrome da tachicardia ortostatica posturale',
+  'PS':'Pronto soccorso',
+  'QTc':'Intervallo QT corretto per la frequenza (Bazett; Fridericia preferibile a FC elevate)',
+  'SCA':'Sindrome coronarica acuta',
+  'SpO2':'Saturazione periferica di ossigeno',
+  'STEMI':'Infarto con sopraslivellamento del tratto ST',
+  'T-LOC':'Transient loss of consciousness — perdita di coscienza transitoria',
+  'TC':'Tomografia computerizzata',
+  'TIA':'Attacco ischemico transitorio',
+  'TPSV':'Tachicardia parossistica sopraventricolare',
+  'TV':'Tachicardia ventricolare',
+  'UTIC':'Unità di terapia intensiva cardiologica',
+  'VD':'Ventricolo destro',
+  'VS':'Ventricolo sinistro',
+  'WPW':'Sindrome di Wolff-Parkinson-White (preeccitazione)'
+};
+const ABBR_RE = new RegExp('(?<![\\w-])(' + Object.keys(GLOSS)
+  .sort((a,b)=>b.length-a.length)
+  .map(k=>k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|') + ')(?![\\w-])','g');
+
+// Avvolge le sigle in <abbr> agendo SOLO sui nodi di testo (niente annidamenti negli attributi)
+function abbrify(root){
+  const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  const nodes = [];
+  while (w.nextNode()) nodes.push(w.currentNode);
+  nodes.forEach(n => {
+    if (!n.parentElement || n.parentElement.closest('abbr,script,style,button.hbtn')) return;
+    const t = n.nodeValue;
+    ABBR_RE.lastIndex = 0;
+    if (!ABBR_RE.test(t)) return;
+    ABBR_RE.lastIndex = 0;
+    const frag = document.createDocumentFragment();
+    let last = 0, m;
+    while ((m = ABBR_RE.exec(t)) !== null) {
+      frag.append(t.slice(last, m.index));
+      const a = document.createElement('abbr');
+      a.title = GLOSS[m[1]]; a.textContent = m[1];
+      frag.append(a);
+      last = m.index + m[1].length;
+    }
+    frag.append(t.slice(last));
+    n.replaceWith(frag);
+  });
+}
+
+// =====================================================================
+//  BIBLIOGRAFIA
+// =====================================================================
+const REFS = [
+  'Brignole M, et al. 2018 ESC Guidelines for the diagnosis and management of syncope. Eur Heart J 2018;39:1883–1948 (+ Practical Instructions, Eur Heart J 2018;39:e43–e80). Linea guida ESC vigente; nuova edizione prevista nel 2028.',
+  'Shen WK, et al. 2017 ACC/AHA/HRS Guideline for the evaluation and management of patients with syncope. Circulation 2017;136:e60–e122.',
+  'NICE CG109. Transient loss of consciousness (“blackouts”) in over 16s. 2010, ultimo aggiornamento 21/11/2023.',
+  'Del Rosso A, et al. Clinical predictors of cardiac syncope at initial evaluation: the EGSYS score. Heart 2008;94:1620–6.',
+  'Thiruganasambandamoorthy V, et al. Development of the Canadian Syncope Risk Score. CMAJ 2016;188:E289–98; Multicenter ED validation of the CSRS. JAMA Intern Med 2020;180:737–44.',
+  'Sheldon R, et al. Historical criteria that distinguish syncope from seizures. J Am Coll Cardiol 2002;40:142–8.',
+  'Konstantinides SV, et al. 2019 ESC Guidelines for the diagnosis and management of acute pulmonary embolism. Eur Heart J 2020;41:543–603.',
+  'Byrne RA, et al. 2023 ESC Guidelines for the management of acute coronary syndromes. Eur Heart J 2023;44:3720–3826.',
+  'Zeppenfeld K, et al. 2022 ESC Guidelines for ventricular arrhythmias and the prevention of sudden cardiac death. Eur Heart J 2022;43:3997–4126.',
+  'Mazzolai L, et al. 2024 ESC Guidelines for the management of peripheral arterial and aortic diseases. Eur Heart J 2024;45:3538–3700.',
+  'Soar J, et al. European Resuscitation Council Guidelines 2021: Adult advanced life support. Resuscitation 2021;161:115–51.',
+  'Brugada J, et al. 2019 ESC Guidelines for the management of supraventricular tachycardia. Eur Heart J 2020;41:655–720.',
+  'Freeman R, et al. Consensus statement on the definition of orthostatic hypotension, neurally mediated syncope and POTS. Clin Auton Res 2011;21:69–72.',
+  'Spasovski G, et al. Clinical practice guideline on diagnosis and treatment of hyponatraemia. Eur J Endocrinol 2014;170:G1–47.',
+  'Glauser T, et al. Evidence-based guideline: treatment of convulsive status epilepticus in children and adults (AES). Epilepsy Curr 2016;16:48–61; Kapur J, et al. ESETT. N Engl J Med 2019;381:2103–13.',
+  'Krumholz A, et al. Evidence-based guideline: management of an unprovoked first seizure in adults (AAN/AES). Neurology 2015;84:1705–13.',
+  'Grossman SA, et al. Do outcomes of near syncope parallel syncope? Am J Emerg Med 2012;30:203–6.',
+  'Furlan L, et al. Syncope in the Emergency Department: a practical approach. J Clin Med 2024;13:3231.',
+  'Ministero della Salute. Linee di indirizzo nazionali sul triage intraospedaliero (codici 1–5), 2019.'
+];
+const R = n => '<sup class="r">['+n+']</sup>';
+
+// =====================================================================
+//  SCORE
+// =====================================================================
+const SCORES = {
+  calgary:{
+    name:'Calgary Syncope-Seizure Score', ref:6,
+    sub:'Anamnesi da paziente e testimoni. Punteggio ≥ 1 = crisi epilettica; < 1 = sincope.',
+    items:[
+      {id:'c1',t:'Al risveglio, morso della lingua',p:2},
+      {id:'c2',t:'Déjà vu o jamais vu prima dell\'episodio',p:1},
+      {id:'c3',t:'Stress emotivo associato alla perdita di coscienza',p:1},
+      {id:'c4',t:'Testimoni: rotazione del capo durante l\'episodio',p:1},
+      {id:'c5',t:'Testimoni: non responsività, posture anomale, scosse agli arti — oppure amnesia dell\'episodio',p:1},
+      {id:'c6',t:'Testimoni: confusione dopo l\'episodio',p:1},
+      {id:'c7',t:'Episodi di “testa leggera” / presincope',p:-2},
+      {id:'c8',t:'Sudorazione prima dell\'episodio',p:-2},
+      {id:'c9',t:'Episodio associato a stazione seduta o eretta prolungata',p:-2}
+    ],
+    interp:tot => tot >= 1
+      ? {l:'warn',h:'<b>Punteggio '+tot+' (≥ 1): favorisce una CRISI EPILETTICA.</b> Sensibilità e specificità ~94% nella casistica di derivazione'+R(6)+'.'}
+      : {l:'ok',h:'<b>Punteggio '+tot+' (< 1): favorisce una SINCOPE.</b> Le brevi mioclonie asincrone sono frequenti nella sincope e non indicano epilessia.'}
+  },
+  spesi:{
+    name:'sPESI — PESI semplificato', ref:7,
+    sub:'1 punto per voce. Stratifica la mortalità a 30 giorni nell\'EP emodinamicamente stabile.',
+    items:[
+      {id:'p1',t:'Età > 80 anni',p:1},
+      {id:'p2',t:'Neoplasia attiva',p:1},
+      {id:'p3',t:'Malattia cardiopolmonare cronica (scompenso cardiaco o pneumopatia cronica) — voce unica',p:1},
+      {id:'p4',t:'FC ≥ 110 bpm',p:1},
+      {id:'p5',t:'PAS < 100 mmHg',p:1},
+      {id:'p6',t:'SpO2 < 90%',p:1}
+    ],
+    interp:tot => tot === 0
+      ? {l:'ok',h:'<b>sPESI 0: rischio basso</b> (mortalità a 30 giorni ~1%). Se anche VD e troponina sono normali e mancano controindicazioni (criteri Hestia), dimissione precoce possibile con DOAC'+R(7)+'.'}
+      : {l:'warn',h:'<b>sPESI '+tot+' (≥ 1): rischio INTERMEDIO</b> (non “alto”: l\'alto rischio è definito dall\'instabilità emodinamica). Valutare disfunzione VD (eco/angio-TC) e troponina: se entrambe alterate = intermedio-alto → ricovero monitorato, anticoagulazione parenterale, trombolisi solo di salvataggio se peggiora'+R(7)+'.'}
+  },
+  egsys:{
+    name:'EGSYS score', ref:4,
+    sub:'Probabilità di sincope cardiaca dall\'anamnesi. Supporto, non sostituto della valutazione ESC.',
+    items:[
+      {id:'e1',t:'Palpitazioni prima della sincope',p:4},
+      {id:'e2',t:'ECG anomalo e/o cardiopatia nota',p:3},
+      {id:'e3',t:'Sincope durante sforzo',p:3},
+      {id:'e4',t:'Sincope in posizione supina',p:2},
+      {id:'e5',t:'Prodromi autonomici (nausea, vomito)',p:-1},
+      {id:'e6',t:'Fattori predisponenti/precipitanti (ambiente caldo e affollato, ortostatismo prolungato, paura, dolore, emozione)',p:-1}
+    ],
+    interp:tot => tot >= 3
+      ? {l:'danger',h:'<b>EGSYS '+tot+' (≥ 3): sincope cardiaca probabile.</b> Sensibilità 95%/92%, specificità 61%/69% (derivazione/validazione); mortalità nel follow-up 17–21% contro 2–3% con score < 3'+R(4)+'.'}
+      : {l:'ok',h:'<b>EGSYS '+tot+' (< 3): sincope cardiaca improbabile</b> (alto valore predittivo negativo)'+R(4)+'.'}
+  },
+  csrs:{
+    name:'Canadian Syncope Risk Score (CSRS)', ref:5,
+    sub:'Rischio di evento grave a 30 giorni. Da usare dopo la valutazione in PS, se non è già emersa una causa grave. Spuntare al massimo una delle due diagnosi finali.',
+    items:[
+      {id:'k1',t:'Predisposizione a sintomi vasovagali (ambiente caldo/affollato, ortostatismo prolungato, paura, emozione, dolore)',p:-1},
+      {id:'k2',t:'Storia di cardiopatia (coronaropatia, FA/flutter, scompenso, valvulopatia)',p:1},
+      {id:'k3',t:'PAS < 90 o > 180 mmHg in qualsiasi misurazione in PS',p:2},
+      {id:'k4',t:'Troponina > 99° percentile',p:2},
+      {id:'k5',t:'Asse del QRS anomalo (< −30° o > 100°)',p:1},
+      {id:'k6',t:'Durata del QRS > 130 ms',p:1},
+      {id:'k7',t:'QTc > 480 ms',p:2},
+      {id:'k8',t:'Diagnosi in PS: sincope vasovagale',p:-2,x:'dx'},
+      {id:'k9',t:'Diagnosi in PS: sincope cardiaca',p:2,x:'dx'}
+    ],
+    interp:tot => {
+      if (tot <= -2) return {l:'ok',h:'<b>CSRS '+tot+': rischio MOLTO BASSO.</b> Eventi gravi a 30 gg ≤ 1% nella validazione: dimissione generalmente appropriata'+R(5)+'.'};
+      if (tot <= 0)  return {l:'ok',h:'<b>CSRS '+tot+': rischio BASSO.</b> Eventi gravi a 30 gg ≤ 1% nella validazione: dimissione generalmente appropriata'+R(5)+'.'};
+      if (tot <= 3)  return {l:'warn',h:'<b>CSRS '+tot+': rischio MEDIO.</b> Osservazione e approfondimenti secondo giudizio clinico'+R(5)+'.'};
+      if (tot <= 5)  return {l:'danger',h:'<b>CSRS '+tot+': rischio ALTO</b> (~20% eventi gravi a 30 gg): considerare breve ricovero con monitoraggio'+R(5)+'.'};
+      return {l:'danger',h:'<b>CSRS '+tot+': rischio MOLTO ALTO</b> (~50% eventi gravi a 30 gg): ricovero con monitoraggio'+R(5)+'.'};
+    }
+  }
+};
+
+// =====================================================================
+//  TESTI RIUTILIZZATI
+// =====================================================================
+const TXT = {
+  guida: '<h3>&#x1F697; Idoneità alla guida (ESC 2018'+R(1)+')</h3><ul>'
+    +'<li><b>Sincope riflessa</b>: episodio singolo/lieve → nessuna restrizione (patente gruppo 1); recidivante e grave → guida dopo controllo dei sintomi. Gruppo 2 (professionale): restrizioni più severe.</li>'
+    +'<li><b>Sincope inspiegata</b>, gruppo 1: nessuna restrizione salvo assenza di prodromi, evento alla guida o cardiopatia strutturale severa; gruppo 2: solo dopo diagnosi e terapia.</li>'
+    +'<li><b>Sincope aritmica</b>: guida dopo terapia efficace documentata; dopo impianto di PM circa 1 settimana per il gruppo 1.</li>'
+    +'<li>In Italia l\'idoneità è regolata dal Codice della Strada (Commissione Medica Locale): informare il paziente e annotarlo in lettera.</li></ul>',
+  dimissione: '<h3>&#x1F4C4; Lettera di dimissione</h3><ul>'
+    +'<li>Diagnosi (certa, probabile o inspiegata), criteri di rischio valutati, ECG allegato.</li>'
+    +'<li>Istruzioni scritte: riconoscere i prodromi, sdraiarsi subito, idratazione, revisione farmaci.</li>'
+    +'<li>Quando tornare: sincope da sforzo o da supino, palpitazioni, dolore toracico, trauma.</li>'
+    +'<li>Follow-up con MMG; ambulatorio sincope/cardiologia se diagnosi incerta o recidive.</li></ul>',
+  abcde: '<ul>'
+    +'<li><b>A</b> — via aerea pervia; posizione laterale di sicurezza se non sospetto trauma cervicale.</li>'
+    +'<li><b>B</b> — O₂ se SpO2 < 94% (obiettivo 94–98%; 88–92% se rischio ipercapnia).</li>'
+    +'<li><b>C</b> — monitor-defibrillatore, 2 accessi venosi, ECG 12 derivazioni, cristalloidi 500 mL in bolo se ipoperfusione senza congestione; POCUS.</li>'
+    +'<li><b>D</b> — GCS, pupille, glicemia capillare (se < 70 mg/dL con sintomi: glucosio 33% 50 mL EV o glucosio 10% 150–200 mL).</li>'
+    +'<li><b>E</b> — esposizione: traumi, sanguinamenti, porpora, segni di tossici.</li></ul>'
+};
+
+// =====================================================================
+//  PERCORSO — ogni opzione: t testo, e esito {l,h}, next, set (flag)
+// =====================================================================
+const NODES = {
+
+start:{sez:'1 · Inquadramento',
+  q:'Che tipo di evento ha presentato il paziente?',
+  hint:'Sincope = perdita di coscienza transitoria da ipoperfusione cerebrale globale: esordio rapido, breve durata, recupero spontaneo e completo'+R(1)+'.',
+  opts:[
+    {t:'Perdita di coscienza transitoria con recupero spontaneo e completo',
+     e:{l:'info',h:'Compatibile con T-LOC. Passo successivo: distinguere la sincope dalle forme non sincopali.'},next:'nonsync'},
+    {t:'Presincope: prodromi senza vera perdita di coscienza',
+     e:{l:'warn',h:'Va stratificata come la sincope: in PS la presincope mostra un rischio di eventi avversi paragonabile'+R(17)+'.'},
+     set:f=>{f.presinc=true;},next:'stab'},
+    {t:'Perdita di coscienza prolungata (> 5 min), recupero incompleto o confusione persistente',
+     e:{l:'danger',h:'<b>Non è una sincope.</b> Ricerca urgente di causa neurologica, metabolica, tossica o di shock; GCS seriato.'},next:'prol'},
+    {t:'Perdita di coscienza conseguente a trauma cranico',
+     e:{l:'warn',h:'Commozione cerebrale, non sincope: percorso trauma cranico. Se si sospetta che una sincope abbia causato la caduta, valutare entrambi.'},next:'end_trauma'}
+  ]},
+
+nonsync:{sez:'1 · Inquadramento',
+  q:'Ci sono elementi a favore di una perdita di coscienza NON sincopale?',
+  info:{title:'Sincope o crisi epilettica: elementi distintivi',html:
+   '<table class="t"><tr><th></th><th>Sincope</th><th>Crisi epilettica</th></tr>'
+   +'<tr><td>Fattore scatenante</td><td>Frequente (ortostatismo, emozione, dolore)</td><td>Raro (privazione di sonno, luci intermittenti)</td></tr>'
+   +'<tr><td>Prodromi</td><td>Calore, sudorazione, nausea, offuscamento visivo</td><td>Aura (déjà vu, epigastrica, olfattiva)</td></tr>'
+   +'<tr><td>Movimenti</td><td>Mioclonie brevi (&lt; 15 s), asincrone, dopo la caduta</td><td>Tonico-cloniche sincrone, prolungate, spesso all\'esordio</td></tr>'
+   +'<tr><td>Morso della lingua</td><td>Raro, punta</td><td>Laterale, più specifico</td></tr>'
+   +'<tr><td>Dopo l\'evento</td><td>Riorientamento rapido</td><td>Confusione e sonnolenza per minuti-ore</td></tr></table>'},
+  opts:[
+    {t:'No: la dinamica è compatibile con sincope',e:{l:'ok',h:'Proseguire con la stratificazione del rischio secondo ESC 2018'+R(1)+'.'},next:'stab'},
+    {t:'Sospetta crisi epilettica (clonie prolungate, morso laterale, confusione post-critica)',
+     e:{l:'info',h:'Calcolare il Calgary Syncope-Seizure Score per orientarsi'+R(6)+'.'},next:'calgary'},
+    {t:'Sospetta pseudosincope psicogena (occhi chiusi, lunga durata, episodi molto frequenti)',
+     e:{l:'info',h:'Diagnosi di esclusione: completare comunque ECG e stratificazione. Utili la videoregistrazione degli episodi da parte dei familiari e il tilt test con monitoraggio video/EEG (ESC 2018, IIa)'+R(1)+'.'},
+     set:f=>{f.psy=true;},next:'stab'},
+    {t:'Ipoglicemia documentata, intossicazione o altra causa metabolica evidente',
+     e:{l:'warn',h:'Perdita di coscienza di origine metabolica/tossica: trattare la causa.'},next:'prol'}
+  ]},
+
+calgary:{sez:'1 · Inquadramento',type:'score',score:'calgary',
+  q:'Calgary Syncope-Seizure Score',
+  next:tot => tot >= 1 ? 'epi' : 'stab'},
+
+epi:{sez:'1 · Neurologia',
+  q:'Situazione neurologica attuale?',
+  opts:[
+    {t:'Crisi in atto o crisi ripetute senza recupero (stato di male)',e:{l:'danger',h:'Emergenza: trattamento a tempo (benzodiazepina entro 5 min).'},next:'end_status'},
+    {t:'Primo episodio, ora recuperato',e:{l:'info',h:'Primo episodio: esami per cause sintomatiche acute e consulenza neurologica.'},next:'end_epi_first'},
+    {t:'Epilessia nota in terapia (crisi “breakthrough”)',e:{l:'info',h:'Ricercare la causa della crisi intercorrente.'},next:'end_epi_bt'}
+  ]},
+
+stab:{sez:'2 · Stabilità',
+  q:'Il paziente è emodinamicamente stabile?',
+  hint:'Valutare ABCDE, PA, FC, FR, SpO2, GCS, glicemia capillare; ECG 12 derivazioni subito.',
+  info:{title:'Valutazione primaria ABCDE',html:TXT.abcde},
+  opts:[
+    {t:'No: ipotensione/shock, aritmia in atto, distress respiratorio o coscienza alterata',
+     e:{l:'danger',h:'<b>Codice 1 (rosso)</b>'+R(19)+': ABCDE, monitor-defibrillatore, 2 accessi venosi, attivare il team dell\'emergenza. Cercare subito aritmia, SCA, EP, dissezione, tamponamento, emorragia.'},next:'emerg'},
+    {t:'Sì: parametri stabili, paziente vigile e orientato',
+     e:{l:'ok',h:'Proseguire con la ricerca di cause acute gravi.'},next:'acute'}
+  ]},
+
+emerg:{sez:'2 · Emergenza',
+  q:'Dopo valutazione primaria, ECG e POCUS, quale causa emerge?',
+  opts:[
+    {t:'Aritmia in atto (bradi- o tachiaritmia)',e:{l:'danger',h:'Trattare l\'aritmia prima di qualsiasi altro accertamento.'},next:'arr'},
+    {t:'STEMI',e:{l:'danger',h:'Attivare la rete STEMI.'},next:'end_stemi'},
+    {t:'Sospetta embolia polmonare',e:{l:'danger',h:'Valutare lo stato emodinamico.'},next:'pe'},
+    {t:'Sospetta dissezione aortica',e:{l:'danger',h:'Non anticoagulare; angio-TC aorta urgente.'},next:'end_aod'},
+    {t:'Tamponamento cardiaco (versamento con collasso delle sezioni destre)',e:{l:'danger',h:'Pericardiocentesi urgente.'},next:'end_tamp'},
+    {t:'Emorragia (digestiva, rottura di AAA, GEU, traumatica)',e:{l:'danger',h:'Shock emorragico: controllo della fonte.'},next:'end_bleed'},
+    {t:'Stabilizzato, nessuna causa evidente',e:{l:'warn',h:'Proseguire la stratificazione: l\'instabilità all\'arrivo resta un criterio di alto rischio.'},
+     set:f=>{f.major.push('Instabilità emodinamica all\'arrivo');},next:'acute'}
+  ]},
+
+acute:{sez:'3 · Cause acute',
+  q:'Sintomi associati che suggeriscono una causa acuta grave?',
+  hint:'Criteri maggiori ESC 2018: dolore toracico, dispnea, dolore addominale o cefalea di nuova insorgenza'+R(1)+'.',
+  opts:[
+    {t:'Dolore toracico o dispnea di nuova insorgenza',
+     e:{l:'danger',h:'Escludere SCA, EP, dissezione aortica, tamponamento: ECG seriati, hs-troponina 0/1 h, POCUS, D-dimero secondo probabilità clinica.'},next:'chest'},
+    {t:'Cefalea improvvisa e intensa o deficit neurologico focale',
+     e:{l:'danger',h:'Sospetta ESA o ictus: TC encefalo urgente.'},next:'end_neuro'},
+    {t:'Dolore addominale/lombare, ematemesi o melena',
+     e:{l:'danger',h:'Sospetta emorragia digestiva, rottura di AAA o GEU.'},next:'end_bleed'},
+    {t:'Nessuno di questi',e:{l:'ok',h:'Nessun criterio maggiore dai sintomi associati. Passo successivo: ECG.'},next:'ecg'}
+  ]},
+
+chest:{sez:'3 · Cause acute',
+  q:'Esito della valutazione mirata (ECG, hs-troponina, POCUS, imaging)?',
+  info:{title:'Elementi chiave',html:'<ul>'
+    +'<li><b>SCA</b>: hs-troponina con algoritmo 0/1 h (o 0/2 h)'+R(8)+'.</li>'
+    +'<li><b>EP</b>: probabilità clinica (Wells/Ginevra); D-dimero con soglia aggiustata per età (età × 10 µg/L oltre i 50 anni) solo se probabilità non alta; altrimenti angio-TC'+R(7)+'. I criteri PERC valgono solo con bassa probabilità clinica.</li>'
+    +'<li><b>Dissezione</b>: ADD-RS; differenza di PAS tra le braccia > 20 mmHg, deficit di polso, dolore lacerante; ADD-RS ≤ 1 con D-dimero < 500 ng/mL rende improbabile la diagnosi'+R(10)+'.</li>'
+    +'<li><b>POCUS</b>: funzione VS, dilatazione VD, versamento pericardico, aorta.</li></ul>'},
+  opts:[
+    {t:'STEMI',e:{l:'danger',h:'Rete STEMI.'},next:'end_stemi'},
+    {t:'SCA senza sopraslivellamento ST (hs-troponina elevata/dinamica)',e:{l:'danger',h:'Percorso SCA-NSTE.'},next:'end_nste'},
+    {t:'Embolia polmonare sospetta o confermata',e:{l:'danger',h:'Valutare lo stato emodinamico.'},next:'pe'},
+    {t:'Dissezione aortica sospetta o confermata',e:{l:'danger',h:'Percorso dissezione.'},next:'end_aod'},
+    {t:'Accertamenti negativi',e:{l:'warn',h:'Causa acuta esclusa. Il dolore toracico resta un elemento di rischio: proseguire con l\'ECG.'},
+     set:f=>{f.minor.push('Dolore toracico con accertamenti iniziali negativi');},next:'ecg'}
+  ]},
+
+pe:{sez:'3 · Embolia polmonare',
+  q:'Stato emodinamico in sospetta o confermata EP?',
+  opts:[
+    {t:'Instabile: arresto cardiaco, shock ostruttivo o ipotensione persistente (PAS < 90 mmHg)',
+     e:{l:'danger',h:'<b>EP ad ALTO rischio.</b>'},next:'end_pe_high'},
+    {t:'Stabile',e:{l:'info',h:'Anticoagulazione parenterale subito se probabilità clinica alta/intermedia, in attesa dell\'angio-TC (ESC 2019, I)'+R(7)+'. Calcolare lo sPESI.'},next:'spesi'}
+  ]},
+
+spesi:{sez:'3 · Embolia polmonare',type:'score',score:'spesi',q:'sPESI',next:()=>'end_pe'},
+
+arr:{sez:'4 · Aritmia',
+  q:'Quale aritmia?',
+  opts:[
+    {t:'Bradicardia severa / BAV avanzato / pause',
+     e:{l:'danger',h:'<ul><li>Atropina 0,5 mg EV ogni 3–5 min fino a 3 mg'+R(11)+' (inefficace nel BAV sotto-hisiano e nel cuore trapiantato).</li><li>Se inefficace: adrenalina 2–10 µg/min EV o isoprenalina 5 µg/min; pacing transcutaneo, poi transvenoso temporaneo.</li><li>Cercare cause reversibili: iperkaliemia, farmaci (beta-bloccanti, calcioantagonisti, digossina), ischemia inferiore.</li></ul>'},
+     set:f=>{f.arrType='brady';},next:'end_arr'},
+    {t:'Tachicardia ventricolare monomorfa con polso',
+     e:{l:'danger',h:'<ul><li><b>Instabile</b>: cardioversione elettrica sincronizzata in sedazione (fino a 3 tentativi).</li><li><b>Tollerata</b>: cardioversione elettrica di prima scelta se rischio anestesiologico basso (ESC 2022, I)'+R(9)+'; in alternativa amiodarone 300 mg EV in 10–20 min, poi 900 mg/24 h'+R(11)+'.</li></ul>'},
+     set:f=>{f.arrType='tv';},next:'end_arr'},
+    {t:'Torsione di punta (QT lungo)',
+     e:{l:'danger',h:'<ul><li>Magnesio solfato 2 g EV in 10 min'+R(11)+' (bolo se arresto).</li><li>Potassio a 4,5–5 mmol/L; sospendere i farmaci che allungano il QT.</li><li>Recidive bradicardia-dipendenti: pacing a frequenza elevata o isoprenalina (non nel QT lungo congenito adrenergico-dipendente).</li></ul>'},
+     set:f=>{f.arrType='tdp';},next:'end_arr'},
+    {t:'Tachicardia sopraventricolare / FA preeccitata (WPW)',
+     e:{l:'danger',h:'<ul><li>Instabile: cardioversione elettrica sincronizzata.</li><li>TPSV stabile: manovre vagali (Valsalva modificata), poi adenosina 6 → 12 → 18 mg EV rapida'+R(12)+'.</li><li><b>FA preeccitata</b>: NON adenosina, digossina, verapamil/diltiazem, beta-bloccanti né amiodarone EV; cardioversione elettrica (o farmacologica con ibutilide/procainamide se disponibili)'+R(12)+'.</li></ul>'},
+     set:f=>{f.arrType='svt';},next:'end_arr'},
+    {t:'FV / TV senza polso',
+     e:{l:'danger',h:'Arresto cardiaco: RCP e defibrillazione immediata (bifasico ≥ 150 J), adrenalina 1 mg dopo il 3° shock e poi ogni 3–5 min, amiodarone 300 mg dopo il 3° shock'+R(11)+'.'},
+     set:f=>{f.arrType='arrest';},next:'end_arr'}
+  ]},
+
+ecg:{sez:'4 · ECG',
+  q:'ECG a 12 derivazioni: quale quadro?',
+  info:{title:'Criteri ECG ad alto rischio (ESC 2018)',html:
+    '<b>Maggiori</b> (alto rischio di per sé):<ul>'
+    +'<li>Ischemia acuta</li><li>BAV II grado Mobitz 2 o BAV III grado</li><li>FA lenta (&lt; 40 bpm)</li>'
+    +'<li>Bradicardia sinusale &lt; 40 bpm, blocchi seno-atriali ripetuti o pause &gt; 3 s da sveglio, in assenza di allenamento fisico</li>'
+    +'<li>Blocco di branca, disturbi di conduzione intraventricolare, ipertrofia ventricolare o onde Q compatibili con cardiopatia ischemica o cardiomiopatia</li>'
+    +'<li>TV sostenuta e non sostenuta</li><li>Malfunzionamento di PM/ICD</li><li>Pattern di Brugada tipo 1</li><li>QTc &gt; 460 ms su ECG ripetuti (sospetto QT lungo)</li></ul>'
+    +'<b>Minori</b> (alto rischio solo se l\'anamnesi suggerisce sincope aritmica):<ul>'
+    +'<li>BAV II grado Mobitz 1 e BAV I grado con PR molto lungo</li><li>Bradicardia sinusale 40–50 bpm o FA lenta 40–50 bpm asintomatiche</li>'
+    +'<li>TPSV o FA parossistica</li><li>QRS preeccitato</li><li>QTc breve (≤ 340 ms)</li><li>Pattern di Brugada atipico</li>'
+    +'<li>T negative nelle precordiali destre, onde epsilon (sospetta cardiomiopatia aritmogena)</li></ul>'+R(1)},
+  opts:[
+    {t:'Aritmia maggiore in atto o documentata (BAV avanzato, FA < 40 bpm, bradicardia < 40 o pause > 3 s da sveglio, TV)',
+     e:{l:'danger',h:'Criterio maggiore: trattare l\'aritmia.'},set:f=>{f.major.push('Aritmia maggiore all\'ECG');},next:'arr'},
+    {t:'Anomalia maggiore senza aritmia in atto (ischemia, blocco di branca, ipertrofia/onde Q, Brugada tipo 1, QTc > 460 ms ripetuto, malfunzionamento PM/ICD)',
+     e:{l:'danger',h:'<b>Criterio maggiore ESC 2018 → alto rischio.</b> Specificare l\'anomalia per gli accertamenti mirati.'},
+     set:f=>{f.major.push('Anomalia ECG maggiore');},next:'ecgmaj'},
+    {t:'Anomalia minore (BAV I con PR molto lungo o Mobitz 1, bradicardia/FA 40–50 bpm, TPSV o FA parossistica, preeccitazione, QTc ≤ 340 ms, Brugada atipico, T negative V1–V3 / onda epsilon)',
+     e:{l:'warn',h:'Criterio minore: diventa di alto rischio se l\'anamnesi è suggestiva di sincope aritmica.'},
+     set:f=>{f.minorECG=true;f.minor.push('Anomalia ECG minore');},next:'hist'},
+    {t:'ECG normale',e:{l:'ok',h:'ECG senza criteri di rischio. Passo successivo: anamnesi dell\'episodio.'},next:'hist'}
+  ]},
+
+ecgmaj:{sez:'4 · ECG',
+  q:'Quale anomalia maggiore?',
+  opts:[
+    {t:'Ischemia acuta',e:{l:'danger',h:'Percorso SCA: hs-troponina 0/1 h, cardiologo.'},next:'end_nste'},
+    {t:'Blocco di branca / bifascicolare / QRS ≥ 120 ms',
+     e:{l:'danger',h:'Sospetta bradiaritmia intermittente: telemetria. Se sincope inspiegata: EPS (IIa); HV ≥ 70 ms o BAV indotto → PM (I); se EPS negativo → ILR'+R(1)+'.'},
+     set:f=>{f.ecgDet='Blocco di branca: telemetria, EPS (IIa); HV ≥ 70 ms → PM; EPS negativo → ILR.';},next:'end_high'},
+    {t:'Ipertrofia ventricolare o onde Q (cardiopatia ischemica / cardiomiopatia)',
+     e:{l:'danger',h:'Ecocardiogramma urgente. Con IMA pregresso o cicatrice e sincope inspiegata dopo esami non invasivi: EPS (I); TV monomorfa inducibile → ICD'+R(1)+R(9)+'.'},
+     set:f=>{f.ecgDet='Cardiopatia ischemica/cardiomiopatia: eco urgente; EPS (I) se IMA pregresso/cicatrice; TV inducibile → ICD.';},next:'end_high'},
+    {t:'Pattern di Brugada tipo 1',
+     e:{l:'danger',h:'Consulenza aritmologica: Brugada tipo 1 spontaneo con sincope aritmica → ICD da considerare (ESC 2022, IIa)'+R(9)+'. Evitare i farmaci controindicati (brugadadrugs.org), trattare subito la febbre.'},
+     set:f=>{f.ecgDet='Brugada tipo 1: consulenza aritmologica, ICD da considerare se sincope aritmica; evitare farmaci controindicati, antipiretici.';},next:'end_high'},
+    {t:'QTc > 460 ms su ECG ripetuti',
+     e:{l:'danger',h:'QTc > 500 ms = alto rischio di torsione di punta. Sospendere i farmaci che allungano il QT (crediblemeds.org), portare K⁺ a 4,5–5 mmol/L e correggere Mg²⁺; telemetria; consulenza aritmologica (QT lungo + sincope: beta-bloccante, ICD da valutare)'+R(9)+'.'},
+     set:f=>{f.ecgDet='QT lungo: telemetria, stop farmaci QT-prolunganti, K⁺ 4,5–5 e Mg²⁺, consulenza aritmologica.';},next:'end_high'},
+    {t:'Malfunzionamento di PM/ICD',
+     e:{l:'danger',h:'Controllo urgente del dispositivo (tecnico/aritmologo); monitoraggio continuo.'},
+     set:f=>{f.ecgDet='Malfunzionamento PM/ICD: interrogazione urgente del dispositivo.';},next:'end_high'}
+  ]},
+
+hist:{sez:'5 · Anamnesi',
+  q:'Come si è presentato l\'episodio?',
+  hint:'Raccogliere da paziente e testimoni: posizione, attività, prodromi, fattori scatenanti, recupero.',
+  info:{title:'Caratteristiche anamnestiche (ESC 2018)',html:
+    '<b>Basso rischio</b>: prodromi tipici della sincope riflessa; dopo stimolo improvviso spiacevole (vista, rumore, odore, dolore); dopo ortostatismo prolungato o in ambienti caldi e affollati; durante o dopo il pasto; da tosse, minzione, defecazione; con rotazione del capo o pressione sul seno carotideo; alzandosi in piedi.<br>'
+    +'<b>Alto rischio maggiore</b>: durante sforzo o in posizione supina; palpitazioni improvvise subito seguite da sincope.<br>'
+    +'<b>Alto rischio minore</b> (solo con cardiopatia strutturale o ECG anomalo): nessun prodromo o prodromo &lt; 10 s; storia familiare di morte improvvisa giovanile; sincope da seduto'+R(1)+'.'},
+  opts:[
+    {t:'Durante sforzo fisico o in posizione supina',
+     e:{l:'danger',h:'<b>Criterio maggiore → alto rischio.</b> Sospetta causa aritmica o ostruttiva (stenosi aortica, cardiomiopatia ipertrofica). La sincope <i>dopo</i> lo sforzo è più spesso riflessa.'},
+     set:f=>{f.major.push('Sincope da sforzo o in posizione supina');f.exert=true;},next:'end_high'},
+    {t:'Palpitazioni improvvise subito seguite da perdita di coscienza',
+     e:{l:'danger',h:'<b>Criterio maggiore → alto rischio</b> (sospetta tachiaritmia).'},
+     set:f=>{f.major.push('Palpitazioni improvvise subito seguite da sincope');},next:'end_high'},
+    {t:'Prodromi tipici (calore, sudorazione, nausea, pallore) con un fattore scatenante',
+     e:{l:'ok',h:'Quadro suggestivo di sincope riflessa. Precisare il fattore scatenante.'},set:f=>{f.pattern='riflessa';},next:'trigger'},
+    {t:'Subito dopo essersi alzato in piedi (da supino o seduto)',
+     e:{l:'info',h:'Sospetta ipotensione ortostatica: eseguire il test ortostatico attivo.'},set:f=>{f.pattern='ortostatica';},next:'ortho'},
+    {t:'Senza prodromi o con prodromo brevissimo (< 10 s), oppure da seduto',
+     e:{l:'warn',h:'Criterio minore: diventa di alto rischio se associato a cardiopatia strutturale o ECG anomalo.'},
+     set:f=>{f.minorH=true;f.pattern='incerta';f.minor.push('Assenza di prodromi / prodromo breve o sincope da seduto');},next:'hx'},
+    {t:'Dinamica non ricostruibile (nessun testimone, amnesia)',
+     e:{l:'warn',h:'Sincope non classificabile dall\'anamnesi: la stratificazione si basa su ECG, anamnesi patologica ed esame obiettivo.'},
+     set:f=>{f.pattern='incerta';},next:'hx'}
+  ]},
+
+trigger:{sez:'5 · Anamnesi',
+  q:'Qual è stato il fattore scatenante?',
+  opts:[
+    {t:'Paura, dolore, vista del sangue, procedura medica',e:{l:'ok',h:'Sincope vasovagale emozionale.'},set:f=>{f.sub='vasovagale emozionale';},next:'hx'},
+    {t:'Ortostatismo prolungato, ambiente caldo e affollato',e:{l:'ok',h:'Sincope vasovagale ortostatica.'},set:f=>{f.sub='vasovagale ortostatica';},next:'hx'},
+    {t:'Tosse, starnuto, minzione, defecazione, deglutizione, dopo il pasto o subito dopo lo sforzo',
+     e:{l:'ok',h:'Sincope situazionale. Attenzione: la sincope <i>durante</i> lo sforzo non è riflessa.'},set:f=>{f.sub='situazionale';},next:'hx'},
+    {t:'Rotazione del capo, pressione sul collo (colletto stretto, rasatura)',
+     e:{l:'info',h:'Sospetta sindrome del seno carotideo: massaggio del seno carotideo se età > 40 anni (ESC 2018, I), evitandolo se TIA/ictus negli ultimi 3 mesi o soffi carotidei (salvo eco-Doppler negativo)'+R(1)+'.'},
+     set:f=>{f.sub='seno carotideo';f.csn=true;},next:'hx'}
+  ]},
+
+ortho:{sez:'5 · Ipotensione ortostatica',
+  q:'Test ortostatico attivo (PA e FC dopo 5 min supino, poi in piedi per 3 min): risultato?',
+  opts:[
+    {t:'Calo PAS ≥ 20 mmHg o PAD ≥ 10 mmHg, oppure PAS < 90 mmHg, con riproduzione dei sintomi',
+     e:{l:'ok',h:'<b>Sincope da ipotensione ortostatica confermata</b> (ESC 2018, I)'+R(1)+R(13)+'.'},set:f=>{f.ohConf=true;},next:'orthocause'},
+    {t:'Calo pressorio significativo ma senza sintomi',
+     e:{l:'warn',h:'Ipotensione ortostatica probabile: considerare anche altre cause dell\'episodio.'},next:'orthocause'},
+    {t:'Paziente iperteso in clinostatismo con calo della PAS ≥ 30 mmHg',
+     e:{l:'ok',h:'Nell\'ipertensione supina il criterio è un calo di PAS ≥ 30 mmHg'+R(13)+'.'},set:f=>{f.ohConf=true;f.supHtn=true;},next:'orthocause'},
+    {t:'Aumento della FC ≥ 30 bpm (o > 120 bpm) senza ipotensione',
+     e:{l:'info',h:'Possibile POTS: raramente causa sincope; valutazione specialistica ambulatoriale.'},set:f=>{f.pattern='incerta';f.pots=true;},next:'hx'},
+    {t:'Test negativo',
+     e:{l:'warn',h:'Non esclude un\'ipotensione ortostatica ritardata o intermittente: ripetere le misure, considerare tilt test (IIa) o monitoraggio pressorio delle 24 h'+R(1)+'.'},
+     set:f=>{f.pattern='incerta';},next:'hx'}
+  ]},
+
+orthocause:{sez:'5 · Ipotensione ortostatica',
+  q:'Causa prevalente dell\'ipotensione ortostatica?',
+  opts:[
+    {t:'Farmaci (alfa-litici, diuretici, nitrati, vasodilatatori, antidepressivi triciclici, antipsicotici, levodopa)',
+     e:{l:'ok',h:'Ridurre o sospendere i farmaci ipotensivanti (ESC 2018, IIa), senza togliere quelli indispensabili privi di alternativa'+R(1)+'.'},set:f=>{f.ohCause='farmaci';},next:'hx'},
+    {t:'Ipovolemia (disidratazione, vomito, diarrea, febbre)',
+     e:{l:'ok',h:'Reidratazione (cristalloidi 500–1000 mL EV se l\'idratazione orale non è possibile) e trattamento della causa. Escludere un sanguinamento occulto (emocromo, esplorazione rettale).'},set:f=>{f.ohCause='ipovolemia';},next:'hx'},
+    {t:'Disautonomia neurogena (diabete, Parkinson, MSA, amiloidosi, neuropatie)',
+     e:{l:'warn',h:'IO neurogena: misure fisiche, midodrina o fludrocortisone (IIa), consulenza neurologica; ricercare ipertensione supina'+R(1)+'.'},set:f=>{f.ohCause='neurogena';},next:'hx'},
+    {t:'Multifattoriale nell\'anziano / non identificata',
+     e:{l:'info',h:'Revisione della terapia, idratazione, valutazione del rischio di caduta.'},set:f=>{f.ohCause='multifattoriale';},next:'hx'}
+  ]},
+
+hx:{sez:'5 · Anamnesi patologica',
+  q:'Cardiopatia strutturale o coronarica severa nota?',
+  hint:'Scompenso cardiaco, FE ridotta, IMA pregresso, cardiomiopatia, valvulopatia severa.',
+  opts:[
+    {t:'Sì',e:{l:'danger',h:'<b>Criterio maggiore → alto rischio</b>'+R(1)+'.'},set:f=>{f.major.push('Cardiopatia strutturale o coronarica severa');},next:'end_high'},
+    {t:'No, ma storia familiare di morte improvvisa giovanile o di cardiopatia ereditaria',
+     e:{l:'warn',h:'Criterio minore: alto rischio se associato ad anomalie ECG.'},set:f=>{f.minorH=true;f.minor.push('Storia familiare di morte improvvisa giovanile');},next:'exam'},
+    {t:'No',e:{l:'ok',h:'Nessuna cardiopatia severa nota. Passo successivo: esame obiettivo.'},next:'exam'}
+  ]},
+
+exam:{sez:'6 · Esame obiettivo',
+  q:'All\'esame obiettivo è presente uno di questi reperti?',
+  opts:[
+    {t:'PAS < 90 mmHg persistente non spiegata',e:{l:'danger',h:'<b>Criterio maggiore → alto rischio.</b>'},set:f=>{f.major.push('PAS < 90 mmHg non spiegata');},next:'end_high'},
+    {t:'Sangue all\'esplorazione rettale (sospetta emorragia digestiva)',e:{l:'danger',h:'Sincope da emorragia digestiva.'},next:'end_bleed'},
+    {t:'Bradicardia < 40 bpm persistente da sveglio, non atleta',e:{l:'danger',h:'<b>Criterio maggiore → alto rischio.</b>'},set:f=>{f.major.push('Bradicardia persistente < 40 bpm');},next:'end_high'},
+    {t:'Soffio sistolico non noto',e:{l:'danger',h:'<b>Criterio maggiore</b>: sospetta stenosi aortica o cardiomiopatia ipertrofica ostruttiva → ecocardiogramma urgente.'},
+     set:f=>{f.major.push('Soffio sistolico non noto');f.murmur=true;},next:'end_high'},
+    {t:'Nessuno',e:{l:'ok',h:'Esame obiettivo senza criteri di rischio.'},next:'OUTCOME'}
+  ]},
+
+vvs_freq:{sez:'7 · Sincope riflessa',
+  q:'Frequenza e gravità degli episodi?',
+  opts:[
+    {t:'Episodio singolo o rari episodi, con prodromi',
+     e:{l:'ok',h:'<b>Basso rischio.</b> Rassicurazione ed educazione; ricovero e ulteriori esami non indicati (ESC 2018)'+R(1)+'.'},set:f=>{f.vvsRec=false;},next:'end_low'},
+    {t:'Recidivanti, gravi o imprevedibili (traumi, prodromi assenti, attività a rischio)',
+     e:{l:'warn',h:'Serve una terapia oltre l\'educazione: indicare il profilo prevalente.'},set:f=>{f.vvsRec=true;},next:'vvs_prof'}
+  ]},
+
+vvs_prof:{sez:'7 · Sincope riflessa',
+  q:'Profilo prevalente del paziente?',
+  opts:[
+    {t:'Età < 60 anni con prodromi riconoscibili',
+     e:{l:'ok',h:'Manovre di contropressione isometrica (incrocio gambe, handgrip, tensione delle braccia) (IIa); tilt training (IIb)'+R(1)+'.'},
+     set:f=>{f.prof='Manovre di contropressione isometrica (IIa); tilt training (IIb).';},next:'end_low'},
+    {t:'Giovane con PA bassa-normale, forma ortostatica',
+     e:{l:'ok',h:'Fludrocortisone 0,05–0,1 mg/die (IIb, off-label), associato a liquidi e sale; controllare potassio e PA'+R(1)+'.'},
+     set:f=>{f.prof='Fludrocortisone 0,05–0,1 mg/die (IIb, off-label) + liquidi e sale; controllo K⁺ e PA.';},next:'end_low'},
+    {t:'Fenotipo ipotensivo o in terapia ipotensivante',
+     e:{l:'ok',h:'Ridurre o sospendere gli ipotensivanti (IIa); midodrina 2,5–10 mg × 3/die (IIb), ultima dose ≥ 4 h prima di coricarsi'+R(1)+'.'},
+     set:f=>{f.prof='Riduzione ipotensivanti (IIa); midodrina 2,5–10 mg × 3/die (IIb), ultima dose ≥ 4 h prima di coricarsi.';},next:'end_low'},
+    {t:'> 40 anni con sincopi gravi e imprevedibili (sospetta forma cardioinibitoria)',
+     e:{l:'warn',h:'Massaggio del seno carotideo (I) e tilt test (IIa); ILR per documentare le pause (IIa). Pacing bicamerale (IIa) se pause asistoliche ≥ 3 s sintomatiche o ≥ 6 s asintomatiche'+R(1)+'.'},
+     set:f=>{f.prof='Massaggio seno carotideo (I), tilt test (IIa), ILR (IIa); pacing bicamerale (IIa) se pause ≥ 3 s sintomatiche o ≥ 6 s asintomatiche. Beta-bloccanti non indicati.';},next:'end_low'}
+  ]},
+
+prol:{sez:'1 · PdC prolungata',
+  q:'Orientamento causale?',
+  info:{title:'Diagnosi differenziale',html:'<table class="t"><tr><th>Causa</th><th>Indizi</th></tr>'
+    +'<tr><td>Stato di male epilettico</td><td>Clonie, deviazione dello sguardo, nessun recupero tra le crisi</td></tr>'
+    +'<tr><td>Ictus / emorragia cerebrale / ESA</td><td>Deficit focali, cefalea improvvisa, vomito</td></tr>'
+    +'<tr><td>Ipoglicemia</td><td>Glicemia &lt; 70 mg/dL, insulina o sulfaniluree</td></tr>'
+    +'<tr><td>Tossici</td><td>Miosi e bradipnea (oppioidi), anamnesi, flaconi</td></tr>'
+    +'<tr><td>Encefalopatia metabolica</td><td>Iponatriemia, uremia, ammoniemia, ipercapnia</td></tr>'
+    +'<tr><td>Shock / aritmia</td><td>Ipotensione, lattati, ECG</td></tr></table>'},
+  opts:[
+    {t:'Sospetto neurologico vascolare (deficit focali, cefalea improvvisa)',e:{l:'danger',h:'TC encefalo urgente.'},next:'end_neuro'},
+    {t:'Crisi in atto o subentranti (stato di male)',e:{l:'danger',h:'Trattamento a tempo.'},next:'end_status'},
+    {t:'Ipoglicemia o altra causa metabolica',e:{l:'warn',h:'Correzione mirata.'},next:'end_meta'},
+    {t:'Intossicazione (oppioidi, benzodiazepine, alcol, altro)',e:{l:'warn',h:'Antidoti mirati e supporto.'},next:'end_tox'},
+    {t:'Shock o causa cardiogena',e:{l:'danger',h:'Percorso emergenza cardiovascolare.'},next:'emerg'},
+    {t:'Causa ignota',e:{l:'danger',h:'Approccio sistematico al coma.'},next:'end_coma'}
+  ]},
+
+// --------------------------------------------------------------- TERMINALI
+end_high:{type:'end',lvl:'danger',title:'ALTO RISCHIO — ricovero o osservazione monitorata',
+  html:f => '<p>Uno o più criteri di alto rischio ESC 2018'+R(1)+': non dimettere senza diagnosi o esclusione di una causa cardiaca grave.</p>'
+   +'<h3>Accertamenti</h3><ul>'
+   +'<li>Monitoraggio ECG continuo (telemetria) in PS/OBI o reparto (ESC 2018, I).</li>'
+   +'<li>Ecocardiogramma transtoracico'+(f.murmur?' <b>urgente</b> (soffio)':'')+'; emocromo, elettroliti, funzione renale, hs-troponina; BNP se sospetto scompenso.</li>'
+   +(f.exert?'<li>Sincope da sforzo: test ergometrico <b>dopo</b> l\'ecocardiogramma (escludere ostruzione all\'efflusso) (I).</li>':'')
+   +(f.ecgDet?'<li>'+f.ecgDet+'</li>':'')
+   +'<li>Se la causa resta inspiegata dopo valutazione completa e non c\'è indicazione a ICD/PM: ILR (I).</li>'
+   +'<li>Consulenza cardiologica; rivedere farmaci bradicardizzanti, antiaritmici e QT-prolunganti.</li></ul>'
+   +'<p><b>Guida</b>: sconsigliata fino a diagnosi e terapia definite.</p>',
+  scores:['egsys','csrs']},
+
+end_int:{type:'end',lvl:'warn',title:'RISCHIO INTERMEDIO / NON CLASSIFICABILE — osservazione',
+  html:f => '<p>Né criteri maggiori né un quadro di basso rischio certo'+R(1)+'.</p>'
+   +'<h3>Gestione</h3><ul>'
+   +'<li>Osservazione in PS/OBI con monitoraggio ECG (indicativamente fino a 24 h) o invio rapido a Syncope Unit/ambulatorio dedicato (ESC 2018, I).</li>'
+   +'<li>Ecocardiogramma se sospetta cardiopatia; Holter se episodi frequenti (≥ 1/settimana); loop recorder esterno se intervallo tra episodi ≤ 4 settimane; ILR precoce se recidive di origine incerta (I).</li>'
+   +(f.minorECG&&!f.minorH?'<li>Anomalia ECG minore con anamnesi non aritmica: monitoraggio e valutazione aritmologica ambulatoriale.</li>':'')
+   +(f.psy?'<li>Sospetta pseudosincope psicogena: tilt test con video/EEG, valutazione psicologica dopo esclusione organica.</li>':'')
+   +(f.pots?'<li>Sospetta POTS: valutazione in ambulatorio di disautonomia.</li>':'')
+   +'<li>Tilt test se sospetta forma riflessa o ortostatica non confermata (IIa).</li>'
+   +'<li>Gli score clinici supportano ma <b>non sostituiscono</b> il giudizio clinico: ESC 2018 ne sconsiglia l\'uso isolato in PS.</li></ul>'
+   + TXT.dimissione + TXT.guida,
+  scores:['csrs','egsys']},
+
+end_low:{type:'end',lvl:'ok',title:'BASSO RISCHIO — sincope riflessa: dimissione',
+  html:f => '<p>Sincope riflessa'+(f.sub?' ('+f.sub+')':'')+' senza criteri di rischio: ricovero ed esami aggiuntivi non indicati (ESC 2018)'+R(1)+'.</p>'
+   +'<h3>Educazione (sempre, I)</h3><ul>'
+   +'<li>Spiegare la natura benigna e riconoscere i prodromi: sdraiarsi o sedersi subito.</li>'
+   +'<li>Evitare i fattori scatenanti; adeguata assunzione di liquidi e sale se non ci sono controindicazioni (ipertensione, scompenso).</li>'
+   +'<li>Manovre di contropressione isometrica.</li></ul>'
+   +(f.vvsRec?'<h3>Terapia per recidive</h3><ul><li>'+(f.prof||'Scegliere secondo il profilo del paziente.')+'</li><li>Beta-bloccanti: non indicati (ESC 2018, III).</li></ul>':'')
+   +(f.csn?'<p>Sospetta sindrome del seno carotideo: massaggio del seno carotideo ambulatoriale (> 40 anni); pacing bicamerale se forma cardioinibitoria con sincopi recidivanti (IIa).</p>':'')
+   + TXT.dimissione + TXT.guida,
+  scores:['csrs','egsys']},
+
+end_oh:{type:'end',lvl:'ok',title:'SINCOPE DA IPOTENSIONE ORTOSTATICA',
+  html:f => '<p>Causa prevalente: <b>'+(f.ohCause||'da definire')+'</b>. Senza criteri di alto rischio la gestione è ambulatoriale'+R(1)+'.</p>'
+   +'<h3>Misure (ESC 2018)</h3><ul>'
+   +'<li>Spiegazione e modifiche dello stile di vita (I); alzarsi lentamente, evitare caldo, pasti abbondanti, alcol.</li>'
+   +'<li>Liquidi 2–3 L/die e sale fino a 10 g/die (IIa), se non controindicati.</li>'
+   +'<li>Riduzione/sospensione dei farmaci ipotensivanti (IIa).</li>'
+   +'<li>Calze a compressione o fascia addominale; manovre di contropressione (IIa).</li>'
+   +'<li>Testiera del letto sollevata di oltre 10° (IIa)'+(f.supHtn?', utile anche per l\'ipertensione supina':'')+'.</li>'
+   +'<li>Midodrina 2,5–10 mg × 3/die (IIa) o fludrocortisone 0,1–0,3 mg/die (IIa) nelle forme persistenti; attenzione a ipertensione supina, ipokaliemia, scompenso.</li></ul>'
+   +(f.ohCause==='neurogena'?'<p>Forma neurogena: consulenza neurologica e test autonomici.</p>':'')
+   +(!f.ohConf?'<p>Diagnosi solo probabile: se gli episodi si ripetono considerare tilt test e monitoraggio pressorio delle 24 h.</p>':'')
+   + TXT.dimissione + TXT.guida,
+  scores:['csrs']},
+
+end_arr:{type:'end',lvl:'danger',title:'ARITMIA — gestione urgente e ricovero',
+  html:f => '<p>Le indicazioni terapeutiche specifiche sono nell\'esito della domanda precedente.</p><ul>'
+   +'<li>Monitor-defibrillatore, cardiologo/UTIC.</li>'
+   +'<li>Correggere K⁺, Mg²⁺, ischemia; sospendere i farmaci responsabili.</li>'
+   +'<li>Dopo stabilizzazione: ricovero in UTIC/Cardiologia per terapia definitiva (PM, ablazione, ICD)'+R(9)+R(12)+'.</li></ul>'},
+
+end_stemi:{type:'end',lvl:'danger',title:'STEMI — rete per angioplastica primaria',
+  html:() => '<ul>'
+   +'<li>Obiettivo diagnosi–guida: ≤ 60 min nel centro con emodinamica, ≤ 90 min se trasferito; se l\'angioplastica non è possibile entro 120 min → fibrinolisi'+R(8)+'.</li>'
+   +'<li>Aspirina 150–300 mg per os (o 75–250 mg EV); eparina non frazionata 70–100 UI/kg EV.</li>'
+   +'<li>Pretrattamento con inibitore P2Y12 da considerare secondo protocollo locale (IIb)'+R(8)+'.</li>'
+   +'<li>Sincope nello STEMI: sospettare aritmia (BAV nell\'inferiore, TV/FV) o shock.</li></ul>'},
+
+end_nste:{type:'end',lvl:'danger',title:'SCA SENZA SOPRASLIVELLAMENTO ST',
+  html:() => '<ul>'
+   +'<li>Monitoraggio ECG continuo; consulenza cardiologica.</li>'
+   +'<li>hs-troponina 0/1 h (o 0/2 h); stratificazione per la strategia invasiva (immediata se instabilità, aritmie maggiori o shock)'+R(8)+'.</li>'
+   +'<li>Aspirina; pretrattamento P2Y12 di routine non raccomandato se è prevista coronarografia precoce'+R(8)+'.</li></ul>'},
+
+end_pe_high:{type:'end',lvl:'danger',title:'EMBOLIA POLMONARE AD ALTO RISCHIO',
+  html:() => '<ul>'
+   +'<li>Eparina non frazionata EV in bolo subito.</li>'
+   +'<li>Trombolisi sistemica (ESC 2019, I): alteplase 100 mg in 2 h (o 0,6 mg/kg in 15 min, max 50 mg, in arresto).</li>'
+   +'<li>Se controindicata o inefficace: embolectomia chirurgica o terapia percutanea con catetere.</li>'
+   +'<li>Supporto: noradrenalina se ipotensione, cautela con i fluidi (max 500 mL); evitare l\'intubazione se possibile'+R(7)+'.</li></ul>'},
+
+end_pe:{type:'end',lvl:'warn',title:'EMBOLIA POLMONARE EMODINAMICAMENTE STABILE',
+  html:f => '<ul>'
+   +'<li>Anticoagulazione: DOAC (preferiti) oppure eparina a basso peso molecolare.</li>'
+   +'<li>sPESI = '+(f.score_spesi!==undefined?f.score_spesi:'—')+'. La sincope di per sé è un marcatore prognostico sfavorevole: valutare sempre VD e troponina'+R(7)+'.</li>'
+   +'<li>Rischio intermedio-alto: ricovero monitorato almeno 48–72 h, trombolisi solo di salvataggio.</li></ul>'},
+
+end_aod:{type:'end',lvl:'danger',title:'SOSPETTA DISSEZIONE AORTICA',
+  html:() => '<ul>'
+   +'<li><b>Non anticoagulare né antiaggregare</b> fino all\'esclusione.</li>'
+   +'<li>Angio-TC aorta urgente; ecocardiogramma (transtoracico/transesofageo).</li>'
+   +'<li>Analgesia (oppioidi); beta-bloccante EV (esmololo, labetalolo) per FC &lt; 60 bpm e PAS 100–120 mmHg; vasodilatatore solo dopo il beta-blocco'+R(10)+'.</li>'
+   +'<li>Tipo A → cardiochirurgia urgente; tipo B complicata → chirurgia vascolare/TEVAR.</li>'
+   +'<li>Sincope nella dissezione: sospettare tamponamento, coinvolgimento dei vasi epiaortici o rottura.</li></ul>'},
+
+end_tamp:{type:'end',lvl:'danger',title:'TAMPONAMENTO CARDIACO',
+  html:() => '<ul><li>Pericardiocentesi eco-guidata urgente (chirurgica se emopericardio da dissezione o trauma).</li><li>Fluidi come ponte; evitare la ventilazione a pressione positiva se possibile.</li><li>Ricercare la causa: neoplasia, dissezione, post-procedurale, pericardite, uremia.</li></ul>'},
+
+end_bleed:{type:'end',lvl:'danger',title:'EMORRAGIA — sincope ipovolemica',
+  html:() => '<ul>'
+   +'<li>Due accessi venosi di grosso calibro, gruppo e prove crociate, emocromo, coagulazione, lattati.</li>'
+   +'<li>Trasfusione restrittiva (Hb 7–8 g/dL; più alta se cardiopatia ischemica); correggere la coagulopatia, invertire gli anticoagulanti.</li>'
+   +'<li>Emorragia digestiva: endoscopia entro 24 h (urgente se instabile), terapia con inibitore di pompa EV.</li>'
+   +'<li>Sospetta rottura di AAA: POCUS, chirurgo vascolare, ipotensione permissiva. Donna in età fertile: β-hCG (GEU).</li></ul>'},
+
+end_neuro:{type:'end',lvl:'danger',title:'EMERGENZA NEUROLOGICA',
+  html:() => '<ul>'
+   +'<li>TC encefalo senza mezzo di contrasto urgente (ESA, emorragia); angio-TC se sospetto ictus ischemico o ESA.</li>'
+   +'<li>NIHSS completo (11 voci, 0–42) con il team ictus; trombolisi entro 4,5 h dall\'esordio, trombectomia nelle occlusioni di grosso vaso fino a 24 h con selezione per imaging. Vedi PDTA Ictus.</li>'
+   +'<li>La sincope isolata, senza deficit focali, non è causata da TIA o ictus: in quel caso non sono indicati TC encefalo né eco-Doppler TSA di routine'+R(1)+'.</li></ul>'},
+
+end_meta:{type:'end',lvl:'warn',title:'CAUSA METABOLICA',
+  html:() => '<h3>Ipoglicemia (&lt; 70 mg/dL con sintomi neuroglicopenici)</h3><ul>'
+   +'<li>Glucosio 33% 50 mL EV (≈ 16 g) o glucosio 10% 150–200 mL; senza accesso: glucagone 1 mg IM.</li>'
+   +'<li>Tiamina contestuale se etilismo o malnutrizione, <b>senza ritardare il glucosio</b>.</li>'
+   +'<li>Sulfaniluree o insulina a lunga durata: infusione di glucosio e osservazione prolungata.</li></ul>'
+   +'<h3>Iponatriemia con sintomi gravi (convulsioni, coma)</h3><ul>'
+   +'<li>NaCl 3% 150 mL EV in 20 min, ripetibile 2 volte controllando la natriemia, fino a +5 mmol/L.</li>'
+   +'<li>Limite di correzione 10 mmol/L nelle prime 24 h (8 se alto rischio di demielinizzazione osmotica)'+R(14)+'.</li></ul>'
+   +'<h3>Encefalopatia epatica</h3><ul><li>Lattulosio, rifaximina 550 mg × 2/die; trattare il fattore precipitante.</li></ul>'},
+
+end_tox:{type:'end',lvl:'warn',title:'INTOSSICAZIONE',
+  html:() => '<ul>'
+   +'<li><b>Oppioidi</b>: naloxone titolato per la respirazione — 0,04–0,1 mg EV nei pazienti dipendenti (evita l\'astinenza acuta), fino a 0,4–2 mg; ripetere o infondere (durata d\'azione breve).</li>'
+   +'<li><b>Benzodiazepine</b>: supporto ventilatorio. Flumazenil <b>non</b> di routine (rischio di convulsioni negli assuntori cronici e nelle co-ingestioni con triciclici).</li>'
+   +'<li>ECG (QRS, QTc), EGA, etanolo, esami tossicologici; contattare il Centro Antiveleni.</li></ul>'},
+
+end_coma:{type:'end',lvl:'danger',title:'COMA DI CAUSA IGNOTA',
+  html:() => '<ul>'
+   +'<li>ABCDE, protezione della via aerea se GCS ≤ 8.</li>'
+   +'<li>Glicemia capillare subito; glucosio se bassa. Tiamina 200–500 mg EV se sospetto Wernicke (senza ritardare il glucosio).</li>'
+   +'<li>Naloxone se miosi e bradipnea. Flumazenil non raccomandato nel coma indifferenziato.</li>'
+   +'<li>TC encefalo; EGA, elettroliti, calcio, creatinina, ammoniemia, lattati, funzione epatica, tossicologico, etanolo, emocolture se sospetta sepsi; EEG se sospetto stato di male non convulsivo; rachicentesi se sospetta meningoencefalite.</li>'
+   +'<li>Ricovero in area critica.</li></ul>'},
+
+end_status:{type:'end',lvl:'danger',title:'STATO DI MALE EPILETTICO',
+  html:() => '<h3>0–5 min</h3><ul><li>ABCDE, O₂, glicemia, accesso venoso.</li></ul>'
+   +'<h3>5–20 min — benzodiazepina</h3><ul><li>Lorazepam 0,1 mg/kg EV (max 4 mg/dose, ripetibile una volta) oppure diazepam 0,15–0,2 mg/kg EV (max 10 mg/dose); senza accesso: midazolam 10 mg IM (&gt; 40 kg)'+R(15)+'.</li></ul>'
+   +'<h3>20–40 min — seconda linea (efficacia simile, ESETT)</h3><ul><li>Levetiracetam 60 mg/kg EV (max 4500 mg) oppure valproato 40 mg/kg EV (max 3000 mg) oppure fenitoina 20 mg/kg EV (monitoraggio ECG)'+R(15)+'.</li></ul>'
+   +'<h3>&gt; 40 min — refrattario</h3><ul><li>Anestesia generale (propofol, midazolam) in terapia intensiva con monitoraggio EEG.</li></ul>'},
+
+end_epi_first:{type:'end',lvl:'info',title:'PRIMA CRISI EPILETTICA',
+  html:() => '<ul>'
+   +'<li>Glicemia, elettroliti (Na, Ca, Mg), funzione renale ed epatica, emocromo, tossicologico se indicato.</li>'
+   +'<li>Neuroimaging: TC urgente in PS (trauma, anticoagulanti, deficit focali, cefalea, immunodepressione); RM encefalo con protocollo per epilessia come esame di riferimento (mezzo di contrasto solo se sospetta lesione o infezione).</li>'
+   +'<li>EEG il prima possibile (resa maggiore entro 24–48 h).</li>'
+   +'<li>Rachicentesi dopo TC se febbre o sospetta encefalite.</li>'
+   +'<li>Consulenza neurologica: terapia dopo la prima crisi solo in casi selezionati (EEG epilettiforme, lesione strutturale, crisi notturna)'+R(16)+'.</li>'
+   +'<li>Guida: sospendere; idoneità secondo normativa e neurologo.</li></ul>'},
+
+end_epi_bt:{type:'end',lvl:'info',title:'CRISI IN EPILESSIA NOTA',
+  html:() => '<ul>'
+   +'<li>Cause: mancata aderenza, privazione di sonno, alcol, infezioni, interazioni farmacologiche, iponatriemia.</li>'
+   +'<li>Dosaggio dei livelli plasmatici del farmaco quando disponibile.</li>'
+   +'<li>Neuroimaging se crisi di tipo nuovo, trauma o deficit focali.</li>'
+   +'<li>Stabile e recuperato → rivalutazione neurologica ambulatoriale a breve; crisi ripetute → ricovero.</li></ul>'},
+
+end_trauma:{type:'end',lvl:'warn',title:'TRAUMA CRANICO CON PERDITA DI COSCIENZA',
+  html:() => '<ul>'
+   +'<li>Percorso trauma cranico: TC encefalo secondo regole decisionali validate (es. Canadian CT Head Rule) e sempre se anticoagulante o antiaggregante, GCS &lt; 15, deficit focali, vomito ripetuto, età avanzata.</li>'
+   +'<li>Se un malore ha preceduto la caduta (anziano, caduta inspiegata): eseguire anche ECG, PA ortostatica e stratificazione per sincope — riavviare il percorso dalla prima domanda.</li></ul>'}
+};
+
+// Decide l'esito al termine di anamnesi + esame obiettivo
+function outcome(f){
+  if (f.major.length) return 'end_high';
+  if (f.minor.length || f.pattern === 'incerta' || f.psy) return 'end_int';
+  if (f.pattern === 'riflessa') return 'vvs_freq';
+  if (f.pattern === 'ortostatica') return 'end_oh';
+  return 'end_int';
+}
+
+// =====================================================================
+//  MOTORE
+// =====================================================================
+// path: [{id, v (indice opzione) | checks:Set, confirmed}]
+let path = [];
+let endChecks = {};          // stato degli score facoltativi nel riepilogo finale
+
+function newFlags(){ return {major:[],minor:[],pattern:null}; }
+
+function scoreTotal(sid, checks){
+  return SCORES[sid].items.reduce((s,it)=> s + (checks.has(it.id) ? it.p : 0), 0);
+}
+
+// Ricostruisce i flag ripercorrendo le risposte fino all'indice i (escluso)
+function flagsBefore(i){
+  const f = newFlags();
+  for (let k=0; k<i && k<path.length; k++){
+    const en = path[k], nd = NODES[en.id];
+    if (nd.type === 'score'){ f['score_'+nd.score] = scoreTotal(nd.score, en.checks); }
+    else if (en.v !== undefined && nd.opts[en.v].set){ nd.opts[en.v].set(f); }
+  }
+  // ESC 2018: criterio minore anamnestico + anomalia ECG = alto rischio
+  if (f.minorH && f.minorECG) f.major.push('Criteri minori anamnestici + anomalia ECG (sospetta sincope aritmica)');
+  return f;
+}
+
+function resolveNext(nd, en, f){
+  let nx = nd.type === 'score' ? nd.next(scoreTotal(nd.score, en.checks)) : nd.opts[en.v].next;
+  if (typeof nx === 'function') nx = nx(f);
+  if (nx === 'OUTCOME') nx = outcome(f);
+  return nx;
+}
+
+function esitoBox(e, label){
+  return '<div class="esito l-'+e.l+'"><b class="et">'+(label||'Esito')+'</b>'+e.h+'</div>';
+}
+
+function renderQuestion(i, en, nd){
+  const answered = en.v !== undefined;
+  let h = '<section class="step'+(answered?' done':'')+'" data-i="'+i+'">'
+    + '<div class="shead"><span class="num">'+(i+1)+'</span><span class="sez">'+(nd.sez||'')+'</span></div>'
+    + '<h2 class="q">'+nd.q+'</h2>';
+  if (nd.hint) h += '<p class="hint">'+nd.hint+'</p>';
+  if (nd.info) h += '<details class="info"><summary>&#x2139;&#xFE0F; '+nd.info.title+'</summary><div class="ib">'+nd.info.html+'</div></details>';
+  h += '<div class="opts" role="radiogroup">';
+  nd.opts.forEach((o,k)=>{
+    h += '<button type="button" role="radio" aria-checked="'+(en.v===k)+'" class="opt'+(en.v===k?' sel':'')+'" data-i="'+i+'" data-v="'+k+'"><span class="dot"></span><span>'+o.t+'</span></button>';
+  });
+  h += '</div>';
+  if (answered) h += esitoBox(nd.opts[en.v].e);
+  return h + '</section>';
+}
+
+function scoreItemsHtml(sid, checks, attrs){
+  return SCORES[sid].items.map(it =>
+    '<label class="sitem"><input type="checkbox" '+attrs+' data-it="'+it.id+'"'+(checks.has(it.id)?' checked':'')+'>'
+    +'<span>'+it.t+'</span><span class="pt">'+(it.p>0?'+':'')+it.p+'</span></label>').join('');
+}
+
+function renderScore(i, en, nd){
+  const sc = SCORES[nd.score], tot = scoreTotal(nd.score, en.checks);
+  let h = '<section class="step'+(en.confirmed?' done':'')+'" data-i="'+i+'">'
+    + '<div class="shead"><span class="num">'+(i+1)+'</span><span class="sez">'+(nd.sez||'')+'</span></div>'
+    + '<h2 class="q">'+sc.name+R(sc.ref)+'</h2><p class="hint">'+sc.sub+'</p>'
+    + scoreItemsHtml(nd.score, en.checks, 'data-si="'+i+'"')
+    + '<div class="stot">Totale: <b>'+tot+'</b></div>'
+    + esitoBox(sc.interp(tot), 'Esito (si aggiorna a ogni spunta)');
+  if (!en.confirmed) h += '<button type="button" class="btn" data-confirm="'+i+'">Conferma e prosegui &#x203A;</button>';
+  return h + '</section>';
+}
+
+function renderMiniScore(sid){
+  const sc = SCORES[sid];
+  const checks = endChecks[sid] || (endChecks[sid] = new Set());
+  const tot = scoreTotal(sid, checks);
+  return '<div class="mini" data-mini="'+sid+'"><div class="mt">'+sc.name+R(sc.ref)+' — facoltativo</div><div class="ms">'+sc.sub+'</div>'
+    + scoreItemsHtml(sid, checks, 'data-ms="'+sid+'"')
+    + '<div class="stot">Totale: <b>'+tot+'</b></div>'
+    + (checks.size ? esitoBox(sc.interp(tot),'Esito') : '<div class="esito l-info"><b class="et">Esito</b>Spuntare le voci presenti: il risultato compare qui.</div>')
+    + '</div>';
+}
+
+function renderEnd(i, nd, f){
+  const rows = path.slice(0,i).map(en => {
+    const n = NODES[en.id];
+    if (n.type === 'score') return '<li><span class="rq">'+SCORES[n.score].name+':</span> '+scoreTotal(n.score,en.checks)+' punti</li>';
+    return '<li><span class="rq">'+n.q+'</span> → '+n.opts[en.v].t+'</li>';
+  }).join('');
+  let h = '<section class="step end e-'+nd.lvl+'" data-i="'+i+'">'
+    + '<div class="shead"><span class="num">&#x2714;</span><span class="sez">Conclusione del percorso</span></div>'
+    + '<h2>'+nd.title+'</h2>';
+  if (f.presinc) h += '<p><i>Evento: presincope, stratificata come sincope.</i></p>';
+  if (f.major.length) h += '<div class="esito l-danger reasons"><b class="et">Criteri di alto rischio</b><ul>'+f.major.map(x=>'<li>'+x+'</li>').join('')+'</ul></div>';
+  if (f.minor.length && !f.major.length) h += '<div class="esito l-warn reasons"><b class="et">Elementi di rischio minore</b><ul>'+f.minor.map(x=>'<li>'+x+'</li>').join('')+'</ul></div>';
+  h += nd.html(f);
+  if (nd.scores) h += '<h3>Score di supporto</h3>' + nd.scores.map(renderMiniScore).join('');
+  h += '<h3>Riepilogo delle risposte</h3><ol class="riep">'+rows+'</ol>'
+    + '<div class="acts"><button type="button" class="btn" data-act="print">&#x1F5A8;&#xFE0F; Stampa riepilogo</button>'
+    + '<button type="button" class="btn sec" data-act="reset">&#x21BB; Nuovo caso</button></div>';
+  return h + '</section>';
+}
+
+function render(scrollTo){
+  const flow = document.getElementById('flow');
+  let h = '';
+  let i = 0;
+  if (!path.length) path.push(newEntry('start'));
+  while (i < path.length){
+    const en = path[i], nd = NODES[en.id], f = flagsBefore(i);
+    if (nd.type === 'end'){ h += renderEnd(i, nd, f); path.length = i+1; break; }
+    if (nd.type === 'score'){
+      h += renderScore(i, en, nd);
+      if (!en.confirmed){ path.length = i+1; break; }
+    } else {
+      h += renderQuestion(i, en, nd);
+      if (en.v === undefined){ path.length = i+1; break; }
+    }
+    const f2 = flagsBefore(i+1);
+    const nx = resolveNext(nd, en, f2);
+    if (!NODES[nx]) { h += '<div class="esito l-danger">Errore di percorso: nodo “'+nx+'” mancante.</div>'; break; }
+    if (i+1 >= path.length || path[i+1].id !== nx){ path.length = i+1; path.push(newEntry(nx)); }
+    i++;
+  }
+  flow.innerHTML = h;
+  abbrify(flow);
+  if (scrollTo !== undefined){
+    const el = flow.querySelector('[data-i="'+scrollTo+'"]');
+    if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+}
+
+function newEntry(id){
+  const nd = NODES[id];
+  return nd.type === 'score' ? {id, checks:new Set(), confirmed:false} : {id};
+}
+
+// ---------------- eventi (delegati, nessun onclick inline)
+document.addEventListener('click', e => {
+  const opt = e.target.closest('.opt');
+  if (opt){
+    const i = +opt.dataset.i, v = +opt.dataset.v;
+    if (path[i].v === v) return;
+    path = path.slice(0, i+1);
+    path[i] = {id:path[i].id, v};
+    endChecks = {};
+    render(i+1);
+    return;
+  }
+  const cf = e.target.closest('[data-confirm]');
+  if (cf){ const i = +cf.dataset.confirm; path[i].confirmed = true; render(i+1); return; }
+  const act = e.target.closest('[data-act]');
+  if (act){ if (act.dataset.act === 'print') window.print(); else resetAll(); }
+});
+
+document.addEventListener('change', e => {
+  const cb = e.target;
+  if (!cb.matches('input[type=checkbox]')) return;
+  if (cb.dataset.si !== undefined){
+    const i = +cb.dataset.si, en = path[i], nd = NODES[en.id];
+    const before = en.confirmed ? resolveNext(nd, en, flagsBefore(i+1)) : null;
+    toggleCheck(nd.score, en.checks, cb);
+    if (en.confirmed){
+      const after = resolveNext(nd, en, flagsBefore(i+1));
+      if (after !== before) { path = path.slice(0, i+1); en.confirmed = false; }
+    }
+    endChecks = {};
+    render();
+  } else if (cb.dataset.ms){
+    const sid = cb.dataset.ms;
+    toggleCheck(sid, endChecks[sid], cb);
+    const box = document.querySelector('[data-mini="'+sid+'"]');
+    if (box){ const tmp = document.createElement('div'); tmp.innerHTML = renderMiniScore(sid); box.replaceWith(tmp.firstChild); abbrify(document.querySelector('[data-mini="'+sid+'"]')); }
+  }
+});
+
+function toggleCheck(sid, set, cb){
+  const it = SCORES[sid].items.find(x=>x.id===cb.dataset.it);
+  if (cb.checked){
+    if (it.x) SCORES[sid].items.filter(x=>x.x===it.x).forEach(x=>set.delete(x.id));
+    set.add(it.id);
+  } else set.delete(it.id);
+}
+
+function resetAll(){ path = []; endChecks = {}; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+
+// ---------------- glossario e bibliografia
+function initGloss(){
+  const tb = document.querySelector('#gtab tbody');
+  tb.innerHTML = Object.keys(GLOSS).sort((a,b)=>a.localeCompare(b,'it')).map(k =>
+    '<tr data-s="'+(k+' '+GLOSS[k]).toLowerCase().replace(/"/g,'')+'"><td>'+k+'</td><td>'+GLOSS[k]+'</td></tr>').join('');
+  const m = document.getElementById('gloss');
+  document.getElementById('b-gloss').onclick = () => { m.classList.add('open'); document.getElementById('gsearch').focus(); };
+  document.getElementById('gclose').onclick = () => m.classList.remove('open');
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') m.classList.remove('open'); });
+  document.getElementById('gsearch').addEventListener('input', e => {
+    const q = e.target.value.toLowerCase();
+    tb.querySelectorAll('tr').forEach(tr => tr.style.display = (!q || tr.dataset.s.includes(q)) ? '' : 'none');
+  });
+  document.getElementById('b-print').onclick = () => window.print();
+  document.getElementById('b-reset').onclick = resetAll;
+}
+function initRefs(){
+  document.getElementById('refs').innerHTML = '<h3>&#x1F4DA; Bibliografia</h3><ol>'+REFS.map(r=>'<li>'+r+'</li>').join('')+'</ol>'
+    + '<p style="margin-top:6px">Classi di raccomandazione ESC: I = raccomandato; IIa = da considerare; IIb = può essere considerato; III = non raccomandato.</p>';
+}
+
+document.addEventListener('DOMContentLoaded', () => { initGloss(); initRefs(); render(); });
+</script>
+</body>
+</html>
