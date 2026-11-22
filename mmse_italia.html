@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MMSE – correzione italiana</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700&family=Source+Serif+4:opsz,wght@8..60,600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: clinico, sobrio, da cartella clinica ben impaginata
+   IDEA: la scheda cartacea MMSE di reparto, con il punteggio corretto che si compone a margine
+   PICTURE: pannello risultato a destra con punteggio grezzo → corretto e scala di gravità
+   COLOUR e TYPE: bianco, inchiostro blu-notte, accento ottanio; Source Serif per titoli, Public Sans per testo
+   LAYOUT: colonna sezioni a sinistra, risultato fisso a destra; sotto 860px il risultato sale in alto */
+:root{color-scheme:light dark;
+--bg:light-dark(#ffffff,#0f141a);--panel:light-dark(#f4f6f8,#18202a);--ink:light-dark(#14202e,#e6ecf2);
+--mute:light-dark(#5a6878,#9aa8b8);--line:light-dark(#dde3ea,#2a3542);--acc:light-dark(#0b6e7f,#4cc3d3);
+--ok:light-dark(#1d7a46,#5fd08f);--mild:light-dark(#b07a00,#f0c040);--mod:light-dark(#c25a10,#ff9a50);--sev:light-dark(#b0202a,#ff6b72)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Public Sans",system-ui,sans-serif;overflow-x:clip}
+h1,h2{font-family:"Source Serif 4",Georgia,serif;font-weight:600;line-height:1.1;margin:0}
+h1{font-size:clamp(28px,4vw,40px);text-wrap:balance}
+h2{font-size:21px;display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+h2 small{font:600 15px "Public Sans",sans-serif;color:var(--acc);white-space:nowrap}
+header{padding:28px max(5vw,16px) 8px;max-width:1240px;margin:auto}
+header p{color:var(--mute);margin:6px 0 0;max-width:70ch}
+.wrap{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:28px;padding:16px max(5vw,16px) 40px;max-width:1240px;margin:auto;align-items:start}
+.res{position:sticky;top:12px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px}
+section.card{border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:14px}
+.demo{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+label.f{display:flex;flex-direction:column;gap:4px;font-weight:600;font-size:14px}
+input[type=number],input[type=text],select{font:16px "Public Sans",sans-serif;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);min-height:44px;width:100%}
+input:focus-visible,button:focus-visible,select:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.items{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:6px 14px;margin-top:10px}
+.it{display:flex;align-items:center;gap:10px;min-height:44px;padding:4px 8px;border-radius:8px;cursor:pointer}
+.it:hover{background:var(--panel)}
+.it input{width:22px;height:22px;accent-color:var(--acc);flex:none}
+.sub{font-size:14px;color:var(--mute);margin:6px 0 0}
+.att{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px}
+.att h3{font-size:15px;margin:0 0 4px}
+.big{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.big .n{font:600 clamp(56px,8vw,76px)/1 "Source Serif 4",serif;color:var(--acc)}
+.big .of{color:var(--mute)}
+.row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--line);font-size:15px}
+.row b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.verdict{margin:14px 0 6px;padding:10px 12px;border-radius:8px;font-weight:700;color:#fff}
+.scale{display:grid;grid-template-columns:10fr 8fr 6fr 6fr;height:12px;border-radius:6px;overflow:hidden;position:relative;margin:16px 0 4px}
+.scale i:nth-child(1){background:var(--sev)}.scale i:nth-child(2){background:var(--mod)}.scale i:nth-child(3){background:var(--mild)}.scale i:nth-child(4){background:var(--ok)}
+.mk{position:absolute;top:-5px;width:4px;height:22px;background:var(--ink);border-radius:2px;transform:translateX(-2px);transition:left .3s}
+.sl{display:flex;justify-content:space-between;font-size:13px;color:var(--mute)}
+.warn{font-size:14px;color:var(--mod);margin-top:8px}
+.btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+button{font:600 15px "Public Sans",sans-serif;min-height:44px;padding:0 16px;border-radius:8px;border:1px solid var(--acc);background:var(--acc);color:#fff;cursor:pointer}
+button.ghost{background:transparent;color:var(--acc)}
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{border:1px solid var(--line);padding:6px 8px;text-align:right}
+th:first-child,td:first-child{text-align:left}
+td.on{background:var(--acc);color:#fff;font-weight:700}
+.note{font-size:14px;color:var(--mute)}
+.bib{font-size:14px;padding-left:18px}.bib li{margin-bottom:6px}
+footer{border-top:3px solid var(--acc);padding:18px max(5vw,16px);max-width:1240px;margin:auto;font-size:14px}
+footer strong{display:block;font-size:15px}
+.quick{display:flex;gap:12px;align-items:end;flex-wrap:wrap}
+@media(max-width:860px){.wrap{grid-template-columns:minmax(0,1fr)}.res{position:static;order:-1}}
+@media(max-width:600px){.att{grid-template-columns:1fr}table{font-size:13px}}
+@media(prefers-reduced-motion:reduce){.mk{transition:none}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Mini-Mental State Examination con correzione italiana</h1>
+  <p>Punteggio grezzo per item e punteggio corretto per età e scolarità secondo le norme italiane di Measso et al. (1993, 20–79 anni) e Magni et al. (1996, 65–89 anni).</p>
+</header>
+
+<div class="wrap">
+<main>
+  <section class="card">
+    <h2>Dati del paziente</h2>
+    <div class="demo" style="margin-top:10px">
+      <label class="f">Paziente / ID<input type="text" id="pid" placeholder="facoltativo"></label>
+      <label class="f">Età (anni)<input type="number" id="age" min="18" max="110" value="78" inputmode="numeric"></label>
+      <label class="f">Scolarità (anni)<input type="number" id="edu" min="0" max="25" value="5" inputmode="numeric"></label>
+      <label class="f">Data<input type="text" id="dt"></label>
+      <label class="f">Norme di correzione<select id="norm">
+        <option value="auto">Automatico (Measso &lt; 65 a, Magni ≥ 65 a)</option>
+        <option value="magni">Magni 1996 (65–89 anni)</option>
+        <option value="measso">Measso 1993 (20–79 anni)</option></select></label>
+    </div>
+    <div class="quick" style="margin-top:12px">
+      <label class="f" style="flex:1 1 220px">Inserimento rapido del punteggio grezzo (0–30)
+        <input type="number" id="rawq" min="0" max="30" placeholder="lascia vuoto per usare gli item"></label>
+    </div>
+  </section>
+
+  <div id="secs"></div>
+
+  <section class="card">
+    <h2>Coefficienti di correzione (Magni et al., 1996)</h2>
+    <p class="sub">Valore da sommare al punteggio grezzo. La cella evidenziata è quella applicata.</p>
+    <div class="scroll" style="margin-top:8px"><table id="tab"></table></div>
+    <p class="note">Anziani italiani di 65–89 anni (tabella ripresa dal Progetto Cronos, DM 20/07/2000). Cut-off sul punteggio corretto: 24. Il punteggio corretto non può superare 30.</p>
+  </section>
+
+  <section class="card">
+    <h2>Coefficienti di correzione (Measso et al., 1993)</h2>
+    <p class="sub">Tabella 4 dell'articolo originale: 906 soggetti sani di 20–79 anni, fasce per decennio. Cut-off sul punteggio corretto: 23,8 (5° percentile, Tabella 5).</p>
+    <div class="scroll" style="margin-top:8px"><table id="tab2"></table></div>
+    <p class="note">Nello studio di Measso la prova alternativa alle sottrazioni era «CARNE» al contrario; l'app usa «MONDO», la variante più diffusa nella pratica italiana.</p>
+  </section>
+
+  <section class="card">
+    <h2>Interpretazione</h2>
+    <ul class="note" style="color:var(--ink)">
+      <li><b>≥ cut-off</b> (24 con Magni, 23,8 con Measso): nella norma per età e scolarità.</li>
+      <li><b>18 – sotto il cut-off</b>: deterioramento cognitivo lieve.</li>
+      <li><b>10–17,9</b>: deterioramento moderato.</li>
+      <li><b>&lt; 10</b>: deterioramento grave.</li>
+    </ul>
+    <p class="note">L'MMSE è uno strumento di screening e non pone diagnosi: un punteggio patologico richiede valutazione clinica e neuropsicologica di secondo livello. Deficit sensoriali, afasia, delirium, depressione e bassa scolarità possono ridurre il punteggio. Per la prescrizione degli inibitori delle colinesterasi la Nota AIFA 85 fa riferimento all'MMSE nel range 10–26.</p>
+  </section>
+
+  <section class="card">
+    <h2>Bibliografia</h2>
+    <ol class="bib">
+      <li>Folstein MF, Folstein SE, McHugh PR. "Mini-mental state". A practical method for grading the cognitive state of patients for the clinician. <i>J Psychiatr Res</i> 1975;12:189–198.</li>
+      <li>Magni E, Binetti G, Bianchetti A, Rozzini R, Trabucchi M. Mini-Mental State Examination: a normative study in Italian elderly population. <i>Eur J Neurol</i> 1996;3:198–202. doi:10.1111/j.1468-1331.1996.tb00423.x</li>
+      <li>Measso G, Cavarzeran F, Zappalà G, et al. The Mini-Mental State Examination: normative study of an Italian random sample. <i>Dev Neuropsychol</i> 1993;9:77–85.</li>
+      <li>Foderaro G, Isella V, Mazzone A, et al. New normative data for the Mini-Mental State Examination in an Italian population. <i>Neurol Sci</i> 2022. doi:10.1007/s10072-021-05845-4</li>
+      <li>Ministero della Sanità – Progetto Cronos, DM 20 luglio 2000, Tabella 1 bis: coefficienti di aggiustamento del MMSE per la popolazione italiana (riprende Magni et al., 1996).</li>
+      <li>AIFA – Nota 85: farmaci per la malattia di Alzheimer (inibitori delle colinesterasi, memantina).</li>
+    </ol>
+    <p class="note">MMSE © Folstein et al.; diritti di distribuzione Psychological Assessment Resources (PAR). Questa app è un ausilio al calcolo del punteggio: per la somministrazione usare la scheda ufficiale.</p>
+  </section>
+</main>
+
+<aside class="res" aria-live="polite">
+  <div class="note">Punteggio corretto</div>
+  <div class="big"><span class="n" id="corr">–</span><span class="of">/ 30</span></div>
+  <div class="scale"><i></i><i></i><i></i><i></i><span class="mk" id="mk"></span></div>
+  <div class="sl"><span>0</span><span>10</span><span>18</span><span>24</span><span>30</span></div>
+  <div class="verdict" id="verd">–</div>
+  <div class="row"><span>Punteggio grezzo</span><b id="raw">–</b></div>
+  <div class="row"><span>Norme</span><b id="nrm">–</b></div>
+  <div class="row"><span>Coefficiente applicato</span><b id="coef">–</b></div>
+  <div class="row"><span>Fascia età / scolarità</span><b id="band">–</b></div>
+  <div id="dom"></div>
+  <div class="warn" id="warn"></div>
+  <div class="btns">
+    <button id="copy">Copia referto</button>
+    <button class="ghost" id="reset">Azzera</button>
+  </div>
+  <div class="note" id="msg" style="margin-top:8px"></div>
+</aside>
+</div>
+
+<footer>
+  <strong>Ideato dal dr. C.Briglia (cesarebriglia@gmail.com) con l'apporto di Claude - Antropic</strong>
+  Versione 1.2 · creata il 16/11/2026 · aggiornata il 16/11/2026
+</footer>
+
+<script>
+{
+const SECS=[
+ {id:'ot',t:'Orientamento temporale',max:5,items:['Anno','Stagione','Mese','Giorno del mese','Giorno della settimana']},
+ {id:'os',t:'Orientamento spaziale',max:5,items:['Nazione','Regione','Città','Luogo (ospedale/edificio)','Piano']},
+ {id:'reg',t:'Registrazione (3 parole)',max:3,items:['Casa','Pane','Gatto'],sub:'Un punto per ogni parola ripetuta al primo tentativo.'},
+ {id:'att',t:'Attenzione e calcolo',max:5,att:true},
+ {id:'ric',t:'Richiamo differito',max:3,items:['Casa','Pane','Gatto']},
+ {id:'den',t:'Denominazione',max:2,items:['Matita','Orologio']},
+ {id:'rip',t:'Ripetizione',max:1,items:['Frase ripetuta correttamente']},
+ {id:'cmd',t:'Comando in tre fasi',max:3,items:['Prende il foglio','Lo piega a metà','Lo mette sul tavolo / a terra']},
+ {id:'let',t:'Lettura ed esecuzione',max:1,items:['Esegue «Chiuda gli occhi»']},
+ {id:'scr',t:'Scrittura',max:1,items:['Scrive una frase di senso compiuto']},
+ {id:'cop',t:'Prassia costruttiva',max:1,items:['Copia i pentagoni intersecati']}
+];
+const S7=['93','86','79','72','65'], MONDO=['O','D','N','O','M'];
+const AGES=['65–69','70–74','75–79','80–84','85–89'], EDUS=['0–4','5–7','8–12','13–17'];
+const K=[[0.4,-1.1,-2.0,-2.8],[0.7,-0.7,-1.6,-2.3],[1.0,-0.3,-1.0,-1.7],[1.5,0.4,-0.3,-0.9],[2.2,1.4,0.8,0.3]];
+const AGES2=['20–29','30–39','40–49','50–59','60–69','70–79'], EDUS2=['0–3','4–5','6–8','9–13','> 13'];
+const K2=[[0.72,-0.17,-0.81,-1.41,-1.93],[0.91,0.09,-0.58,-1.25,-1.90],[1.10,0.31,-0.38,-1.11,-1.79],
+ [2.24,0.74,-0.03,-1.01,-1.69],[2.99,1.27,0.53,-0.51,-1.54],[5.24,2.03,1.20,-0.14,-1.15]];
+const $=id=>document.getElementById(id);
+const cb=(n,i,l)=>`<label class="it"><input type="checkbox" data-s="${n}" id="${n}${i}">${l}</label>`;
+
+$('secs').innerHTML=SECS.map(s=>`<section class="card"><h2>${s.t}<small id="p_${s.id}">0 / ${s.max}</small></h2>${s.sub?`<p class="sub">${s.sub}</p>`:''}${
+ s.att?`<p class="sub">Sottrazioni seriali di 7 da 100 oppure «MONDO» al contrario: si considera la prova con il punteggio migliore.</p>
+ <div class="att"><div><h3>Sottrazioni da 100</h3><div class="items">${S7.map((x,i)=>cb('s7',i,x)).join('')}</div></div>
+ <div><h3>MONDO al contrario</h3><div class="items">${MONDO.map((x,i)=>cb('mo',i,x)).join('')}</div></div></div>`
+ :`<div class="items">${s.items.map((x,i)=>cb(s.id,i,x)).join('')}</div>`}</section>`).join('');
+
+$('tab').innerHTML=`<thead><tr><th>Età \\ Scolarità</th>${EDUS.map(e=>`<th>${e} anni</th>`).join('')}</tr></thead><tbody>${
+ K.map((r,a)=>`<tr><td>${AGES[a]}</td>${r.map((v,e)=>`<td id="k${a}${e}">${v>0?'+':''}${v.toFixed(1).replace('.',',')}</td>`).join('')}</tr>`).join('')}</tbody>`;
+$('tab2').innerHTML=`<thead><tr><th>Età \\ Scolarità</th>${EDUS2.map(e=>`<th>${e} anni</th>`).join('')}</tr></thead><tbody>${
+ K2.map((r,a)=>`<tr><td>${AGES2[a]}</td>${r.map((v,e)=>`<td id="q${a}${e}">${v>0?'+':''}${v.toFixed(2).replace('.',',')}</td>`).join('')}</tr>`).join('')}</tbody>`;
+
+const d=new Date();$('dt').value=d.toLocaleDateString('it-IT');
+const cnt=n=>document.querySelectorAll(`input[data-s="${n}"]:checked`).length;
+const fmt=v=>v.toFixed(1).replace('.',',');
+let last='';
+
+function calc(){
+ const parts={};
+ SECS.forEach(s=>{parts[s.id]=s.att?Math.max(cnt('s7'),cnt('mo')):cnt(s.id);$('p_'+s.id).textContent=parts[s.id]+' / '+s.max});
+ let raw=Object.values(parts).reduce((a,b)=>a+b,0);
+ const q=$('rawq').value.trim(); let quick=false;
+ if(q!==''){const v=Math.round(+q);if(v>=0&&v<=30){raw=v;quick=true}}
+ const age=+$('age').value, edu=+$('edu').value; const w=[];
+ if($('age').value===''||$('edu').value===''){w.push('Inserire età e scolarità.')}
+ let n=$('norm').value; if(n==='auto')n=age<65?'measso':'magni';
+ let k,band,cut,src,cell,dec;
+ if(n==='magni'){
+  const ai=age<70?0:age<75?1:age<80?2:age<85?3:4, ei=edu<=4?0:edu<=7?1:edu<=12?2:3;
+  if(age<65)w.push('Età < 65 anni: Magni non è validato; applicata la fascia 65–69. Preferire Measso.');
+  if(age>89)w.push('Età > 89 anni: applicata la fascia 85–89 (norme non validate oltre).');
+  if(edu>17)w.push('Scolarità > 17 anni: applicata la fascia 13–17.');
+  k=K[ai][ei];band=AGES[ai]+' a · '+EDUS[ei]+' a';cut=24;src='Magni 1996';cell='k'+ai+ei;dec=1;
+ }else{
+  const ai=Math.min(5,Math.max(0,Math.floor((age-20)/10))), ei=edu<=3?0:edu<=5?1:edu<=8?2:edu<=13?3:4;
+  if(age<20)w.push('Età < 20 anni: applicata la fascia 20–29 (norme non validate).');
+  if(age>79)w.push('Età > 79 anni: Measso arriva a 79 anni; applicata la fascia 70–79. Preferire Magni.');
+  k=K2[ai][ei];band=AGES2[ai]+' a · '+EDUS2[ei]+' a';cut=23.8;src='Measso 1993';cell='q'+ai+ei;dec=2;
+ }
+ const f=v=>v.toFixed(dec).replace('.',',');
+ let c=Math.min(30,Math.max(0,raw+k));
+ document.querySelectorAll('td.on').forEach(t=>t.classList.remove('on'));$(cell).classList.add('on');
+ $('raw').textContent=raw+' / 30'+(quick?' (rapido)':'');
+ $('nrm').textContent=src+' · cut-off '+String(cut).replace('.',',');
+ $('coef').textContent=(k>0?'+':'')+f(k);
+ $('band').textContent=band;
+ $('corr').textContent=f(c);
+ $('mk').style.left=(c/30*100)+'%';
+ const [lab,col]=c>=cut?['Nella norma','--ok']:c>=18?['Deterioramento lieve','--mild']:c>=10?['Deterioramento moderato','--mod']:['Deterioramento grave','--sev'];
+ const v=$('verd');v.textContent=lab;v.style.background=`var(${col})`;
+ $('dom').innerHTML=quick?'':SECS.map(s=>`<div class="row"><span>${s.t}</span><b>${parts[s.id]}/${s.max}</b></div>`).join('');
+ $('warn').innerHTML=w.join('<br>');
+ last=['MINI-MENTAL STATE EXAMINATION (versione italiana)',
+  $('pid').value?'Paziente: '+$('pid').value:'', 'Data: '+$('dt').value,
+  `Età: ${age} anni – Scolarità: ${edu} anni`,
+  ...(quick?[]:SECS.map(s=>`  ${s.t}: ${parts[s.id]}/${s.max}`)),
+  `Punteggio grezzo: ${raw}/30`,
+  `Coefficiente di correzione (${src}, ${band}): ${(k>0?'+':'')+f(k)}`,
+  `Punteggio corretto: ${f(c)}/30 – ${lab} (cut-off ${String(cut).replace('.',',')})`,
+  ...w].filter(Boolean).join('\n');
+}
+document.addEventListener('input',calc);document.addEventListener('change',calc);
+$('copy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(last);$('msg').textContent='Referto copiato negli appunti.'}catch(e){$('msg').textContent='Copia non consentita dal browser: selezionare il testo manualmente.'}});
+$('reset').addEventListener('click',()=>{document.querySelectorAll('input[type=checkbox]').forEach(x=>x.checked=false);$('rawq').value='';$('pid').value='';$('msg').textContent='';calc()});
+calc();
+}
+</script>
+</body>
+</html>
