@@ -66,6 +66,16 @@
     text-align: left;
   }
 
+  /* Contatore visite (header) */
+  .visits {
+    display: none;
+    margin-top: 10px;
+    font-size: clamp(0.72rem, 2vw, 0.82rem);
+    color: var(--text-soft);
+  }
+  .visits b { color: var(--title); }
+  .counters-on .visits { display: block; }
+
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -117,6 +127,18 @@
     color: var(--title);
   }
 
+  .badge-new {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    background: var(--title);
+    color: #f6f1e7;
+    padding: 1px 6px;
+    border-radius: 8px;
+    margin-left: auto;
+    align-self: flex-start;
+  }
+
   .card-desc {
     font-size: clamp(0.78rem, 2.2vw, 0.88rem);
     color: var(--text-soft);
@@ -151,6 +173,17 @@
   }
   .btn-secondary:hover { background: var(--soft-btn-hover); }
 
+  /* Contatori per singola app */
+  .card-stats {
+    display: none;
+    margin-top: 8px;
+    font-size: 0.72rem;
+    color: var(--text-soft);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .counters-on .card-stats { display: block; }
+
   footer {
     text-align: center;
     max-width: 1100px;
@@ -179,13 +212,19 @@
   <h1>ClinicalTOOLs</h1>
   <p class="subtitle">Raccolta di app a supporto della pratica in Medicina Interna</p>
   <p class="disclaimer">⚠️ Strumenti di supporto alla decisione clinica: non sostituiscono il giudizio del medico né le indicazioni delle schede tecniche e delle linee guida vigenti.</p>
+  <p class="visits">👁️ Visite al portale: <b id="visits-total">–</b> · Utilizzi app: <b id="uses-total">–</b> · Download: <b id="downloads-total">–</b></p>
 </header>
+
+<!--
+  Ogni card ha data-app="<id>": i pulsanti generano gli eventi
+  "avvia-<id>" e "scarica-<id>" (aggiunti automaticamente dallo script in fondo).
+-->
 
 <section class="group">
   <h2 class="group-title">Antimicrobici – posologia</h2>
   <div class="grid">
 
-  <div class="card">
+  <div class="card" data-app="aware">
     <div class="card-header"><span class="card-icon">💊</span><span class="card-title">Antibiotici AWaRe</span></div>
     <p class="card-desc">Guida posologica clinica con classificazione AWaRe degli antibiotici e calcolatore della funzione renale (CKD-EPI / Cockcroft-Gault).</p>
     <div class="card-actions">
@@ -194,7 +233,7 @@
     </div>
   </div>
 
-  <div class="card">
+  <div class="card" data-app="antifungini">
     <div class="card-header"><span class="card-icon">🍄</span><span class="card-title">Antifungini – Calcolatore posologico</span></div>
     <p class="card-desc">Dosaggio degli antifungini in base a peso, funzione renale (Cockcroft-Gault), dialisi e classe Child-Pugh.</p>
     <div class="card-actions">
@@ -210,7 +249,7 @@
   <h2 class="group-title">Infezioni – percorsi clinici</h2>
   <div class="grid">
 
-  <div class="card">
+  <div class="card" data-app="sepsi">
     <div class="card-header"><span class="card-icon">🦠</span><span class="card-title">Sepsi</span></div>
     <p class="card-desc">Screening e stratificazione del rischio: qSOFA, SOFA e criteri Sepsis-3.</p>
     <div class="card-actions">
@@ -219,7 +258,16 @@
     </div>
   </div>
 
-  <div class="card">
+  <div class="card" data-app="addome">
+    <div class="card-header"><span class="card-icon">🤕</span><span class="card-title">Addome Acuto</span></div>
+    <p class="card-desc">Supporto decisionale per la valutazione del dolore addominale e dell'addome acuto.</p>
+    <div class="card-actions">
+      <a class="btn btn-primary" href="addome_app.html">▶ avvia</a>
+      <a class="btn btn-secondary" href="addome_app.html" download>⤓ scarica</a>
+    </div>
+  </div>
+
+  <div class="card" data-app="polmonite">
     <div class="card-header"><span class="card-icon">🫁</span><span class="card-title">Polmonite</span></div>
     <p class="card-desc">Score di gravità (CURB-65, PSI) e supporto alla terapia antibiotica della polmonite acquisita in comunità.</p>
     <div class="card-actions">
@@ -228,7 +276,7 @@
     </div>
   </div>
 
-  <div class="card">
+  <div class="card" data-app="uti">
     <div class="card-header"><span class="card-icon">🚽</span><span class="card-title">UTI – Infezioni del Tratto Urinario</span></div>
     <p class="card-desc">Gestione delle infezioni del tratto urinario (Urinary Tract Infections) e criterio antibiotico.</p>
     <div class="card-actions">
@@ -237,7 +285,7 @@
     </div>
   </div>
 
-  <div class="card">
+  <div class="card" data-app="ssti">
     <div class="card-header"><span class="card-icon">🧴</span><span class="card-title">SSTI – Infezioni Cutanee</span></div>
     <p class="card-desc">Classificazione e trattamento delle infezioni della cute e dei tessuti molli (Skin and Soft Tissue Infections).</p>
     <div class="card-actions">
@@ -246,7 +294,7 @@
     </div>
   </div>
 
-  <div class="card">
+  <div class="card" data-app="osteoarticolari">
     <div class="card-header"><span class="card-icon">🦴</span><span class="card-title">Infezioni Osteoarticolari</span></div>
     <p class="card-desc">Inquadramento e terapia antibiotica delle infezioni osteoarticolari.</p>
     <div class="card-actions">
@@ -262,7 +310,7 @@
   <h2 class="group-title">Cardiologia e anticoagulazione</h2>
   <div class="grid">
 
-  <div class="card">
+  <div class="card" data-app="troponina">
     <div class="card-header"><span class="card-icon">🫀</span><span class="card-title">Triage Troponina ESC</span></div>
     <p class="card-desc">Triage biochimico della sospetta sindrome coronarica acuta: algoritmo ESC 0/1h-2h-3h e HEART score.</p>
     <div class="card-actions">
@@ -271,7 +319,7 @@
     </div>
   </div>
 
-  <div class="card">
+  <div class="card" data-app="score2">
     <div class="card-header"><span class="card-icon">📈</span><span class="card-title">SCORE2 – Rischio Cardiovascolare</span></div>
     <p class="card-desc">Stima del rischio cardiovascolare con lo score SCORE2 ed indicazione ai farmaci ipolipemizzanti.</p>
     <div class="card-actions">
@@ -280,7 +328,7 @@
     </div>
   </div>
 
-  <div class="card">
+  <div class="card" data-app="doacs">
     <div class="card-header"><span class="card-icon">🩸</span><span class="card-title">Dosaggio DOACs</span></div>
     <p class="card-desc">Supporto al dosaggio degli anticoagulanti orali diretti.</p>
     <div class="card-actions">
@@ -289,7 +337,7 @@
     </div>
   </div>
 
-  <div class="card">
+  <div class="card" data-app="ortoanticoag">
     <div class="card-header"><span class="card-icon">🩼</span><span class="card-title">OrtoAnticoag</span></div>
     <p class="card-desc">Profilassi del TEV e gestione dell'anticoagulazione nel paziente ortopedico con frattura.</p>
     <div class="card-actions">
@@ -302,10 +350,53 @@
 </section>
 
 <section class="group">
+  <h2 class="group-title">PDTA e percorsi diagnostici</h2>
+  <div class="grid">
+
+  <div class="card" data-app="ictus">
+    <div class="card-header"><span class="card-icon">🧠</span><span class="card-title">PDTA Ictus Cerebrale</span><span class="badge-new">NUOVO</span></div>
+    <p class="card-desc">Flow chart interattiva guidata dai dati del paziente: ictus ischemico, emorragico e TIA.</p>
+    <div class="card-actions">
+      <a class="btn btn-primary" href="pdta_ictus_flowchart_v2.5.html">▶ avvia</a>
+      <a class="btn btn-secondary" href="pdta_ictus_flowchart_v2.5.html" download>⤓ scarica</a>
+    </div>
+  </div>
+
+  <div class="card" data-app="sincope">
+    <div class="card-header"><span class="card-icon">😵‍💫</span><span class="card-title">PDTA Sincope</span><span class="badge-new">NUOVO</span></div>
+    <p class="card-desc">Percorso a passi per la valutazione della perdita transitoria di coscienza: inquadramento, stratificazione del rischio e destinazione del paziente.</p>
+    <div class="card-actions">
+      <a class="btn btn-primary" href="sincope_pdta.html">▶ avvia</a>
+      <a class="btn btn-secondary" href="sincope_pdta.html" download>⤓ scarica</a>
+    </div>
+  </div>
+
+  <div class="card" data-app="anemia">
+    <div class="card-header"><span class="card-icon">🩸</span><span class="card-title">Anemia Severa – Primo Riscontro</span><span class="badge-new">NUOVO</span></div>
+    <p class="card-desc">Percorso guidato a passi per il primo inquadramento dell'anemia severa.</p>
+    <div class="card-actions">
+      <a class="btn btn-primary" href="anemia_severa.html">▶ avvia</a>
+      <a class="btn btn-secondary" href="anemia_severa.html" download>⤓ scarica</a>
+    </div>
+  </div>
+
+  <div class="card" data-app="porpora">
+    <div class="card-header"><span class="card-icon">🔴</span><span class="card-title">Porpora Cutanea – Percorso Clinico</span><span class="badge-new">NUOVO</span></div>
+    <p class="card-desc">Percorso a passi per l'inquadramento diagnostico della porpora cutanea.</p>
+    <div class="card-actions">
+      <a class="btn btn-primary" href="Porpora_Flowchart.html">▶ avvia</a>
+      <a class="btn btn-secondary" href="Porpora_Flowchart.html" download>⤓ scarica</a>
+    </div>
+  </div>
+
+  </div>
+</section>
+
+<section class="group">
   <h2 class="group-title">Convertitori</h2>
   <div class="grid">
 
-  <div class="card">
+  <div class="card" data-app="steroidi">
     <div class="card-header"><span class="card-icon">⚖️</span><span class="card-title">Convertitore Steroidi</span></div>
     <p class="card-desc">Equivalenze di dose tra corticosteroidi sistemici.</p>
     <div class="card-actions">
@@ -314,7 +405,7 @@
     </div>
   </div>
 
-  <div class="card">
+  <div class="card" data-app="oppioidi">
     <div class="card-header"><span class="card-icon">💉</span><span class="card-title">Convertitore Oppioidi</span></div>
     <p class="card-desc">Conversione equianalgesica tra oppioidi.</p>
     <div class="card-actions">
@@ -327,19 +418,10 @@
 </section>
 
 <section class="group">
-  <h2 class="group-title">Urgenze e procedure</h2>
+  <h2 class="group-title">Procedure</h2>
   <div class="grid">
 
-  <div class="card">
-    <div class="card-header"><span class="card-icon">🤕</span><span class="card-title">Addome Acuto</span></div>
-    <p class="card-desc">Supporto decisionale per la valutazione del dolore addominale e dell'addome acuto.</p>
-    <div class="card-actions">
-      <a class="btn btn-primary" href="addome_app.html">▶ avvia</a>
-      <a class="btn btn-secondary" href="addome_app.html" download>⤓ scarica</a>
-    </div>
-  </div>
-
-  <div class="card">
+  <div class="card" data-app="accessi">
     <div class="card-header"><span class="card-icon">🩺</span><span class="card-title">Accessi Vascolari</span></div>
     <p class="card-desc">Guida alla scelta e gestione degli accessi vascolari (CVC, PICC, midline, arteriosi).</p>
     <div class="card-actions">
@@ -355,7 +437,7 @@
   <h2 class="group-title">Nutrizione e dimissione</h2>
   <div class="grid">
 
-  <div class="card">
+  <div class="card" data-app="dieta">
     <div class="card-header"><span class="card-icon">🥗</span><span class="card-title">Piano Dietetico alla Dimissione</span></div>
     <p class="card-desc">Compilazione del piano dietetico da consegnare al paziente alla dimissione.</p>
     <div class="card-actions">
@@ -369,8 +451,75 @@
 
 <footer>
   <div>Ideato dal dr. C.Briglia (<a href="mailto:cesarebriglia@gmail.com">cesarebriglia@gmail.com</a>) con l'apporto di Claude - Anthropic</div>
-  <div class="meta">Versione 2.5 · Data di creazione: 02/11/2026 · Ultimo aggiornamento: 13/11/2026</div>
+  <div class="meta">Versione 2.7 · Data di creazione: 02/11/2026 · Ultimo aggiornamento: 22/11/2026</div>
 </footer>
+
+<script>
+/* =====================================================================
+   CONTATORE VISITE / UTILIZZI / DOWNLOAD  (GoatCounter – gratuito,
+   senza cookie, conforme GDPR).
+   Per attivarlo: scrivere qui sotto il codice scelto su goatcounter.com
+   (es. 'clinicaltools' se il pannello è clinicaltools.goatcounter.com).
+   Lasciato vuoto, il contatore resta spento e la pagina funziona normalmente.
+   ===================================================================== */
+var GOATCOUNTER_CODE = '';
+
+(function () {
+  // 1) Etichetta ogni pulsante con l'evento da conteggiare
+  document.querySelectorAll('.card[data-app]').forEach(function (card) {
+    var id = card.getAttribute('data-app');
+    var avvia = card.querySelector('.btn-primary');
+    var scarica = card.querySelector('.btn-secondary');
+    if (avvia)   { avvia.setAttribute('data-goatcounter-click', 'avvia-' + id);
+                   avvia.setAttribute('data-goatcounter-title', 'Avvia ' + id); }
+    if (scarica) { scarica.setAttribute('data-goatcounter-click', 'scarica-' + id);
+                   scarica.setAttribute('data-goatcounter-title', 'Scarica ' + id); }
+    var stats = document.createElement('div');
+    stats.className = 'card-stats';
+    stats.innerHTML = '▶ <span data-n="avvia-' + id + '">–</span> utilizzi · ⤓ <span data-n="scarica-' + id + '">–</span> download';
+    card.appendChild(stats);
+  });
+
+  if (!GOATCOUNTER_CODE) return;          // contatore non configurato
+  var base = 'https://' + GOATCOUNTER_CODE + '.goatcounter.com';
+
+  // 2) Carica lo script di conteggio (registra la visita e i click)
+  var s = document.createElement('script');
+  s.async = true;
+  s.src = 'https://gc.zgo.at/count.js';
+  s.setAttribute('data-goatcounter', base + '/count');
+  document.body.appendChild(s);
+
+  // 3) Legge e mostra i conteggi (richiede in GoatCounter l'opzione
+  //    "Allow adding visitor counts on your website")
+  function toNum(str) { return parseInt(String(str).replace(/[^\d]/g, ''), 10) || 0; }
+  function fmt(n) { return n.toLocaleString('it-IT'); }
+  function get(path) {
+    return fetch(base + '/counter/' + encodeURIComponent(path) + '.json')
+      .then(function (r) { return r.ok ? r.json() : { count: '0' }; })
+      .then(function (j) { return toNum(j.count); })
+      .catch(function () { return 0; });
+  }
+
+  document.body.classList.add('counters-on');
+
+  var pagePath = location.pathname || '/';
+  get(pagePath).then(function (n) { document.getElementById('visits-total').textContent = fmt(n); });
+
+  var cells = Array.prototype.slice.call(document.querySelectorAll('[data-n]'));
+  var totUse = 0, totDl = 0;
+  Promise.all(cells.map(function (el) {
+    var ev = el.getAttribute('data-n');
+    return get(ev).then(function (n) {
+      el.textContent = fmt(n);
+      if (ev.indexOf('avvia-') === 0) totUse += n; else totDl += n;
+    });
+  })).then(function () {
+    document.getElementById('uses-total').textContent = fmt(totUse);
+    document.getElementById('downloads-total').textContent = fmt(totDl);
+  });
+})();
+</script>
 
 </body>
 </html>
