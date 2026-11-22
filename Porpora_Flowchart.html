@@ -1,0 +1,1634 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Porpora Cutanea — Percorso Clinico a Passi</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@700&display=swap');
+
+:root {
+  --bg:#f4f7fb; --card:#ffffff; --ink:#1f2a37; --ink2:#374151; --muted:#6b7280;
+  --line:#e3e8ef; --line2:#cfd8e3;
+  --primary:#1769aa; --primary-lt:#e8f2fb; --accent:#0f9d8a; --accent-lt:#e6f6f3;
+  --red:#c62828; --red-lt:#fdecec; --amber:#b45309; --amber-lt:#fff5e0;
+  --green:#15803d; --green-lt:#e9f7ee; --blue:#1d4ed8; --blue-lt:#eaf0fe; --purple:#6d28d9; --purple-lt:#f1ebfd;
+  --sans:'Inter','Segoe UI',Roboto,Arial,sans-serif;
+  --mono:'Inter','Segoe UI',Roboto,Arial,sans-serif;
+  --serif:'Merriweather',Georgia,serif;
+}
+* { box-sizing:border-box; margin:0; padding:0; }
+body { background:var(--bg); color:var(--ink); font-family:var(--sans); min-height:100vh; font-size:15px; line-height:1.55; }
+
+header { padding:14px 20px; background:linear-gradient(120deg,#1769aa 0%,#16a1b8 100%); color:#fff;
+  position:sticky; top:0; z-index:100; display:flex; align-items:center; justify-content:space-between; gap:12px;
+  box-shadow:0 2px 10px rgba(23,105,170,.25); }
+.header-left { display:flex; align-items:center; gap:14px; min-width:0; }
+.header-icon { width:42px; height:42px; border-radius:12px; flex-shrink:0; background:rgba(255,255,255,.2);
+  display:flex; align-items:center; justify-content:center; font-size:21px; }
+.header-title { font-size:clamp(15px,3.5vw,19px); font-weight:700; }
+.header-sub { font-size:11.5px; opacity:.85; }
+.header-btns { display:flex; gap:8px; flex-shrink:0; }
+.hbtn { background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.5); color:#fff; padding:7px 12px; border-radius:8px;
+  cursor:pointer; font-family:var(--sans); font-size:12.5px; font-weight:600; white-space:nowrap; }
+.hbtn:hover { background:#fff; color:var(--primary); }
+.hbtn:disabled { opacity:.4; cursor:default; background:rgba(255,255,255,.15); color:#fff; }
+
+#breadcrumb { padding:9px 20px; display:flex; flex-wrap:wrap; align-items:center; gap:6px; font-size:12px; color:var(--muted);
+  background:#fff; border-bottom:1px solid var(--line); min-height:36px; }
+.bc-sep { color:var(--line2); }
+.bc-item { color:var(--primary); }
+.bc-item.current { color:var(--ink); font-weight:600; }
+
+#stage { max-width:800px; margin:0 auto; padding:24px 16px 30px; }
+.disclaimer { font-size:12.5px; color:var(--ink2); background:var(--primary-lt); border-radius:10px; padding:10px 14px; margin-bottom:22px; }
+
+.step { position:relative; padding-left:38px; margin-bottom:10px; animation:fadeUp .28s ease both; }
+.step::before { content:''; position:absolute; left:13px; top:32px; bottom:-10px; width:2px; background:var(--line2); }
+.step:last-child::before { display:none; }
+.step-num { position:absolute; left:0; top:0; width:28px; height:28px; border-radius:50%; background:#fff; border:2px solid var(--primary);
+  color:var(--primary); font-size:13px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+.step.answered .step-num { background:var(--primary); color:#fff; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+.q-label { font-size:11px; font-weight:600; color:var(--accent); letter-spacing:.8px; text-transform:uppercase; margin-bottom:3px; }
+.q-text { font-family:var(--serif); font-size:clamp(17px,3.6vw,21px); font-weight:700; line-height:1.35; margin-bottom:4px; color:var(--ink); }
+.q-sub { font-size:13px; color:var(--muted); margin-bottom:14px; }
+
+.choices { display:flex; flex-direction:column; gap:8px; }
+.choice-btn { background:var(--card); border:1.5px solid var(--line); border-radius:12px; padding:11px 14px; cursor:pointer; text-align:left;
+  display:flex; align-items:center; gap:12px; color:var(--ink); font-family:var(--sans); font-size:14.5px; width:100%;
+  box-shadow:0 1px 2px rgba(16,24,40,.04); transition:border-color .15s, box-shadow .15s, background .15s; }
+.choice-btn:hover { border-color:var(--primary); box-shadow:0 3px 10px rgba(23,105,170,.12); }
+.choice-btn.danger { border-left:4px solid #ef9a9a; }
+.choice-btn.warning { border-left:4px solid #f6c66b; }
+.choice-btn.selected { border-color:var(--primary); background:var(--primary-lt); box-shadow:0 0 0 1px var(--primary) inset; }
+.step.answered .choice-btn:not(.selected) { opacity:.6; }
+.step.answered .choice-btn:not(.selected):hover { opacity:1; }
+.choice-icon { font-size:20px; width:30px; text-align:center; flex-shrink:0; }
+.choice-body { flex:1; }
+.choice-title { font-weight:600; }
+.choice-desc { font-size:12.5px; color:var(--muted); margin-top:1px; }
+.choice-check { width:18px; height:18px; border-radius:50%; border:2px solid var(--line2); flex-shrink:0; }
+.choice-btn.selected .choice-check { border-color:var(--primary); background:radial-gradient(circle,var(--primary) 45%,transparent 50%); }
+
+.esito { margin:12px 0 20px; border-radius:12px; padding:12px 14px; display:flex; gap:10px; align-items:flex-start; font-size:14px; animation:fadeUp .25s ease both; border-left-width:5px; border-left-style:solid; }
+.esito-icon { font-size:17px; flex-shrink:0; line-height:1.3; }
+.esito-tag { font-size:10.5px; font-weight:700; letter-spacing:.8px; text-transform:uppercase; display:block; margin-bottom:2px; }
+.esito.ok      { background:var(--green-lt); border-color:var(--green); color:#14532d; }
+.esito.info    { background:var(--blue-lt); border-color:var(--blue); color:#1e3a8a; }
+.esito.warning { background:var(--amber-lt); border-color:#f59e0b; color:#78350f; }
+.esito.danger  { background:var(--red-lt); border-color:var(--red); color:#7f1d1d; }
+.esito strong { color:inherit; }
+
+.end-card { border:1px dashed var(--line2); border-radius:12px; padding:14px 16px; background:#fff; color:var(--ink2); font-size:14px; }
+
+.result-panel { margin-top:8px; animation:fadeUp .3s ease both; }
+.result-header { border-radius:14px 14px 0 0; padding:16px 18px; display:flex; align-items:center; gap:14px; color:#fff; }
+.result-header.danger  { background:linear-gradient(120deg,#c62828 0%,#e5534b 100%); }
+.result-header.warning { background:linear-gradient(120deg,#d97706 0%,#f2a43a 100%); }
+.result-header.info    { background:linear-gradient(120deg,#1769aa 0%,#16a1b8 100%); }
+.result-icon { font-size:30px; background:rgba(255,255,255,.22); border-radius:12px; width:50px; height:50px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.result-kicker { font-size:10.5px; font-weight:700; letter-spacing:.9px; text-transform:uppercase; opacity:.9; }
+.result-dx { font-family:var(--serif); font-size:clamp(16px,3.5vw,20px); font-weight:700; line-height:1.3; }
+.result-subtitle { font-size:12.5px; opacity:.92; margin-top:2px; }
+.result-tabs { display:flex; background:#fff; border-left:1px solid var(--line); border-right:1px solid var(--line); border-bottom:1px solid var(--line); overflow-x:auto; scrollbar-width:none; }
+.result-tabs::-webkit-scrollbar { display:none; }
+.rtab { flex:0 0 auto; background:none; border:none; border-bottom:3px solid transparent; padding:11px 15px; cursor:pointer;
+  font-family:var(--sans); font-size:13px; font-weight:600; color:var(--muted); white-space:nowrap; }
+.rtab:hover { color:var(--ink); }
+.rtab.active { color:var(--primary); border-bottom-color:var(--primary); }
+.rtab-content { display:none; }
+.rtab-content.active { display:block; }
+.result-body { background:#fff; border:1px solid var(--line); border-top:none; border-radius:0 0 14px 14px; padding:18px; box-shadow:0 4px 16px rgba(16,24,40,.06); }
+.section-label { font-size:11px; font-weight:700; letter-spacing:.8px; text-transform:uppercase; color:var(--accent);
+  margin:18px 0 8px; padding-bottom:5px; border-bottom:1px solid var(--line); }
+.rtab-content > .section-label:first-child, .rtab-content > .alert:first-child + .section-label { margin-top:0; }
+.info-row { display:flex; gap:10px; padding:7px 0; border-bottom:1px solid #f0f3f7; font-size:14px; }
+.info-row:last-child { border-bottom:none; }
+.info-dot { width:7px; height:7px; border-radius:50%; margin-top:8px; flex-shrink:0; }
+.dot-b{background:var(--blue)} .dot-r{background:var(--red)} .dot-a{background:#f59e0b} .dot-w{background:#9ca3af} .dot-g{background:var(--green)}
+.info-main { color:var(--ink2); flex:1; }
+.info-main strong { color:var(--ink); }
+.info-sub { color:var(--muted); font-size:12.5px; }
+.drug-box { background:#fafcfe; border:1px solid var(--line); border-left:4px solid var(--accent); border-radius:10px; padding:11px 13px; margin-bottom:9px; }
+.drug-name { font-weight:700; font-size:14.5px; color:var(--ink); margin-bottom:4px; }
+.drug-dose { font-size:12.5px; font-weight:500; color:#0b5e53; background:var(--accent-lt); padding:3px 8px; border-radius:6px; display:inline-block; margin-bottom:5px; line-height:1.45; }
+.drug-note { font-size:12.5px; color:var(--muted); }
+.badge { display:inline-block; font-size:10.5px; font-weight:700; letter-spacing:.3px; text-transform:uppercase; padding:2px 8px; border-radius:20px; margin-left:6px; vertical-align:middle; }
+.badge-r{background:var(--red-lt);color:var(--red)}
+.badge-a{background:var(--amber-lt);color:var(--amber)}
+.badge-g{background:var(--green-lt);color:var(--green)}
+.badge-b{background:var(--blue-lt);color:var(--blue)}
+.badge-p{background:var(--purple-lt);color:var(--purple)}
+.alert { border-radius:10px; padding:11px 13px; margin-bottom:12px; display:flex; gap:10px; align-items:flex-start; font-size:13.5px; border-left:4px solid; }
+.alert-icon { font-size:16px; flex-shrink:0; }
+.alert.danger{background:var(--red-lt);border-color:var(--red);color:#7f1d1d}
+.alert.warning{background:var(--amber-lt);border-color:#f59e0b;color:#78350f}
+.alert.info{background:var(--blue-lt);border-color:var(--blue);color:#1e3a8a}
+.ref-list { padding-left:20px; font-size:12.5px; color:var(--ink2); }
+.ref-list li { margin-bottom:6px; }
+
+.score-widget { background:#fafcfe; border:1px solid var(--line); border-radius:12px; padding:14px; }
+.score-title { font-size:12px; font-weight:700; letter-spacing:.6px; text-transform:uppercase; color:var(--primary); margin-bottom:4px; }
+.score-desc { font-size:12.5px; color:var(--muted); margin-bottom:8px; }
+.score-row { display:flex; align-items:center; gap:10px; padding:6px 0; border-bottom:1px solid #f0f3f7; cursor:pointer; }
+.score-row label { font-size:13.5px; color:var(--ink2); flex:1; cursor:pointer; }
+.score-pts { font-size:12px; font-weight:600; color:var(--muted); min-width:34px; text-align:right; }
+.score-row input { accent-color:var(--primary); width:16px; height:16px; cursor:pointer; flex-shrink:0; }
+.score-result { margin-top:12px; padding:10px 14px; border-radius:10px; text-align:center; background:#fff; border:1px solid var(--line); }
+.score-num { font-family:var(--serif); font-size:26px; font-weight:700; line-height:1; color:var(--muted); }
+.score-interp { font-size:13px; margin-top:4px; color:var(--muted); }
+
+.btn-row { margin-top:18px; display:flex; flex-wrap:wrap; gap:10px; }
+.btn { background:#fff; border:1px solid var(--line2); color:var(--ink2); padding:8px 14px; border-radius:8px; cursor:pointer; font-size:13px; font-weight:600; font-family:var(--sans); }
+.btn:hover { border-color:var(--primary); color:var(--primary); }
+
+footer { max-width:800px; margin:0 auto; padding:18px 16px 40px; border-top:1px solid var(--line); font-size:12px; color:var(--muted); text-align:center; line-height:1.7; }
+footer .sign { color:var(--ink); font-weight:600; }
+footer details { text-align:left; margin-top:12px; }
+footer summary { cursor:pointer; color:var(--primary); text-align:center; font-weight:600; }
+footer ol { padding-left:20px; margin-top:8px; }
+
+@media (max-width:560px) { header { flex-wrap:wrap; } .step { padding-left:34px; } }
+
+@media print {
+  * { box-shadow:none !important; }
+  body { background:#fff; font-size:11pt; }
+  header { position:static; background:#fff !important; color:#000; border-bottom:2px solid #000; }
+  .header-btns, #breadcrumb, .btn-row, .result-tabs, .disclaimer { display:none !important; }
+  .choice-btn:not(.selected) { display:none !important; }
+  .step::before, .step-num { display:none; }
+  .step { padding-left:0; page-break-inside:avoid; }
+  .rtab-content { display:block !important; margin-bottom:10px; }
+  .rtab-content[data-tab="tab-score"] { display:none !important; }
+  .result-header { color:#000 !important; background:#eee !important; }
+  .result-icon { background:none; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <div class="header-icon">🩸</div>
+    <div>
+      <div class="header-title">Porpora Cutanea — Percorso Clinico a Passi</div>
+      <div class="header-sub">v2.1 · 22/11/2026 · ESC 2023 · ISTH 2020-25 · ASH 2018/2026 · EULAR 2019/2022 · ESCMID 2016</div>
+    </div>
+  </div>
+  <div class="header-btns">
+    <button class="hbtn" id="btnBack" type="button">‹ Indietro</button>
+    <button class="hbtn" id="btnReset" type="button">↺ Ricomincia</button>
+  </div>
+</header>
+
+<div id="breadcrumb"></div>
+<main id="stage"></main>
+
+<footer>
+  <div class="sign">Ideato dal dr. C.Briglia (cesarebriglia@gmail.com) con l'apporto di Claude - Antropic</div>
+  <div>Versione 2.1 · creata il 22/11/2026 (revisione della v1.0; v2.1: nuova grafica chiara)</div>
+  <div>Strumento di supporto alla decisione clinica: non sostituisce il giudizio del medico né i protocolli aziendali. Verificare sempre dosi e controindicazioni sulla scheda tecnica (RCP).</div>
+  <details>
+    <summary>Bibliografia completa</summary>
+    <ol id="biblio"></ol>
+  </details>
+</footer>
+
+<script>
+"use strict";
+/* =====================================================================
+   BIBLIOGRAFIA
+   ===================================================================== */
+const REFS = {
+  escmid16: "van de Beek D, et al. ESCMID guideline: diagnosis and treatment of acute bacterial meningitis. Clin Microbiol Infect 2016;22(Suppl 3):S37-62.",
+  ssc21: "Evans L, et al. Surviving Sepsis Campaign: international guidelines for management of sepsis and septic shock 2021. Intensive Care Med 2021;47:1181-247.",
+  ecdc: "ECDC. Public health management of sporadic cases of invasive meningococcal disease and their contacts. Stockholm: ECDC; 2010.",
+  isthdic: "Taylor FB Jr, et al. Towards definition, clinical and laboratory criteria, and a scoring system for disseminated intravascular coagulation (ISTH SSC). Thromb Haemost 2001;86:1327-30.",
+  wada13: "Wada H, et al. Guidance for diagnosis and treatment of DIC from harmonization of the recommendations from three guidelines. J Thromb Haemost 2013;11:761-7.",
+  rick: "Parola P, et al. Update on tick-borne rickettsioses around the world: a geographic approach. Clin Microbiol Rev 2013;26:657-702.",
+  ebv: "Dunmire SK, Hogquist KA, Balfour HH. Infectious mononucleosis. Curr Top Microbiol Immunol 2015;390:211-40.",
+  chovel: "Chovel-Sella A, et al. Incidence of rash after amoxicillin treatment in children with infectious mononucleosis. Pediatrics 2013;131:e1424-7.",
+  esc23: "Delgado V, et al. 2023 ESC Guidelines for the management of endocarditis. Eur Heart J 2023;44:3948-4042.",
+  duke23: "Fowler VG, et al. The 2023 Duke-International Society for Cardiovascular Infectious Diseases criteria for infective endocarditis. Clin Infect Dis 2023;77:518-26.",
+  isthttpdx: "Zheng XL, et al. ISTH guidelines for the diagnosis of thrombotic thrombocytopenic purpura. J Thromb Haemost 2020;18:2486-95.",
+  isthttp20: "Zheng XL, et al. ISTH guidelines for treatment of thrombotic thrombocytopenic purpura. J Thromb Haemost 2020;18:2496-502.",
+  isthttp25: "Zheng XL, et al. 2025 focused update of the 2020 ISTH guidelines for management of thrombotic thrombocytopenic purpura. J Thromb Haemost 2025. doi:10.1016/j.jtha.2025.06.002.",
+  hercules: "Scully M, et al. Caplacizumab treatment for acquired thrombotic thrombocytopenic purpura (HERCULES). N Engl J Med 2019;380:335-46.",
+  plasmic: "Bendapudi PK, et al. Derivation and external validation of the PLASMIC score for rapid assessment of adults with thrombotic microangiopathies. Lancet Haematol 2017;4:e157-64.",
+  ahus: "Goodship THJ, et al. Atypical hemolytic uremic syndrome and C3 glomerulopathy: conclusions from a KDIGO Controversies Conference. Kidney Int 2017;91:539-51.",
+  apl: "Sanz MA, et al. Management of acute promyelocytic leukemia: updated recommendations from an expert panel of the European LeukemiaNet. Blood 2019;133:1630-43.",
+  febneut: "Klastersky J, et al. Management of febrile neutropaenia: ESMO Clinical Practice Guidelines. Ann Oncol 2016;27(Suppl 5):v111-8.",
+  aplastic: "Kulasekararaj A, et al. Guidelines for the diagnosis and management of adult aplastic anaemia: a British Society for Haematology guideline. Br J Haematol 2024;204:784-804.",
+  ash18hit: "Cuker A, et al. American Society of Hematology 2018 guidelines for management of venous thromboembolism: heparin-induced thrombocytopenia. Blood Adv 2018;2:3360-92.",
+  lo4t: "Lo GK, et al. Evaluation of pretest clinical score (4 T's) for the diagnosis of heparin-induced thrombocytopenia in two clinical settings. J Thromb Haemost 2006;4:759-65.",
+  ditp: "Aster RH, Bougie DW. Drug-induced immune thrombocytopenia. N Engl J Med 2007;357:580-7.",
+  ash26: "Cuker A, et al. American Society of Hematology 2026 guidelines for immune thrombocytopenia: initial and second-line therapy in adults with primary ITP. Blood Adv 2026. doi:10.1182/bloodadvances.2026021269.",
+  ash19: "Neunert C, et al. American Society of Hematology 2019 guidelines for immune thrombocytopenia. Blood Adv 2019;3:3829-66.",
+  icr19: "Provan D, et al. Updated international consensus report on the investigation and management of primary immune thrombocytopenia. Blood Adv 2019;3:3780-817.",
+  chcc: "Jennette JC, et al. 2012 Revised International Chapel Hill Consensus Conference Nomenclature of Vasculitides. Arthritis Rheum 2013;65:1-11.",
+  derm18: "Sunderkötter CH, et al. Nomenclature of cutaneous vasculitis: dermatologic addendum to the 2012 Revised International Chapel Hill Consensus Conference. Arthritis Rheumatol 2018;70:171-84.",
+  share19: "Ozen S, et al. European consensus-based recommendations for diagnosis and treatment of immunoglobulin A vasculitis: the SHARE initiative. Rheumatology 2019;58:1607-16.",
+  kdigo21: "KDIGO 2021 Clinical Practice Guideline for the Management of Glomerular Diseases. Kidney Int 2021;100(4S):S1-S276.",
+  eular22: "Hellmich B, et al. EULAR recommendations for the management of ANCA-associated vasculitis: 2022 update. Ann Rheum Dis 2024;83:30-47.",
+  kdigo24: "KDIGO 2024 Clinical Practice Guideline for the Management of Antineutrophil Cytoplasmic Antibody (ANCA)-Associated Vasculitis. Kidney Int 2024;105(3S):S71-S116.",
+  pexivas: "Walsh M, et al. Plasma exchange and glucocorticoids in severe ANCA-associated vasculitis (PEXIVAS). N Engl J Med 2020;382:622-31.",
+  advocate: "Jayne DRW, et al. Avacopan for the treatment of ANCA-associated vasculitis (ADVOCATE). N Engl J Med 2021;384:599-609.",
+  crio: "Roccatello D, et al. Cryoglobulinaemia. Nat Rev Dis Primers 2018;4:11.",
+  aps19: "Tektonidou MG, et al. EULAR recommendations for the management of antiphospholipid syndrome in adults. Ann Rheum Dis 2019;78:1296-304.",
+  aps23: "Barbhaiya M, et al. 2023 ACR/EULAR antiphospholipid syndrome classification criteria. Arthritis Rheumatol 2023;75:1687-702.",
+  retiform: "Georgesen C, Fox LP, Harp J. Retiform purpura: a diagnostic approach. J Am Acad Dermatol 2020;82:783-96.",
+  calci: "Nigwekar SU, Thadhani R, Brandenburg VM. Calciphylaxis. N Engl J Med 2018;378:1704-14.",
+  chol: "Kronzon I, Saric M. Cholesterol embolization syndrome. Circulation 2010;122:631-41.",
+  vkanec: "Nazarian RM, et al. Warfarin-induced skin necrosis. J Am Acad Dermatol 2009;61:325-32.",
+  accp: "Holbrook A, et al. Evidence-based management of anticoagulant therapy: ACCP Evidence-Based Clinical Practice Guidelines (9th ed). Chest 2012;141(2 Suppl):e152S-e184S.",
+  ehra21: "Steffel J, et al. 2021 European Heart Rhythm Association Practical Guide on the use of non-vitamin K antagonist oral anticoagulants. Europace 2021;23:1612-76.",
+  easl22: "EASL Clinical Practice Guidelines on prevention and management of bleeding and thrombosis in patients with cirrhosis. J Hepatol 2022;76:1151-84.",
+  baveno7: "de Franchis R, et al. Baveno VII - Renewing consensus in portal hypertension. J Hepatol 2022;76:959-74.",
+  wfh20: "Srivastava A, et al. WFH Guidelines for the Management of Hemophilia, 3rd edition. Haemophilia 2020;26(Suppl 6):1-158.",
+  aha20: "Tiede A, et al. International recommendations on the diagnosis and treatment of acquired hemophilia A. Haematologica 2020;105:1791-801.",
+  vwd21: "James PD, et al. / Connell NT, et al. ASH ISTH NHF WFH 2021 guidelines on the diagnosis and on the management of von Willebrand disease. Blood Adv 2021;5:280-300 e 301-25.",
+  scurvy: "Hirschmann JV, Raugi GJ. Adult scurvy. J Am Acad Dermatol 1999;41:895-906.",
+  senile: "Kaya G, Saurat JH. Dermatoporosis: a chronic cutaneous insufficiency/fragility syndrome. Dermatology 2007;215:284-94."
+};
+
+/* =====================================================================
+   ALBERO DECISIONALE
+   Nodo domanda: { type:'q', label, text, sub, options:[{icon,title,desc,cls,esito:{lvl,txt},next|end}] }
+   lvl: ok | info | warning | danger
+   ===================================================================== */
+const N = {
+
+  q_vitro: {
+    type:"q", label:"Conferma della porpora",
+    text:"La lesione scompare alla vitropressione (diascopia)?",
+    sub:"Premere con un vetrino trasparente: la porpora (stravaso di emazie) non sbianca; l'eritema (vasodilatazione) sì.",
+    options:[
+      { icon:"⚪", title:"Sì, sbianca completamente",
+        esito:{ lvl:"info", txt:"<strong>Non è porpora</strong>: lesione eritematosa o vascolare (esantema, orticaria, teleangectasie, angiomi). Il percorso porpora termina qui. Se il colore è dubbio ripetere la prova: le lesioni molto recenti possono sbiancare in parte." },
+        end:true },
+      { icon:"🔴", title:"No, non sbianca",
+        esito:{ lvl:"ok", txt:"<strong>Porpora confermata</strong> (stravaso ematico nel derma). Passo successivo: febbre e stabilità clinica." },
+        next:"q_febbre" }
+    ]
+  },
+
+  q_febbre: {
+    type:"q", label:"Stratificazione della gravità",
+    text:"Febbre e condizioni generali?",
+    sub:"Febbre = T ≥ 38 °C. Instabilità = PAS ≤ 100 mmHg, FR ≥ 22/min, alterazione dello stato di coscienza (qSOFA ≥ 2), lattati > 2 mmol/L, oppure porpora che si estende a vista.",
+    options:[
+      { icon:"🚨", cls:"danger", title:"Febbre con segni di sepsi o porpora in rapida estensione",
+        esito:{ lvl:"danger", txt:"<strong>EMERGENZA — sospetta sepsi con porpora</strong> (meningococcemia / purpura fulminans). Emocolture ×2 e antibiotico EV <strong>subito, entro 1 ora</strong>; non ritardare per TC, rachicentesi o esami. Allertare la rianimazione." },
+        next:"r_sepsi" },
+      { icon:"🌡️", cls:"warning", title:"Febbre, emodinamicamente stabile",
+        esito:{ lvl:"warning", txt:"Porpora febbrile: un'infezione invasiva va esclusa anche nel paziente stabile. Subito: emocromo con striscio, PT/aPTT, fibrinogeno, D-dimero, emocolture, PCR/PCT, lattati. Rivalutare parametri e cute ogni 1–2 h." },
+        next:"q_febbre_morf" },
+      { icon:"✅", title:"Apiressia",
+        esito:{ lvl:"ok", txt:"Porpora non febbrile: l'orientamento si basa su morfologia, emocromo e coagulazione." },
+        next:"q_morf" }
+    ]
+  },
+
+  /* ---------------- RAMO FEBBRILE ---------------- */
+  q_febbre_morf: {
+    type:"q", label:"Paziente febbrile stabile — morfologia",
+    text:"Aspetto e sede delle lesioni?",
+    sub:"Palpare le lesioni: la porpora palpabile indica infiammazione della parete vasale (vasculite).",
+    options:[
+      { icon:"🔴", title:"Petecchie / porpora piatta (non palpabile)", desc:"Diffuse o declivi, eventuale sanguinamento mucoso",
+        esito:{ lvl:"warning", txt:"Porpora piatta febbrile: il dato decisivo è l'<strong>emocromo con striscio periferico</strong> e la coagulazione." },
+        next:"q_febbre_emo" },
+      { icon:"🟠", title:"Porpora palpabile", desc:"Rilevata al tatto, declive (gambe, glutei)",
+        esito:{ lvl:"warning", txt:"Porpora palpabile = <strong>vasculite dei piccoli vasi</strong>. Con febbre considerare anche endocardite e vasculiti sistemiche: definire gli organi coinvolti." },
+        next:"q_palp" },
+      { icon:"🕷️", title:"Esantema maculo-papuloso/petecchiale con palme e piante ± escara nera", desc:"Tache noire nel sito di puntura di zecca; contatto con cani, ambiente rurale, maggio–settembre",
+        esito:{ lvl:"warning", txt:"Sospetta <strong>rickettsiosi</strong> (febbre bottonosa del Mediterraneo, endemica nel Centro-Sud Italia): iniziare doxiciclina subito, senza attendere la sierologia." },
+        next:"r_rickettsia" },
+      { icon:"🦠", title:"Petecchie al palato + faringite + linfoadenopatia cervicale",
+        esito:{ lvl:"info", txt:"Quadro suggestivo di <strong>mononucleosi infettiva (EBV)</strong>. Evitare le aminopenicilline." },
+        next:"r_mono" },
+      { icon:"🫀", cls:"danger", title:"Lesioni di Janeway, nodi di Osler, emorragie subungueali a scheggia", desc:"Soffio nuovo, protesi valvolare, device, uso di droghe EV",
+        esito:{ lvl:"danger", txt:"Sospetta <strong>endocardite infettiva</strong>: 3 set di emocolture PRIMA dell'antibiotico ed ecocardiogramma." },
+        next:"r_endocardite" },
+      { icon:"⬛", cls:"danger", title:"Porpora retiforme, necrotica o con bolle emorragiche",
+        esito:{ lvl:"danger", txt:"Porpora retiforme febbrile = <strong>occlusione vascolare</strong> (purpura fulminans, ectima gangrenoso, emboli settici, CID): gestire come sepsi grave anche se i parametri sono stabili." },
+        next:"r_sepsi" }
+    ]
+  },
+
+  q_febbre_emo: {
+    type:"q", label:"Paziente febbrile — laboratorio",
+    text:"Emocromo, striscio periferico e coagulazione?",
+    sub:"Emocromo con formula, striscio (schistociti, blasti), PT/INR, aPTT, fibrinogeno, D-dimero, LDH, aptoglobina, bilirubina.",
+    options:[
+      { icon:"🧩", cls:"danger", title:"PLT ↓ + schistociti > 1%, LDH ↑, aptoglobina ↓, coagulazione normale",
+        esito:{ lvl:"danger", txt:"<strong>Microangiopatia trombotica</strong>: TTP finché non provato il contrario. Prelevare ADAMTS13 PRIMA di plasma o plasmaferesi e contattare subito ematologo/Centro trasfusionale." },
+        next:"r_mat" },
+      { icon:"🩸", cls:"danger", title:"PLT ↓ + PT/aPTT allungati, fibrinogeno ↓, D-dimero ↑↑",
+        esito:{ lvl:"danger", txt:"<strong>CID in corso di febbre</strong>: la causa più probabile è la sepsi. Calcolare lo score ISTH, antibiotico subito e trattamento della causa." },
+        next:"r_sepsi" },
+      { icon:"🔻", cls:"danger", title:"Pancitopenia, blasti o promielociti allo striscio",
+        esito:{ lvl:"danger", txt:"Febbre + citopenie: possibile <strong>neutropenia febbrile</strong> (antibiotico entro 1 h) o leucemia acuta. Promielociti atipici + CID → sospetta <strong>leucemia acuta promielocitica</strong>: ematologo in urgenza, ATRA immediato." },
+        next:"r_pancito" },
+      { icon:"📉", cls:"warning", title:"Piastrinopenia isolata, striscio normale",
+        esito:{ lvl:"warning", txt:"Piastrinopenia isolata febbrile: infezioni (virali, rickettsie, sepsi iniziale), farmaci o eparina. Escludere la pseudopiastrinopenia da EDTA (ricontare su citrato)." },
+        next:"q_plt_isolata" },
+      { icon:"✅", title:"Emocromo e coagulazione normali",
+        esito:{ lvl:"warning", txt:"Porpora febbrile non trombocitopenica: endocardite, vasculite, infezioni virali o rickettsiali, meningococcemia agli esordi. Emocolture e <strong>rivalutazione ravvicinata</strong>: la conta può calare nelle ore successive." },
+        next:"r_febbre_ddx" }
+    ]
+  },
+
+  /* ---------------- RAMO APIRETICO ---------------- */
+  q_morf: {
+    type:"q", label:"Paziente apiretico — morfologia",
+    text:"Aspetto, sede e contesto delle lesioni?",
+    sub:"Osservare distribuzione, palpabilità, bordi; chiedere di farmaci (antiaggreganti, anticoagulanti, steroidi) e sanguinamenti mucosi.",
+    options:[
+      { icon:"🔴", title:"Petecchie / porpora piatta", desc:"Puntiformi, declivi o diffuse, ± sanguinamento mucoso",
+        esito:{ lvl:"info", txt:"Porpora piatta: tipica dei disturbi piastrinici. Passo successivo: <strong>emocromo e striscio periferico</strong>." },
+        next:"q_emo" },
+      { icon:"🟠", title:"Porpora palpabile", desc:"Rilevata, declive, talvolta con bolle o ulcere",
+        esito:{ lvl:"warning", txt:"Porpora palpabile = <strong>vasculite dei piccoli vasi</strong>. Definire il coinvolgimento d'organo: esame urine sempre." },
+        next:"q_palp" },
+      { icon:"🌀", cls:"warning", title:"Porpora retiforme / livedo / necrosi", desc:"A rete o stellata, bordi angolati, centro necrotico",
+        esito:{ lvl:"warning", txt:"Porpora retiforme = <strong>occlusione del lume vascolare</strong> (trombi, emboli, calcificazioni, crioproteine). Il contesto orienta la diagnosi." },
+        next:"q_retif" },
+      { icon:"🟤", title:"Ecchimosi estese / ematomi profondi / emartri",
+        esito:{ lvl:"info", txt:"Ecchimosi ed ematomi profondi orientano verso un <strong>difetto della coagulazione</strong>. Passo successivo: PT/INR e aPTT." },
+        next:"q_coag" },
+      { icon:"🍊", title:"Petecchie perifollicolari + gengivorragie", desc:"Malnutrizione, alcol, anziano solo, dieta restrittiva",
+        esito:{ lvl:"info", txt:"Quadro tipico dello <strong>scorbuto</strong> (deficit di vitamina C)." },
+        next:"r_scorbuto" },
+      { icon:"👴", title:"Ecchimosi su avambracci e dorso delle mani nell'anziano, senza altri sintomi",
+        esito:{ lvl:"ok", txt:"Compatibile con <strong>porpora senile (attinica)</strong>: la diagnosi richiede emocromo e PT/aPTT normali e la revisione dei farmaci." },
+        next:"r_senile" }
+    ]
+  },
+
+  q_emo: {
+    type:"q", label:"Porpora piatta — laboratorio",
+    text:"Emocromo e striscio periferico?",
+    sub:"Richiedere anche PT/INR, aPTT, fibrinogeno, LDH, aptoglobina, bilirubina, reticolociti.",
+    options:[
+      { icon:"📉", title:"Piastrinopenia isolata (PLT < 100.000/µL), striscio normale",
+        esito:{ lvl:"info", txt:"Escludere prima la <strong>pseudopiastrinopenia da EDTA</strong> (aggregati allo striscio → ricontare su provetta con citrato). Poi definire il contesto." },
+        next:"q_plt_isolata" },
+      { icon:"🧩", cls:"danger", title:"PLT ↓ + schistociti > 1%, LDH ↑, aptoglobina ↓",
+        esito:{ lvl:"danger", txt:"<strong>Microangiopatia trombotica</strong>: TTP finché non provato il contrario. ADAMTS13 prima del plasma; ematologo subito." },
+        next:"r_mat" },
+      { icon:"🩸", cls:"danger", title:"PLT ↓ + PT/aPTT allungati, fibrinogeno ↓, D-dimero ↑↑",
+        esito:{ lvl:"danger", txt:"<strong>CID</strong> senza febbre: cercare neoplasia (prostata, pancreas, leucemia promielocitica), causa ostetrica, aneurisma, trauma." },
+        next:"r_cid" },
+      { icon:"🔻", cls:"warning", title:"Pancitopenia / bicitopenia o cellule anomale allo striscio",
+        esito:{ lvl:"warning", txt:"Citopenie multiple: sospetto di patologia midollare. Blasti o promielociti allo striscio = urgenza ematologica." },
+        next:"r_pancito" },
+      { icon:"✅", title:"Piastrine normali",
+        esito:{ lvl:"info", txt:"Porpora con PLT normali: valutare coagulazione e funzione piastrinica (antiaggreganti, uremia). Petecchie limitate a volto/collo dopo tosse, vomito o sforzo sono meccaniche e benigne." },
+        next:"q_coag" }
+    ]
+  },
+
+  q_plt_isolata: {
+    type:"q", label:"Piastrinopenia isolata — contesto",
+    text:"In quale contesto compare la piastrinopenia?",
+    sub:"Confrontare con conte precedenti; ricostruire terapia degli ultimi 3 mesi (eparina inclusi lavaggi di cateteri).",
+    options:[
+      { icon:"💉", cls:"danger", title:"Eparina in corso o nei 100 giorni precedenti; calo dal 5°–10° giorno",
+        esito:{ lvl:"danger", txt:"Sospetta <strong>HIT</strong>: calcolare subito il 4T score. Se ≥ 4 sospendere ogni eparina e iniziare un anticoagulante non eparinico." },
+        next:"r_hit" },
+      { icon:"💊", title:"Farmaco nuovo nelle 1–3 settimane precedenti (inibitori GP IIb/IIIa: ore)",
+        esito:{ lvl:"warning", txt:"Sospetta <strong>piastrinopenia immune da farmaci</strong>: sospendere subito il farmaco sospetto." },
+        next:"r_ditp" },
+      { icon:"🦠", title:"Infezione in atto o nota (EBV, CMV, HIV, HCV; dengue dopo viaggio)",
+        esito:{ lvl:"info", txt:"Probabile <strong>piastrinopenia immune secondaria</strong>: trattare la causa; la gestione del rischio emorragico segue i criteri dell'ITP." },
+        next:"r_itp" },
+      { icon:"🍷", title:"Epatopatia cronica, alcol, splenomegalia",
+        esito:{ lvl:"info", txt:"Probabile <strong>ipersplenismo</strong> e ridotta trombopoietina da epatopatia; raramente PLT < 30.000." },
+        next:"r_epatopatia" },
+      { icon:"🤰", title:"Gravidanza",
+        esito:{ lvl:"warning", txt:"Diagnosi differenziale: piastrinopenia gestazionale (di solito PLT > 70.000, III trimestre, asintomatica) vs <strong>preeclampsia/HELLP</strong> (PA ↑, transaminasi ↑, emolisi) vs ITP vs TTP. Valutazione ostetrico-ematologica urgente se PLT < 70.000, ipertensione, schistociti o sintomi. Fine del percorso in questa app." },
+        end:true },
+      { icon:"❔", title:"Nessuna causa evidente",
+        esito:{ lvl:"info", txt:"Diagnosi di esclusione: <strong>ITP primaria</strong> probabile se anamnesi, esame obiettivo (milza non palpabile) e striscio sono altrimenti normali." },
+        next:"r_itp" }
+    ]
+  },
+
+  q_palp: {
+    type:"q", label:"Porpora palpabile — organi e contesto",
+    text:"Coinvolgimento d'organo e contesto?",
+    sub:"Sempre: esame urine con sedimento, creatinina, emocromo, PCR. Valutare polmoni, vie aeree superiori, nervi periferici, addome, articolazioni.",
+    options:[
+      { icon:"🩹", title:"Solo cute; nuovo farmaco o infezione nelle 1–3 settimane precedenti",
+        esito:{ lvl:"ok", txt:"Probabile <strong>vasculite leucocitoclastica cutanea</strong> (da farmaci o post-infettiva). Va comunque escluso un coinvolgimento sistemico." },
+        next:"r_vlc" },
+      { icon:"🫘", title:"Artralgie/artrite, dolore addominale colico ± ematuria",
+        esito:{ lvl:"warning", txt:"Quadro di <strong>vasculite IgA (Schönlein-Henoch)</strong>. Nell'adulto il rischio renale è maggiore: sedimento e proteinuria." },
+        next:"r_igav" },
+      { icon:"🫁", cls:"danger", title:"Emottisi/emorragia alveolare, GN rapidamente progressiva, sinusite crostosa, mononeurite",
+        esito:{ lvl:"danger", txt:"Sospetta <strong>vasculite ANCA-associata</strong>. Emorragia alveolare + glomerulonefrite = <strong>sindrome polmone-rene</strong>: emergenza; dosare anche gli anti-GBM." },
+        next:"r_aav" },
+      { icon:"❄️", title:"HCV/HBV, artralgie, neuropatia, porpora a poussée, C4 molto basso",
+        esito:{ lvl:"warning", txt:"Sospetta <strong>vasculite crioglobulinemica</strong>: prelievo per crioglobuline mantenuto a 37 °C." },
+        next:"r_crio" },
+      { icon:"🫀", cls:"danger", title:"Febbre persistente con soffio o fattori di rischio per endocardite",
+        esito:{ lvl:"danger", txt:"Porpora palpabile da <strong>endocardite</strong> (vasculite da immunocomplessi/emboli): emocolture ×3 ed ecocardiogramma." },
+        next:"r_endocardite" }
+    ]
+  },
+
+  q_retif: {
+    type:"q", label:"Porpora retiforme — contesto",
+    text:"Qual è il contesto clinico?",
+    sub:"La porpora retiforme non è una vasculite primitiva nella maggior parte dei casi: indica occlusione del lume.",
+    options:[
+      { icon:"🧬", title:"Trombosi pregresse, complicanze ostetriche, LES, aPTT allungato",
+        esito:{ lvl:"warning", txt:"Sospetta <strong>sindrome da anticorpi antifosfolipidi</strong>: ricerca degli aPL; valutare CAPS se più organi coinvolti." },
+        next:"r_aps" },
+      { icon:"🧊", title:"Gammopatia monoclonale/mieloma o lesioni acrali scatenate dal freddo",
+        esito:{ lvl:"warning", txt:"Sospetta <strong>crioglobulinemia di tipo I</strong> (monoclonale): occlusione da crioprecipitati." },
+        next:"r_crio" },
+      { icon:"🧱", cls:"danger", title:"IRC avanzata/dialisi; lesioni molto dolorose su cosce, addome, glutei",
+        esito:{ lvl:"danger", txt:"Sospetta <strong>calcifilassi</strong> (arteriolopatia uremica calcifica): prognosi severa, gestione multidisciplinare." },
+        next:"r_calcifilassi" },
+      { icon:"🦶", title:"Dopo cateterismo/procedura endovascolare o anticoagulazione: dita blu, livedo, IRA, eosinofilia",
+        esito:{ lvl:"warning", txt:"Sospetta <strong>embolia di cristalli di colesterolo</strong>." },
+        next:"r_colesterolo" },
+      { icon:"⚠️", cls:"danger", title:"Warfarin iniziato da 3–5 giorni (senza copertura eparinica)",
+        esito:{ lvl:"danger", txt:"Sospetta <strong>necrosi cutanea da warfarin</strong> (deficit transitorio di proteina C): sospendere il warfarin, vitamina K, eparina." },
+        next:"r_necrosi_vka" },
+      { icon:"🚨", cls:"danger", title:"Febbre, neutropenia o immunodepressione",
+        esito:{ lvl:"danger", txt:"Purpura fulminans, <strong>ectima gangrenoso</strong> (Pseudomonas) o infezione fungina angioinvasiva: trattare come sepsi." },
+        next:"r_sepsi" }
+    ]
+  },
+
+  q_coag: {
+    type:"q", label:"Coagulazione",
+    text:"PT/INR e aPTT?",
+    sub:"Annotare anticoagulanti in corso (VKA, DOAC, eparina) e la sede del prelievo (catetere eparinato?).",
+    options:[
+      { icon:"⬆️", title:"PT/INR allungato, aPTT normale",
+        esito:{ lvl:"info", txt:"Difetto della <strong>via estrinseca</strong> (FVII): VKA, carenza di vitamina K, epatopatia iniziale; raramente deficit congenito di FVII." },
+        next:"r_vitk" },
+      { icon:"⬆️", title:"aPTT allungato isolato",
+        esito:{ lvl:"info", txt:"Difetto della <strong>via intrinseca</strong> o inibitore: il passo decisivo è il <strong>test di miscela</strong> (1:1 con plasma normale, subito e dopo 2 h a 37 °C)." },
+        next:"q_mix" },
+      { icon:"⬆️", cls:"warning", title:"PT e aPTT entrambi allungati",
+        esito:{ lvl:"warning", txt:"Deficit multipli: CID, epatopatia o eccesso di anticoagulante. Servono fibrinogeno, D-dimero e piastrine." },
+        next:"q_pt_aptt" },
+      { icon:"✅", title:"PT e aPTT normali",
+        esito:{ lvl:"info", txt:"Coagulazione normale: considerare <strong>difetto funzionale piastrinico</strong> (antiaggreganti, uremia), malattia di von Willebrand lieve, fragilità vascolare, deficit di FXIII." },
+        next:"r_vwd" }
+    ]
+  },
+
+  q_mix: {
+    type:"q", label:"aPTT isolato",
+    text:"Anamnesi emorragica e test di miscela?",
+    options:[
+      { icon:"🚨", cls:"danger", title:"Anziano o post-partum, ematomi estesi a insorgenza recente, nessuna storia emorragica; aPTT non corretto dopo incubazione",
+        esito:{ lvl:"danger", txt:"Sospetta <strong>emofilia A acquisita</strong> (autoanticorpi anti-FVIII): emergenza emorragica. Evitare iniezioni IM e procedure invasive; Centro Emofilia subito." },
+        next:"r_eaa" },
+      { icon:"🧬", title:"Storia personale/familiare di sanguinamenti; aPTT corretto dalla miscela",
+        esito:{ lvl:"info", txt:"Probabile <strong>deficit congenito</strong> di fattore (FVIII, FIX, FXI) o malattia di von Willebrand." },
+        next:"r_emofilia" },
+      { icon:"🧪", title:"Eparina non frazionata in corso o prelievo da catetere eparinato",
+        esito:{ lvl:"info", txt:"Probabile <strong>interferenza eparinica</strong>: ripetere il prelievo da vena periferica. Tempo di trombina allungato con tempo di reptilasi normale conferma l'eparina; se in terapia con ENF controllare anti-Xa e dose. Fine del percorso." },
+        end:true },
+      { icon:"🌀", title:"Nessun sanguinamento, aPTT non corretto; trombosi o aborti",
+        esito:{ lvl:"warning", txt:"Probabile <strong>lupus anticoagulant</strong>: allunga l'aPTT ma NON causa emorragia (rischio trombotico). Ricercare APS." },
+        next:"r_aps" }
+    ]
+  },
+
+  q_pt_aptt: {
+    type:"q", label:"PT e aPTT allungati",
+    text:"Fibrinogeno, D-dimero, piastrine e contesto?",
+    options:[
+      { icon:"🩸", cls:"danger", title:"Fibrinogeno ↓, D-dimero ↑↑, PLT ↓ (o in calo)",
+        esito:{ lvl:"danger", txt:"<strong>CID</strong>: calcolare lo score ISTH e cercare la causa." },
+        next:"r_cid" },
+      { icon:"🫃", title:"Epatopatia nota o segni di cirrosi; fibrinogeno normale o lievemente ↓",
+        esito:{ lvl:"info", txt:"<strong>Coagulopatia dell'epatopatia</strong>: emostasi riequilibrata, l'INR non misura il rischio emorragico." },
+        next:"r_epatopatia" },
+      { icon:"💊", cls:"warning", title:"VKA con INR molto elevato, DOAC o possibile esposizione a rodenticidi",
+        esito:{ lvl:"warning", txt:"<strong>Eccesso di anticoagulante</strong> o superwarfarin. Antidoto in base al farmaco e alla gravità del sanguinamento." },
+        next:"r_vitk" }
+    ]
+  },
+
+  /* =====================================================================
+     ESITI FINALI
+     ===================================================================== */
+  r_sepsi: {
+    type:"r", icon:"🚨", urgency:"danger",
+    dx:"Sepsi con porpora — Meningococcemia / Purpura fulminans",
+    subtitle:"Emergenza: antibiotico entro 1 ora · ESCMID 2016 · Surviving Sepsis 2021",
+    semio:[
+      { d:"r", t:"<strong>Purpura fulminans</strong>: petecchie non sbiancanti che in poche ore evolvono in ecchimosi e necrosi a margini geografici, soprattutto distali." },
+      { d:"r", t:"<strong>Sepsi/shock</strong>: febbre, tachicardia, ipotensione, alterazione della coscienza; dolore agli arti, estremità fredde e refill > 2 s sono segni precoci." },
+      { d:"r", t:"Meningite concomitante possibile (cefalea, rigor nucale, fotofobia), spesso assente nella meningococcemia fulminante." },
+      { d:"a", t:"Altri agenti: <strong>S. pneumoniae</strong> e <strong>Capnocytophaga canimorsus</strong> (asplenia, morso di cane), S. aureus, gram-negativi, Pseudomonas (ectima gangrenoso nel neutropenico); rickettsie; P. falciparum dopo viaggio." },
+      { d:"w", t:"CID quasi costante nelle forme fulminanti (consumo di proteina C)." }
+    ],
+    esami:[
+      { u:true, n:"Emocolture ×2", s:"Prima dell'antibiotico, ma senza ritardarlo." },
+      { u:true, n:"Emocromo + striscio; PT/INR, aPTT, fibrinogeno, D-dimero", s:"Score ISTH per la CID (scheda Score)." },
+      { u:true, n:"Lattati, EGA, PCR, PCT, creatinina, bilirubina", s:"Stadiazione della disfunzione d'organo (SOFA)." },
+      { u:true, n:"PCR real-time su sangue per N. meningitidis / S. pneumoniae", s:"Utile anche dopo l'inizio dell'antibiotico." },
+      { u:false, n:"Rachicentesi solo quando sicura", s:"Rinviarla se instabilità emodinamica, CID o PLT < 50.000, anticoagulazione, segni di ipertensione endocranica." },
+      { u:false, n:"TC encefalo prima della rachicentesi", s:"Se deficit focali (esclusi i nervi cranici), crisi di nuova insorgenza, GCS < 10, grave immunodepressione (ESCMID)." },
+      { u:false, n:"Tampone o biopsia di una lesione cutanea", s:"Gram e PCR." }
+    ],
+    terapia:{
+      alert:{ c:"danger", i:"🚨", t:"Antibiotico EV <strong>subito</strong> (entro 1 h dal riconoscimento), fluidi 30 mL/kg di cristalloidi se ipoperfusione, vasopressori, rianimazione. Non attendere TC, rachicentesi o esami." },
+      drugs:[
+        { n:"Ceftriaxone", dose:"2 g EV ogni 12 h se meningite possibile; 2 g/die se sepsi meningococcica senza meningite · bambini 80–100 mg/kg/die", note:"In alternativa cefotaxime 2 g ogni 4–6 h. Durata per N. meningitidis: 7 giorni.", b:["badge-r","1ª scelta"] },
+        { n:"Ampicillina (in aggiunta)", dose:"2 g EV ogni 4 h", note:"Se meningite possibile ed età > 50 anni, gravidanza, alcolismo, immunodepressione (copertura Listeria).", b:["badge-a","Rischio Listeria"] },
+        { n:"Vancomicina (in aggiunta)", dose:"15–20 mg/kg EV ogni 8–12 h (monitoraggio livelli)", note:"Se Gram positivi su liquor, sospetto pneumococco resistente alle cefalosporine o rischio MRSA/sepsi da catetere.", b:["badge-b","Selezionati"] },
+        { n:"Desametasone", dose:"10 mg EV ogni 6 h × 4 giorni (bambini 0,15 mg/kg)", note:"Solo se meningite sospetta: iniziare con o poco prima della 1ª dose di antibiotico. Beneficio dimostrato soprattutto nella meningite pneumococcica; non indicato nella sepsi meningococcica senza meningite. Nello shock refrattario: idrocortisone 200 mg/die (SSC 2021).", b:["badge-p","Se meningite"] },
+        { n:"Allergia grave ai beta-lattamici", dose:"Consulenza infettivologica", note:"Opzioni: meropenem (se allergia non anafilattica), cloramfenicolo, moxifloxacina + vancomicina.", b:["badge-a","Alternativa"] }
+      ],
+      extra:[
+        { l:"Profilassi dei contatti stretti", t:"Il prima possibile, idealmente entro 24 h dalla diagnosi del caso indice: <strong>ciprofloxacina 500 mg OS dose singola</strong> (adulti; utilizzabile anche in età pediatrica secondo ECDC) oppure <strong>rifampicina 600 mg ogni 12 h per 2 giorni</strong> (bambini 10 mg/kg ogni 12 h); <strong>in gravidanza ceftriaxone 250 mg IM dose singola</strong> (rifampicina e chinolonici non raccomandati). Operatori sanitari solo se esposti alle secrezioni respiratorie senza protezione (es. intubazione)." },
+        { l:"Sanità pubblica", t:"Malattia batterica invasiva: segnalazione immediata al Servizio di Igiene e Sanità Pubblica della ASL. Isolamento respiratorio (droplet) per le prime 24 h di terapia efficace." },
+        { l:"CID / purpura fulminans", t:"Emocomponenti solo se sanguinamento o procedure: piastrine se < 50.000 con sanguinamento (< 10–20.000 senza); PFC 15–30 mL/kg se PT/aPTT > 1,5× con sanguinamento; fibrinogeno se < 1,5 g/L. Concentrato di proteina C: uso off-label in centri esperti." }
+      ]
+    },
+    score:"isth_dic",
+    refs:["escmid16","ssc21","ecdc","isthdic","wada13"]
+  },
+
+  r_rickettsia: {
+    type:"r", icon:"🕷️", urgency:"warning",
+    dx:"Rickettsiosi — Febbre bottonosa del Mediterraneo (R. conorii)",
+    subtitle:"Endemica nel Centro-Sud Italia e nelle isole · terapia empirica con doxiciclina",
+    semio:[
+      { d:"b", t:"Febbre elevata ad esordio brusco, cefalea, mialgie, 5–7 giorni dopo la puntura della zecca del cane (Rhipicephalus sanguineus); picco maggio–settembre." },
+      { d:"b", t:"<strong>Escara nera (tache noire)</strong> nel sito di puntura, presente nella maggior parte dei casi, ± linfoadenite satellite." },
+      { d:"b", t:"Esantema maculo-papuloso, talora petecchiale, dal 3°–5° giorno, esteso a <strong>palme e piante</strong>." },
+      { d:"a", t:"Frequenti piastrinopenia, iponatriemia, transaminasi aumentate." },
+      { d:"r", t:"Forme gravi (insufficienza renale, CID, coinvolgimento neurologico) più frequenti in anziani, diabetici, alcolisti, deficit di G6PD e con ritardo terapeutico." }
+    ],
+    esami:[
+      { u:true, n:"Emocromo, elettroliti, transaminasi, creatinina, coagulazione", s:"Stadiazione di gravità." },
+      { u:false, n:"Tampone o biopsia dell'escara per PCR Rickettsia", s:"Metodo più rapido e sensibile nella fase acuta." },
+      { u:false, n:"Sierologia IFA (R. conorii) su due campioni a 2–4 settimane", s:"Spesso negativa nella prima settimana: non attendere per trattare." },
+      { u:false, n:"Emocolture", s:"Diagnosi differenziale con sepsi batterica/meningococcemia." }
+    ],
+    terapia:{
+      alert:{ c:"info", i:"ℹ️", t:"La doxiciclina va iniziata sul sospetto clinico: il ritardo terapeutico è il principale fattore di gravità." },
+      drugs:[
+        { n:"Doxiciclina", dose:"100 mg OS/EV ogni 12 h per 5–7 giorni (almeno 48–72 h dopo lo sfebbramento)", note:"Farmaco di scelta, anche nei bambini per cicli brevi.", b:["badge-r","1ª scelta"] },
+        { n:"Azitromicina o claritromicina", dose:"Azitromicina 500 mg/die × 3 giorni · claritromicina 500 mg ogni 12 h × 7 giorni", note:"In gravidanza o intolleranza alle tetracicline; meno validate nelle forme gravi.", b:["badge-a","Alternativa"] }
+      ],
+      extra:[ { l:"Prevenzione", t:"Rimozione precoce della zecca con pinzetta; la profilassi antibiotica dopo puntura non è indicata." } ]
+    },
+    refs:["rick"]
+  },
+
+  r_mono: {
+    type:"r", icon:"🦠", urgency:"info",
+    dx:"Mononucleosi infettiva (EBV)",
+    subtitle:"Petecchie palatali in corso di faringite febbrile",
+    semio:[
+      { d:"b", t:"Triade: febbre, faringotonsillite (spesso essudativa), linfoadenopatia cervicale posteriore; astenia marcata." },
+      { d:"b", t:"Petecchie al confine palato duro-palato molle: frequenti ma <strong>non specifiche</strong> (anche faringite streptococcica)." },
+      { d:"b", t:"Splenomegalia in circa metà dei casi: rischio di rottura splenica (0,1–0,5%) nelle prime 3–4 settimane." },
+      { d:"a", t:"Esantema dopo aminopenicilline in circa il 30% (studi recenti; il dato storico del 90% è sovrastimato); non indica allergia vera." },
+      { d:"w", t:"Piastrinopenia lieve frequente; raramente piastrinopenia grave, anemia emolitica autoimmune, HLH, epatite colestatica." }
+    ],
+    esami:[
+      { u:true, n:"Emocromo con formula", s:"Linfocitosi con linfociti reattivi > 10%: suggestiva, non patognomonica (anche CMV, HIV acuto, toxoplasma)." },
+      { u:true, n:"Test anticorpi eterofili (Monotest)", s:"Falsi negativi nella 1ª settimana e nei bambini piccoli." },
+      { u:false, n:"Sierologia EBV", s:"VCA-IgM positivi con EBNA-IgG negativi = infezione primaria." },
+      { u:false, n:"Transaminasi, bilirubina, LDH", s:"Ipertransaminasemia lieve nella maggior parte dei casi." },
+      { u:false, n:"Se eterofili e VCA negativi", s:"CMV, HIV (Ag p24/RNA), toxoplasma." },
+      { u:false, n:"Ecografia addome", s:"Se dolore in ipocondrio sinistro (rottura splenica)." }
+    ],
+    terapia:{
+      alert:{ c:"info", i:"ℹ️", t:"Evitare ampicillina/amoxicillina; trattare con antibiotico solo un'infezione streptococcica documentata." },
+      drugs:[
+        { n:"Terapia di supporto", dose:"Paracetamolo 500–1000 mg ogni 6–8 h (max 3 g/die)", note:"Idratazione, riposo relativo; malattia autolimitante in 2–4 settimane.", b:["badge-g","Supporto"] },
+        { n:"Corticosteroidi", dose:"Prednisone 40–60 mg/die per 5–7 giorni, poi sospendere", note:"Non di routine. Solo complicanze: ostruzione delle vie aeree, anemia emolitica, piastrinopenia grave, HLH (con ematologo).", b:["badge-a","Selezionati"] }
+      ],
+      extra:[ { l:"Attività fisica", t:"Evitare sport di contatto e sforzi intensi per almeno 3–4 settimane dall'esordio (rischio di rottura splenica)." } ]
+    },
+    refs:["ebv","chovel"]
+  },
+
+  r_endocardite: {
+    type:"r", icon:"🫀", urgency:"danger",
+    dx:"Endocardite infettiva",
+    subtitle:"Criteri Duke-ISCVID 2023 · ESC 2023",
+    semio:[
+      { d:"r", t:"<strong>Lesioni di Janeway</strong>: macule emorragiche non dolenti di palmi e piante (microemboli settici)." },
+      { d:"r", t:"<strong>Nodi di Osler</strong>: noduli dolenti dei polpastrelli (immunomediati), più tipici delle forme subacute." },
+      { d:"b", t:"Emorragie subungueali a scheggia, petecchie congiuntivali e palatali, macchie di Roth al fondo oculare." },
+      { d:"b", t:"Febbre + soffio nuovo o modificato; embolie (cerebrali, spleniche, renali), spondilodiscite." },
+      { d:"w", t:"Fattori di rischio: protesi valvolare o TAVI, pregressa EI, cardiopatia congenita, device intracardiaci, uso di droghe EV, emodialisi, CVC." }
+    ],
+    esami:[
+      { u:true, n:"Emocolture: 3 set da siti diversi", s:"Prima dell'antibiotico; nei pazienti stabili prelievi distanziati di circa 30 min." },
+      { u:true, n:"Ecocardiogramma transtoracico", s:"TEE se TTE negativo con sospetto clinico, protesi o device, e prima di passare alla terapia orale." },
+      { u:false, n:"TC cardiaca, PET/TC-FDG (protesi, device)", s:"Ascessi, pseudoaneurismi; TC/RM encefalo e addome per embolie." },
+      { u:false, n:"Esame urine, creatinina, fattore reumatoide, PCR/VES", s:"GN e FR positivo sono criteri minori immunologici (Duke-ISCVID)." },
+      { u:false, n:"Emocolture negative", s:"Sierologie Coxiella, Bartonella, Brucella; PCR su tessuto valvolare." }
+    ],
+    terapia:{
+      alert:{ c:"warning", i:"⚠️", t:"Terapia empirica solo dopo le emocolture; coinvolgere precocemente l'Endocarditis Team (cardiologo, cardiochirurgo, infettivologo)." },
+      drugs:[
+        { n:"Empirica", dose:"Secondo schemi ESC 2023 e consulenza infettivologica", note:"Comunitaria su valvola nativa: copertura di streptococchi, enterococchi e S. aureus (es. ampicillina + oxacillina ± gentamicina). Nosocomiale, protesi precoce o rischio MRSA: vancomicina (o daptomicina) + gentamicina ± rifampicina su protesi.", b:["badge-b","Empirica"] },
+        { n:"S. aureus meticillino-sensibile", dose:"Oxacillina o (flu)cloxacillina 12 g/die EV in 4–6 dosi (alternativa cefazolina 6 g/die in 3 dosi)", note:"Valvola nativa 4–6 settimane. Protesi ≥ 6 settimane + rifampicina 900 mg/die in 2–3 dosi + gentamicina 3 mg/kg/die per 2 settimane.", b:["badge-g","MSSA"] },
+        { n:"S. aureus meticillino-resistente", dose:"Vancomicina 30–60 mg/kg/die EV in 2–3 dosi (monitoraggio livelli/AUC) · alternativa daptomicina 10 mg/kg/die", note:"Su protesi aggiungere rifampicina e gentamicina come sopra.", b:["badge-r","MRSA"] },
+        { n:"Streptococchi penicillino-sensibili (MIC ≤ 0,125 mg/L)", dose:"Amoxicillina 100–200 mg/kg/die EV in 4–6 dosi o ceftriaxone 2 g/die · 4 settimane (nativa), 6 (protesi)", note:"Schema di 2 settimane + gentamicina 3 mg/kg/die solo su valvola nativa non complicata con funzione renale normale.", b:["badge-g","Streptococchi"] },
+        { n:"Enterococcus faecalis", dose:"Amoxicillina 200 mg/kg/die EV in 4–6 dosi + ceftriaxone 2 g ogni 12 h × 6 settimane", note:"Preferito ad ampicillina + gentamicina (nefrotossicità). E. faecium/VRE: consulenza infettivologica.", b:["badge-a","Enterococco"] }
+      ],
+      extra:[
+        { l:"Passaggio a terapia orale (ESC 2023)", t:"Nei pazienti stabili con streptococchi, E. faecalis, S. aureus o stafilococchi coagulasi-negativi, dopo almeno 10 giorni di terapia EV (7 dopo chirurgia), senza ascessi e con TEE di controllo." },
+        { l:"Chirurgia (ESC 2023)", t:"Emergente/urgente per scompenso cardiaco da disfunzione valvolare; infezione non controllata (ascesso, pseudoaneurisma, fistola, vegetazione in crescita, batteriemia persistente, funghi o germi multiresistenti, protesi infetta da S. aureus o gram-negativi non HACEK); vegetazione ≥ 10 mm con embolia nonostante la terapia." },
+        { l:"Profilassi (pazienti ad alto rischio)", t:"Amoxicillina 2 g OS 30–60 min prima delle procedure dentarie con manipolazione gengivale o periapicale. In allergia: azitromicina o claritromicina 500 mg, oppure doxiciclina 100 mg (la clindamicina non è più raccomandata)." }
+      ]
+    },
+    refs:["esc23","duke23"]
+  },
+
+  r_febbre_ddx: {
+    type:"r", icon:"🔎", urgency:"warning",
+    dx:"Porpora febbrile con emocromo e coagulazione normali",
+    subtitle:"Fase precoce o porpora non piastrinica — rivalutazione ravvicinata",
+    semio:[
+      { d:"r", t:"La <strong>meningococcemia</strong> può esordire con poche petecchie e conta normale: rivalutare cute e parametri ogni 1–2 h nelle prime ore." },
+      { d:"b", t:"Vasculiti (IgA, leucocitoclastica, crioglobulinemica): la porpora diventa palpabile." },
+      { d:"b", t:"Endocardite: petecchie congiuntivali/palatali, emorragie subungueali." },
+      { d:"b", t:"Infezioni virali (enterovirus, parvovirus B19 \"a guanti e calzini\", EBV/CMV, HIV acuto), rickettsiosi; dengue, leptospirosi o malaria dopo viaggio/esposizione." },
+      { d:"w", t:"Reazioni a farmaci con febbre (vasculite da farmaci, DRESS con eosinofilia ed epatite)." }
+    ],
+    esami:[
+      { u:true, n:"Emocolture ×2, PCR, PCT, lattati", s:"Ripetere emocromo e coagulazione dopo 6–12 h." },
+      { u:false, n:"Esame urine con sedimento", s:"Vasculite, endocardite." },
+      { u:false, n:"Ecocardiogramma", s:"Se fattori di rischio o emocolture positive." },
+      { u:false, n:"Sierologie mirate", s:"EBV, CMV, HIV, parvovirus B19, Rickettsia; test per malaria/dengue se viaggio." }
+    ],
+    terapia:{
+      alert:{ c:"warning", i:"⚠️", t:"Se il paziente peggiora o la porpora si estende: trattare come sepsi (ceftriaxone EV subito)." },
+      drugs:[
+        { n:"Osservazione attiva", dose:"Parametri vitali e ispezione cutanea ogni 1–2 h", note:"Delimitare con penna il margine delle lesioni per valutarne l'estensione.", b:["badge-b","Monitoraggio"] },
+        { n:"Antibiotico empirico", dose:"Ceftriaxone 2 g EV", note:"Soglia bassa se aspetto tossico, PCR/PCT elevate, giovane età, petecchie in aumento.", b:["badge-a","Soglia bassa"] }
+      ],
+      extra:[]
+    },
+    refs:["escmid16","ssc21"]
+  },
+
+  r_mat: {
+    type:"r", icon:"🧩", urgency:"danger",
+    dx:"Microangiopatia trombotica — TTP / SEU / SEU atipica",
+    subtitle:"Schistociti + piastrinopenia + emolisi · ISTH 2020, aggiornamento 2025",
+    semio:[
+      { d:"r", t:"Piastrinopenia (nella TTP spesso < 30.000) + <strong>anemia emolitica microangiopatica</strong>: schistociti > 1%, LDH ↑, aptoglobina indosabile, bilirubina indiretta ↑, Coombs diretto negativo." },
+      { d:"r", t:"<strong>TTP</strong>: sintomi neurologici fluttuanti (confusione, cefalea, afasia, deficit transitori), dolore addominale, troponina ↑; insufficienza renale di solito lieve. La porpora è piatta (petecchie), non palpabile. La pentade completa è presente in meno del 10%." },
+      { d:"r", t:"<strong>SEU da STEC</strong>: diarrea (spesso emorragica) nei 5–10 giorni precedenti, insufficienza renale acuta predominante; soprattutto bambini." },
+      { d:"a", t:"<strong>SEU atipica</strong> (complemento): IRA predominante, recidive, familiarità, trigger (gravidanza/post-partum, infezioni, chirurgia)." },
+      { d:"w", t:"MAT secondarie: ipertensione maligna, preeclampsia/HELLP, neoplasie disseminate, farmaci (gemcitabina, inibitori della calcineurina, chinino), trapianto, infezioni; il deficit di B12 dà una pseudo-MAT. Diagnosi differenziale con CID e protesi valvolari." }
+    ],
+    esami:[
+      { u:true, n:"ADAMTS13 attività + inibitore/anticorpi", s:"Prelevare PRIMA di plasma o plasmaferesi; attività < 10% conferma la TTP." },
+      { u:true, n:"PLASMIC score (scheda Score)", s:"Stima la probabilità di TTP in attesa di ADAMTS13." },
+      { u:true, n:"Striscio, reticolociti, LDH, aptoglobina, bilirubina, Coombs diretto", s:"Conferma dell'emolisi meccanica." },
+      { u:true, n:"PT/aPTT, fibrinogeno, creatinina, esame urine, troponina", s:"Coagulazione normale nella MAT, alterata nella CID." },
+      { u:true, n:"β-hCG, pressione arteriosa; HIV, HBV, HCV", s:"Prima di plasma e rituximab." },
+      { u:false, n:"Feci: PCR geni stx1/stx2 e coltura STEC", s:"Se diarrea." },
+      { u:false, n:"C3, C4; studio del complemento (CFH, CFI, MCP, anti-CFH); B12, omocisteina", s:"Prelevare prima del plasma o dell'eculizumab." }
+    ],
+    terapia:{
+      alert:{ c:"danger", i:"🚨", t:"TTP sospetta (PLASMIC ≥ 6 o alta probabilità clinica): <strong>plasmaferesi urgente senza attendere ADAMTS13</strong> — mortalità senza trattamento > 90%. Evitare le trasfusioni piastriniche salvo emorragia grave." },
+      drugs:[
+        { n:"Plasmaferesi (TPE)", dose:"1–1,5 volumi plasmatici/die con plasma come liquido di sostituzione", note:"Fino a PLT > 150.000 per 2 giorni consecutivi. Se la TPE non è subito disponibile: infusione di plasma (20–30 mL/kg, attenzione al sovraccarico) e trasferimento al centro di riferimento.", b:["badge-r","Urgenza"] },
+        { n:"Corticosteroidi", dose:"Metilprednisolone 1 g/die EV × 3 giorni oppure prednisone 1 mg/kg/die", note:"Raccomandazione forte ISTH in associazione alla TPE.", b:["badge-r","Sempre"] },
+        { n:"Rituximab", dose:"375 mg/m² EV settimanale × 4", note:"Raccomandazione condizionata ISTH al primo episodio e nelle recidive; riduce le ricadute. Somministrare dopo la seduta di TPE; screening HBV.", b:["badge-b","TTP immune"] },
+        { n:"Caplacizumab", dose:"10 mg EV prima della TPE, poi 10 mg SC/die per tutta la TPE e per 30 giorni dopo (prolungabile fino al recupero di ADAMTS13)", note:"Riduce recidive/esacerbazioni ed eventi tromboembolici e accelera il recupero piastrinico (HERCULES); l'aggiornamento ISTH 2025 richiama dati di possibile beneficio sulla sopravvivenza. Effetto avverso principale: sanguinamenti mucosi.", b:["badge-g","Aggiungere"] },
+        { n:"SEU atipica: eculizumab o ravulizumab", dose:"Eculizumab 900 mg EV/sett × 4, poi 1200 mg alla 5ª settimana e ogni 2 settimane · ravulizumab a dose per peso ogni 8 settimane", note:"Quando ADAMTS13 > 10% ed escluse STEC e cause secondarie. Vaccinazione antimeningococcica (ACWY + B) e profilassi antibiotica fino a 2 settimane dopo la vaccinazione.", b:["badge-p","aHUS"] }
+      ],
+      extra:[
+        { l:"SEU da STEC", t:"Terapia di supporto (fluidi, dialisi se necessaria, emazie se Hb < 7 g/dL). <strong>Evitare antibiotici e antimotilità</strong>: possono aumentare il rilascio di tossina e il rischio di SEU. Evitare trasfusioni piastriniche." },
+        { l:"Follow-up della TTP", t:"Monitorare ADAMTS13 in remissione: il rituximab preventivo quando l'attività scende sotto il 20% riduce le recidive." }
+      ]
+    },
+    score:"plasmic",
+    refs:["isthttpdx","isthttp20","isthttp25","hercules","plasmic","ahus"]
+  },
+
+  r_cid: {
+    type:"r", icon:"🩸", urgency:"danger",
+    dx:"Coagulazione intravascolare disseminata (CID)",
+    subtitle:"Sempre secondaria: trattare la causa · ISTH",
+    semio:[
+      { d:"r", t:"Sanguinamento diffuso (accessi venosi, mucose, ecchimosi estese) e/o microtrombosi (acrocianosi, necrosi, insufficienza d'organo)." },
+      { d:"b", t:"Laboratorio: PLT ↓ o in calo, PT/aPTT ↑, fibrinogeno ↓ (può restare normale perché proteina di fase acuta), D-dimero ↑↑; schistociti talora presenti." },
+      { d:"a", t:"Cause: sepsi, trauma, neoplasie (adenocarcinomi mucinosi, prostata, pancreas; <strong>leucemia promielocitica</strong>), complicanze ostetriche, aneurismi voluminosi, morsi di vipera, reazioni trasfusionali." },
+      { d:"w", t:"CID cronica compensata (neoplasie, aneurismi): PLT e fibrinogeno quasi normali, D-dimero molto elevato." }
+    ],
+    esami:[
+      { u:true, n:"Score ISTH (scheda Score)", s:"≥ 5 = CID manifesta; ripetere ogni 6–24 h: il trend conta più del singolo valore." },
+      { u:true, n:"Striscio periferico", s:"Blasti/promielociti → leucemia promielocitica; schistociti." },
+      { u:true, n:"Ricerca della causa", s:"Emocolture, imaging, β-hCG, PSA/markers secondo contesto." },
+      { u:false, n:"Antitrombina, proteina C", s:"Significato prognostico." }
+    ],
+    terapia:{
+      alert:{ c:"danger", i:"⚠️", t:"Il cardine è il trattamento della patologia di base. La correzione dei valori di laboratorio è indicata solo in presenza di sanguinamento o prima di procedure invasive." },
+      drugs:[
+        { n:"Piastrine", dose:"Se < 50.000 con sanguinamento; profilassi se < 10–20.000 ad alto rischio emorragico", note:"", b:["badge-r","Se sanguinamento"] },
+        { n:"Plasma fresco congelato", dose:"15–30 mL/kg", note:"Se PT/aPTT > 1,5× con sanguinamento o prima di procedure.", b:["badge-a","Se sanguinamento"] },
+        { n:"Fibrinogeno", dose:"Concentrato 2–4 g EV o crioprecipitato", note:"Se fibrinogeno < 1,5 g/L con sanguinamento.", b:["badge-a","Fbg < 1,5 g/L"] },
+        { n:"Eparina", dose:"EBPM a dose profilattica; dose terapeutica se prevale la trombosi", note:"Profilassi TEV in assenza di sanguinamento. Antifibrinolitici in genere controindicati (eccezione: CID iperfibrinolitica con sanguinamento grave, in centri esperti).", b:["badge-b","Trombosi"] }
+      ],
+      extra:[
+        { l:"Leucemia acuta promielocitica", t:"Al sospetto (promielociti atipici, corpi di Auer, fibrinogeno molto basso): <strong>ATRA 45 mg/m²/die subito</strong>, senza attendere la conferma genetica; mantenere PLT > 30–50.000 e fibrinogeno > 1–1,5 g/L (ELN 2019)." }
+      ]
+    },
+    score:"isth_dic",
+    refs:["isthdic","wada13","apl"]
+  },
+
+  r_pancito: {
+    type:"r", icon:"🔻", urgency:"warning",
+    dx:"Pancitopenia — cause midollari e periferiche",
+    subtitle:"Valutare origine centrale vs periferica · urgenza se blasti o neutropenia febbrile",
+    semio:[
+      { d:"b", t:"Petecchie (piastrinopenia) + pallore (anemia) + infezioni (neutropenia)." },
+      { d:"r", t:"Blasti allo striscio → leucemia acuta (urgenza ematologica); promielociti atipici + CID → leucemia promielocitica (emergenza)." },
+      { d:"a", t:"Splenomegalia → ipersplenismo (cirrosi), linfomi, mielofibrosi, <strong>leishmaniosi viscerale</strong> (endemica in Italia: febbre, splenomegalia, ipergammaglobulinemia)." },
+      { d:"a", t:"Macrocitosi → deficit di B12/folati, mielodisplasia, alcol, farmaci." },
+      { d:"w", t:"Farmaci (metotrexato, azatioprina, chemioterapici, linezolid), infezioni virali (HIV, parvovirus B19), HLH (febbre, ferritina molto alta, trigliceridi ↑, fibrinogeno ↓)." }
+    ],
+    esami:[
+      { u:true, n:"Striscio periferico, reticolociti, LDH, acido urico, coagulazione con fibrinogeno", s:"Blasti, displasia, eritroblasti/leucoeritroblastosi (infiltrazione midollare)." },
+      { u:true, n:"B12, folati, funzione epatica e renale, ferritina, trigliceridi", s:"Carenze, HLH." },
+      { u:false, n:"Aspirato e biopsia osteomidollare", s:"Cellularità, infiltrazione, displasia, fibrosi." },
+      { u:false, n:"Citofluorimetria su sangue periferico", s:"Immunofenotipo; clone EPN (FLAER/CD59) — ha sostituito il test di Ham." },
+      { u:false, n:"Sierologie HIV, HBV, HCV, EBV, CMV, parvovirus B19; Leishmania", s:"Leishmania (sierologia/PCR) se splenomegalia febbrile." },
+      { u:false, n:"Ecografia addome / TC", s:"Splenomegalia, adenopatie." }
+    ],
+    terapia:{
+      alert:{ c:"danger", i:"🚨", t:"Neutrofili < 500/µL + febbre = <strong>neutropenia febbrile</strong>: emocolture e beta-lattamico antipseudomonas (es. piperacillina/tazobactam 4,5 g EV ogni 6–8 h) entro 1 h." },
+      drugs:[
+        { n:"Consulenza ematologica", dose:"Urgente se blasti, neutrofili < 500/µL o PLT < 20.000 con sanguinamento", note:"La terapia specifica dipende dalla diagnosi midollare.", b:["badge-r","Urgente"] },
+        { n:"Supporto trasfusionale", dose:"Piastrine se < 10.000 (profilassi) o < 50.000 con sanguinamento · emazie se Hb < 7–8 g/dL", note:"Nei possibili candidati a trapianto: emocomponenti secondo protocollo ematologico (irradiati, leucodepleti).", b:["badge-a","Supporto"] },
+        { n:"Deficit di B12/folati", dose:"Cianocobalamina o idrossocobalamina 1000 µg IM secondo schema · acido folico 5 mg/die", note:"Correggere la B12 prima o insieme ai folati.", b:["badge-g","Se carenza"] }
+      ],
+      extra:[
+        { l:"Aplasia midollare grave (BSH 2024)", t:"Trapianto allogenico da donatore familiare compatibile nei pazienti giovani; negli altri: siero antilinfocitario + ciclosporina + eltrombopag." }
+      ]
+    },
+    refs:["aplastic","apl","febneut"]
+  },
+
+  r_hit: {
+    type:"r", icon:"⚡", urgency:"danger",
+    dx:"Piastrinopenia indotta da eparina (HIT)",
+    subtitle:"Score 4T · ASH 2018",
+    semio:[
+      { d:"r", t:"Calo delle PLT > 50% rispetto al picco (nadir di solito 30–70.000, raramente < 20.000) tra il <strong>5° e il 10° giorno</strong> di eparina; entro 24 h se esposizione nei 30 giorni precedenti." },
+      { d:"r", t:"Complicanza paradossa: <strong>trombosi</strong> venosa e/o arteriosa (TVP, EP, ischemia degli arti, ictus, IMA). Emorragie e porpora sono rare." },
+      { d:"r", t:"Necrosi cutanea nel sito di iniezione SC di eparina; reazione sistemica acuta dopo bolo EV." },
+      { d:"a", t:"Più frequente con eparina non frazionata che con EBPM e nei pazienti chirurgici (ortopedia, cardiochirurgia); eccezionale con fondaparinux." },
+      { d:"w", t:"Se porpora marcata con PLT < 20.000 considerare altre cause (piastrinopenia da farmaci, CID, sepsi, TTP)." }
+    ],
+    esami:[
+      { u:true, n:"Score 4T (scheda Score)", s:"0–3: bassa probabilità (valore predittivo negativo ~99%) → non eseguire test, proseguire eparina se indicata." },
+      { u:true, n:"Anticorpi anti-PF4/eparina (immunoassay)", s:"Solo se 4T ≥ 4." },
+      { u:false, n:"Test funzionale (SRA/HIPA)", s:"Se immunoassay positivo a titolo debole-intermedio." },
+      { u:false, n:"Ecocolordoppler venoso bilaterale degli arti inferiori", s:"In tutti i casi confermati (anche arti superiori se CVC)." }
+    ],
+    terapia:{
+      alert:{ c:"danger", i:"🚨", t:"4T ≥ 4: <strong>sospendere OGNI eparina</strong> (inclusi lavaggi, cateteri eparinati, EBPM profilattica) e iniziare un anticoagulante non eparinico a dose terapeutica anche senza trombosi. Non trasfondere piastrine a scopo profilattico. Non iniziare warfarin; se in corso sospenderlo e somministrare vitamina K." },
+      drugs:[
+        { n:"Argatroban", dose:"2 µg/kg/min EV (0,5–1,2 µg/kg/min se insufficienza epatica, scompenso o paziente critico) · aPTT 1,5–3× il basale", note:"Eliminazione epatica: preferibile in insufficienza renale; prolunga l'INR (attenzione nella transizione a warfarin).", b:["badge-r","EV"] },
+        { n:"Fondaparinux", dose:"5 mg (< 50 kg), 7,5 mg (50–100 kg), 10 mg (> 100 kg) SC/die", note:"Off-label, opzione ASH 2018 nei pazienti stabili; evitare se CrCl < 30 mL/min.", b:["badge-a","Stabili"] },
+        { n:"DOAC (rivaroxaban, apixaban)", dose:"Dosi da trattamento del TEV (es. rivaroxaban 15 mg × 2/die per 3 settimane, poi 20 mg/die)", note:"Opzione ASH 2018 nei pazienti stabili senza trombosi pericolose per arto o vita; evitare in insufficienza renale o epatica severa. Off-label.", b:["badge-b","Stabili"] },
+        { n:"Bivalirudina", dose:"0,15 mg/kg/h EV · aPTT 1,5–2,5×", note:"Indicata in PCI e cardiochirurgia nel paziente con HIT.", b:["badge-p","PCI/CCH"] }
+      ],
+      extra:[
+        { l:"Durata e transizione", t:"HIT senza trombosi: anticoagulazione almeno fino al recupero piastrinico (in pratica spesso 4–6 settimane); HIT con trombosi: 3 mesi. Warfarin solo con PLT ≥ 150.000, a basse dosi, sovrapposto per almeno 5 giorni e fino a INR in range." },
+        { l:"Documentazione", t:"Registrare la HIT in cartella e nella lettera di dimissione; evitare l'eparina in futuro (riesposizione solo in casi selezionati, es. cardiochirurgia con anticorpi negativi)." }
+      ]
+    },
+    score:"score_4t",
+    refs:["ash18hit","lo4t"]
+  },
+
+  r_ditp: {
+    type:"r", icon:"💊", urgency:"warning",
+    dx:"Piastrinopenia immune da farmaci (DITP)",
+    subtitle:"Sospendere subito il farmaco sospetto",
+    semio:[
+      { d:"b", t:"Piastrinopenia spesso grave (< 20.000) 5–10 giorni dopo l'inizio di un farmaco nuovo; entro ore in caso di riesposizione o assunzione intermittente." },
+      { d:"b", t:"Inibitori GP IIb/IIIa (tirofiban, eptifibatide, abciximab): calo entro ore anche alla prima esposizione." },
+      { d:"a", t:"Farmaci frequenti: chinino (anche bevande toniche), vancomicina, linezolid, piperacillina e altri beta-lattamici, trimetoprim/sulfametossazolo, rifampicina, carbamazepina, fenitoina, valproato, FANS." },
+      { d:"r", t:"Sanguinamenti mucosi possibili. Se il farmaco è l'eparina il quadro è diverso (trombotico): vedi HIT." }
+    ],
+    esami:[
+      { u:true, n:"Emocromo quotidiano dopo la sospensione", s:"Recupero atteso in genere entro 5–10 giorni; se no, rivalutare la diagnosi (ITP, mielotossicità)." },
+      { u:false, n:"Anticorpi farmaco-dipendenti", s:"Centri di riferimento: conferma a posteriori." }
+    ],
+    terapia:{
+      drugs:[
+        { n:"Sospensione del farmaco sospetto", dose:"Priorità assoluta", note:"Sostituire con molecola di classe diversa.", b:["badge-g","Priorità"] },
+        { n:"Trasfusione di piastrine", dose:"Se emorragia grave", note:"Efficacia ridotta finché il farmaco è in circolo.", b:["badge-r","Emorragia"] },
+        { n:"Immunoglobuline EV", dose:"1 g/kg/die × 1–2 giorni", note:"Se emorragia o PLT < 10.000 con rischio elevato; efficacia non dimostrata da studi controllati.", b:["badge-a","Selezionati"] },
+        { n:"Corticosteroidi", dose:"Prednisone 1 mg/kg/die per breve periodo", note:"Spesso usati per l'incertezza diagnostica con ITP; beneficio non dimostrato.", b:["badge-b","Incerto"] }
+      ],
+      extra:[ { l:"Documentazione", t:"Registrare la reazione in cartella e in lettera di dimissione, informare il paziente: il farmaco è controindicato a vita. Segnalazione di farmacovigilanza (AIFA)." } ]
+    },
+    refs:["ditp"]
+  },
+
+  r_itp: {
+    type:"r", icon:"🩸", urgency:"warning",
+    dx:"Piastrinopenia immune (ITP) primaria o secondaria",
+    subtitle:"Diagnosi di esclusione · terapia ASH 2026 · diagnosi ASH 2019 / ICR 2019",
+    semio:[
+      { d:"b", t:"Piastrinopenia isolata (< 100.000) con emocromo e striscio altrimenti normali; milza non palpabile." },
+      { d:"b", t:"Petecchie, ecchimosi, sanguinamenti mucosi (epistassi, gengivorragie, menometrorragie), più frequenti con PLT < 20–30.000." },
+      { d:"r", t:"Emorragia intracranica rara (< 1%) ma grave: cefalea nuova o deficit neurologici → TC urgente." },
+      { d:"a", t:"ITP secondaria: HCV, HIV, H. pylori, LES/APS, linfoproliferativi (LLC), immunodeficienza comune variabile, farmaci, vaccini, gravidanza." },
+      { d:"w", t:"Escludere pseudopiastrinopenia da EDTA, piastrinopenie congenite (macropiastrine), mielodisplasia nell'anziano." }
+    ],
+    esami:[
+      { u:true, n:"Emocromo + striscio", s:"Aggregati, macropiastrine, schistociti, blasti; ricontare su citrato se aggregati." },
+      { u:true, n:"Gruppo sanguigno e Coombs diretto", s:"Prima di immunoglobuline; sindrome di Evans." },
+      { u:false, n:"HCV, HIV, HBV; H. pylori (breath test o antigene fecale)", s:"HBV prima di rituximab e steroidi." },
+      { u:false, n:"TSH, immunoglobuline sieriche, ANA e anticorpi antifosfolipidi se clinica suggestiva; β-hCG", s:"Cause secondarie." },
+      { u:false, n:"Aspirato/biopsia midollare", s:"Non di routine: se età > 60 anni con altre anomalie, sintomi sistemici, mancata risposta alla 1ª linea o prima della splenectomia." }
+    ],
+    terapia:{
+      alert:{ c:"warning", i:"⚠️", t:"Trattare se PLT < 30.000 (anche se asintomatica, adulto) o se sanguinamento a qualunque conta. Emorragia grave o intracranica: piastrine + immunoglobuline EV + metilprednisolone 1 g in associazione." },
+      drugs:[
+        { n:"Corticosteroidi", dose:"Prednisone 0,5–2 mg/kg/die (max ~80 mg) per 2 settimane, poi ridurre e sospendere entro 6 settimane · oppure desametasone 40 mg/die × 4 giorni (1–3 cicli)", note:"Raccomandato un ciclo breve (≤ 6 settimane). Il desametasone dà una risposta più rapida, sovrapponibile a lungo termine.", b:["badge-g","1ª linea"] },
+        { n:"Immunoglobuline EV", dose:"1 g/kg/die × 1–2 giorni (o 0,4 g/kg/die × 5 giorni)", note:"Risposta in 24–72 h, transitoria: sanguinamento, preparazione a procedure, gravidanza.", b:["badge-r","Rapida"] },
+        { n:"Terapia iniziale potenziata (ASH 2026)", dose:"Corticosteroide + rituximab (375 mg/m²/sett × 4 o 1 g × 2) oppure + agonista del recettore TPO", note:"ASH 2026 suggerisce, quando disponibili, di associarli al corticosteroide già alla terapia iniziale (più risposte durature, meno terapie di salvataggio). In Italia verificare indicazioni e rimborsabilità (spesso solo dopo fallimento dello steroide).", b:["badge-p","ASH 2026"] },
+        { n:"Agonisti TPO-R (2ª linea raccomandata)", dose:"Eltrombopag 50 mg/die a digiuno (25 mg se origine asiatica o epatopatia) · avatrombopag 20 mg/die · romiplostim 1–10 µg/kg SC/sett", note:"Monitorare transaminasi (eltrombopag) e rischio trombotico. Il rituximab è l'altra opzione suggerita.", b:["badge-b","2ª linea"] },
+        { n:"Altre opzioni di 2ª linea", dose:"Fostamatinib (inibitore SYK) 100–150 mg × 2/die · inibitori BTK (rilzabrutinib) · micofenolato", note:"ASH 2026: per chi non può ricevere o rifiuta agonisti TPO e rituximab. Disponibilità variabile.", b:["badge-a","Alternative"] },
+        { n:"Splenectomia", dose:"Da differire se possibile (in genere ≥ 12 mesi dalla diagnosi)", note:"Dopo fallimento di più terapie mediche. Vaccini anti-pneumococco, meningococco ACWY e B, Haemophilus almeno 2 settimane prima.", b:["badge-a","Tardiva"] }
+      ],
+      extra:[ { l:"Trasfusione di piastrine", t:"Solo per emorragie gravi o procedure urgenti, sempre insieme a immunoglobuline e/o steroidi (sopravvivenza piastrinica breve)." } ]
+    },
+    refs:["ash26","ash19","icr19"]
+  },
+
+  r_vlc: {
+    type:"r", icon:"🔬", urgency:"info",
+    dx:"Vasculite leucocitoclastica cutanea (dei piccoli vasi)",
+    subtitle:"Spesso da farmaci o post-infettiva · Chapel Hill 2012, addendum dermatologico 2018",
+    semio:[
+      { d:"b", t:"Porpora palpabile monomorfa e declive (gambe, caviglie, glutei), talora bolle emorragiche, pustole, ulcere; prurito o bruciore." },
+      { d:"b", t:"Esordio tipico <strong>7–10 giorni</strong> (1–3 settimane) dopo un farmaco nuovo o un'infezione; risoluzione in 3–4 settimane dopo la rimozione del trigger." },
+      { d:"a", t:"Trigger: farmaci (beta-lattamici, sulfamidici, FANS, allopurinolo, diuretici, anti-TNF; propiltiouracile e levamisolo con ANCA), infezioni (streptococco, HBV, HCV, HIV), connettiviti (LES, AR, Sjögren), emopatie." },
+      { d:"w", t:"Diagnosi che richiede di escludere vasculite sistemica (IgA, ANCA, crioglobulinemica) e coinvolgimento renale." }
+    ],
+    esami:[
+      { u:true, n:"Esame urine con sedimento, creatinina, emocromo, PCR, transaminasi", s:"Coinvolgimento sistemico." },
+      { u:false, n:"Biopsia cutanea (punch 4 mm su lesione < 48 h) + seconda biopsia per immunofluorescenza diretta", s:"Leucocitoclasia; depositi di IgA, IgM, C3." },
+      { u:false, n:"ANA, ANCA (PR3/MPO), crioglobuline, C3/C4, FR, HBV, HCV, HIV, elettroforesi proteica", s:"Se forma recidivante, sintomi sistemici o nessun trigger evidente." }
+    ],
+    terapia:{
+      drugs:[
+        { n:"Sospensione del farmaco / trattamento dell'infezione", dose:"Immediata", note:"Risoluzione in 2–4 settimane nella maggior parte dei casi.", b:["badge-g","Causa"] },
+        { n:"Misure generali", dose:"Riposo con arti sollevati, calze elastiche; antistaminici per il prurito", note:"FANS solo se non sono il trigger e la funzione renale è normale.", b:["badge-g","Sintomatica"] },
+        { n:"Colchicina o dapsone", dose:"Colchicina 0,5 mg × 2/die · dapsone 50–150 mg/die (dosare G6PD prima)", note:"Forme persistenti o recidivanti.", b:["badge-b","Recidivante"] },
+        { n:"Prednisone", dose:"0,5–1 mg/kg/die con riduzione in 4–6 settimane", note:"Forme ulcero-necrotiche, estese o con interessamento sistemico.", b:["badge-a","Grave"] }
+      ],
+      extra:[]
+    },
+    refs:["chcc","derm18"]
+  },
+
+  r_igav: {
+    type:"r", icon:"🫘", urgency:"warning",
+    dx:"Vasculite IgA (porpora di Schönlein-Henoch)",
+    subtitle:"SHARE 2019 (età pediatrica) · KDIGO 2021 (nefrite)",
+    semio:[
+      { d:"b", t:"Porpora palpabile declive (arti inferiori, glutei), spesso dopo un'infezione delle vie aeree superiori." },
+      { d:"b", t:"Artralgie/artrite non erosiva di ginocchia e caviglie (circa 3 casi su 4)." },
+      { d:"r", t:"Dolore addominale colico (50–75%), vomito, melena; complicanza: <strong>invaginazione intestinale</strong> (soprattutto nei bambini)." },
+      { d:"r", t:"<strong>Nefrite</strong> (ematuria ± proteinuria) nel 20–55% dei bambini, più frequente e severa nell'adulto; compare di solito entro 4–12 settimane." },
+      { d:"w", t:"Picco 3–15 anni. Nell'adulto valutare infezioni e neoplasie associate." }
+    ],
+    esami:[
+      { u:true, n:"Esame urine con sedimento, rapporto proteinuria/creatininuria, creatinina, pressione arteriosa", s:"Stadiazione renale." },
+      { u:true, n:"Emocromo e coagulazione", s:"PLT normali: distingue dalle porpore trombocitopeniche." },
+      { u:false, n:"Biopsia cutanea con immunofluorescenza diretta", s:"Depositi di IgA (conferma, soprattutto nell'adulto)." },
+      { u:false, n:"Biopsia renale", s:"Se proteinuria persistente > 0,5–1 g/die, sindrome nefrosica o calo del GFR." },
+      { u:false, n:"IgA sieriche, C3/C4; ecografia addome se dolore severo", s:"IgA aumentate in circa metà dei casi; complemento normale." }
+    ],
+    terapia:{
+      drugs:[
+        { n:"Forme lievi (cute, articolazioni)", dose:"Paracetamolo o FANS, riposo", note:"Evitare FANS se nefrite o sanguinamento intestinale. Nei bambini autolimitante in 4–6 settimane.", b:["badge-g","Lieve"] },
+        { n:"Prednisone", dose:"1–2 mg/kg/die (max 60 mg) per 1–2 settimane, poi riduzione", note:"Per dolore addominale severo, orchite, sanguinamento intestinale (SHARE). Riduce la durata del dolore addominale; <strong>non previene la nefrite</strong>: non usarlo a scopo profilattico.", b:["badge-a","Moderato"] },
+        { n:"Nefrite", dose:"ACE-inibitore/sartano se proteinuria · forme moderate-severe: metilprednisolone 0,5–1 g × 3, poi prednisone ± azatioprina, micofenolato o ciclofosfamide", note:"Con il nefrologo; la GN rapidamente progressiva si tratta come le vasculiti ANCA.", b:["badge-r","Renale"] }
+      ],
+      extra:[ { l:"Follow-up", t:"Esame urine e pressione arteriosa per almeno 6–12 mesi, anche se il rash è guarito." } ]
+    },
+    refs:["share19","kdigo21","chcc"]
+  },
+
+  r_aav: {
+    type:"r", icon:"🫁", urgency:"danger",
+    dx:"Vasculite ANCA-associata (GPA / MPA / EGPA)",
+    subtitle:"EULAR 2022 · KDIGO 2024",
+    semio:[
+      { d:"r", t:"<strong>GPA</strong>: rinosinusite crostosa, epistassi, otite, perforazione del setto, noduli polmonari cavitati, glomerulonefrite; prevalentemente PR3-ANCA." },
+      { d:"r", t:"<strong>MPA</strong>: glomerulonefrite rapidamente progressiva ed emorragia alveolare; prevalentemente MPO-ANCA." },
+      { d:"r", t:"<strong>EGPA</strong>: asma a esordio tardivo, eosinofilia > 10%, poliposi nasale, mononeurite multipla, cardiomiopatia; ANCA (MPO) positivi in circa un terzo." },
+      { d:"b", t:"Cute: porpora palpabile, noduli, ulcere, livedo; sintomi generali (febbre, calo ponderale, artromialgie)." },
+      { d:"r", t:"<strong>Sindrome polmone-rene</strong> (emorragia alveolare + glomerulonefrite): emergenza; diagnosi differenziale con malattia anti-GBM e LES." }
+    ],
+    esami:[
+      { u:true, n:"PR3-ANCA e MPO-ANCA con test antigene-specifico", s:"Metodo di prima scelta (EULAR 2022); anti-GBM in parallelo se coinvolgimento renale o polmonare." },
+      { u:true, n:"Creatinina, esame urine con sedimento (emazie dismorfiche, cilindri), proteinuria", s:"Stadiazione renale." },
+      { u:true, n:"TC torace, Hb seriata, EGA", s:"Emorragia alveolare: calo di Hb, infiltrati; l'emottisi può mancare." },
+      { u:false, n:"Biopsia (rene, vie aeree, cute)", s:"Vasculite pauci-immune; non deve ritardare la terapia nelle forme gravi." },
+      { u:false, n:"Eosinofili, IgE; troponina, ecocardiogramma, RM cardiaca", s:"EGPA." },
+      { u:false, n:"Prima dell'immunosoppressione", s:"HBV, HCV, HIV, test per tubercolosi latente, immunoglobuline." }
+    ],
+    terapia:{
+      alert:{ c:"danger", i:"⚠️", t:"Malattia che minaccia organi o vita: induzione immediata in ambiente specialistico. La sola positività ANCA non deve guidare la terapia." },
+      drugs:[
+        { n:"Induzione GPA/MPA: rituximab", dose:"375 mg/m²/sett × 4 oppure 1 g × 2 (giorni 1 e 15)", note:"Prima scelta (non inferiore alla ciclofosfamide; preferito nelle recidive e in età fertile).", b:["badge-r","1ª scelta"] },
+        { n:"Induzione: ciclofosfamide EV", dose:"15 mg/kg (max 1,2 g) alle settimane 0, 2, 4, poi ogni 3 settimane per 3–6 dosi", note:"Alternativa al rituximab; ridurre la dose per età > 60 anni e insufficienza renale.", b:["badge-a","Alternativa"] },
+        { n:"Glucocorticoidi a dosi ridotte (schema PEXIVAS)", dose:"Metilprednisolone 250–1000 mg/die × 1–3 giorni nelle forme gravi, poi prednisone 1 mg/kg/die (max 75–80 mg) con riduzione rapida a 5 mg/die entro 4–5 mesi", note:"Riduce le infezioni gravi senza perdita di efficacia.", b:["badge-r","Sempre"] },
+        { n:"Avacopan (inibitore del recettore C5a)", dose:"30 mg × 2/die OS", note:"GPA/MPA: da considerare per ridurre l'esposizione agli steroidi (EULAR 2022); superiore al prednisone nella remissione sostenuta a 52 settimane (ADVOCATE). Monitorare la funzione epatica.", b:["badge-p","Risparmio steroideo"] },
+        { n:"Plasmaferesi", dose:"Da considerare in GN rapidamente progressiva con creatinina > 300 µmol/L (3,4 mg/dL)", note:"Riduce il rischio di insufficienza renale terminale a 12 mesi (meta-analisi); nessun beneficio sulla mortalità (PEXIVAS). Nell'emorragia alveolare valutazione caso per caso; indicata se anti-GBM positivi.", b:["badge-a","Renale severa"] },
+        { n:"Mantenimento", dose:"Rituximab 500 mg ogni 6 mesi (o azatioprina 2 mg/kg/die)", note:"Per 24–48 mesi dopo la remissione (EULAR 2022).", b:["badge-b","Mantenimento"] }
+      ],
+      extra:[
+        { l:"Profilassi", t:"Trimetoprim/sulfametossazolo 400/80 mg/die o 800/160 mg tre volte alla settimana durante l'induzione; vaccinazioni (antinfluenzale, antipneumococcica, anti-COVID) prima del rituximab se possibile." },
+        { l:"EGPA", t:"Forme gravi: glucocorticoidi + ciclofosfamide o rituximab. Forme non gravi recidivanti o refrattarie: mepolizumab 300 mg SC ogni 4 settimane." }
+      ]
+    },
+    refs:["eular22","kdigo24","pexivas","advocate"]
+  },
+
+  r_crio: {
+    type:"r", icon:"❄️", urgency:"warning",
+    dx:"Crioglobulinemia (vasculite crioglobulinemica)",
+    subtitle:"Tipo II–III mista (spesso HCV) · tipo I monoclonale (porpora retiforme)",
+    semio:[
+      { d:"b", t:"Triade di Meltzer: porpora palpabile intermittente agli arti inferiori, artralgie, astenia; iperpigmentazione residua e ulcere malleolari." },
+      { d:"b", t:"Neuropatia periferica sensitiva, glomerulonefrite membranoproliferativa, sindrome sicca." },
+      { d:"a", t:"Tipo II/III (mista): HCV (causa principale), HBV, HIV, Sjögren, LES, linfomi B; fattore reumatoide positivo, <strong>C4 molto basso</strong>." },
+      { d:"r", t:"Tipo I (monoclonale: MGUS, Waldenström, mieloma): Raynaud, acrocianosi, porpora retiforme e necrosi acrale da occlusione; iperviscosità." }
+    ],
+    esami:[
+      { u:true, n:"Crioglobuline", s:"Prelievo e trasporto a 37 °C, lettura a 7 giorni: falsi negativi frequenti se la temperatura non è rispettata." },
+      { u:true, n:"Esame urine, creatinina, proteinuria", s:"Coinvolgimento renale." },
+      { u:false, n:"C3, C4, FR, elettroforesi e immunofissazione sieriche, catene leggere libere", s:"Tipizzazione." },
+      { u:false, n:"HCV-Ab e HCV-RNA, HBsAg/HBV-DNA, HIV; ANA, anti-SSA/SSB", s:"Cause." },
+      { u:false, n:"Biopsia cutanea o renale; elettromiografia se neuropatia", s:"Conferma e stadiazione." }
+    ],
+    terapia:{
+      drugs:[
+        { n:"Forma HCV-correlata: antivirali diretti", dose:"Sofosbuvir/velpatasvir o glecaprevir/pibrentasvir", note:"Trattamento della causa; la vasculite migliora nella maggior parte dei pazienti con risposta virologica sostenuta.", b:["badge-g","Causa"] },
+        { n:"Rituximab", dose:"375 mg/m²/sett × 4 o 1 g × 2", note:"Forme moderate-gravi (glomerulonefrite, neuropatia, ulcere) o persistenti dopo eradicazione virale.", b:["badge-b","Moderata-grave"] },
+        { n:"Glucocorticoidi ± plasmaferesi", dose:"Steroide a dose medio-alta per breve periodo; plasmaferesi nelle forme gravi", note:"Plasmaferesi per GN rapidamente progressiva, iperviscosità, vasculite intestinale.", b:["badge-r","Grave"] },
+        { n:"Tipo I", dose:"Terapia della malattia clonale (ematologo)", note:"Evitare l'esposizione al freddo; plasmaferesi con circuito riscaldato se iperviscosità.", b:["badge-a","Monoclonale"] }
+      ],
+      extra:[]
+    },
+    refs:["crio","retiform"]
+  },
+
+  r_aps: {
+    type:"r", icon:"🌀", urgency:"warning",
+    dx:"Sindrome da anticorpi antifosfolipidi (APS)",
+    subtitle:"Classificazione ACR/EULAR 2023 · gestione EULAR 2019",
+    semio:[
+      { d:"r", t:"Porpora retiforme, necrosi cutanea, ulcere, emorragie subungueali: occlusione trombotica senza vasculite." },
+      { d:"b", t:"<strong>Livedo racemosa</strong> (a maglie interrotte, irregolare): più specifica della livedo reticolare fisiologica." },
+      { d:"b", t:"Trombosi venose o arteriose (anche in sedi atipiche), complicanze ostetriche, piastrinopenia moderata, valvulopatia, nefropatia microvascolare." },
+      { d:"a", t:"aPTT allungato non corretto dalla miscela = lupus anticoagulant: rischio trombotico, non emorragico." },
+      { d:"r", t:"<strong>APS catastrofica (CAPS)</strong>: coinvolgimento di ≥ 3 organi in meno di una settimana con microtrombosi; mortalità elevata (~30–40%)." },
+      { d:"w", t:"Anticorpi antifosfolipidi in circa il 30–40% dei pazienti con LES; APS clinica in una quota minore." }
+    ],
+    esami:[
+      { u:true, n:"Lupus anticoagulant, anticardiolipina e anti-β2-glicoproteina I (IgG/IgM)", s:"LA preferibilmente prima dell'anticoagulazione (interferenza di eparina, DOAC, VKA)." },
+      { u:false, n:"Conferma dopo almeno 12 settimane", s:"La tripla positività identifica il profilo ad alto rischio." },
+      { u:false, n:"Emocromo, creatinina, esame urine, complemento, ANA, anti-dsDNA", s:"LES associato." },
+      { u:false, n:"Ecocolordoppler, angio-TC/RM secondo sede; biopsia cutanea", s:"Trombi senza vasculite." }
+    ],
+    terapia:{
+      drugs:[
+        { n:"Warfarin", dose:"INR 2–3 a tempo indefinito dopo trombosi venosa non provocata · trombosi arteriosa: INR 2–3 (± aspirina basse dosi) o 3–4 secondo rischio", note:"DOAC da evitare nella tripla positività (eccesso di eventi con rivaroxaban, TRAPS) e nelle trombosi arteriose.", b:["badge-g","Cronica"] },
+        { n:"Eparina (EBPM/ENF)", dose:"Dose terapeutica in fase acuta e in gravidanza (con aspirina basse dosi)", note:"", b:["badge-b","Acuta/gravidanza"] },
+        { n:"CAPS", dose:"Eparina + glucocorticoidi (metilprednisolone 0,5–1 g/die × 3) + plasmaferesi e/o immunoglobuline EV", note:"Ricerca e trattamento del trigger (infezione, chirurgia, sospensione dell'anticoagulante); nei refrattari rituximab o eculizumab. Terapia intensiva.", b:["badge-r","Emergenza"] }
+      ],
+      extra:[ { l:"Profilassi primaria", t:"Aspirina 75–100 mg/die nei portatori asintomatici con profilo aPL ad alto rischio, con o senza fattori di rischio cardiovascolare (EULAR 2019)." } ]
+    },
+    refs:["aps19","aps23","retiform"]
+  },
+
+  r_calcifilassi: {
+    type:"r", icon:"🧱", urgency:"danger",
+    dx:"Calcifilassi (arteriolopatia uremica calcifica)",
+    subtitle:"IRC avanzata e dialisi — prognosi severa",
+    semio:[
+      { d:"r", t:"Placche o noduli violacei <strong>molto dolorosi</strong>, livedo e porpora retiforme che evolvono in escare necrotiche; sedi ricche di adipe (cosce, addome, glutei) o distali." },
+      { d:"b", t:"Fattori di rischio: dialisi, sesso femminile, obesità, diabete, warfarin, iperfosforemia, alterazioni del PTH, sali di calcio, ipoalbuminemia." },
+      { d:"a", t:"Mortalità a 1 anno elevata (45–80%), soprattutto per sepsi dalle ulcere." }
+    ],
+    esami:[
+      { u:true, n:"Calcio, fosforo, PTH, albumina, fosfatasi alcalina; INR se in warfarin", s:"Fattori correggibili." },
+      { u:false, n:"Biopsia cutanea profonda", s:"Calcificazioni della media arteriolare; dibattuta (rischio di nuove ulcere)." },
+      { u:false, n:"Radiografia/TC dei tessuti molli", s:"Calcificazioni vascolari a rete." },
+      { u:false, n:"Diagnosi differenziale", s:"Vasculite, embolia di colesterolo, crioglobulinemia, APS, necrosi da warfarin." }
+    ],
+    terapia:{
+      drugs:[
+        { n:"Gestione multidisciplinare", dose:"Nefrologo, dermatologo/vulnologo, terapia del dolore", note:"Analgesia adeguata; cura delle ulcere e debridement selettivo; prevenzione delle infezioni.", b:["badge-r","Sempre"] },
+        { n:"Sodio tiosolfato", dose:"25 g EV tre volte alla settimana a fine dialisi (off-label)", note:"Evidenze osservazionali; effetti avversi: acidosi metabolica, nausea.", b:["badge-a","Off-label"] },
+        { n:"Correzione dei fattori di rischio", dose:"Sospendere warfarin, sali di calcio e vitamina D; chelanti del fosforo non calcici; cinacalcet o paratiroidectomia se iperparatiroidismo", note:"Intensificare la dialisi.", b:["badge-b","Causa"] }
+      ],
+      extra:[]
+    },
+    refs:["calci","retiform"]
+  },
+
+  r_colesterolo: {
+    type:"r", icon:"🦶", urgency:"warning",
+    dx:"Embolia di cristalli di colesterolo (ateroembolia)",
+    subtitle:"Dopo procedure endovascolari, chirurgia aortica, anticoagulazione o trombolisi",
+    semio:[
+      { d:"b", t:"Livedo reticolare/racemosa e <strong>dita blu con polsi periferici conservati</strong>; porpora retiforme, ulcere, gangrena digitale." },
+      { d:"b", t:"Comparsa da giorni a settimane dopo cateterismo (coronarografia, angioplastica), chirurgia aortica, inizio di anticoagulanti o trombolisi." },
+      { d:"r", t:"Coinvolgimento sistemico: insufficienza renale subacuta a gradini, ischemia intestinale, pancreatite, placche di Hollenhorst alla retina, deficit neurologici." },
+      { d:"a", t:"Laboratorio: eosinofilia transitoria (frequente), VES/PCR aumentate, ipocomplementemia." }
+    ],
+    esami:[
+      { u:true, n:"Creatinina, esame urine (eosinofiluria), emocromo con eosinofili, C3/C4, amilasi/lipasi", s:"Coinvolgimento d'organo." },
+      { u:false, n:"Fondo oculare", s:"Placche di Hollenhorst." },
+      { u:false, n:"Biopsia cutanea (o renale/muscolare)", s:"Cristalli aghiformi biconvessi nelle arteriole: diagnosi di certezza." }
+    ],
+    terapia:{
+      drugs:[
+        { n:"Statina ad alta intensità", dose:"Atorvastatina 40–80 mg/die", note:"Stabilizzazione di placca; associata a prognosi migliore in studi osservazionali.", b:["badge-g","Sempre"] },
+        { n:"Antiaggregante", dose:"Aspirina 100 mg/die (o clopidogrel)", note:"Per la vasculopatia aterosclerotica di base. Anticoagulanti: rivalutarne l'indicazione (ruolo controverso).", b:["badge-b","Base"] },
+        { n:"Supporto", dose:"Analgesia, cura delle lesioni, supporto renale", note:"Evitare nuove procedure endovascolari se possibile. Glucocorticoidi: evidenze limitate. Amputazione solo per gangrena delimitata.", b:["badge-a","Supporto"] }
+      ],
+      extra:[]
+    },
+    refs:["chol","retiform"]
+  },
+
+  r_necrosi_vka: {
+    type:"r", icon:"⚠️", urgency:"danger",
+    dx:"Necrosi cutanea da warfarin",
+    subtitle:"Deficit transitorio di proteina C nei primi giorni di terapia con VKA",
+    semio:[
+      { d:"r", t:"Comparsa 3–5 giorni dopo l'inizio del warfarin (soprattutto con dosi di carico e senza eparina sovrapposta): eritema doloroso → porpora retiforme → bolle emorragiche → necrosi." },
+      { d:"b", t:"Sedi ricche di adipe: mammelle, cosce, glutei, addome; più frequente nelle donne obese." },
+      { d:"a", t:"Predisposizione: deficit congenito di proteina C o S, fattore V Leiden, APS; nella HIT acuta il warfarin può causare gangrena venosa degli arti." }
+    ],
+    esami:[
+      { u:true, n:"INR, emocromo, aPTT", s:"Piastrine: escludere HIT se eparina recente." },
+      { u:false, n:"Proteina C e S", s:"Interpretare con cautela in corso di VKA; anticorpi anti-PF4 se esposizione eparinica." },
+      { u:false, n:"Biopsia cutanea", s:"Trombi nei vasi dermici e sottocutanei senza vasculite." }
+    ],
+    terapia:{
+      alert:{ c:"danger", i:"🚨", t:"Sospendere il warfarin, somministrare vitamina K e avviare eparina a dose terapeutica (anticoagulante non eparinico se HIT)." },
+      drugs:[
+        { n:"Vitamina K1", dose:"5–10 mg EV lenta", note:"", b:["badge-r","Subito"] },
+        { n:"Eparina a dose terapeutica", dose:"ENF o EBPM", note:"Se HIT: argatroban o fondaparinux.", b:["badge-r","Subito"] },
+        { n:"Concentrato di proteina C o PFC", dose:"Secondo ematologo", note:"Deficit di proteina C noto o necrosi estesa.", b:["badge-a","Selezionati"] }
+      ],
+      extra:[ { l:"Ripresa della terapia anticoagulante", t:"Se il VKA è necessario: reintrodurlo a basse dosi, senza carico, sotto copertura eparinica completa fino a INR stabile; considerare un DOAC." } ]
+    },
+    refs:["vkanec","retiform"]
+  },
+
+  r_vitk: {
+    type:"r", icon:"🟡", urgency:"warning",
+    dx:"PT/INR allungato — eccesso di anticoagulante o carenza di vitamina K",
+    subtitle:"Via estrinseca (FVII, emivita ~6 h) · ACCP 2012 · EHRA 2021",
+    semio:[
+      { d:"b", t:"Ecchimosi estese, ematomi muscolari o retroperitoneali, sanguinamento da ferite o procedure." },
+      { d:"b", t:"VKA (warfarin, acenocumarolo) con INR sopra range: interazioni (antibiotici, amiodarone, azoli), scarsa alimentazione, febbre, epatopatia." },
+      { d:"a", t:"Carenza di vitamina K: digiuno prolungato + antibiotici, malassorbimento (celiachia, IBD, colestasi, resezioni, chirurgia bariatrica), alcolismo." },
+      { d:"a", t:"I DOAC anti-Xa (rivaroxaban, edoxaban) possono allungare il PT; il dabigatran allunga soprattutto aPTT e tempo di trombina." },
+      { d:"w", t:"Superwarfarin (rodenticidi, es. brodifacoum): INR molto elevato e persistente per settimane-mesi; ingestione accidentale o occulta." }
+    ],
+    esami:[
+      { u:true, n:"PT/INR, aPTT, emocromo, fibrinogeno, funzione epatica", s:"TC se sospetto ematoma profondo." },
+      { u:false, n:"Fattori II, VII, IX, X e fattore V", s:"Vit K-dipendenti ridotti con FV normale → carenza di vitamina K; FV ridotto → epatopatia." },
+      { u:false, n:"PIVKA-II; dosaggio specifico del DOAC; ricerca di superwarfarin", s:"Ricerca tossicologica tramite Centro Antiveleni." }
+    ],
+    terapia:{
+      alert:{ c:"warning", i:"⚠️", t:"Emorragia maggiore in VKA: sospendere, vitamina K 10 mg EV + concentrato protrombinico a 4 fattori. Emorragia maggiore in DOAC: antidoto specifico o concentrato protrombinico." },
+      drugs:[
+        { n:"Vitamina K1 (fitomenadione)", dose:"Senza sanguinamento: INR 4,5–10 → sospendere 1–2 dosi di VKA; INR > 10 → 2–5 mg OS · sanguinamento maggiore: 10 mg EV lenta", note:"EV in almeno 20–30 min (rischio di reazione anafilattoide); effetto EV in 4–6 h, OS in circa 24 h. Malassorbimento: 10 mg EV/die × 3 giorni.", b:["badge-g","1ª scelta"] },
+        { n:"Concentrato protrombinico a 4 fattori", dose:"25 UI/kg (INR 2–4), 35 UI/kg (INR 4–6), 50 UI/kg (INR > 6); max 5000 UI", note:"Effetto immediato; sempre insieme alla vitamina K. Ricontrollare l'INR dopo 30 min.", b:["badge-r","Emorragia"] },
+        { n:"Antidoti dei DOAC", dose:"Idarucizumab 5 g EV (dabigatran) · andexanet alfa (apixaban, rivaroxaban) o concentrato protrombinico 50 UI/kg se non disponibile", note:"Secondo protocollo aziendale e tempo dall'ultima dose.", b:["badge-b","DOAC"] },
+        { n:"Plasma fresco congelato", dose:"15 mL/kg", note:"Solo se il concentrato protrombinico non è disponibile (volume, rischio di TACO/TRALI).", b:["badge-a","Alternativa"] }
+      ],
+      extra:[ { l:"Superwarfarin", t:"Vitamina K orale ad alte dosi (anche 50–100 mg/die o più) per settimane-mesi, guidata dall'INR; consulenza Centro Antiveleni." } ]
+    },
+    refs:["accp","ehra21"]
+  },
+
+  r_epatopatia: {
+    type:"r", icon:"🫃", urgency:"warning",
+    dx:"Coagulopatia dell'epatopatia cronica / ipersplenismo",
+    subtitle:"Emostasi riequilibrata · EASL 2022 · Baveno VII",
+    semio:[
+      { d:"b", t:"Stigmate di epatopatia: ittero, spider nevi, eritema palmare, ascite, circoli collaterali; splenomegalia." },
+      { d:"b", t:"Ridotta sintesi sia dei fattori procoagulanti (II, V, VII, IX, X, XI) sia degli anticoagulanti naturali (proteina C, S, antitrombina): <strong>PT/INR e aPTT non predicono il rischio emorragico</strong>." },
+      { d:"b", t:"FVIII e VWF aumentati (sintesi endoteliale); piastrinopenia da sequestro splenico e ridotta trombopoietina." },
+      { d:"a", t:"I sanguinamenti nella cirrosi dipendono più spesso dall'ipertensione portale (varici) che dalla coagulopatia; il rischio trombotico è conservato (trombosi portale, TEV)." },
+      { d:"w", t:"CID sovrapposta (cirrosi scompensata, sepsi): FVIII ridotto, a differenza dell'epatopatia isolata." }
+    ],
+    esami:[
+      { u:true, n:"Emocromo, PT/INR, aPTT, fibrinogeno, D-dimero, funzione epatica e renale", s:"Child-Pugh e MELD." },
+      { u:false, n:"FV e FVIII", s:"FV ↓ con FVIII normale/↑ = epatopatia; entrambi ↓ = CID." },
+      { u:false, n:"Test viscoelastici (TEG/ROTEM)", s:"Se disponibili, per guidare la correzione prima di procedure o durante emorragia." },
+      { u:false, n:"Ecografia addome con Doppler; EGDS", s:"Ipertensione portale, trombosi portale, varici." }
+    ],
+    terapia:{
+      alert:{ c:"info", i:"ℹ️", t:"Non correggere INR o piastrine a scopo profilattico prima di procedure a basso rischio (EASL 2022): il plasma non riduce il sanguinamento e aumenta la pressione portale e il rischio di sovraccarico." },
+      drugs:[
+        { n:"Vitamina K1", dose:"10 mg EV/die × 3 giorni", note:"Solo se carenza plausibile (colestasi, malnutrizione, antibiotici); non corregge il deficit di sintesi.", b:["badge-g","Se carenza"] },
+        { n:"Emorragia attiva", dose:"Piastrine se < 50.000 · fibrinogeno se < 1,2–1,5 g/L · plasma o concentrato protrombinico solo in emorragia grave non controllata", note:"Correzione mirata, possibilmente guidata da test viscoelastici.", b:["badge-r","Sanguinamento"] },
+        { n:"Procedure elettive ad alto rischio con PLT < 50.000", dose:"Avatrombopag 40–60 mg/die × 5 giorni (inizio 10–13 giorni prima) o lusutrombopag 3 mg/die × 7 giorni", note:"Alternativa alla trasfusione piastrinica.", b:["badge-b","Pre-procedura"] }
+      ],
+      extra:[ { l:"Ipertensione portale (Baveno VII)", t:"Prevenzione con beta-bloccanti non selettivi (carvedilolo 6,25–12,5 mg/die o propranololo) o legatura delle varici. Emorragia varicosa acuta: terlipressina 2 mg ogni 4 h (poi 1 mg ogni 4 h) o somatostatina/octreotide, ceftriaxone 1 g/die, EGDS entro 12 h, valutare TIPS preventiva." } ]
+    },
+    refs:["easl22","baveno7"]
+  },
+
+  r_emofilia: {
+    type:"r", icon:"🧬", urgency:"warning",
+    dx:"Deficit congenito della via intrinseca — emofilia A/B, deficit di FXI, von Willebrand",
+    subtitle:"aPTT allungato corretto dalla miscela · WFH 2020 · ASH/ISTH 2021",
+    semio:[
+      { d:"b", t:"<strong>Emofilia A (FVIII) e B (FIX)</strong>: X-linked, maschi; emartri ed ematomi muscolari spontanei nelle forme gravi (< 1%); nelle lievi (5–40%) sanguinamento dopo traumi o chirurgia." },
+      { d:"b", t:"Portatrici: possono avere livelli ridotti e sanguinamento." },
+      { d:"b", t:"<strong>Deficit di FXI</strong>: autosomico, sanguinamento post-chirurgico o mucoso poco correlato al livello." },
+      { d:"b", t:"<strong>Von Willebrand</strong> con FVIII ridotto (tipo 2N, tipo 3, tipo 1 severo): aPTT allungato." },
+      { d:"a", t:"Deficit di FXII, precallicreina, HMWK: aPTT molto allungato SENZA sanguinamento." }
+    ],
+    esami:[
+      { u:false, n:"Dosaggio FVIII, FIX, FXI (FXII se aPTT molto lungo senza sanguinamento)", s:"Identifica il fattore carente." },
+      { u:false, n:"VWF:Ag, attività del VWF (GPIbM o RCo), FVIII; multimeri", s:"Tipizzazione della malattia di von Willebrand." },
+      { u:false, n:"ISTH-BAT e anamnesi familiare", s:"Quantifica la storia emorragica." }
+    ],
+    terapia:{
+      alert:{ c:"info", i:"ℹ️", t:"Gestione con il Centro Emofilia di riferimento: le dosi dei concentrati dipendono dal livello del fattore, dal tipo di emorragia e dal peso." },
+      drugs:[
+        { n:"Desmopressina (DDAVP)", dose:"0,3 µg/kg EV in 50 mL di fisiologica in 30 min (o spray nasale 300 µg; 150 µg se < 50 kg)", note:"Emofilia A lieve e vWD tipo 1 responsivi (testare la risposta). Tachifilassi dopo 3–4 dosi; restrizione idrica e controllo della natriemia; cautela in cardiopatici e anziani.", b:["badge-g","Lieve"] },
+        { n:"Concentrato di FVIII (emofilia A)", dose:"1 UI/kg aumenta il FVIII di circa il 2% · target 40–60% per emartro, 80–100% per chirurgia maggiore o emorragia intracranica", note:"Prodotti standard o a emivita estesa.", b:["badge-r","Grave"] },
+        { n:"Concentrato di FIX (emofilia B)", dose:"1 UI/kg aumenta il FIX di circa l'1%", note:"Disponibili prodotti a emivita estesa.", b:["badge-b","Emofilia B"] },
+        { n:"Emicizumab (profilassi, emofilia A)", dose:"3 mg/kg/sett SC × 4, poi 1,5 mg/kg/sett (o 3 mg/kg ogni 2 sett., 6 mg/kg ogni 4 sett.)", note:"Con o senza inibitori; interferisce con aPTT e dosaggi coagulativi.", b:["badge-p","Profilassi"] },
+        { n:"Acido tranexamico", dose:"1 g × 3/die OS (o 10 mg/kg EV)", note:"Sanguinamenti mucosi, procedure odontoiatriche; evitare in caso di ematuria.", b:["badge-a","Aggiuntivo"] }
+      ],
+      extra:[ { l:"Deficit di FXI", t:"Plasma o concentrato di FXI e acido tranexamico per la chirurgia, su indicazione del Centro." } ]
+    },
+    refs:["wfh20","vwd21"]
+  },
+
+  r_eaa: {
+    type:"r", icon:"🚨", urgency:"danger",
+    dx:"Emofilia A acquisita",
+    subtitle:"Autoanticorpi anti-FVIII · raccomandazioni internazionali 2020",
+    semio:[
+      { d:"r", t:"Ecchimosi estese, ematomi muscolari e sottocutanei improvvisi, emorragie post-procedurali in un paziente <strong>senza storia emorragica</strong>; emartri rari." },
+      { d:"r", t:"Tipicamente anziani o donne nel post-partum; mortalità significativa per emorragia e per le infezioni da immunosoppressione." },
+      { d:"b", t:"Associazioni: malattie autoimmuni (AR, LES), neoplasie, farmaci; circa metà dei casi è idiopatica." },
+      { d:"a", t:"aPTT isolatamente allungato che non si corregge (o si riallunga) dopo incubazione della miscela per 2 h a 37 °C; PT e piastrine normali." }
+    ],
+    esami:[
+      { u:true, n:"Test di miscela immediato e dopo 2 h di incubazione; FVIII; titolo dell'inibitore (Bethesda/Nijmegen)", s:"Conferma diagnostica." },
+      { u:true, n:"Emocromo, gruppo sanguigno, Hb seriata; imaging dei grandi ematomi", s:"Retroperitoneo, psoas, muscoli." },
+      { u:false, n:"Lupus anticoagulant (dRVVT) ed esclusione dell'eparina; screening neoplastico e autoimmune", s:"Diagnosi differenziale e causa." }
+    ],
+    terapia:{
+      alert:{ c:"danger", i:"🚨", t:"Evitare iniezioni IM, cateteri arteriosi e procedure invasive non indispensabili. Contattare subito il Centro Emofilia. DDAVP e FVIII umano sono poco efficaci in presenza dell'inibitore." },
+      drugs:[
+        { n:"Agenti bypassanti", dose:"rFVIIa 90 µg/kg ogni 2–3 h · oppure aPCC 50–100 UI/kg ogni 8–12 h (max 200 UI/kg/die)", note:"Prima linea per i sanguinamenti.", b:["badge-r","Emorragia"] },
+        { n:"FVIII porcino ricombinante (susoctocog alfa)", dose:"Dose guidata dai livelli di FVIII", note:"Alternativa ai bypassanti.", b:["badge-a","Alternativa"] },
+        { n:"Emicizumab", dose:"Profilassi secondo il Centro", note:"Uso crescente nella fase di eradicazione dell'inibitore.", b:["badge-p","Profilassi"] },
+        { n:"Immunosoppressione per eradicare l'inibitore", dose:"Prednisone 1 mg/kg/die ± ciclofosfamide 1,5–2 mg/kg/die, oppure rituximab", note:"Da iniziare subito alla diagnosi.", b:["badge-b","Sempre"] }
+      ],
+      extra:[]
+    },
+    refs:["aha20"]
+  },
+
+  r_vwd: {
+    type:"r", icon:"🔬", urgency:"info",
+    dx:"Difetto della funzione piastrinica / von Willebrand con coagulazione normale",
+    subtitle:"Piastrine, PT e aPTT normali · ASH/ISTH/NHF/WFH 2021",
+    semio:[
+      { d:"b", t:"Sanguinamento mucocutaneo: ecchimosi facili, epistassi, gengivorragie, menorragia, sanguinamento dopo estrazioni o chirurgia." },
+      { d:"b", t:"Malattia di von Willebrand: tipo 1 (quantitativo, il più frequente), tipo 2 (qualitativo; 2B con piastrinopenia), tipo 3 (assenza)." },
+      { d:"a", t:"Difetti acquisiti, molto frequenti: antiaggreganti (aspirina, inibitori P2Y12), FANS, SSRI, uremia, gammopatie, mieloproliferativi, ipotiroidismo; vWD acquisita in stenosi aortica (sindrome di Heyde) e LVAD." },
+      { d:"w", t:"Altre cause con test normali: deficit di FXIII, iperfibrinolisi, connettivopatie (Ehlers-Danlos), steroidi, scorbuto, maltrattamento." }
+    ],
+    esami:[
+      { u:false, n:"ISTH-BAT", s:"Un punteggio patologico giustifica i test di secondo livello." },
+      { u:false, n:"VWF:Ag, attività del VWF, FVIII, gruppo sanguigno", s:"vWD se VWF < 30 UI/dL, o 30–50 UI/dL con sanguinamento anomalo (2021); gruppo 0 = livelli fisiologicamente più bassi." },
+      { u:false, n:"Aggregazione piastrinica (ADP, collagene, epinefrina, acido arachidonico, ristocetina)", s:"Il PFA-100 è solo uno screening a sensibilità limitata." },
+      { u:false, n:"Creatinina, TSH, elettroforesi proteica; FXIII se tutto normale", s:"Cause acquisite." }
+    ],
+    terapia:{
+      drugs:[
+        { n:"Revisione dei farmaci", dose:"Sospendere o sostituire antiaggreganti non indispensabili, FANS, SSRI", note:"Prima misura nei difetti acquisiti.", b:["badge-g","Prima"] },
+        { n:"Desmopressina (DDAVP)", dose:"0,3 µg/kg EV in 30 min", note:"vWD tipo 1, piastrinopatie lievi, uremia; test di risposta; restrizione idrica e controllo del sodio; evitare nel tipo 2B; cautela in cardiopatici e anziani.", b:["badge-g","vWD tipo 1"] },
+        { n:"Concentrati VWF/FVIII o VWF ricombinante", dose:"Secondo tipo e gravità (Centro Emofilia)", note:"vWD tipo 2 e 3 o non responsivi al DDAVP.", b:["badge-b","Tipo 2/3"] },
+        { n:"Acido tranexamico", dose:"1 g × 3/die OS (o 10 mg/kg EV)", note:"Epistassi, menorragia, procedure odontoiatriche.", b:["badge-a","Mucoso"] },
+        { n:"Uremia", dose:"Dialisi adeguata, DDAVP, correzione dell'anemia, estrogeni coniugati", note:"", b:["badge-p","Uremia"] }
+      ],
+      extra:[ { l:"Menorragia", t:"Terapie ormonali (estroprogestinici o dispositivo intrauterino al levonorgestrel) o acido tranexamico (linee guida 2021)." } ]
+    },
+    refs:["vwd21"]
+  },
+
+  r_scorbuto: {
+    type:"r", icon:"🍊", urgency:"info",
+    dx:"Scorbuto — deficit di vitamina C",
+    subtitle:"Raro ma sottodiagnosticato in anziani, alcolisti, malnutriti",
+    semio:[
+      { d:"b", t:"<strong>Petecchie perifollicolari</strong> con ipercheratosi e peli a cavaturaccioli (arti inferiori): segno molto suggestivo." },
+      { d:"b", t:"Gengive ipertrofiche e sanguinanti (nei pazienti dentati); ecchimosi estese, ematomi muscolari, emartri; ritardo di cicatrizzazione." },
+      { d:"a", t:"Rischio: diete molto restrittive o monotone, alcolismo, anziani soli o istituzionalizzati, disturbi psichiatrici, malassorbimento, chirurgia bariatrica, dialisi, fumo." },
+      { d:"w", t:"Piastrine, PT e aPTT normali; anemia frequente (carenze associate di ferro e folati)." }
+    ],
+    esami:[
+      { u:false, n:"Acido ascorbico plasmatico", s:"A digiuno, campione protetto dalla luce: < 11 µmol/L (< 0,2 mg/dL) = deficit. Non sempre disponibile rapidamente." },
+      { u:false, n:"Emocromo, ferritina, folati, B12, albumina", s:"Carenze associate." }
+    ],
+    terapia:{
+      drugs:[
+        { n:"Acido ascorbico", dose:"1 g/die per 3 giorni, poi 500 mg/die per 1 settimana, poi 100 mg/die per 1–3 mesi (in alternativa 300–1000 mg/die per 1 mese)", note:"Miglioramento dei sintomi in pochi giorni, delle lesioni cutanee in 1–2 settimane: la risposta conferma la diagnosi.", b:["badge-g","Curativa"] }
+      ],
+      extra:[ { l:"Prevenzione", t:"Fabbisogno circa 75–90 mg/die (maggiore nei fumatori); frutta e verdura fresca; valutazione nutrizionale." } ]
+    },
+    refs:["scurvy"]
+  },
+
+  r_senile: {
+    type:"r", icon:"👴", urgency:"info",
+    dx:"Porpora senile (attinica, di Bateman)",
+    subtitle:"Fragilità del derma fotoinvecchiato — diagnosi di esclusione",
+    semio:[
+      { d:"b", t:"Ecchimosi a margini netti e irregolari su avambracci (superficie estensoria) e dorso delle mani; persistono 1–3 settimane e lasciano pigmentazione bruna (emosiderina)." },
+      { d:"b", t:"Cute sottile e atrofica, pseudocicatrici stellate, lacerazioni facili (dermatoporosi)." },
+      { d:"a", t:"Aggravanti: corticosteroidi sistemici o topici, antiaggreganti, anticoagulanti, danno attinico cronico." },
+      { d:"w", t:"Assenti: porpora palpabile, sanguinamenti mucosi, ematomi profondi, sintomi sistemici." }
+    ],
+    esami:[
+      { u:false, n:"Emocromo e PT/aPTT alla prima valutazione", s:"Attesi normali." },
+      { u:false, n:"Revisione dei farmaci; vitamina C se malnutrizione", s:"Lo scorbuto può coesistere nell'anziano." }
+    ],
+    terapia:{
+      drugs:[
+        { n:"Nessuna terapia specifica", dose:"Rassicurazione", note:"Processo benigno legato all'invecchiamento del derma.", b:["badge-g","Benigna"] },
+        { n:"Misure preventive (evidenze limitate)", dose:"Protezione meccanica (manicotti), fotoprotezione, emollienti", note:"Rivalutare l'indicazione a steroidi e antiaggreganti; prodotti topici (retinoidi, acido ialuronico) con evidenze scarse.", b:["badge-b","Prevenzione"] }
+      ],
+      extra:[ { l:"Educazione del paziente", t:"Rivalutare se le lesioni compaiono in sedi atipiche, diventano palpabili o si associano a sanguinamenti mucosi o febbre." } ]
+    },
+    refs:["senile"]
+  }
+};
+
+/* =====================================================================
+   SCORE
+   ===================================================================== */
+const SCORES = {
+  isth_dic: {
+    title:"Score ISTH per CID manifesta",
+    desc:"Applicabile solo in presenza di una condizione predisponente nota (sepsi, neoplasia, trauma, complicanza ostetrica).",
+    groups:[
+      { label:"Piastrine", items:[ ["> 100.000/µL",0], ["50.000–100.000/µL",1], ["< 50.000/µL",2] ] },
+      { label:"D-dimero (o altro marker di fibrina)", items:[ ["Non aumentato",0], ["Aumento moderato",2], ["Aumento marcato",3] ] },
+      { label:"Allungamento del PT", items:[ ["< 3 s",0], ["3–6 s",1], ["> 6 s",2] ] },
+      { label:"Fibrinogeno", items:[ ["≥ 1 g/L",0], ["< 1 g/L",1] ] }
+    ],
+    interpret:s => s >= 5
+      ? { c:"danger", t:`${s} punti: compatibile con CID manifesta. Trattare la causa; ripetere ogni giorno.` }
+      : { c:"ok", t:`${s} punti: suggestivo di CID non manifesta. Ripetere entro 1–2 giorni se il sospetto persiste.` }
+  },
+  score_4t: {
+    title:"Score 4T — probabilità pre-test di HIT",
+    desc:"Lo, J Thromb Haemost 2006. Usare il picco di PLT dopo l'inizio dell'eparina come riferimento.",
+    groups:[
+      { label:"Thrombocytopenia — entità del calo", items:[ ["Calo < 30% o nadir < 10.000",0], ["Calo 30–50% o nadir 10.000–19.000",1], ["Calo > 50% e nadir ≥ 20.000",2] ] },
+      { label:"Timing del calo", items:[ ["≤ 4 giorni senza esposizione recente",0], ["Compatibile con 5–10 gg ma incerto, > 10° giorno, o ≤ 1 g con esposizione 30–100 gg prima",1], ["Esordio netto 5°–10° giorno, o ≤ 1 g con esposizione nei 30 gg precedenti",2] ] },
+      { label:"Thrombosis / sequele", items:[ ["Nessuna",0], ["Trombosi progressiva o ricorrente, lesioni cutanee eritematose non necrotiche, trombosi sospetta non confermata",1], ["Trombosi nuova confermata, necrosi cutanea al sito di iniezione, reazione sistemica dopo bolo EV",2] ] },
+      { label:"Other causes — altre cause di piastrinopenia", items:[ ["Causa alternativa definita",0], ["Causa alternativa possibile",1], ["Nessuna causa alternativa evidente",2] ] }
+    ],
+    interpret:s => s <= 3
+      ? { c:"ok", t:`${s} punti: bassa probabilità (VPN ~99%). Non eseguire test anticorpali; proseguire l'eparina se indicata.` }
+      : s <= 5
+      ? { c:"warning", t:`${s} punti: probabilità intermedia. Sospendere l'eparina, anticoagulante alternativo, anticorpi anti-PF4.` }
+      : { c:"danger", t:`${s} punti: alta probabilità. Sospendere SUBITO ogni eparina, anticoagulante alternativo, anticorpi anti-PF4 urgenti.` }
+  },
+  plasmic: {
+    title:"PLASMIC score — probabilità di TTP",
+    desc:"Bendapudi, Lancet Haematol 2017. Un punto per ogni criterio presente.",
+    groups:[
+      { label:"Piastrine < 30.000/µL", items:[ ["No",0], ["Sì",1] ] },
+      { label:"Emolisi (reticolociti > 2,5%, aptoglobina indosabile o bilirubina indiretta > 2 mg/dL)", items:[ ["No",0], ["Sì",1] ] },
+      { label:"Assenza di neoplasia attiva", items:[ ["No (neoplasia attiva)",0], ["Sì",1] ] },
+      { label:"Assenza di trapianto d'organo solido o di cellule staminali", items:[ ["No (trapiantato)",0], ["Sì",1] ] },
+      { label:"MCV < 90 fL", items:[ ["No",0], ["Sì",1] ] },
+      { label:"INR < 1,5", items:[ ["No",0], ["Sì",1] ] },
+      { label:"Creatinina < 2,0 mg/dL", items:[ ["No",0], ["Sì",1] ] }
+    ],
+    interpret:s => s <= 4
+      ? { c:"ok", t:`${s} punti: rischio basso di TTP (deficit grave di ADAMTS13 poco probabile). Cercare altre cause di MAT.` }
+      : s === 5
+      ? { c:"warning", t:`${s} punti: rischio intermedio. Discutere subito con l'ematologo; ADAMTS13 urgente.` }
+      : { c:"danger", t:`${s} punti: rischio alto di TTP. Plasmaferesi e corticosteroidi senza attendere ADAMTS13.` }
+  }
+};
+
+/* =====================================================================
+   STATO E RENDERING
+   ===================================================================== */
+const START = "q_vitro";
+let path = [];          // indici delle opzioni scelte, passo per passo
+let scoreState = {};    // { scoreKey: { groupIdx: value } }
+let activeTab = "tab-semio";
+
+const LVL_ICON = { ok:"✅", info:"ℹ️", warning:"⚠️", danger:"🚨" };
+const LVL_TAG  = { ok:"Esito", info:"Esito", warning:"Esito — attenzione", danger:"Esito — urgenza" };
+const URG_TXT  = { danger:"Esito finale · urgenza/emergenza", warning:"Esito finale · attenzione", info:"Esito finale · gestione ordinaria" };
+
+const stage = document.getElementById("stage");
+
+function esc(s){ return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+
+function walk(){
+  // restituisce la sequenza dei nodi attraversati secondo path
+  const seq = [];
+  let id = START;
+  for (let i = 0; ; i++) {
+    const node = N[id];
+    if (!node) break;
+    const choice = node.type === "q" ? path[i] : undefined;
+    seq.push({ id, node, choice });
+    if (node.type !== "q" || choice === undefined) break;
+    const opt = node.options[choice];
+    if (opt.end || !opt.next) break;
+    id = opt.next;
+  }
+  return seq;
+}
+
+function render(scrollTarget){
+  const seq = walk();
+  let html = `<div class="disclaimer">Rispondere a una domanda per volta: sotto ogni risposta compare subito l'esito e, se pertinente, la domanda successiva. Cliccando su una risposta precedente il percorso riparte da quel punto.</div>`;
+  let stepNo = 0;
+  seq.forEach((s, i) => {
+    if (s.node.type === "q") {
+      stepNo++;
+      html += renderStep(s, i, stepNo);
+    } else {
+      html += renderResult(s.node);
+    }
+  });
+  stage.innerHTML = html;
+  updateBreadcrumb(seq);
+  document.getElementById("btnBack").disabled = path.length === 0;
+  restoreScores();
+  if (scrollTarget) {
+    const el = document.getElementById(scrollTarget);
+    if (el) el.scrollIntoView({ behavior:"smooth", block:"start" });
+  }
+}
+
+function renderStep(s, i, stepNo){
+  const n = s.node;
+  const answered = s.choice !== undefined;
+  let h = `<section class="step ${answered ? "answered" : ""}" id="step-${i}">
+    <div class="step-num">${stepNo}</div>
+    <div class="q-label">Passo ${stepNo} · ${n.label}</div>
+    <div class="q-text">${n.text}</div>
+    ${n.sub ? `<div class="q-sub">${n.sub}</div>` : ""}
+    <div class="choices" role="radiogroup">`;
+  n.options.forEach((o, j) => {
+    const sel = answered && s.choice === j;
+    h += `<button type="button" class="choice-btn ${o.cls || ""} ${sel ? "selected" : ""}" data-step="${i}" data-opt="${j}" role="radio" aria-checked="${sel}">
+      <span class="choice-icon">${o.icon || "•"}</span>
+      <span class="choice-body"><span class="choice-title">${o.title}</span>${o.desc ? `<span class="choice-desc" style="display:block">${o.desc}</span>` : ""}</span>
+      <span class="choice-check"></span>
+    </button>`;
+  });
+  h += `</div>`;
+  if (answered) {
+    const o = n.options[s.choice];
+    const e = o.esito;
+    h += `<div class="esito ${e.lvl}" id="esito-${i}" role="status">
+      <span class="esito-icon">${LVL_ICON[e.lvl]}</span>
+      <div><span class="esito-tag">${LVL_TAG[e.lvl]}</span>${e.txt}</div>
+    </div>`;
+    if (o.end) {
+      h += `<div class="end-card">■ Fine del percorso. Usare <strong>Ricomincia</strong> per un nuovo paziente o modificare una risposta precedente.</div>`;
+    }
+  }
+  h += `</section>`;
+  return h;
+}
+
+function renderResult(r){
+  const hasScore = !!r.score;
+  const tabs = [["tab-semio","Semeiotica"],["tab-esami","Esami"],["tab-terapia","Terapia"]];
+  if (hasScore) tabs.push(["tab-score","Score"]);
+  tabs.push(["tab-refs","Bibliografia"]);
+  if (!tabs.some(t => t[0] === activeTab)) activeTab = "tab-semio";
+
+  let h = `<section class="result-panel" id="result">
+    <div class="result-header ${r.urgency}">
+      <span class="result-icon">${r.icon}</span>
+      <div>
+        <div class="result-kicker">${URG_TXT[r.urgency]}</div>
+        <div class="result-dx">${r.dx}</div>
+        <div class="result-subtitle">${r.subtitle}</div>
+      </div>
+    </div>
+    <div class="result-tabs" role="tablist">
+      ${tabs.map(t => `<button type="button" class="rtab ${t[0] === activeTab ? "active" : ""}" data-tab="${t[0]}" role="tab">${t[1]}</button>`).join("")}
+    </div>
+    <div class="result-body">`;
+
+  // Semeiotica
+  h += tabWrap("tab-semio", `<div class="section-label">Elementi clinici</div>` +
+    r.semio.map(x => `<div class="info-row"><div class="info-dot dot-${x.d}"></div><div class="info-main">${x.t}</div></div>`).join(""));
+
+  // Esami
+  const urg = r.esami.filter(e => e.u), el = r.esami.filter(e => !e.u);
+  let ex = "";
+  if (urg.length) ex += `<div class="section-label">Urgenti / contestuali</div>` + urg.map(e => examRow(e,"r")).join("");
+  if (el.length)  ex += `<div class="section-label">Di completamento</div>` + el.map(e => examRow(e,"b")).join("");
+  h += tabWrap("tab-esami", ex);
+
+  // Terapia
+  const t = r.terapia;
+  let th = "";
+  if (t.alert) th += `<div class="alert ${t.alert.c}"><span class="alert-icon">${t.alert.i}</span><div>${t.alert.t}</div></div>`;
+  th += `<div class="section-label">Trattamenti</div>`;
+  t.drugs.forEach(d => {
+    th += `<div class="drug-box">
+      <div class="drug-name">${d.n}${d.b ? ` <span class="badge ${d.b[0]}">${d.b[1]}</span>` : ""}</div>
+      <div class="drug-dose">${d.dose}</div>
+      ${d.note ? `<div class="drug-note">${d.note}</div>` : ""}
+    </div>`;
+  });
+  if (t.extra && t.extra.length) {
+    th += `<div class="section-label">Note aggiuntive</div>` +
+      t.extra.map(x => `<div class="info-row"><div class="info-dot dot-a"></div><div class="info-main"><strong>${x.l}</strong><div class="info-sub">${x.t}</div></div></div>`).join("");
+  }
+  h += tabWrap("tab-terapia", th);
+
+  if (hasScore) h += tabWrap("tab-score", renderScore(r.score));
+
+  h += tabWrap("tab-refs", `<div class="section-label">Fonti per questo esito</div><ol class="ref-list">` +
+    r.refs.map(k => `<li>${esc(REFS[k] || k)}</li>`).join("") + `</ol>`);
+
+  h += `</div>
+    <div class="btn-row">
+      <button type="button" class="btn" data-action="back">‹ Indietro</button>
+      <button type="button" class="btn" data-action="print">🖨 Stampa riepilogo</button>
+      <button type="button" class="btn" data-action="reset">↺ Nuovo paziente</button>
+    </div>
+  </section>`;
+  return h;
+}
+
+function tabWrap(id, inner){ return `<div class="rtab-content ${id === activeTab ? "active" : ""}" data-tab="${id}">${inner}</div>`; }
+function examRow(e, dot){ return `<div class="info-row"><div class="info-dot dot-${dot}"></div><div class="info-main"><strong>${e.n}</strong><div class="info-sub">${e.s}</div></div></div>`; }
+
+function renderScore(key){
+  const sc = SCORES[key];
+  let h = `<div class="score-widget" data-score="${key}"><div class="score-title">${sc.title}</div><div class="score-desc">${sc.desc}</div>`;
+  sc.groups.forEach((g, gi) => {
+    h += `<div class="section-label" style="margin-top:12px">${g.label}</div>`;
+    g.items.forEach((it, ii) => {
+      const id = `${key}-${gi}-${ii}`;
+      h += `<div class="score-row"><input type="radio" id="${id}" name="${key}-${gi}" value="${it[1]}" data-score="${key}" data-group="${gi}">
+        <label for="${id}">${it[0]}</label><span class="score-pts">+${it[1]}</span></div>`;
+    });
+  });
+  h += `<div class="score-result" data-score-res="${key}"><div class="score-num">—</div><div class="score-interp">Selezionare un valore per ogni voce (0/${sc.groups.length})</div></div></div>`;
+  return h;
+}
+
+const RES_STYLE = {
+  ok:{ bg:"#e9f7ee", bd:"#15803d", fg:"#15803d" },
+  warning:{ bg:"#fff5e0", bd:"#f59e0b", fg:"#b45309" },
+  danger:{ bg:"#fdecec", bd:"#c62828", fg:"#c62828" }
+};
+
+function calcScore(key){
+  const sc = SCORES[key];
+  const st = scoreState[key] || {};
+  const box = stage.querySelector(`[data-score-res="${key}"]`);
+  if (!box) return;
+  const done = Object.keys(st).length;
+  if (done < sc.groups.length) {
+    box.querySelector(".score-num").textContent = "—";
+    box.querySelector(".score-interp").textContent = `Selezionare un valore per ogni voce (${done}/${sc.groups.length})`;
+    return;
+  }
+  const total = Object.values(st).reduce((a,b) => a + b, 0);
+  const res = sc.interpret(total), sty = RES_STYLE[res.c];
+  box.style.background = sty.bg; box.style.border = `1px solid ${sty.bd}`;
+  const num = box.querySelector(".score-num"), txt = box.querySelector(".score-interp");
+  num.textContent = `${total} pt`; num.style.color = sty.fg;
+  txt.textContent = res.t; txt.style.color = sty.fg;
+}
+
+function restoreScores(){
+  Object.keys(scoreState).forEach(key => {
+    const st = scoreState[key];
+    Object.keys(st).forEach(gi => {
+      const r = stage.querySelector(`input[name="${key}-${gi}"][value="${st[gi]}"]`);
+      if (r) r.checked = true;
+    });
+    calcScore(key);
+  });
+}
+
+function updateBreadcrumb(seq){
+  const bc = document.getElementById("breadcrumb");
+  const items = [];
+  seq.forEach(s => {
+    if (s.node.type === "q" && s.choice !== undefined) {
+      const t = s.node.options[s.choice].title.replace(/<[^>]+>/g,"");
+      items.push(t.length > 42 ? t.slice(0,40) + "…" : t);
+    } else if (s.node.type === "r") {
+      items.push("Esito: " + s.node.dx.split(" — ")[0]);
+    }
+  });
+  if (!items.length) { bc.innerHTML = `<span>Inizio percorso</span>`; return; }
+  bc.innerHTML = items.map((t,i) => `${i ? '<span class="bc-sep">›</span>' : ""}<span class="bc-item ${i === items.length-1 ? "current" : ""}">${esc(t)}</span>`).join("");
+}
+
+function choose(step, opt){
+  const changed = path[step] !== opt || path.length > step + 1;
+  path = path.slice(0, step);
+  path.push(opt);
+  if (changed) { scoreState = {}; activeTab = "tab-semio"; }
+  render(`esito-${step}`);
+}
+function goBack(){
+  if (!path.length) return;
+  path.pop(); scoreState = {}; activeTab = "tab-semio";
+  render(`step-${path.length}`);
+}
+function resetFlow(){
+  path = []; scoreState = {}; activeTab = "tab-semio";
+  render(); window.scrollTo({ top:0, behavior:"smooth" });
+}
+
+/* Delegazione degli eventi */
+stage.addEventListener("click", ev => {
+  const c = ev.target.closest(".choice-btn");
+  if (c) { choose(+c.dataset.step, +c.dataset.opt); return; }
+  const tab = ev.target.closest(".rtab");
+  if (tab) {
+    activeTab = tab.dataset.tab;
+    const panel = tab.closest(".result-panel");
+    panel.querySelectorAll(".rtab").forEach(b => b.classList.toggle("active", b === tab));
+    panel.querySelectorAll(".rtab-content").forEach(x => x.classList.toggle("active", x.dataset.tab === activeTab));
+    return;
+  }
+  const a = ev.target.closest("[data-action]");
+  if (a) {
+    if (a.dataset.action === "back") goBack();
+    else if (a.dataset.action === "reset") resetFlow();
+    else if (a.dataset.action === "print") window.print();
+  }
+});
+stage.addEventListener("change", ev => {
+  const r = ev.target;
+  if (r.matches('input[type="radio"][data-score]')) {
+    const key = r.dataset.score;
+    scoreState[key] = scoreState[key] || {};
+    scoreState[key][r.dataset.group] = +r.value;
+    calcScore(key);
+  }
+});
+document.getElementById("btnBack").addEventListener("click", goBack);
+document.getElementById("btnReset").addEventListener("click", resetFlow);
+
+/* Bibliografia completa nel footer */
+document.getElementById("biblio").innerHTML = Object.values(REFS).map(r => `<li>${esc(r)}</li>`).join("");
+
+render();
+</script>
+</body>
+</html>
